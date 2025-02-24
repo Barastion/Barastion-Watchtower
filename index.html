@@ -34,8 +34,7 @@
                         <th>Godzina</th>
                         <th>IP</th>
                         <th>Lokalizacja</th>
-                        <th>User Agent</th>
-                        <th>Przeglądarka</th>
+                        <th>Urządzenie</th> <!-- Nowa kolumna -->
                     </tr>
                 </thead>
                 <tbody id="logTableBody"></tbody>
@@ -64,6 +63,23 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        // Funkcja do określania typu urządzenia
+        function getDeviceType(userAgent) {
+            if (userAgent.includes('Android')) {
+                return 'Android';
+            } else if (userAgent.includes('iPhone')) {
+                return 'iPhone';
+            } else if (userAgent.includes('iPad')) {
+                return 'Tablet';
+            } else if (userAgent.includes('Macintosh')) {
+                return 'Mac'; // Mac jest osobną kategorią
+            } else if (userAgent.includes('Windows') || userAgent.includes('Linux')) {
+                return 'PC';
+            } else {
+                return 'Inne';
+            }
+        }
+
         // Funkcja do zapisywania logów
         async function logVisit() {
             const now = new Date();
@@ -72,10 +88,10 @@
             const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
             const ip = await getIp();
             const location = await getLocation(ip);
-            const userAgent = navigator.userAgent.slice(0, 10); // Skrócony User Agent
-            const browser = getBrowser();
+            const userAgent = navigator.userAgent;
+            const device = getDeviceType(userAgent); // Określ typ urządzenia
 
-            const logEntry = { date, day, time, ip, location, userAgent, browser };
+            const logEntry = { date, day, time, ip, location, device };
 
             if (checkDDoSProtection(ip)) {
                 const logsRef = ref(database, 'logs');
@@ -105,8 +121,7 @@
                     <td>${log.time}</td>
                     <td>${log.ip}</td>
                     <td>${log.location}</td>
-                    <td>${log.userAgent}</td>
-                    <td>${log.browser}</td>
+                    <td>${log.device}</td> <!-- Nowa kolumna -->
                 `;
                 logTableBody.appendChild(row);
             });
@@ -149,18 +164,6 @@
                 console.error('Błąd pobierania lokalizacji:', err);
                 return 'Nieznana lokalizacja';
             }
-        }
-
-        // Pobierz przeglądarkę użytkownika (skrócona do 10 znaków)
-        function getBrowser() {
-            const userAgent = navigator.userAgent;
-            return userAgent.match(/(Chrome|Firefox|Safari|Edge)/) ? userAgent.match(/(Chrome|Firefox|Safari|Edge)/)[0].slice(0, 10) : 'Nieznana';
-        }
-
-        // Pobierz aktualną datę
-        function getCurrentDate() {
-            const now = new Date();
-            return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
         // Inicjalizacja przy załadowaniu strony
