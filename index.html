@@ -6,7 +6,7 @@
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
     <!-- Meta tag CSP dla Firebase i Open-Meteo -->
-   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app; style-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com; style-src 'self' 'unsafe-inline';">
 </head>
 <body>
     <div class="container">
@@ -17,8 +17,11 @@
                     <thead>
                         <tr>
                             <th>Data</th>
+                            <th>Dzień</th>
                             <th>Godzina</th>
                             <th>IP</th>
+                            <th>Lokalizacja</th>
+                            <th>User Agent</th>
                             <th>Przeglądarka</th>
                         </tr>
                     </thead>
@@ -56,41 +59,66 @@
         const database = getDatabase(app);
 
         // Funkcja do zapisywania logów
-        function logVisit(date, time, ip, browser) {
-            const logsRef = ref(database, 'logs/' + Date.now()); // Unikalny klucz dla każdego logu
-            set(logsRef, {
-                date: date,
-                time: time,
-                ip: ip,
-                browser: browser
-            }).then(() => {
-                console.log('Log zapisany w Firebase!');
-            }).catch((error) => {
-                console.error('Błąd zapisu logu:', error);
-            });
+        async function logVisit() {
+            const now = new Date();
+            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const day = now.toLocaleDateString('pl-PL', { weekday: 'long' });
+            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const ip = await getIp();
+            const location = await getLocation(ip);
+            const userAgent = navigator.userAgent.slice(0, 10); // Skrócony User Agent
+            const browser = getBrowser();
+
+            const logEntry = { date, day, time, ip, location, userAgent, browser };
+
+            if (checkDDoSProtection(ip)) {
+                const logsRef = ref(database, 'logs');
+                onValue(logsRef, (snapshot) => {
+                    let logs = snapshot.val() ? Object.values(snapshot.val()) : [];
+                    logs.unshift(logEntry); // Nowe logi na górze
+                    if (logs.length > 50) logs.pop(); // Ograniczenie do 50 logów
+                    set(logsRef, logs).then(() => {
+                        console.log('Log zapisany w Firebase!');
+                    }).catch((error) => {
+                        console.error('Błąd zapisu logu:', error);
+                    });
+                });
+            }
         }
 
         // Funkcja do wyświetlania logów
-        function displayLogs() {
-            const logsRef = ref(database, 'logs');
-            onValue(logsRef, (snapshot) => {
-                const logs = snapshot.val();
-                const logTableBody = document.getElementById('logTableBody');
-                logTableBody.innerHTML = ''; // Wyczyść tabelę
+        function displayLogs(logs) {
+            const logTableBody = document.getElementById('logTableBody');
+            logTableBody.innerHTML = ''; // Wyczyść tabelę
 
-                if (logs) {
-                    Object.values(logs).forEach(log => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${log.date}</td>
-                            <td>${log.time}</td>
-                            <td>${log.ip}</td>
-                            <td>${log.browser}</td>
-                        `;
-                        logTableBody.appendChild(row);
-                    });
-                }
+            logs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.date}</td>
+                    <td>${log.day}</td>
+                    <td>${log.time}</td>
+                    <td>${log.ip}</td>
+                    <td>${log.location}</td>
+                    <td>${log.userAgent}</td>
+                    <td>${log.browser}</td>
+                `;
+                logTableBody.appendChild(row);
             });
+        }
+
+        // Ochrona przed DDoS – zapisujemy logi tylko raz na minutę dla każdego IP
+        let lastIpLogTime = {};
+        function checkDDoSProtection(ip) {
+            const currentTime = Date.now();
+            if (lastIpLogTime[ip]) {
+                const timeDiff = (currentTime - lastIpLogTime[ip]) / 1000 / 60; // W minutach
+                if (timeDiff < 1) {
+                    console.log('Ograniczenie logowania – zbyt częste z tego samego IP');
+                    return false; // Nie zapisujemy, jeśli minęła mniej niż minuta
+                }
+            }
+            lastIpLogTime[ip] = currentTime;
+            return true;
         }
 
         // Pobierz IP użytkownika
@@ -105,57 +133,36 @@
             }
         }
 
-        // Pobierz przeglądarkę użytkownika
+        // Pobierz lokalizację (Miasto/Kraj) na podstawie IP
+        async function getLocation(ip) {
+            try {
+                const response = await fetch(`https://ipapi.co/${ip}/json/`);
+                const data = await response.json();
+                return `${data.city}, ${data.country_name}` || 'Nieznana lokalizacja';
+            } catch (err) {
+                console.error('Błąd pobierania lokalizacji:', err);
+                return 'Nieznana lokalizacja';
+            }
+        }
+
+        // Pobierz przeglądarkę użytkownika (skrócona do 10 znaków)
         function getBrowser() {
             const userAgent = navigator.userAgent;
             return userAgent.match(/(Chrome|Firefox|Safari|Edge)/) ? userAgent.match(/(Chrome|Firefox|Safari|Edge)/)[0].slice(0, 10) : 'Nieznana';
         }
 
-        // Pobierz pogodę dla lokalizacji IP
-        async function getWeather(ip) {
-            try {
-                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
-                const locationData = await locationResponse.json();
-                const lat = locationData.latitude;
-                const lon = locationData.longitude;
-
-                // Pobierz aktualną pogodę
-                const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}¤t_weather=true&temperature_unit=celsius&timezone=auto`);
-                const weatherData = await weatherResponse.json();
-                document.getElementById('currentTemp').textContent = weatherData.current_weather.temperature.toFixed(1);
-
-                // Pobierz prognozę na następne dni
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
-                const forecastData = await forecastResponse.json();
-
-                const forecastList = document.getElementById('weatherForecast');
-                forecastList.innerHTML = '';
-                forecastData.daily.time.forEach((date, index) => {
-                    const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric' });
-                    const maxTemp = forecastData.daily.temperature_2m_max[index];
-                    const minTemp = forecastData.daily.temperature_2m_min[index];
-                    const li = document.createElement('li');
-                    li.textContent = `${formattedDate}: ${maxTemp.toFixed(1)}°C / ${minTemp.toFixed(1)}°C`;
-                    forecastList.appendChild(li);
-                });
-            } catch (err) {
-                console.error('Błąd pobierania pogody:', err);
-                document.getElementById('currentTemp').textContent = 'Błąd';
-                document.getElementById('weatherForecast').innerHTML = '<li>Błąd pobierania prognozy</li>';
-            }
-        }
-
         // Inicjalizacja przy załadowaniu strony
         window.onload = async function() {
-            displayLogs(); // Wyświetl logi
-            const ip = await getIp();
-            const browser = getBrowser();
-            const now = new Date();
-            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const logsRef = ref(database, 'logs');
+            onValue(logsRef, (snapshot) => {
+                const logs = snapshot.val() ? Object.values(snapshot.val()) : [];
+                displayLogs(logs);
+            });
 
-            logVisit(date, time, ip, browser); // Zapisz log
-            getWeather(ip); // Pobierz pogodę
+            const ip = await getIp();
+            if (checkDDoSProtection(ip)) {
+                logVisit(); // Zapisz log tylko jeśli ochrona DDoS pozwala
+            }
         };
     </script>
 </body>
