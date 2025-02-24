@@ -38,28 +38,36 @@ h1::after {
     margin: 10px auto 0; /* Wyśrodkowanie podkreślenia */
 }
 
-.weather-info {
-    display: flex;
-    justify-content: space-between;
-    background-color: #3a3a3a; /* Ciemne tło dla sekcji pogody */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+/* Sekcja dzisiejszej pogody */
+.today-weather {
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.weather-date {
-    flex: 1;
+.today-date {
+    font-size: 1.5em; /* Większa czcionka dla daty */
+    font-weight: bold; /* Pogrubiona czcionka */
+    color: #ffffff;
+    margin-bottom: 10px;
 }
 
+.today-temp {
+    font-size: 2em; /* Duża czcionka dla temperatury */
+    font-weight: bold; /* Pogrubiona czcionka */
+    color: #ffffff;
+}
+
+/* Sekcja prognozy na następne dni */
 .weather-forecast {
-    flex: 1;
+    text-align: center; /* Wyśrodkowanie nagłówka */
+    margin-top: 20px;
 }
 
 .weather-forecast h3 {
     margin-top: 0;
     color: #ffffff;
-    font-size: 1.2em;
+    font-size: 1.5em; /* Większa czcionka dla nagłówka prognozy */
+    font-weight: bold; /* Pogrubiona czcionka */
 }
 
 .forecast-container {
@@ -67,6 +75,7 @@ h1::after {
     gap: 10px; /* Odstęp między słupkami */
     overflow-x: auto; /* Przewijanie poziome, jeśli jest za dużo słupków */
     padding: 10px 0;
+    justify-content: center; /* Wyśrodkowanie słupków */
 }
 
 .forecast-bar {
