@@ -17,7 +17,6 @@
                     <th>Godzina</th>
                     <th>IP</th>
                     <th>Lokalizacja (Miasto/Kraj)</th>
-                    <th>IP (surowe)</th>
                     <th>User Agent</th>
                     <th>Przeglądarka</th>
                 </tr>
@@ -28,25 +27,24 @@
     </div>
 
     <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Dla pobierania lokalizacji IP -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         const CLIENT_ID = '183075047643-uo1onbpgq7ebpru4br02o87a4fjhjssc.apps.googleusercontent.com';
         const API_KEY = '';
-        const FILE_ID = '183075047643-uo1onbpgq7ebpru4br02o87a4fjhjssc.apps.googleusercontent.com';
+        const FILE_ID = '1h720TRMofpJ0G6VXFg-H6j5XL3GKGhx8nPl-IZFrbR8';  // Poprawiony prawidłowy File ID
         const SCOPE = 'https://www.googleapis.com/auth/drive.file';
 
         let token = null;
-        let lastIpLogTime = {}; // Obiekt do śledzenia ostatniego logowania dla każdego IP
 
         function initGoogleAPI() {
             gapi.load('client:auth2', () => {
                 gapi.client.init({
-                    apiKey: API_KEY,
                     clientId: CLIENT_ID,
                     scope: SCOPE,
                 }).then(() => {
-                    gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-                    updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+                    const authInstance = gapi.auth2.getAuthInstance();
+                    authInstance.isSignedIn.listen(updateSigninStatus);
+                    updateSigninStatus(authInstance.isSignedIn.get());
                 });
             });
         }
@@ -70,11 +68,16 @@
         }
 
         async function fetchLogs() {
-            const response = await fetch(`https://www.googleapis.com/drive/v3/files/${FILE_ID}?alt=media`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const text = await response.text();
-            return text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
+            try {
+                const response = await fetch(`https://www.googleapis.com/drive/v3/files/${FILE_ID}?alt=media`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const text = await response.text();
+                return text.split('\n').filter(line => line.trim() !== '').map(line => JSON.parse(line));
+            } catch (error) {
+                console.error('Błąd pobierania logów:', error);
+                return [];
+            }
         }
 
         async function saveLogs(logs) {
@@ -92,61 +95,50 @@
                 logs.map(JSON.stringify).join('\n') +
                 closeDelim;
 
-            await fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
-                method: 'PATCH',
-                headers: { Authorization: `Bearer ${token}` },
-                body: multipartRequestBody,
-            });
+            try {
+                await fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
+                    method: 'PATCH',
+                    headers: { Authorization: `Bearer ${token}` },
+                    body: multipartRequestBody,
+                });
+            } catch (error) {
+                console.error('Błąd zapisu logów:', error);
+            }
         }
 
         async function logVisit() {
-            const ip = await fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => data.ip)
-                .catch(() => 'Nieznany IP');
-            const userAgent = navigator.userAgent;
-            const browser = userAgent.match(/(Chrome|Firefox|Safari|Edge)/) ? userAgent.match(/(Chrome|Firefox|Safari|Edge)/)[0].slice(0, 10) : 'Nieznana';
-            const now = new Date();
-            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const dayOfWeek = now.toLocaleDateString('pl-PL', { weekday: 'long' });
-            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-            const location = await getLocation(ip);
-
-            const logEntry = {
-                date,
-                dayOfWeek,
-                time,
-                ip,
-                location,
-                userAgent,
-                browser
-            };
-
-            // Ochrona przed DDoS – zapisujemy logi tylko raz na minutę z tego samego IP, chyba że IP się zmieni
-            const currentTime = Date.now();
-            if (lastIpLogTime[ip]) {
-                const timeDiff = (currentTime - lastIpLogTime[ip]) / 1000 / 60; // W minutach
-                if (timeDiff < 1 && lastIpLogTime[ip]) {
-                    console.log('Ograniczenie logowania – zbyt częste z tego samego IP');
-                    return; // Nie zapisujemy, jeśli minęła mniej niż minuta
-                }
-            }
-            lastIpLogTime[ip] = currentTime;
-
             try {
-                let logs = await fetchLogs();
-                logs.unshift(logEntry); // Nowe logi na górze
-                if (logs.length > 100) logs.pop(); // Usuwamy najstarszy log (ostatni)
+                const ip = await fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => data.ip)
+                    .catch(() => 'Nieznany IP');
+
+                const userAgent = navigator.userAgent;
+                const browser = (userAgent.match(/(Chrome|Firefox|Safari|Edge)/) || ['Inna'])[0];
+
+                const now = new Date();
+                const logEntry = {
+                    date: now.toISOString().split('T')[0],
+                    dayOfWeek: now.toLocaleDateString('pl-PL', { weekday: 'long' }),
+                    time: now.toLocaleTimeString(),
+                    ip: ip,
+                    location: await getLocation(ip),
+                    userAgent: userAgent,
+                    browser: browser,
+                };
+
+                const logs = await fetchLogs();
+                logs.push(logEntry);
                 await saveLogs(logs);
-                displayLogs(logs);
-            } catch (err) {
-                console.error('Błąd:', err);
+                updateLogTable(logs);
+            } catch (error) {
+                console.error('Błąd logowania wizyty:', error);
             }
         }
 
-        function displayLogs(logs) {
-            const logTableBody = document.getElementById('logTableBody');
-            logTableBody.innerHTML = '';
+        function updateLogTable(logs) {
+            const tbody = document.getElementById('logTableBody');
+            tbody.innerHTML = '';
             logs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -155,30 +147,25 @@
                     <td>${log.time}</td>
                     <td>${log.ip}</td>
                     <td>${log.location}</td>
-                    <td>${log.ip}</td> <!-- Surowe IP, możesz pominąć, jeśli jest duplikat -->
-                    <td>${log.userAgent.slice(0, 50)}...</td> <!-- Skrócony User Agent -->
+                    <td>${log.userAgent}</td>
                     <td>${log.browser}</td>
                 `;
-                logTableBody.appendChild(row);
+                tbody.appendChild(row);
             });
         }
 
         function exportLogs() {
-            const logs = JSON.parse(localStorage.getItem('visitLogs')) || [];
-            const logText = logs.map(log => 
-                `${log.date} | ${log.dayOfWeek} | ${log.time} | ${log.ip} | ${log.location} | ${log.userAgent} | ${log.browser}`
-            ).join('\n');
-            const blob = new Blob([logText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
+            const logs = document.getElementById('logTableBody').innerHTML;
+            const blob = new Blob([logs], { type: 'text/plain' });
             const a = document.createElement('a');
-            a.href = url;
+            a.href = URL.createObjectURL(blob);
             a.download = 'logs.txt';
             a.click();
-            URL.revokeObjectURL(url);
-            alert('Logi zostały wyeksportowane jako plik logs.txt!');
         }
 
-        initGoogleAPI();
+        window.onload = function () {
+            initGoogleAPI();
+        };
     </script>
 </body>
 </html>
