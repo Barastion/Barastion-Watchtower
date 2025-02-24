@@ -11,29 +11,35 @@
 <body>
     <div class="container">
         <h1>Monitor Odwiedzin</h1>
-        <div class="content-wrapper">
-            <div class="log-table">
-                <table id="logTable">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Dzień</th>
-                            <th>Godzina</th>
-                            <th>IP</th>
-                            <th>Lokalizacja</th>
-                            <th>User Agent</th>
-                            <th>Przeglądarka</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTableBody"></tbody>
-                </table>
-            </div>
-            <div class="weather-info">
-                <h2>Pogoda dla Twojej lokalizacji</h2>
+        
+        <!-- Sekcja pogody i daty -->
+        <div class="weather-info">
+            <div class="weather-date">
+                <p>Aktualna data: <span id="currentDate">-</span></p>
                 <p>Aktualna temperatura: <span id="currentTemp">-</span>°C</p>
+            </div>
+            <div class="weather-forecast">
                 <h3>Prognoza na następne dni</h3>
                 <ul id="weatherForecast"></ul>
             </div>
+        </div>
+
+        <!-- Tabela logów -->
+        <div class="log-table">
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Dzień</th>
+                        <th>Godzina</th>
+                        <th>IP</th>
+                        <th>Lokalizacja</th>
+                        <th>User Agent</th>
+                        <th>Przeglądarka</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBody"></tbody>
+            </table>
         </div>
     </div>
 
@@ -151,6 +157,12 @@
             return userAgent.match(/(Chrome|Firefox|Safari|Edge)/) ? userAgent.match(/(Chrome|Firefox|Safari|Edge)/)[0].slice(0, 10) : 'Nieznana';
         }
 
+        // Pobierz aktualną datę
+        function getCurrentDate() {
+            const now = new Date();
+            return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
         // Inicjalizacja przy załadowaniu strony
         window.onload = async function() {
             const logsRef = ref(database, 'logs');
@@ -163,6 +175,12 @@
             if (checkDDoSProtection(ip)) {
                 logVisit(); // Zapisz log tylko jeśli ochrona DDoS pozwala
             }
+
+            // Ustaw aktualną datę
+            document.getElementById('currentDate').textContent = getCurrentDate();
+
+            // Pobierz pogodę
+            getWeather(ip);
         };
     </script>
 </body>
