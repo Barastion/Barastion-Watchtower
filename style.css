@@ -38,29 +38,44 @@ h1::after {
     margin: 10px auto 0; /* Wyśrodkowanie podkreślenia */
 }
 
-/* Sekcja dzisiejszej pogody */
-.today-weather {
-    text-align: center;
+/* Sekcja pogody */
+.weather-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Odstęp między lewą a prawą sekcją */
     margin-bottom: 20px;
 }
 
+/* Lewa strona: Dzisiejsza pogoda */
+.today-weather {
+    flex: 1;
+    text-align: center;
+    background-color: #3a3a3a; /* Ciemne tło */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
 .today-date {
-    font-size: 1.5em; /* Większa czcionka dla daty */
+    font-size: 2em; /* Duża czcionka dla daty */
     font-weight: bold; /* Pogrubiona czcionka */
     color: #ffffff;
     margin-bottom: 10px;
 }
 
 .today-temp {
-    font-size: 2em; /* Duża czcionka dla temperatury */
+    font-size: 1.5em; /* Większa czcionka dla temperatury */
     font-weight: bold; /* Pogrubiona czcionka */
     color: #ffffff;
 }
 
-/* Sekcja prognozy na następne dni */
+/* Prawa strona: Prognoza na następne dni */
 .weather-forecast {
-    text-align: center; /* Wyśrodkowanie nagłówka */
-    margin-top: 20px;
+    flex: 2;
+    background-color: #3a3a3a; /* Ciemne tło */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .weather-forecast h3 {
@@ -68,6 +83,7 @@ h1::after {
     color: #ffffff;
     font-size: 1.5em; /* Większa czcionka dla nagłówka prognozy */
     font-weight: bold; /* Pogrubiona czcionka */
+    text-align: center;
 }
 
 .forecast-container {
@@ -79,7 +95,7 @@ h1::after {
 }
 
 .forecast-bar {
-    background-color: #3a3a3a; /* Kolor tła słupka */
+    background-color: #2d2d2d; /* Kolor tła słupka */
     border-radius: 8px;
     padding: 10px;
     text-align: center;
@@ -109,6 +125,7 @@ h1::after {
     margin-right: 5px;
 }
 
+/* Tabela logów */
 .log-table {
     overflow-x: auto; /* Przewijanie poziome */
 }
@@ -150,7 +167,7 @@ tr:hover {
         flex-direction: column;
     }
 
-    .weather-date, .weather-forecast {
+    .today-weather, .weather-forecast {
         width: 100%;
     }
 
