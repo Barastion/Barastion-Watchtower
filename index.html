@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Dla pogody -->
 </head>
 <body>
     <div class="container">
@@ -15,7 +14,6 @@
                 <table id="logTable">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Data</th>
                             <th>Godzina</th>
                             <th>IP</th>
@@ -148,6 +146,7 @@
                 });
                 if (!response.ok) throw new Error('Błąd zapisywania logów do Google Drive: ' + response.status);
                 console.log('Logi zapisane do Google Drive');
+                localStorage.setItem('visitLogs', JSON.stringify(logs)); // Zaktualizuj localStorage
             } catch (err) {
                 console.error('Błąd saveLogs:', err);
                 // Zapisz do localStorage jako backup
@@ -184,7 +183,7 @@
             });
         }
 
-        // Wyświetlanie logów w tabeli z numerkami
+        // Wyświetlanie logów w tabeli bez numerków
         function displayLogs(logs) {
             const logTableBody = document.getElementById('logTableBody');
             if (!logTableBody) {
@@ -192,10 +191,9 @@
                 return;
             }
             logTableBody.innerHTML = '';
-            logs.forEach((log, index) => {
+            logs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${logs.length - index}</td> <!-- Numerki od 1 do 50, najnowsze na górze -->
                     <td>${log.date || 'Nieznana'}</td>
                     <td>${log.time || 'Nieznana'}</td>
                     <td>${log.ip || 'Nieznany'}</td>
@@ -264,15 +262,17 @@
                 const lat = locationData.latitude;
                 const lon = locationData.longitude;
 
-                const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=YOUR_OPENWEATHERMAP_API_KEY&units=metric&lang=pl`);
-                const forecastResponse = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=YOUR_OPENWEATHERMAP_API_KEY&units=metric&lang=pl`);
+                const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=YOUR_OPENWEATHERMAP_API_KEY&units=metric&lang=pl`);
+                const weatherData = await weatherResponse.json();
+                const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=YOUR_OPENWEATHERMAP_API_KEY&units=metric&lang=pl`);
+                const forecastData = await forecastResponse.json();
 
-                document.getElementById('currentTemp').textContent = weatherResponse.data.main.temp.toFixed(1);
+                document.getElementById('currentTemp').textContent = weatherData.main.temp.toFixed(1);
                 
                 const forecastList = document.getElementById('weatherForecast');
                 forecastList.innerHTML = '';
                 const dailyForecast = {};
-                forecastResponse.data.list.forEach(item => {
+                forecastData.list.forEach(item => {
                     const date = new Date(item.dt * 1000).toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric' });
                     if (!dailyForecast[date]) {
                         dailyForecast[date] = item.main.temp;
