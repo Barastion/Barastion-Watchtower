@@ -23,11 +23,19 @@ h1 {
     margin: 20px 0; /* Równe marginesy */
     font-size: 2.5em;
     font-weight: bold; /* Pogrubiona czcionka */
-    text-shadow: 
-        -1px -1px 0 #007bff, /* Niebieski kontur */
-        1px -1px 0 #007bff,
-        -1px 1px 0 #007bff,
-        1px 1px 0 #007bff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtelny cień tekstu */
+    letter-spacing: 2px; /* Lekkie rozstrzelenie liter */
+    font-family: 'Arial', sans-serif; /* Nowoczesna czcionka */
+    position: relative; /* Pozwala na dodanie efektu podkreślenia */
+}
+
+h1::after {
+    content: '';
+    display: block;
+    width: 60px; /* Szerokość podkreślenia */
+    height: 3px; /* Grubość podkreślenia */
+    background-color: #007bff; /* Kolor podkreślenia (niebieski) */
+    margin: 10px auto 0; /* Wyśrodkowanie podkreślenia */
 }
 
 .weather-info {
