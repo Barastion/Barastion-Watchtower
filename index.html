@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Dodaj meta tag CSP, aby obsłużyć skrypty Firebase -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com; style-src 'self' 'unsafe-inline';">
 </head>
 <body>
     <div class="container">
@@ -32,10 +34,10 @@
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js"></script>
     <script>
-        // Konfiguracja Firebase (wstaw swoje dane z Firebase Console)
+        // Konfiguracja Firebase z Twoimi danymi
         const firebaseConfig = {
             apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
             authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
@@ -77,7 +79,7 @@
                 const browser = getBrowser();
                 const logEntry = { date, time, ip, browser };
 
-                checkDDoSProtection(ip, () => {
+                if (checkDDoSProtection(ip)) {
                     logsRef.once('value').then(snapshot => {
                         let logs = snapshot.val() ? Object.values(snapshot.val()) : [];
                         logs.unshift(logEntry); // Nowe logi na górze
@@ -85,8 +87,17 @@
                         logsRef.set(logs.reduce((obj, item, index) => {
                             obj[index] = item;
                             return obj;
-                        }, {}));
-                        displayLogs(logs);
+                        }, {})).then(() => {
+                            displayLogs(logs);
+                        }).catch(err => {
+                            console.error('Błąd zapisu logów do Firebase:', err);
+                            // Backup w localStorage w przypadku błędu
+                            let localLogs = JSON.parse(localStorage.getItem('visitLogs')) || [];
+                            localLogs.unshift(logEntry);
+                            if (localLogs.length > 50) localLogs.pop();
+                            localStorage.setItem('visitLogs', JSON.stringify(localLogs));
+                            displayLogs(localLogs);
+                        });
                     }).catch(err => {
                         console.error('Błąd odczytu logów z Firebase:', err);
                         // Backup w localStorage w przypadku błędu
@@ -96,7 +107,7 @@
                         localStorage.setItem('visitLogs', JSON.stringify(localLogs));
                         displayLogs(localLogs);
                     });
-                });
+                }
             });
         }
 
@@ -120,7 +131,7 @@
         }
 
         // Ochrona przed DDoS – zapisujemy logi tylko raz na minutę dla każdego IP
-        function checkDDoSProtection(ip, callback) {
+        function checkDDoSProtection(ip) {
             const currentTime = Date.now();
             if (lastIpLogTime[ip]) {
                 const timeDiff = (currentTime - lastIpLogTime[ip]) / 1000 / 60; // W minutach
@@ -130,7 +141,6 @@
                 }
             }
             lastIpLogTime[ip] = currentTime;
-            callback();
             return true;
         }
 
@@ -192,7 +202,7 @@
         window.onload = function() {
             loadLogsFromFirebase(); // Pobierz logi z Firebase
             getIp().then(ip => {
-                if (checkDDoSProtection(ip, logVisit)) {
+                if (checkDDoSProtection(ip)) {
                     logVisit(); // Zapisujemy log tylko jeśli ochrona DDoS pozwala
                 }
                 getWeather(ip); // Pobierz pogodę dla lokalizacji IP
