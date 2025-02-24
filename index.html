@@ -14,13 +14,15 @@
         
         <!-- Sekcja pogody -->
         <div class="weather-info">
-            <!-- Dzisiejsza pogoda -->
+            <!-- Lewa strona: Dzisiejsza pogoda -->
             <div class="today-weather">
                 <div class="today-date" id="currentDate">25.02.2025</div>
-                <div class="today-temp" id="currentTemp">-°C</div>
+                <div class="today-temp">
+                    <span id="currentTempMax">-°C</span> / <span id="currentTempMin">-°C</span>
+                </div>
             </div>
 
-            <!-- Prognoza na następne dni -->
+            <!-- Prawa strona: Prognoza na następne dni -->
             <div class="weather-forecast">
                 <h3>Prognoza na następne dni</h3>
                 <div class="forecast-container" id="weatherForecast"></div>
@@ -183,20 +185,23 @@
                 const lat = locationData.latitude;
                 const lon = locationData.longitude;
 
-                // Pobierz aktualną pogodę
-                const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}¤t_weather=true&temperature_unit=celsius&timezone=auto`);
-                const weatherData = await weatherResponse.json();
-
-                if (weatherData.current_weather && weatherData.current_weather.temperature) {
-                    document.getElementById('currentTemp').textContent = `${weatherData.current_weather.temperature.toFixed(1)}°C`;
-                } else {
-                    document.getElementById('currentTemp').textContent = 'Błąd';
-                }
-
-                // Pobierz prognozę na następne dni
+                // Pobierz prognozę na dzisiaj i następne dni
                 const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
                 const forecastData = await forecastResponse.json();
 
+                // Ustaw dzisiejszą datę
+                document.getElementById('currentDate').textContent = getCurrentDate();
+
+                // Ustaw dzisiejszą temperaturę (maksymalną i minimalną)
+                if (forecastData.daily && forecastData.daily.temperature_2m_max && forecastData.daily.temperature_2m_min) {
+                    document.getElementById('currentTempMax').textContent = `${forecastData.daily.temperature_2m_max[0].toFixed(1)}°C`;
+                    document.getElementById('currentTempMin').textContent = `${forecastData.daily.temperature_2m_min[0].toFixed(1)}°C`;
+                } else {
+                    document.getElementById('currentTempMax').textContent = 'Błąd';
+                    document.getElementById('currentTempMin').textContent = 'Błąd';
+                }
+
+                // Pobierz prognozę na następne dni
                 const forecastContainer = document.getElementById('weatherForecast');
                 forecastContainer.innerHTML = ''; // Wyczyść kontener
 
@@ -237,7 +242,8 @@
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
-                document.getElementById('currentTemp').textContent = 'Błąd';
+                document.getElementById('currentTempMax').textContent = 'Błąd';
+                document.getElementById('currentTempMin').textContent = 'Błąd';
                 document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
             }
         }
@@ -254,9 +260,6 @@
             if (checkDDoSProtection(ip)) {
                 logVisit(); // Zapisz log tylko jeśli ochrona DDoS pozwala
             }
-
-            // Ustaw aktualną datę
-            document.getElementById('currentDate').textContent = getCurrentDate();
 
             // Pobierz pogodę
             getWeather(ip);
