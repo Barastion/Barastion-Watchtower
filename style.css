@@ -19,12 +19,15 @@ body {
 
 h1 {
     text-align: center;
-    color: #007bff; /* Niebieski kolor tekstu, jak tło nagłówków kolumn */
-    font-size: 2em; /* Mniejsza czcionka */
-    font-weight: 600; /* Pogrubiona czcionka */
-    margin: 20px 0; /* Równe marginesy góra i dół */
-    padding: 10px 0;
-    background-color: transparent; /* Przezroczyste tło */
+    color: #ffffff; /* Biała czcionka */
+    margin: 20px 0; /* Równe marginesy */
+    font-size: 2.5em;
+    font-weight: bold; /* Pogrubiona czcionka */
+    text-shadow: 
+        -1px -1px 0 #007bff, /* Niebieski kontur */
+        1px -1px 0 #007bff,
+        -1px 1px 0 #007bff,
+        1px 1px 0 #007bff;
 }
 
 .weather-info {
