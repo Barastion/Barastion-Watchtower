@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Dodaj meta tag CSP, aby obsłużyć skrypty Firebase -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com; style-src 'self' 'unsafe-inline';">
+    <!-- Meta tag CSP dla Firebase i Open-Meteo -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app; style-src 'self' 'unsafe-inline';">
 </head>
 <body>
     <div class="container">
@@ -37,19 +37,8 @@
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js"></script>
     <script>
-        // Konfiguracja Firebase z Twoimi danymi
-        const firebaseConfig = {
-            apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
-            authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
-            databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "monitor-odwiedzin-405c9",
-            storageBucket: "monitor-odwiedzin-405c9.firebasestorage.app",
-            messagingSenderId: "93459469114",
-            appId: "1:93459469114:web:0a709b6be237705bf8f603"
-        };
-
-        // Inicjalizacja Firebase
-        firebase.initializeApp(firebaseConfig);
+        // Firebase automatycznie pobierze konfigurację z Hosting
+        firebase.initializeApp({});
         const db = firebase.database();
         const logsRef = db.ref('logs');
 
