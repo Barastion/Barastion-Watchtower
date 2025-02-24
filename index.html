@@ -34,7 +34,7 @@
                         <th>Godzina</th>
                         <th>IP</th>
                         <th>Lokalizacja</th>
-                        <th>Urządzenie</th> <!-- Nowa kolumna -->
+                        <th>Urządzenie</th>
                     </tr>
                 </thead>
                 <tbody id="logTableBody"></tbody>
@@ -121,7 +121,7 @@
                     <td>${log.time}</td>
                     <td>${log.ip}</td>
                     <td>${log.location}</td>
-                    <td>${log.device}</td> <!-- Nowa kolumna -->
+                    <td>${log.device}</td>
                 `;
                 logTableBody.appendChild(row);
             });
@@ -164,6 +164,12 @@
                 console.error('Błąd pobierania lokalizacji:', err);
                 return 'Nieznana lokalizacja';
             }
+        }
+
+        // Funkcja do pobierania aktualnej daty
+        function getCurrentDate() {
+            const now = new Date();
+            return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
         // Inicjalizacja przy załadowaniu strony
