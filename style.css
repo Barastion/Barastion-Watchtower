@@ -1,90 +1,80 @@
-/* Reset domyślnych stylów */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* style.css - Ciemny motyw */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #1a1a1a; /* Ciemne tło */
-    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e1e1e; /* Ciemne tło */
+    color: #ffffff; /* Białe litery */
+    margin: 0;
     padding: 20px;
     line-height: 1.6;
 }
 
-/* Kontener główny */
 .container {
     max-width: 1200px;
     margin: 0 auto;
+    background-color: #2d2d2d; /* Ciemniejsze tło dla kontenera */
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Nagłówek */
 h1 {
-    color: #00bcd4; /* Jasnoturkusowy nagłówek */
     text-align: center;
+    color: #ffffff;
     margin-bottom: 20px;
-    font-size: 2.5rem;
+    font-size: 2.5em;
+    font-weight: 300;
 }
 
-/* Wrapper dla treści */
 .content-wrapper {
     display: flex;
     gap: 20px;
-    flex-wrap: wrap; /* Responsywność na mniejszych ekranach */
+    margin-top: 20px;
 }
 
-/* Tabela logów */
 .log-table {
-    flex: 1;
-    min-width: 300px; /* Minimalna szerokość tabeli */
+    flex: 2;
 }
 
-#logTable {
+.weather-info {
+    flex: 1;
+    background-color: #3a3a3a; /* Ciemne tło dla sekcji pogody */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
-    background-color: #3c3c3c; /* Ciemniejsze tło tabeli */
+    margin-top: 20px;
 }
 
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #4c4c4c; /* Jasniejsze linie w tabeli */
+    border-bottom: 1px solid #444; /* Subtelna linia oddzielająca wiersze */
 }
 
 th {
-    background-color: #4c4c4c; /* Nagłówki tabeli */
-    font-weight: bold;
-    color: #00bcd4; /* Jasnoturkusowy kolor nagłówków */
-}
-
-tr:nth-child(even) {
-    background-color: #2c2c2c; /* Alternatywne tło wierszy dla czytelności */
+    background-color: #007bff; /* Niebieski kolor dla nagłówków */
+    color: white;
+    font-weight: 600;
 }
 
 tr:hover {
-    background-color: #3c3c3c; /* Efekt hover na wierszach */
+    background-color: #3a3a3a; /* Efekt hover na wierszach */
 }
 
-/* Informacje o pogodzie */
-.weather-info {
-    flex: 1;
-    min-width: 300px; /* Minimalna szerokość sekcji pogody */
-    background-color: #2c2c2c; /* Ciemnoszare tło */
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+.weather-info h2 {
+    margin-top: 0;
+    color: #ffffff;
+    font-size: 1.8em;
+    font-weight: 300;
 }
 
-.weather-info h2, .weather-info h3 {
-    color: #00bcd4;
-    margin-bottom: 10px;
-}
-
-.weather-info p, .weather-info ul {
-    margin: 5px 0;
+.weather-info p {
+    font-size: 1.2em;
+    color: #ffffff;
 }
 
 .weather-info ul {
@@ -92,61 +82,32 @@ tr:hover {
     padding: 0;
 }
 
-/* Responsywność */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 2rem;
-    }
-
-    .content-wrapper {
-        flex-direction: column; /* Tabela i pogoda jeden pod drugim na mniejszych ekranach */
-    }
-
-    #logTable, .weather-info {
-        width: 100%;
-        min-width: auto; /* Usuwamy minimalną szerokość na mniejszych ekranach */
-    }
-
-    #logTable {
-        font-size: 0.9rem;
-    }
-
-    th, td {
-        padding: 8px;
-    }
+.weather-info ul li {
+    background-color: #2d2d2d; /* Ciemne tło dla elementów listy */
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
 }
 
-@media (max-width: 480px) {
-    h1 {
-        font-size: 1.5rem;
+/* Dodatkowe style dla lepszej czytelności */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsywność */
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
     }
 
-    #logTable, th, td {
-        display: block;
+    .log-table, .weather-info {
         width: 100%;
-    }
-
-    th, td {
-        text-align: right;
-        padding: 6px;
-    }
-
-    th::before, td::before {
-        content: attr(data-label);
-        float: left;
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    .weather-info {
-        padding: 10px;
     }
 }
