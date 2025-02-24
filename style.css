@@ -19,14 +19,12 @@ body {
 
 h1 {
     text-align: center;
-    color: #ffffff; /* Biały kolor tekstu */
-    font-size: 2.5em;
+    color: #007bff; /* Niebieski kolor tekstu, jak tło nagłówków kolumn */
+    font-size: 2em; /* Mniejsza czcionka */
     font-weight: 600; /* Pogrubiona czcionka */
     margin: 20px 0; /* Równe marginesy góra i dół */
     padding: 10px 0;
-    background-color: #007bff; /* Niebieskie tło, jak nagłówki kolumn */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background-color: transparent; /* Przezroczyste tło */
 }
 
 .weather-info {
