@@ -62,18 +62,42 @@ h1::after {
     font-size: 1.2em;
 }
 
-.weather-forecast ul {
-    list-style-type: none;
-    padding: 0;
+.forecast-container {
+    display: flex;
+    gap: 10px; /* Odstęp między słupkami */
+    overflow-x: auto; /* Przewijanie poziome, jeśli jest za dużo słupków */
+    padding: 10px 0;
 }
 
-.weather-forecast ul li {
-    background-color: #2d2d2d; /* Ciemne tło dla elementów listy */
-    margin: 5px 0;
+.forecast-bar {
+    background-color: #3a3a3a; /* Kolor tła słupka */
+    border-radius: 8px;
     padding: 10px;
-    border-radius: 4px;
+    text-align: center;
+    min-width: 80px; /* Minimalna szerokość słupka */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.forecast-date {
+    font-size: 0.9em;
     color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.forecast-day, .forecast-night {
+    font-size: 1.1em;
+    color: #ffffff;
+    margin: 5px 0;
+}
+
+.forecast-day::before {
+    content: '☀️'; /* Emoji dla dnia */
+    margin-right: 5px;
+}
+
+.forecast-night::before {
+    content: '🌙'; /* Emoji dla nocy */
+    margin-right: 5px;
 }
 
 .log-table {
@@ -119,5 +143,13 @@ tr:hover {
 
     .weather-date, .weather-forecast {
         width: 100%;
+    }
+
+    .forecast-container {
+        flex-wrap: wrap; /* Zawijanie słupków na mniejszych ekranach */
+    }
+
+    .forecast-bar {
+        min-width: 100px; /* Zwiększona szerokość słupków na mniejszych ekranach */
     }
 }
