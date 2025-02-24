@@ -98,8 +98,17 @@ th {
     font-weight: 600;
 }
 
+/* Naprzemienne kolory wierszy */
+tr:nth-child(odd) {
+    background-color: #3a3a3a; /* Ciemniejszy odcień */
+}
+
+tr:nth-child(even) {
+    background-color: #2d2d2d; /* Jaśniejszy odcień */
+}
+
 tr:hover {
-    background-color: #3a3a3a; /* Efekt hover na wierszach */
+    background-color: #4a4a4a; /* Efekt hover na wierszach */
 }
 
 /* Responsywność */
