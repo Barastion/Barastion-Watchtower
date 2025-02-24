@@ -98,8 +98,11 @@
                 onValue(logsRef, (snapshot) => {
                     let logs = snapshot.val() ? Object.values(snapshot.val()) : [];
                     logs.unshift(logEntry); // Nowe logi na górze
-                    if (logs.length > 50) logs.pop(); // Ograniczenie do 50 logów
-                    set(logsRef, logs).then(() => {
+                    if (logs.length > 50) logs.length = 50; // Ograniczenie do 50 logów
+                    set(logsRef, logs.reduce((obj, item, index) => {
+                        obj[index] = item;
+                        return obj;
+                    }, {})).then(() => {
                         console.log('Log zapisany w Firebase!');
                     }).catch((error) => {
                         console.error('Błąd zapisu logu:', error);
