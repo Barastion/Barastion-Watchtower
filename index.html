@@ -14,8 +14,6 @@
                 <tr>
                     <th>Data</th>
                     <th>Godzina</th>
-                    <th>IP</th>
-                    <th>Przeglądarka</th>
                 </tr>
             </thead>
             <tbody id="logTableBody"></tbody>
@@ -23,6 +21,62 @@
     </div>
 
     <script>
+        // Pobierz i wyświetl logi przy załadowaniu strony
+        window.onload = function() {
+            logVisit();
+            displayLogs();
+        };
+
+        // Funkcja zapisująca wizytę
+        function logVisit() {
+            const now = new Date();
+            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const logEntry = { date, time };
+
+            let logs = JSON.parse(localStorage.getItem('visitLogs')) || [];
+            logs.unshift(logEntry); // Nowe logi na górze
+            if (logs.length > 100) logs.pop(); // Usuwamy najstarszy log (ostatni)
+            localStorage.setItem('visitLogs', JSON.stringify(logs));
+            displayLogs();
+        }
+
+        // Funkcja wyświetlająca logi w tabeli
+        function displayLogs() {
+            const logs = JSON.parse(localStorage.getItem('visitLogs')) || [];
+            const logTableBody = document.getElementById('logTableBody');
+            if (!logTableBody) {
+                console.error('Element logTableBody nie istnieje w DOM');
+                return;
+            }
+            logTableBody.innerHTML = '';
+            logs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.date || 'Nieznana'}</td>
+                    <td>${log.time || 'Nieznana'}</td>
+                `;
+                logTableBody.appendChild(row);
+            });
+        }
+
+        // Ochrona przed DDoS – zapisujemy logi tylko raz na minutę z tego samego IP
+        let lastIpLogTime = {};
+        async function checkDDoSProtection(callback) {
+            const ip = await getIp();
+            const currentTime = Date.now();
+            if (lastIpLogTime[ip]) {
+                const timeDiff = (currentTime - lastIpLogTime[ip]) / 1000 / 60; // W minutach
+                if (timeDiff < 1) {
+                    console.log('Ograniczenie logowania – zbyt częste z tego samego IP');
+                    return false; // Nie zapisujemy, jeśli minęła mniej niż minuta
+                }
+            }
+            lastIpLogTime[ip] = currentTime;
+            callback();
+            return true;
+        }
+
         // Pobierz IP użytkownika
         async function getIp() {
             try {
@@ -35,15 +89,11 @@
             }
         }
 
-        // Pobierz informacje o przeglądarce
-        function getBrowser() {
-            const userAgent = navigator.userAgent;
-            return userAgent.match(/(Chrome|Firefox|Safari|Edge)/) ? userAgent.match(/(Chrome|Firefox|Safari|Edge)/)[0].slice(0, 10) : 'Nieznana';
-        }
-
-        // Zapis i odczyt logów z localStorage
-        function logVisit() {
-            const now = new Date();
-            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-            get
+        // Inicjalizacja przy załadowaniu strony z ochroną DDoS
+        window.onload = function() {
+            checkDDoSProtection(logVisit);
+            displayLogs();
+        };
+    </script>
+</body>
+</html>
