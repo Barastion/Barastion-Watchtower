@@ -20,7 +20,7 @@
             </div>
             <div class="weather-forecast">
                 <h3>Prognoza na następne dni</h3>
-                <ul id="weatherForecast"></ul>
+                <div class="forecast-container" id="weatherForecast"></div>
             </div>
         </div>
 
@@ -180,38 +180,50 @@
                 const lat = locationData.latitude;
                 const lon = locationData.longitude;
 
-                // Pobierz aktualną pogodę
-                const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}¤t_weather=true&temperature_unit=celsius&timezone=auto`);
-                const weatherData = await weatherResponse.json();
-
-                if (weatherData.current_weather && weatherData.current_weather.temperature) {
-                    document.getElementById('currentTemp').textContent = weatherData.current_weather.temperature.toFixed(1);
-                } else {
-                    document.getElementById('currentTemp').textContent = 'Błąd';
-                }
-
                 // Pobierz prognozę na następne dni
                 const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
                 const forecastData = await forecastResponse.json();
 
-                const forecastList = document.getElementById('weatherForecast');
-                forecastList.innerHTML = '';
+                const forecastContainer = document.getElementById('weatherForecast');
+                forecastContainer.innerHTML = ''; // Wyczyść kontener
+
                 if (forecastData.daily && forecastData.daily.time) {
                     forecastData.daily.time.forEach((date, index) => {
                         const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric' });
                         const maxTemp = forecastData.daily.temperature_2m_max[index];
                         const minTemp = forecastData.daily.temperature_2m_min[index];
-                        const li = document.createElement('li');
-                        li.textContent = `${formattedDate}: ${maxTemp.toFixed(1)}°C / ${minTemp.toFixed(1)}°C`;
-                        forecastList.appendChild(li);
+
+                        // Tworzymy pionowy słupek
+                        const forecastBar = document.createElement('div');
+                        forecastBar.className = 'forecast-bar';
+
+                        // Data
+                        const forecastDate = document.createElement('div');
+                        forecastDate.className = 'forecast-date';
+                        forecastDate.textContent = formattedDate;
+                        forecastBar.appendChild(forecastDate);
+
+                        // Temperatura w dzień
+                        const forecastDay = document.createElement('div');
+                        forecastDay.className = 'forecast-day';
+                        forecastDay.textContent = `${maxTemp.toFixed(1)}°C`;
+                        forecastBar.appendChild(forecastDay);
+
+                        // Temperatura w nocy
+                        const forecastNight = document.createElement('div');
+                        forecastNight.className = 'forecast-night';
+                        forecastNight.textContent = `${minTemp.toFixed(1)}°C`;
+                        forecastBar.appendChild(forecastNight);
+
+                        // Dodaj słupek do kontenera
+                        forecastContainer.appendChild(forecastBar);
                     });
                 } else {
-                    forecastList.innerHTML = '<li>Błąd pobierania prognozy</li>';
+                    forecastContainer.innerHTML = '<div>Błąd pobierania prognozy</div>';
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
-                document.getElementById('currentTemp').textContent = 'Błąd';
-                document.getElementById('weatherForecast').innerHTML = '<li>Błąd pobierania prognozy</li>';
+                document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
             }
         }
 
