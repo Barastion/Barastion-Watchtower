@@ -34,7 +34,7 @@
                         <th>Godzina</th>
                         <th>IP</th>
                         <th>Lokalizacja</th>
-                        <th>Urządzenie</th>
+                        <th>Urządzenie</th> <!-- Nowa kolumna -->
                     </tr>
                 </thead>
                 <tbody id="logTableBody"></tbody>
@@ -98,11 +98,8 @@
                 onValue(logsRef, (snapshot) => {
                     let logs = snapshot.val() ? Object.values(snapshot.val()) : [];
                     logs.unshift(logEntry); // Nowe logi na górze
-                    if (logs.length > 50) logs.length = 50; // Ograniczenie do 50 logów
-                    set(logsRef, logs.reduce((obj, item, index) => {
-                        obj[index] = item;
-                        return obj;
-                    }, {})).then(() => {
+                    if (logs.length > 50) logs.pop(); // Ograniczenie do 50 logów
+                    set(logsRef, logs).then(() => {
                         console.log('Log zapisany w Firebase!');
                     }).catch((error) => {
                         console.error('Błąd zapisu logu:', error);
@@ -124,7 +121,7 @@
                     <td>${log.time}</td>
                     <td>${log.ip}</td>
                     <td>${log.location}</td>
-                    <td>${log.device}</td>
+                    <td>${log.device}</td> <!-- Nowa kolumna -->
                 `;
                 logTableBody.appendChild(row);
             });
@@ -169,10 +166,44 @@
             }
         }
 
-        // Funkcja do pobierania aktualnej daty
+        // Pobierz aktualną datę
         function getCurrentDate() {
             const now = new Date();
             return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        // Pobierz pogodę dla lokalizacji IP
+        async function getWeather(ip) {
+            try {
+                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+                const locationData = await locationResponse.json();
+                const lat = locationData.latitude;
+                const lon = locationData.longitude;
+
+                // Pobierz aktualną pogodę
+                const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}¤t_weather=true&temperature_unit=celsius&timezone=auto`);
+                const weatherData = await weatherResponse.json();
+                document.getElementById('currentTemp').textContent = weatherData.current_weather.temperature.toFixed(1);
+
+                // Pobierz prognozę na następne dni
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
+                const forecastData = await forecastResponse.json();
+
+                const forecastList = document.getElementById('weatherForecast');
+                forecastList.innerHTML = '';
+                forecastData.daily.time.forEach((date, index) => {
+                    const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric' });
+                    const maxTemp = forecastData.daily.temperature_2m_max[index];
+                    const minTemp = forecastData.daily.temperature_2m_min[index];
+                    const li = document.createElement('li');
+                    li.textContent = `${formattedDate}: ${maxTemp.toFixed(1)}°C / ${minTemp.toFixed(1)}°C`;
+                    forecastList.appendChild(li);
+                });
+            } catch (err) {
+                console.error('Błąd pobierania pogody:', err);
+                document.getElementById('currentTemp').textContent = 'Błąd';
+                document.getElementById('weatherForecast').innerHTML = '<li>Błąd pobierania prognozy</li>';
+            }
         }
 
         // Inicjalizacja przy załadowaniu strony
