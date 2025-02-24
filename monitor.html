@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitor Odwiedzin</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #logList { list-style-type: none; padding: 0; }
+        #logList li { padding: 5px; border-bottom: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Ostatnie 100 odwiedzin</h1>
+    <ul id="logList"></ul>
+    <button onclick="exportLogs()">Eksportuj logi</button>
+
+    <script>
+        // Funkcja zapisująca wizytę
+        function logVisit() {
+            const timestamp = new Date().toLocaleString('pl-PL');
+            let logs = JSON.parse(localStorage.getItem('visitLogs')) || [];
+            logs.push(timestamp);
+            if (logs.length > 100) logs = logs.slice(-100); // Ograniczenie do 100
+            localStorage.setItem('visitLogs', JSON.stringify(logs));
+            displayLogs();
+        }
+
+        // Funkcja wyświetlająca logi
+        function displayLogs() {
+            const logs = JSON.parse(localStorage.getItem('visitLogs')) || [];
+            const logList = document.getElementById('logList');
+            logList.innerHTML = '';
+            logs.forEach(log => {
+                const li = document.createElement('li');
+                li.textContent = log;
+                logList.appendChild(li);
+            });
+        }
+
+        // Funkcja eksportu logów (do skopiowania lub pobrania)
+        function exportLogs() {
+            const logs = JSON.parse(localStorage.getItem('visitLogs')) || [];
+            const logText = logs.join('\n');
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'logs.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Logi zostały wyeksportowane jako plik logs.txt!');
+        }
+
+        // Rejestracja wizyty przy każdym otwarciu strony
+        logVisit();
+    </script>
+</body>
+</html>
