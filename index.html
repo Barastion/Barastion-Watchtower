@@ -64,6 +64,7 @@
         }
 
         async function logVisit() {
+            console.log('Rozpoczynam zapis logu...');
             const now = new Date();
             const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
             const day = now.toLocaleDateString('pl-PL', { weekday: 'long' });
@@ -74,7 +75,7 @@
             const device = getDeviceType(userAgent);
 
             const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
-            console.log('Próba zapisu logu:', logEntry);
+            console.log('Log do zapisania:', logEntry);
 
             const logsRef = ref(database, 'logs');
             const newLogRef = push(logsRef);
@@ -82,7 +83,7 @@
             try {
                 await set(newLogRef, logEntry);
                 console.log('Log zapisany pomyślnie:', logEntry);
-                await updateLogs(); // Aktualizacja po zapisie
+                await updateLogs();
             } catch (error) {
                 console.error('Błąd zapisu logu:', error);
             }
@@ -90,49 +91,44 @@
 
         async function updateLogs() {
             const logsRef = ref(database, 'logs');
+            console.log('Pobieram logi z Firebase...');
             try {
                 onValue(logsRef, (snapshot) => {
                     const logsData = snapshot.val();
                     const logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
                     console.log('Pobrane logi z Firebase:', logs);
                     logs.sort((a, b) => b.timestamp - a.timestamp);
-
-                    if (logs.length > 100) {
-                        const logsToDelete = logs.slice(100);
-                        logs.splice(100); // Ograniczenie do 100 najnowszych
-                        logsToDelete.forEach(log => {
-                            const logRef = ref(database, `logs/${log.key}`);
-                            remove(logRef).catch(err => console.error('Błąd usuwania starego logu:', err));
-                        });
-                    }
-
                     displayLogs(logs);
                 }, { onlyOnce: true });
             } catch (error) {
-                console.error('Błąd podczas pobierania logów:', error);
+                console.error('Błąd pobierania logów:', error);
             }
         }
 
         function displayLogs(logs) {
+            console.log('Próba wyświetlenia logów...');
             const logTableBody = document.getElementById('logTableBody');
             if (!logTableBody) {
                 console.error('Brak elementu #logTableBody w HTML');
                 return;
             }
             logTableBody.innerHTML = '';
+            if (logs.length === 0) {
+                console.log('Brak logów do wyświetlenia.');
+            }
             logs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${log.date || 'Brak danych'}</td>
-                    <td>${log.day || 'Brak danych'}</td>
-                    <td>${log.time || 'Brak danych'}</td>
-                    <td>${log.ip || 'Brak danych'}</td>
-                    <td>${log.location || 'Brak danych'}</td>
-                    <td>${log.device || 'Brak danych'}</td>
+                    <td>${log.date || 'Brak'}</td>
+                    <td>${log.day || 'Brak'}</td>
+                    <td>${log.time || 'Brak'}</td>
+                    <td>${log.ip || 'Brak'}</td>
+                    <td>${log.location || 'Brak'}</td>
+                    <td>${log.device || 'Brak'}</td>
                 `;
                 logTableBody.appendChild(row);
             });
-            console.log('Logi wyświetlone w tabeli:', logs.length);
+            console.log('Logi wyświetlone:', logs.length);
         }
 
         async function getIp() {
@@ -225,6 +221,7 @@
         }
 
         window.onload = async function() {
+            console.log('Strona załadowana, uruchamiam funkcje...');
             const ip = await getIp();
             console.log('IP przy załadowaniu:', ip);
             await logVisit();
