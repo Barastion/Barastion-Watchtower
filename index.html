@@ -12,7 +12,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Zdjęcie NASA -->
         <div class="nasa-container">
             <div class="nasa-frame">
                 <img id="nasaImage" src="" alt="Zdjęcie dnia z NASA">
@@ -21,9 +20,7 @@
 
         <h1>Monitor Odwiedzin</h1>
         
-        <!-- Wspólna ramka dla pogody i tabeli logów -->
         <div class="content-frame">
-            <!-- Sekcja pogody -->
             <div class="weather-info">
                 <div class="weather-forecast">
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
@@ -31,7 +28,6 @@
                 </div>
             </div>
 
-            <!-- Tabela logów -->
             <div class="log-table">
                 <div class="table-container">
                     <table id="logTable">
@@ -113,7 +109,6 @@
                     let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
                     logs.sort((a, b) => b.timestamp - a.timestamp);
 
-                    // Ogranicz liczbę logów do 50
                     if (logs.length > 50) {
                         const logsToDelete = logs.slice(50);
                         logs = logs.slice(0, 50);
