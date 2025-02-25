@@ -59,7 +59,7 @@ h1::after {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 90%; /* Zdjęcie wypełnia 90% szerokości ramki */
+    width: 100%; /* Zdjęcie wypełnia 100% szerokości ramki */
     height: auto;
     transform: translate(-50%, -50%); /* Wyśrodkowanie zdjęcia */
     border-radius: 6px; /* Lekko zaokrąglone rogi */
