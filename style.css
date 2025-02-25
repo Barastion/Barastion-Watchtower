@@ -47,11 +47,12 @@ h1::after {
 .nasa-frame {
     position: relative;
     width: 100%;
-    padding-top: 80%; /* Proporcje 5:4 */
+    padding-top: 56.25%; /* Proporcje 16:9 (9/16 = 0.5625) */
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     background-color: #2d2d2d;
+    border: 4px solid #ffffff; /* Jasna ramka wokół zdjęcia */
 }
 
 #nasaImage {
@@ -61,7 +62,7 @@ h1::after {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 4px; /* Mniejszy border-radius, aby pasował do ramki */
 }
 
 /* Reszta Twojego oryginalnego CSS */
