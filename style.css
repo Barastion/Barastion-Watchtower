@@ -149,10 +149,15 @@ h1::after {
     font-size: 1em;
 }
 
+/* Tabela logów */
 .log-table {
     overflow-x: auto;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 800px; /* Szerokość równa sekcji pogody */
+    margin: 0 auto; /* Wyśrodkowanie */
+    background-color: #3a3a3a; /* Tło zgodne z sekcją pogody */
+    padding: 15px; /* Dodatkowy padding dla spójności */
+    border-radius: 8px; /* Zaokrąglone rogi */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Cień zgodny z sekcją pogody */
 }
 
 table {
@@ -177,11 +182,11 @@ th {
 }
 
 tr:nth-child(odd) {
-    background-color: #3a3a3a;
+    background-color: #2d2d2d;
 }
 
 tr:nth-child(even) {
-    background-color: #2d2d2d;
+    background-color: #3a3a3a;
 }
 
 tr:hover {
