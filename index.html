@@ -16,10 +16,10 @@
             <div class="today-weather">
                 <p class="today-date-label">Data:</p>
                 <div class="today-date" id="currentDate">25.02.2025</div>
-                <div class="today-column">
-                    <div class="weather-icon" id="todayWeatherIcon">☀️</div>
-                    <div class="weather-day" id="todayWeatherDay">Dzisiaj</div>
-                    <div class="weather-description" id="todayWeatherDescription">Ładowanie...</div>
+                <div class="weather-column">
+                    <span class="weather-icon" id="todayWeatherIcon">☀️</span>
+                    <span class="weather-day" id="todayWeatherDay">Dzisiaj</span>
+                    <span class="weather-description" id="todayWeatherDescription">Ładowanie...</span>
                     <div class="weather-temps">
                         <span class="temp-max" id="currentTempMax">10.5°C</span>
                         <span class="temp-min" id="currentTempMin">1.0°C</span>
@@ -197,9 +197,9 @@
                         const forecastBar = document.createElement('div');
                         forecastBar.className = 'forecast-bar';
                         forecastBar.innerHTML = `
-                            <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
-                            <div class="weather-day">${dayName}</div>
-                            <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
+                            <span class="weather-icon">${weatherIcons[weatherCode] || '❓'}</span>
+                            <span class="weather-day">${dayName}</span>
+                            <span class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</span>
                             <div class="weather-temps">
                                 <span class="temp-max">${maxTemp.toFixed(1)}°C</span>
                                 <span class="temp-min">${minTemp.toFixed(1)}°C</span>
