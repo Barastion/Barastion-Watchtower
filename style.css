@@ -65,19 +65,26 @@ h1::after {
     border-radius: 6px; /* Lekko zaokrąglone rogi */
 }
 
+/* Wspólna ramka dla pogody i tabeli logów */
+.content-frame {
+    max-width: 800px; /* Szerokość ramki */
+    margin: 0 auto; /* Wyśrodkowanie */
+    background-color: #3a3a3a; /* Tło ramki */
+    padding: 20px; /* Wewnętrzny padding */
+    border-radius: 8px; /* Zaokrąglone rogi */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Cień */
+}
+
 /* Sekcja pogody */
 .weather-info {
     margin-bottom: 20px;
-    max-width: 800px; /* Szerokość równa tabeli */
-    margin: 0 auto; /* Wyśrodkowanie */
 }
 
 .weather-forecast {
-    background-color: #3a3a3a;
+    background-color: #2d2d2d; /* Tło sekcji pogody */
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    width: 100%; /* Pełna szerokość */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .weather-city {
@@ -95,7 +102,7 @@ h1::after {
 }
 
 .forecast-bar {
-    background-color: #2d2d2d;
+    background-color: #3a3a3a;
     border-radius: 8px;
     padding: 10px;
     text-align: center;
@@ -152,12 +159,10 @@ h1::after {
 /* Tabela logów */
 .log-table {
     overflow-x: auto;
-    max-width: 800px; /* Szerokość równa sekcji pogody */
-    margin: 0 auto; /* Wyśrodkowanie */
-    background-color: #3a3a3a; /* Tło zgodne z sekcją pogody */
-    padding: 15px; /* Dodatkowy padding dla spójności */
-    border-radius: 8px; /* Zaokrąglone rogi */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Cień zgodny z sekcją pogody */
+    background-color: #2d2d2d; /* Tło tabeli */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 table {
@@ -182,11 +187,11 @@ th {
 }
 
 tr:nth-child(odd) {
-    background-color: #2d2d2d;
+    background-color: #3a3a3a;
 }
 
 tr:nth-child(even) {
-    background-color: #3a3a3a;
+    background-color: #2d2d2d;
 }
 
 tr:hover {
@@ -195,6 +200,11 @@ tr:hover {
 
 @media (max-width: 768px) {
     .container {
+        padding: 10px;
+    }
+
+    .content-frame {
+        max-width: 100%;
         padding: 10px;
     }
 
