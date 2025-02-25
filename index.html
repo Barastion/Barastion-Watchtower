@@ -8,13 +8,13 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty i pogodę w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwile zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://source.unsplash.com https://apod.nasa.gov;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://apod.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://apod.nasa.gov;">
 </head>
 <body>
     <div class="container">
         <div class="nasa-container">
             <div class="nasa-frame">
-                <img id="spaceImage" src="placeholder.jpg" alt="Astronomiczne zdjęcie dnia (NASA)">
+                <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
             </div>
         </div>
 
@@ -252,22 +252,20 @@
             }
         }
 
-        async function getNasaImage() {
+        async function getNasaApodImage() {
             try {
-                const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&thumbs=true');
+                const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
                 const data = await response.json();
+                console.log('Dane z NASA APOD:', data);
+                
                 const imgElement = document.getElementById('spaceImage');
-                
-                if (data.media_type === 'image') {
-                    imgElement.src = data.url;
-                } else {
-                    imgElement.src = 'placeholder.jpg';
-                }
-                
-                imgElement.alt = data.title || 'Zdjęcie NASA';
+                imgElement.src = data.url;
+                imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
             } catch (err) {
-                console.error('Błąd NASA APOD:', err);
-                document.getElementById('spaceImage').src = 'placeholder.jpg';
+                console.error('Błąd pobierania zdjęcia z NASA APOD:', err);
+                const imgElement = document.getElementById('spaceImage');
+                imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
+                imgElement.src = 'fallback-image.jpg'; // Opcjonalnie dodaj obraz zastępczy
             }
         }
 
@@ -277,7 +275,7 @@
             console.log('IP przy załadowaniu:', ip);
             await logVisit();
             await getWeather(ip);
-            await getNasaImage();
+            await getNasaApodImage();
         };
     </script>
 </body>
