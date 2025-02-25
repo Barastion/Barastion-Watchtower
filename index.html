@@ -14,8 +14,7 @@
         <!-- Sekcja pogody -->
         <div class="weather-info">
             <div class="weather-forecast">
-                <h3 style="margin: 0;">Pogoda:</h3>
-                <p id="weatherLocation" style="font-size: 14px; color: white; text-align: center; margin-top: -5px;">(Dla miejscowości: <span id="weatherCity">Ładowanie...</span>)</p>
+                <h3 style="margin: 0;">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                 <div class="forecast-container" id="weatherForecast"></div>
             </div>
         </div>
@@ -189,9 +188,10 @@
                         const weatherCode = forecastData.daily.weathercode[index];
                         const maxTemp = forecastData.daily.temperature_2m_max[index];
                         const minTemp = forecastData.daily.temperature_2m_min[index];
+                        const isToday = index === 0; // Wyróżnienie dzisiejszego dnia
 
                         const forecastBar = document.createElement('div');
-                        forecastBar.className = 'forecast-bar';
+                        forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
                         forecastBar.innerHTML = `
                             <div class="forecast-date">${formattedDate}</div>
                             <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
