@@ -8,13 +8,13 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty i pogodę w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwile zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://apod.nasa.gov;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://hubblesite.org; style-src 'self' 'unsafe-inline'; img-src 'self' https://hubblesite.org;">
 </head>
 <body>
     <div class="container">
         <div class="nasa-container">
             <div class="nasa-frame">
-                <img id="nasaImage" src="" alt="Zdjęcie dnia z NASA">
+                <img id="hubbleImage" src="" alt="Zdjęcie z Hubble">
             </div>
         </div>
 
@@ -252,18 +252,17 @@
             }
         }
 
-        async function getNasaImage() {
-            const apiKey = 'DEMO_KEY';
+        async function getHubbleImage() {
             try {
-                const response = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${apiKey}`);
+                const response = await fetch('https://hubblesite.org/api/v3/images');
                 const data = await response.json();
-                console.log('Dane NASA:', data);
-                const imgElement = document.getElementById('nasaImage');
-                imgElement.src = data.url;
-                imgElement.alt = data.title || 'Zdjęcie dnia z NASA';
+                const imgUrl = `https://hubblesite.org${data[0].image_url}`;
+                const imgElement = document.getElementById('hubbleImage');
+                imgElement.src = imgUrl;
+                imgElement.alt = data[0].name || 'Zdjęcie z Hubble';
             } catch (err) {
-                console.error('Błąd pobierania zdjęcia NASA:', err);
-                document.getElementById('nasaImage').alt = 'Błąd pobierania zdjęcia NASA';
+                console.error('Błąd pobierania zdjęcia z Hubble:', err);
+                document.getElementById('hubbleImage').alt = 'Błąd pobierania zdjęcia';
             }
         }
 
@@ -273,7 +272,7 @@
             console.log('IP przy załadowaniu:', ip);
             await logVisit();
             await getWeather(ip);
-            await getNasaImage();
+            await getHubbleImage();
         };
     </script>
 </body>
