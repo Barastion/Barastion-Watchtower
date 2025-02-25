@@ -40,15 +40,10 @@ h1::after {
 
 /* Sekcja pogody */
 .weather-info {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px; /* Odstęp między lewą a prawą sekcją */
     margin-bottom: 20px;
 }
 
-/* Prawa strona: Pogoda (wszystkie dni) */
 .weather-forecast {
-    flex: 2;
     background-color: #3a3a3a; /* Ciemne tło */
     padding: 20px;
     border-radius: 8px;
@@ -92,18 +87,15 @@ h1::after {
 
 .weather-icon {
     font-size: 1.5em; /* Rozmiar ikony */
-    margin-bottom: 5px;
 }
 
 .weather-day {
     font-size: 0.9em; /* Mniejsza czcionka dla dni */
     font-weight: bold;
-    margin-bottom: 5px;
 }
 
 .weather-description {
     font-size: 0.8em; /* Jeszcze mniejsza czcionka dla opisu */
-    margin-bottom: 5px;
     word-wrap: break-word; /* Zawijanie tekstu */
 }
 
