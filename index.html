@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="diabelek.png">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/869/869213.png">
     <meta name="description" content="Monitoruj wizyty i pogodę w czasie rzeczywistym!">
-    <meta name="title" content="Ja tylko na chwile zobaczyć jak leci">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://apod.nasa.gov;">
 </head>
 <body>
@@ -21,34 +20,29 @@
 
         <h1>Monitor Odwiedzin</h1>
         
-        <!-- Wspólna ramka dla pogody i tabeli logów -->
-        <div class="content-frame">
-            <!-- Sekcja pogody -->
-            <div class="weather-info">
-                <div class="weather-forecast">
-                    <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
-                    <div class="forecast-container" id="weatherForecast"></div>
-                </div>
+        <!-- Sekcja pogody -->
+        <div class="weather-info">
+            <div class="weather-forecast">
+                <h3 style="margin: 0;">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
+                <div class="forecast-container" id="weatherForecast"></div>
             </div>
+        </div>
 
-            <!-- Tabela logów -->
-            <div class="log-table">
-                <div class="table-container">
-                    <table id="logTable">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Dzień</th>
-                                <th>Godzina</th>
-                                <th>IP</th>
-                                <th>Lokalizacja</th>
-                                <th>Urządzenie</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- Tabela logów -->
+        <div class="log-table">
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Dzień</th>
+                        <th>Godzina</th>
+                        <th>IP</th>
+                        <th>Lokalizacja</th>
+                        <th>Urządzenie</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBody"></tbody>
+            </table>
         </div>
     </div>
 
@@ -147,10 +141,7 @@
                     <td>${log.day || 'Brak'}</td>
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
-                    <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
-                    </td>
+                    <td>${log.location || 'Brak'}</td>
                     <td>${log.device || 'Brak'}</td>
                 `;
                 logTableBody.appendChild(row);
@@ -175,16 +166,10 @@
                 const response = await fetch(`https://ipapi.co/${ip}/json/`);
                 const data = await response.json();
                 console.log('Lokalizacja pobrana:', data);
-                return {
-                    city: data.city || 'Nieznane miasto',
-                    country: data.country_name || 'Nieznany kraj'
-                };
+                return data.city && data.country_name ? `${data.city} / ${data.country_name}` : 'Nieznana lokalizacja';
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji:', err);
-                return {
-                    city: 'Nieznane miasto',
-                    country: 'Nieznany kraj'
-                };
+                return 'Nieznana lokalizacja';
             }
         }
 
