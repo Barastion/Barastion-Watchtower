@@ -8,13 +8,13 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty i pogodę w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwile zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://source.unsplash.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://source.unsplash.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://source.unsplash.com https://apod.nasa.gov;">
 </head>
 <body>
     <div class="container">
         <div class="nasa-container">
             <div class="nasa-frame">
-                <img id="spaceImage" src="" alt="Zdjęcie kosmosu z Unsplash">
+                <img id="spaceImage" src="placeholder.jpg" alt="Astronomiczne zdjęcie dnia (NASA)">
             </div>
         </div>
 
@@ -252,15 +252,22 @@
             }
         }
 
-        async function getUnsplashImage() {
+        async function getNasaImage() {
             try {
-                const response = await fetch('https://source.unsplash.com/1600x900/?space,galaxy');
+                const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&thumbs=true');
+                const data = await response.json();
                 const imgElement = document.getElementById('spaceImage');
-                imgElement.src = response.url;
-                imgElement.alt = 'Zdjęcie kosmosu z Unsplash';
+                
+                if (data.media_type === 'image') {
+                    imgElement.src = data.url;
+                } else {
+                    imgElement.src = 'placeholder.jpg';
+                }
+                
+                imgElement.alt = data.title || 'Zdjęcie NASA';
             } catch (err) {
-                console.error('Błąd pobierania zdjęcia z Unsplash:', err);
-                document.getElementById('spaceImage').alt = 'Błąd pobierania zdjęcia';
+                console.error('Błąd NASA APOD:', err);
+                document.getElementById('spaceImage').src = 'placeholder.jpg';
             }
         }
 
@@ -270,7 +277,7 @@
             console.log('IP przy załadowaniu:', ip);
             await logVisit();
             await getWeather(ip);
-            await getUnsplashImage();
+            await getNasaImage();
         };
     </script>
 </body>
