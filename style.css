@@ -7,6 +7,7 @@ body {
     padding: 20px;
     line-height: 1.6;
 }
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -15,6 +16,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
 h1 {
     text-align: center;
     color: #ffffff; /* Biała czcionka */
@@ -26,6 +28,7 @@ h1 {
     font-family: 'Arial', sans-serif; /* Nowoczesna czcionka */
     position: relative; /* Pozwala na dodanie efektu podkreślenia */
 }
+
 h1::after {
     content: '';
     display: block;
@@ -34,6 +37,7 @@ h1::after {
     background-color: #007bff; /* Kolor podkreślenia (niebieski) */
     margin: 10px auto 0; /* Wyśrodkowanie podkreślenia */
 }
+
 /* Sekcja pogody */
 .weather-info {
     display: flex;
@@ -41,147 +45,121 @@ h1::after {
     gap: 20px; /* Odstęp między lewą a prawą sekcją */
     margin-bottom: 20px;
 }
-/* Lewa strona: Dzisiejsza pogoda */
-.today-weather {
-    flex: 1;
-    text-align: center;
+
+/* Wspólny styl dla słupków pogodowych */
+.weather-column {
     background-color: #3a3a3a; /* Ciemne tło */
-    padding: 10px 20px; /* Zmniejszony padding górny i dolny */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-.today-date-label {
-    font-size: 16px;
-    color: #ffffff;
-    margin-bottom: 2px; /* Zmniejszony odstęp pod etykietą "Data:" */
-    margin-top: 0; /* Usunięcie marginesu górnego */
-}
-.today-date {
-    font-size: 2em; /* Duża czcionka dla daty */
-    font-weight: bold; /* Pogrubiona czcionka */
-    color: #ffffff;
-    margin-bottom: 5px; /* Zmniejszony odstęp pod datą */
-}
-.today-temp {
-    font-size: 1.5em; /* Większa czcionka dla temperatury */
-    font-weight: bold; /* Pogrubiona czcionka */
-    color: #ffffff;
-    background-color: #2d2d2d; /* Przyciemnione tło dla temperatur */
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin: 0 auto; /* Wyśrodkowanie względem daty */
-    width: fit-content; /* Dopasowanie szerokości do zawartości */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 100px;
 }
-.temp-row {
-    display: flex; /* Ustawienie ikony i temperatury w jednej linii */
-    align-items: center; /* Wyśrodkowanie w pionie */
-    margin: 5px 0; /* Odstęp między wierszami */
+
+.weather-icon {
+    font-size: 2em;
+    margin-bottom: 5px;
 }
-.temp-icon {
-    margin-right: 10px; /* Odstęp między ikoną a temperaturą */
+
+.weather-day {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
+
+.weather-description {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    word-wrap: break-word; /* Zawijanie tekstu */
+}
+
+.weather-temps {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.temp-max {
+    color: #ff4d4d; /* Czerwony */
+    font-weight: bold;
+}
+
+.temp-min {
+    color: #4d94ff; /* Niebieski */
+    font-weight: bold;
+}
+
 /* Prawa strona: Prognoza na następne dni */
 .weather-forecast {
     flex: 2;
-    background-color: #3a3a3a; /* Ciemne tło */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
 .weather-forecast h3 {
     margin-top: 0;
     color: #ffffff;
-    font-size: 1.5em; /* Większa czcionka dla nagłówka prognozy */
-    font-weight: bold; /* Pogrubiona czcionka */
+    font-size: 1.5em;
+    font-weight: bold;
     text-align: center;
 }
+
 .forecast-container {
     display: flex;
-    gap: 10px; /* Odstęp między słupkami */
-    overflow-x: auto; /* Przewijanie poziome, jeśli jest za dużo słupków */
+    gap: 10px;
+    overflow-x: auto;
     padding: 10px 0;
-    justify-content: center; /* Wyśrodkowanie słupków */
+    justify-content: center;
 }
+
 .forecast-bar {
-    background-color: #2d2d2d; /* Kolor tła słupka */
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    min-width: 80px; /* Minimalna szerokość słupka */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    min-width: 100px;
 }
-.forecast-date {
-    font-size: 0.9em;
-    color: #ffffff;
-    margin-bottom: 10px;
-}
-.forecast-day, .forecast-night {
-    font-size: 1.1em;
-    color: #ffffff;
-    margin: 5px 0;
-}
-.forecast-day::przed {
-    content: '☀️'; /* Emoji dla dnia */
-    margin-right: 5px;
-}
-.forecast-night::przed {
-    content: '🌙'; /* Emoji dla nocy */
-    margin-right: 5px;
-}
+
 /* Tabela logów */
 .log-table {
-    overflow-x: auto; /* Przewijanie poziome */
+    overflow-x: auto;
 }
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
+
 th, td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #444; /* Subtelna linia oddzielająca wiersze */
+    border-bottom: 1px solid #444;
 }
+
 th {
-    background-color: #007bff; /* Niebieski kolor dla nagłówków */
+    background-color: #007bff;
     color: white;
     font-weight: 600;
 }
-/* Naprzemienne kolory wierszy */
+
 tr:nth-child(odd) {
-    background-color: #3a3a3a; /* Ciemniejszy odcień */
+    background-color: #3a3a3a;
 }
+
 tr:nth-child(even) {
-    background-color: #2d2d2d; /* Jaśniejszy odcień */
+    background-color: #2d2d2d;
 }
+
 tr:hover {
-    background-color: #4a4a4a; /* Efekt hover na wierszach */
+    background-color: #4a4a4a;
 }
+
 /* Responsywność */
 @media (max-width: 768px) {
     .weather-info {
         flex-direction: column;
     }
-    .today-weather, .weather-forecast {
+
+    .weather-column {
         width: 100%;
     }
+
     .forecast-container {
-        flex-wrap: wrap; /* Zawijanie słupków na mniejszych ekranach */
+        flex-wrap: wrap;
     }
-    .forecast-bar {
-        min-width: 100px; /* Zwiększona szerokość słupków na mniejszych ekranach */
-    }
-}
-
-/* DODANE: Style dla ikonek pogodowych */
-.weather-icon {
-    font-size: 24px; /* Rozmiar ikonek */
-    margin-right: 10px; /* Odstęp od tekstu */
-    cursor: pointer; /* Kursor wskazujący interaktywność */
-    transition: transform 0.2s; /* Efekt powiększenia po najechaniu */
-}
-
-.weather-icon:hover {
-    transform: scale(1.2); /* Powiększenie ikony po najechaniu */
 }
