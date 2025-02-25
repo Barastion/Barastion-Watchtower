@@ -18,11 +18,11 @@
                 <div class="today-date" id="currentDate">25.02.2025</div>
                 <div class="today-temp">
                     <div class="temp-row">
-                        <span class="temp-icon">☀️</span>
+                        <span class="temp-icon" id="todayWeatherIcon">☀️</span>
                         <span id="currentTempMax">10.5°C</span>
                     </div>
                     <div class="temp-row">
-                        <span class="temp-icon">🌙</span>
+                        <span class="temp-icon" id="todayWeatherIconNight">🌙</span>
                         <span id="currentTempMin">1.0°C</span>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
             const newLogRef = push(logsRef);
             try {
                 await set(newLogRef, logEntry);
-                console.log('Log zapisany w Firebase pod kluczem:', newLogRef.key);
+                console.log('Log zapisany w Firebase pod klucz:', newLogRef.key);
                 updateLogs();
             } catch (error) {
                 console.error('Błąd zapisu logu:', error);
@@ -173,6 +173,31 @@
             return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
+        // Mapowanie kodów pogodowych na ikonki i opisy
+        const weatherIcons = {
+            0: { icon: '☀️', description: 'Bezchmurnie' },
+            1: { icon: '🌤️', description: 'Lekko zachmurzone' },
+            2: { icon: '⛅', description: 'Częściowo zachmurzone' },
+            3: { icon: '☁️', description: 'Zachmurzone' },
+            45: { icon: '🌫️', description: 'Mgła' },
+            48: { icon: '🌫️', description: 'Mgła z szronem' },
+            51: { icon: '🌦️', description: 'Lekka mżawka' },
+            53: { icon: '🌧️', description: 'Umiarkowana mżawka' },
+            55: { icon: '🌧️', description: 'Intensywna mżawka' },
+            61: { icon: '🌦️', description: 'Lekki deszcz' },
+            63: { icon: '🌧️', description: 'Umiarkowany deszcz' },
+            65: { icon: '🌧️', description: 'Ulewny deszcz' },
+            71: { icon: '🌨️', description: 'Lekki śnieg' },
+            73: { icon: '🌨️', description: 'Umiarkowany śnieg' },
+            75: { icon: '🌨️', description: 'Intensywny śnieg' },
+            80: { icon: '🌦️', description: 'Przelotne opady' },
+            81: { icon: '🌧️', description: 'Umiarkowane opady' },
+            82: { icon: '🌧️', description: 'Gwałtowne opady' },
+            95: { icon: '⛈️', description: 'Burza' },
+            96: { icon: '⛈️', description: 'Burza z gradem' },
+            // Dodaj inne kody wg dokumentacji open-meteo.com
+        };
+
         async function getWeather(ip) {
             try {
                 const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
@@ -187,27 +212,31 @@
 
                 document.getElementById('weatherCity').textContent = city;
 
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
+                // Pobranie prognozy z weathercode
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
                 const forecastData = await forecastResponse.json();
 
                 document.getElementById('currentDate').textContent = getCurrentDate();
 
-                if (forecastData.daily && forecastData.daily.temperature_2m_max && forecastData.daily.temperature_2m_min) {
+                if (forecastData.daily && forecastData.daily.temperature_2m_max && forecastData.daily.temperature_2m_min && forecastData.daily.weathercode) {
+                    // Dzisiejsza pogoda
+                    const todayWeatherCode = forecastData.daily.weathercode[0];
+                    const todayWeather = weatherIcons[todayWeatherCode] || { icon: '❓', description: 'Nieznana pogoda' };
+                    document.getElementById('todayWeatherIcon').textContent = todayWeather.icon;
+                    document.getElementById('todayWeatherIcon').title = todayWeather.description;
                     document.getElementById('currentTempMax').textContent = `${forecastData.daily.temperature_2m_max[0].toFixed(1)}°C`;
                     document.getElementById('currentTempMin').textContent = `${forecastData.daily.temperature_2m_min[0].toFixed(1)}°C`;
-                } else {
-                    document.getElementById('currentTempMax').textContent = 'Błąd';
-                    document.getElementById('currentTempMin').textContent = 'Błąd';
-                }
 
-                const forecastContainer = document.getElementById('weatherForecast');
-                forecastContainer.innerHTML = '';
+                    // Prognoza na kolejne dni
+                    const forecastContainer = document.getElementById('weatherForecast');
+                    forecastContainer.innerHTML = '';
 
-                if (forecastData.daily && forecastData.daily.time) {
                     forecastData.daily.time.slice(1).forEach((date, index) => {
                         const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric' });
                         const maxTemp = forecastData.daily.temperature_2m_max[index + 1];
                         const minTemp = forecastData.daily.temperature_2m_min[index + 1];
+                        const weatherCode = forecastData.daily.weathercode[index + 1];
+                        const weather = weatherIcons[weatherCode] || { icon: '❓', description: 'Nieznana pogoda' };
 
                         const forecastBar = document.createElement('div');
                         forecastBar.className = 'forecast-bar';
@@ -219,7 +248,7 @@
 
                         const forecastDay = document.createElement('div');
                         forecastDay.className = 'forecast-day';
-                        forecastDay.textContent = `${maxTemp.toFixed(1)}°C`;
+                        forecastDay.innerHTML = `<span class="weather-icon" title="${weather.description}">${weather.icon}</span> ${maxTemp.toFixed(1)}°C`;
                         forecastBar.appendChild(forecastDay);
 
                         const forecastNight = document.createElement('div');
@@ -230,7 +259,9 @@
                         forecastContainer.appendChild(forecastBar);
                     });
                 } else {
-                    forecastContainer.innerHTML = '<div>Błąd pobierania prognozy</div>';
+                    document.getElementById('currentTempMax').textContent = 'Błąd';
+                    document.getElementById('currentTempMin').textContent = 'Błąd';
+                    document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
@@ -254,6 +285,14 @@
             console.log('Pobrane IP przy załadowaniu strony:', ip);
             await logVisit();
             await getWeather(ip);
+
+            // Opcjonalne: Automatyczne odświeżanie pogody co godzinę
+            /*
+            setInterval(async () => {
+                const ip = await getIp();
+                await getWeather(ip);
+            }, 3600000); // 1 godzina
+            */
         };
     </script>
 </body>
