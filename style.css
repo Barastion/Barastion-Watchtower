@@ -16,24 +16,26 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-h1 {
+.daily-fact {
     text-align: center;
-    color: #ffffff;
     margin: 20px 0;
-    font-size: 2.5em;
-    font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    position: relative;
-    margin-bottom: 40px;
+    font-size: 1.1em; /* Normalna, niezbyt duża czcionka */
+    color: #ffffff;
 }
 
-h1::after {
-    content: '';
-    display: block;
-    width: 120px;
-    height: 3px;
-    background-color: #007bff;
-    margin: 15px auto 0;
+.fact-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px; /* Odstęp między ikoną a tekstem */
+    font-weight: 500; /* Lekko pogrubiony tekst */
+}
+
+.fact-content {
+    margin-top: 10px; /* Odstęp między nagłówkiem a ciekawostką */
+    font-size: 1.1em; /* Ta sama wielkość czcionki co nagłówek */
+    font-style: italic; /* Kursywa dla ciekawostki */
+    line-height: 1.5;
+    word-wrap: break-word; /* Zapewnienie, że tekst się załamuje, jeśli jest długi */
 }
 
 .nasa-container {
@@ -231,6 +233,14 @@ tr:hover {
     .content-frame {
         max-width: 100%;
         padding: 10px;
+    }
+
+    .daily-fact {
+        font-size: 1em; /* Mniejsza czcionka na urządzeniach mobilnych */
+    }
+
+    .fact-content {
+        font-size: 1em; /* Ta sama wielkość co nagłówek na mobile */
     }
 
     .weather-forecast {
