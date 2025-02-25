@@ -40,7 +40,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
@@ -77,27 +77,35 @@
             const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
             const logsRef = ref(database, 'logs');
             const newLogRef = push(logsRef);
+
             try {
                 await set(newLogRef, logEntry);
                 console.log('Log zapisany:', logEntry);
-                updateLogs();
+                await updateLogs();
             } catch (error) {
-                console.error('Błąd zapisu logu:', error);
+                console.error('Błąd podczas zapisywania logu:', error);
             }
         }
 
         async function updateLogs() {
             const logsRef = ref(database, 'logs');
-            onValue(logsRef, (snapshot) => {
-                let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
-                logs.sort((a, b) => b.timestamp - a.timestamp);
-                if (logs.length > 100) {
-                    const logsToDelete = logs.slice(100);
-                    logs = logs.slice(0, 100);
-                    logsToDelete.forEach(log => remove(ref(database, `logs/${log.key}`)));
-                }
-                displayLogs(logs);
-            }, { onlyOnce: true });
+            try {
+                onValue(logsRef, (snapshot) => {
+                    let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
+                    logs.sort((a, b) => b.timestamp - a.timestamp);
+                    if (logs.length > 100) {
+                        const logsToDelete = logs.slice(100);
+                        logs = logs.slice(0, 100);
+                        logsToDelete.forEach(log => {
+                            const logRef = ref(database, `logs/${log.key}`);
+                            remove(logRef).catch(err => console.error('Błąd usuwania logu:', err));
+                        });
+                    }
+                    displayLogs(logs);
+                }, { onlyOnce: true });
+            } catch (error) {
+                console.error('Błąd podczas aktualizacji logów:', error);
+            }
         }
 
         function displayLogs(logs) {
@@ -122,6 +130,7 @@
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
                 const data = await response.json();
+                console.log('IP pobrane:', data.ip);
                 return data.ip || 'Nieznany IP';
             } catch (err) {
                 console.error('Błąd pobierania IP:', err);
@@ -133,6 +142,7 @@
             try {
                 const response = await fetch(`https://ipapi.co/${ip}/json/`);
                 const data = await response.json();
+                console.log('Lokalizacja pobrana:', data);
                 return data.city && data.country_name ? `${data.city} / ${data.country_name}` : 'Nieznana lokalizacja';
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji:', err);
@@ -158,6 +168,7 @@
             try {
                 const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
                 const locationData = await locationResponse.json();
+                console.log('Dane lokalizacji:', locationData);
                 const lat = locationData.latitude;
                 const lon = locationData.longitude;
                 const city = locationData.city || 'Nieznane miasto';
@@ -166,12 +177,12 @@
 
                 const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
                 const forecastData = await forecastResponse.json();
+                console.log('Dane pogody:', forecastData);
 
                 if (forecastData.daily) {
                     const forecastContainer = document.getElementById('weatherForecast');
                     forecastContainer.innerHTML = '';
 
-                    // Wszystkie dni (w tym dzisiejszy)
                     forecastData.daily.time.forEach((date, index) => {
                         const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
                         const dayName = new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' });
@@ -193,6 +204,8 @@
                         `;
                         forecastContainer.appendChild(forecastBar);
                     });
+                } else {
+                    throw new Error('Brak danych pogodowych');
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
@@ -203,6 +216,7 @@
 
         window.onload = async function() {
             const ip = await getIp();
+            console.log('IP przy załadowaniu:', ip);
             await logVisit();
             await getWeather(ip);
         };
