@@ -51,7 +51,7 @@ h1::after {
     flex: 1;
     text-align: center;
     background-color: #3a3a3a; /* Ciemne tło */
-    padding: 20px;
+    padding: 10px 20px; /* Zmniejszony padding górny i dolny */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
@@ -60,13 +60,14 @@ h1::after {
     font-size: 16px;
     color: #ffffff;
     margin-bottom: 2px; /* Zmniejszony odstęp pod etykietą "Data:" */
+    margin-top: 0; /* Usunięcie marginesu górnego */
 }
 
 .today-date {
     font-size: 2em; /* Duża czcionka dla daty */
     font-weight: bold; /* Pogrubiona czcionka */
     color: #ffffff;
-    margin-bottom: 10px; /* Odstęp pod datą */
+    margin-bottom: 5px; /* Zmniejszony odstęp pod datą */
 }
 
 .today-temp {
