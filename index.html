@@ -74,15 +74,17 @@
             const device = getDeviceType(userAgent);
 
             const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
+            console.log('Próba zapisu logu:', logEntry);
+
             const logsRef = ref(database, 'logs');
             const newLogRef = push(logsRef);
 
             try {
                 await set(newLogRef, logEntry);
-                console.log('Log zapisany:', logEntry);
-                await updateLogs();
+                console.log('Log zapisany pomyślnie:', logEntry);
+                await updateLogs(); // Aktualizacja po zapisie
             } catch (error) {
-                console.error('Błąd podczas zapisywania logu:', error);
+                console.error('Błąd zapisu logu:', error);
             }
         }
 
@@ -90,39 +92,47 @@
             const logsRef = ref(database, 'logs');
             try {
                 onValue(logsRef, (snapshot) => {
-                    let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
+                    const logsData = snapshot.val();
+                    const logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
+                    console.log('Pobrane logi z Firebase:', logs);
                     logs.sort((a, b) => b.timestamp - a.timestamp);
+
                     if (logs.length > 100) {
                         const logsToDelete = logs.slice(100);
-                        logs = logs.slice(0, 100);
+                        logs.splice(100); // Ograniczenie do 100 najnowszych
                         logsToDelete.forEach(log => {
                             const logRef = ref(database, `logs/${log.key}`);
-                            remove(logRef).catch(err => console.error('Błąd usuwania logu:', err));
+                            remove(logRef).catch(err => console.error('Błąd usuwania starego logu:', err));
                         });
                     }
+
                     displayLogs(logs);
                 }, { onlyOnce: true });
             } catch (error) {
-                console.error('Błąd podczas aktualizacji logów:', error);
+                console.error('Błąd podczas pobierania logów:', error);
             }
         }
 
         function displayLogs(logs) {
             const logTableBody = document.getElementById('logTableBody');
+            if (!logTableBody) {
+                console.error('Brak elementu #logTableBody w HTML');
+                return;
+            }
             logTableBody.innerHTML = '';
             logs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${log.date}</td>
-                    <td>${log.day}</td>
-                    <td>${log.time}</td>
-                    <td>${log.ip}</td>
-                    <td>${log.location}</td>
-                    <td>${log.device}</td>
+                    <td>${log.date || 'Brak danych'}</td>
+                    <td>${log.day || 'Brak danych'}</td>
+                    <td>${log.time || 'Brak danych'}</td>
+                    <td>${log.ip || 'Brak danych'}</td>
+                    <td>${log.location || 'Brak danych'}</td>
+                    <td>${log.device || 'Brak danych'}</td>
                 `;
                 logTableBody.appendChild(row);
             });
-            console.log('Logi wyświetlone:', logs.length);
+            console.log('Logi wyświetlone w tabeli:', logs.length);
         }
 
         async function getIp() {
@@ -188,7 +198,7 @@
                         const weatherCode = forecastData.daily.weathercode[index];
                         const maxTemp = forecastData.daily.temperature_2m_max[index];
                         const minTemp = forecastData.daily.temperature_2m_min[index];
-                        const isToday = index === 0; // Wyróżnienie dzisiejszego dnia
+                        const isToday = index === 0;
 
                         const forecastBar = document.createElement('div');
                         forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
