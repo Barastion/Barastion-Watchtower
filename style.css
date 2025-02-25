@@ -272,7 +272,9 @@ tr:hover {
     }
 
     .table-container {
-        min-width: 1000px;
+        min-width: 1000px; /* Zachowujemy szerokość tabeli */
+        overflow-x: auto; /* Dodajemy poziome przewijanie */
+        -webkit-overflow-scrolling: touch; /* Wygładza przewijanie na iOS */
     }
 
     th, td {
