@@ -46,53 +46,7 @@ h1::after {
     margin-bottom: 20px;
 }
 
-/* Lewa strona: Dzisiejsza pogoda */
-.today-weather {
-    flex: 1;
-    text-align: center;
-    background-color: #3a3a3a; /* Ciemne tło */
-    padding: 10px 20px; /* Zmniejszony padding górny i dolny */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.today-date-label {
-    font-size: 16px;
-    color: #ffffff;
-    margin-bottom: 2px; /* Zmniejszony odstęp pod etykietą "Data:" */
-    margin-top: 0; /* Usunięcie marginesu górnego */
-}
-
-.today-date {
-    font-size: 2em; /* Duża czcionka dla daty */
-    font-weight: bold; /* Pogrubiona czcionka */
-    color: #ffffff;
-    margin-bottom: 5px; /* Zmniejszony odstęp pod datą */
-}
-
-.today-temp {
-    font-size: 1.5em; /* Większa czcionka dla temperatury */
-    font-weight: bold; /* Pogrubiona czcionka */
-    color: #ffffff;
-    background-color: #2d2d2d; /* Przyciemnione tło dla temperatur */
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin: 0 auto; /* Wyśrodkowanie względem daty */
-    width: fit-content; /* Dopasowanie szerokości do zawartości */
-}
-
-.temp-row {
-    display: flex; /* Ustawienie ikony i temperatury w jednej linii */
-    align-items: center; /* Wyśrodkowanie w pionie */
-    margin: 5px 0; /* Odstęp między wierszami */
-}
-
-.temp-icon {
-    margin-right: 10px; /* Odstęp między ikoną a temperaturą */
-}
-
-/* Prawa strona: Prognoza na następne dni */
+/* Prawa strona: Pogoda (wszystkie dni) */
 .weather-forecast {
     flex: 2;
     background-color: #3a3a3a; /* Ciemne tło */
@@ -104,7 +58,7 @@ h1::after {
 .weather-forecast h3 {
     margin-top: 0;
     color: #ffffff;
-    font-size: 1.5em; /* Większa czcionka dla nagłówka prognozy */
+    font-size: 1.5em; /* Większa czcionka dla nagłówka pogody */
     font-weight: bold; /* Pogrubiona czcionka */
     text-align: center;
 }
@@ -124,69 +78,49 @@ h1::after {
     text-align: center;
     min-width: 80px; /* Minimalna szerokość słupka */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.forecast-date {
-    font-size: 0.9em;
-    color: #ffffff;
-    margin-bottom: 10px;
-}
-
-.forecast-day, .forecast-night {
-    font-size: 1.1em;
-    color: #ffffff;
-    margin: 5px 0;
-}
-
-.forecast-day::before {
-    content: '☀️'; /* Emoji dla dnia */
-    margin-right: 5px;
-}
-
-.forecast-night::before {
-    content: '🌙'; /* Emoji dla nocy */
-    margin-right: 5px;
-}
-
-/* Nowe style dla słupków pogodowych */
-.weather-column {
-    background-color: #2d2d2d;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 5px;
 }
 
+.forecast-date {
+    font-size: 0.7em; /* Mała czcionka dla daty */
+    color: #cccccc; /* Lekko jaśniejszy odcień */
+    margin-bottom: 5px;
+}
+
 .weather-icon {
-    font-size: 1.5em;
+    font-size: 1.5em; /* Rozmiar ikony */
+    margin-bottom: 5px;
 }
 
 .weather-day {
-    font-size: 0.9em;
+    font-size: 0.9em; /* Mniejsza czcionka dla dni */
     font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .weather-description {
-    font-size: 0.8em;
-    word-wrap: break-word;
+    font-size: 0.8em; /* Jeszcze mniejsza czcionka dla opisu */
+    margin-bottom: 5px;
+    word-wrap: break-word; /* Zawijanie tekstu */
 }
 
 .weather-temps {
     display: flex;
-    gap: 5px;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .temp-max {
-    color: #ff4d4d; /* Czerwony */
+    color: #ff4d4d; /* Czerwony dla temperatury maksymalnej */
     font-weight: bold;
     font-size: 1em;
 }
 
 .temp-min {
-    color: #4d94ff; /* Niebieski */
+    color: #4d94ff; /* Niebieski dla temperatury minimalnej */
     font-weight: bold;
     font-size: 1em;
 }
@@ -232,12 +166,15 @@ tr:hover {
     .weather-info {
         flex-direction: column;
     }
-    .today-weather, .weather-forecast {
+
+    .weather-forecast {
         width: 100%;
     }
+
     .forecast-container {
         flex-wrap: wrap; /* Zawijanie słupków na mniejszych ekranach */
     }
+
     .forecast-bar {
         min-width: 100px; /* Zwiększona szerokość słupków na mniejszych ekranach */
     }
