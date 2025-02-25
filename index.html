@@ -1,204 +1,226 @@
-/* style.css - Ciemny motyw */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1e1e1e; /* Ciemne tło */
-    color: #ffffff; /* Białe litery */
-    margin: 0;
-    padding: 20px;
-    line-height: 1.6;
-}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Odwiedzin</title>
+    <link rel="stylesheet" href="style.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com; style-src 'self' 'unsafe-inline';">
+</head>
+<body>
+    <div class="container">
+        <h1>Monitor Odwiedzin</h1>
+        
+        <!-- Sekcja pogody -->
+        <div class="weather-info">
+            <div class="today-weather">
+                <p class="today-date-label">Data:</p>
+                <div class="today-date" id="currentDate">25.02.2025</div>
+                <div class="today-column">
+                    <div class="weather-icon" id="todayWeatherIcon">☀️</div>
+                    <div class="weather-day" id="todayWeatherDay">Dzisiaj</div>
+                    <div class="weather-description" id="todayWeatherDescription">Ładowanie...</div>
+                    <div class="weather-temps">
+                        <span class="temp-max" id="currentTempMax">10.5°C</span>
+                        <span class="temp-min" id="currentTempMin">1.0°C</span>
+                    </div>
+                </div>
+            </div>
+            <div class="weather-forecast">
+                <h3 style="margin: 0;">Prognoza na następne dni:</h3>
+                <p id="weatherLocation" style="font-size: 14px; color: white; text-align: center; margin-top: -5px;">(Dla miejscowości: <span id="weatherCity">Ładowanie...</span>)</p>
+                <div class="forecast-container" id="weatherForecast"></div>
+            </div>
+        </div>
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #2d2d2d; /* Ciemniejsze tło dla kontenera */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
+        <!-- Tabela logów -->
+        <div class="log-table">
+            <table id="logTable">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Dzień</th>
+                        <th>Godzina</th>
+                        <th>IP</th>
+                        <th>Lokalizacja</th>
+                        <th>Urządzenie</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBody"></tbody>
+            </table>
+        </div>
+    </div>
 
-h1 {
-    text-align: center;
-    color: #ffffff; /* Biała czcionka */
-    margin: 20px 0; /* Równe marginesy */
-    font-size: 2.5em;
-    font-weight: bold; /* Pogrubiona czcionka */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtelny cień tekstu */
-    letter-spacing: 2px; /* Lekkie rozstrzelenie liter */
-    font-family: 'Arial', sans-serif; /* Nowoczesna czcionka */
-    position: relative; /* Pozwala na dodanie efektu podkreślenia */
-}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
-h1::after {
-    content: '';
-    display: block;
-    width: 60px; /* Szerokość podkreślenia */
-    height: 3px; /* Grubość podkreślenia */
-    background-color: #007bff; /* Kolor podkreślenia (niebieski) */
-    margin: 10px auto 0; /* Wyśrodkowanie podkreślenia */
-}
+        const firebaseConfig = {
+            apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
+            authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
+            databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "monitor-odwiedzin-405c9",
+            storageBucket: "monitor-odwiedzin-405c9.appspot.com",
+            messagingSenderId: "93459469114",
+            appId: "1:93459469114:web:0a709b6be237705bf8f603"
+        };
 
-/* Sekcja pogody */
-.weather-info {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px; /* Odstęp między lewą a prawą sekcją */
-    margin-bottom: 20px;
-}
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-/* Lewa strona: Dzisiejsza pogoda */
-.today-weather {
-    flex: 1;
-    text-align: center;
-    background-color: #3a3a3a; /* Ciemne tło */
-    padding: 10px 20px; /* Zmniejszony padding górny i dolny */
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
+        function getDeviceType(userAgent) {
+            if (userAgent.includes('Android')) return 'Android';
+            if (userAgent.includes('iPhone')) return 'iPhone';
+            if (userAgent.includes('iPad')) return 'Tablet';
+            if (userAgent.includes('Macintosh')) return 'Mac';
+            if (userAgent.includes('Windows') || userAgent.includes('Linux')) return 'PC';
+            return 'Inne';
+        }
 
-.today-date-label {
-    font-size: 16px;
-    color: #ffffff;
-    margin-bottom: 2px; /* Zmniejszony odstęp pod etykietą "Data:" */
-    margin-top: 0; /* Usunięcie marginesu górnego */
-}
+        async function logVisit() {
+            const now = new Date();
+            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const day = now.toLocaleDateString('pl-PL', { weekday: 'long' });
+            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const ip = await getIp();
+            const location = await getLocation(ip);
+            const userAgent = navigator.userAgent;
+            const device = getDeviceType(userAgent);
 
-.today-date {
-    font-size: 2em; /* Duża czcionka dla daty */
-    font-weight: bold; /* Pogrubiona czcionka */
-    color: #ffffff;
-    margin-bottom: 5px; /* Zmniejszony odstęp pod datą */
-}
+            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
+            const logsRef = ref(database, 'logs');
+            const newLogRef = push(logsRef);
+            await set(newLogRef, logEntry);
+            updateLogs();
+        }
 
-.today-temp {
-    font-size: 1.5em; /* Większa czcionka dla temperatury */
-    font-weight: bold; /* Pogrubiona czcionka */
-    color: #ffffff;
-    background-color: #2d2d2d; /* Przyciemnione tło dla temperatur */
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin: 0 auto; /* Wyśrodkowanie względem daty */
-    width: fit-content; /* Dopasowanie szerokości do zawartości */
-}
+        async function updateLogs() {
+            const logsRef = ref(database, 'logs');
+            onValue(logsRef, (snapshot) => {
+                let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
+                logs.sort((a, b) => b.timestamp - a.timestamp);
+                if (logs.length > 100) {
+                    const logsToDelete = logs.slice(100);
+                    logs = logs.slice(0, 100);
+                    logsToDelete.forEach(log => remove(ref(database, `logs/${log.key}`)));
+                }
+                displayLogs(logs);
+            }, { onlyOnce: true });
+        }
 
-.temp-row {
-    display: flex; /* Ustawienie ikony i temperatury w jednej linii */
-    align-items: center; /* Wyśrodkowanie w pionie */
-    margin: 5px 0; /* Odstęp między wierszami */
-}
+        function displayLogs(logs) {
+            const logTableBody = document.getElementById('logTableBody');
+            logTableBody.innerHTML = '';
+            logs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.date}</td>
+                    <td>${log.day}</td>
+                    <td>${log.time}</td>
+                    <td>${log.ip}</td>
+                    <td>${log.location}</td>
+                    <td>${log.device}</td>
+                `;
+                logTableBody.appendChild(row);
+            });
+        }
 
-.temp-icon {
-    margin-right: 10px; /* Odstęp między ikoną a temperaturą */
-}
+        async function getIp() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip || 'Nieznany IP';
+            } catch (err) {
+                return 'Nieznany IP';
+            }
+        }
 
-/* Prawa strona: Prognoza na następne dni */
-.weather-forecast {
-    flex: 2;
-    background-color: #3a3a3a; /* Ciemne tło */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
+        async function getLocation(ip) {
+            try {
+                const response = await fetch(`https://ipapi.co/${ip}/json/`);
+                const data = await response.json();
+                return data.city && data.country_name ? `${data.city} / ${data.country_name}` : 'Nieznana lokalizacja';
+            } catch (err) {
+                return 'Nieznana lokalizacja';
+            }
+        }
 
-.weather-forecast h3 {
-    margin-top: 0;
-    color: #ffffff;
-    font-size: 1.5em; /* Większa czcionka dla nagłówka prognozy */
-    font-weight: bold; /* Pogrubiona czcionka */
-    text-align: center;
-}
+        function getCurrentDate() {
+            const now = new Date();
+            return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
 
-.forecast-container {
-    display: flex;
-    gap: 10px; /* Odstęp między słupkami */
-    overflow-x: auto; /* Przewijanie poziome, jeśli jest za dużo słupków */
-    padding: 10px 0;
-    justify-content: center; /* Wyśrodkowanie słupków */
-}
+        const weatherIcons = {
+            0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️', 55: '🌧️',
+            61: '🌦️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '🌦️', 81: '🌧️', 82: '🌧️',
+            95: '⛈️', 96: '⛈️'
+        };
 
-.forecast-bar {
-    background-color: #2d2d2d; /* Kolor tła słupka */
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    min-width: 80px; /* Minimalna szerokość słupka */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
+        const weatherDescriptions = {
+            0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
+            45: 'Mgła', 48: 'Mgła z szronem', 51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
+            61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz', 71: 'Lekki śnieg', 73: 'Umiarkowany śnieg',
+            75: 'Intensywny śnieg', 80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
+            95: 'Burza', 96: 'Burza z gradem'
+        };
 
-.forecast-date {
-    font-size: 0.9em;
-    color: #ffffff;
-    margin-bottom: 10px;
-}
+        async function getWeather(ip) {
+            try {
+                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+                const locationData = await locationResponse.json();
+                const lat = locationData.latitude;
+                const lon = locationData.longitude;
+                const city = locationData.city || 'Nieznane miasto';
 
-.forecast-day, .forecast-night {
-    font-size: 1.1em;
-    color: #ffffff;
-    margin: 5px 0;
-}
+                document.getElementById('weatherCity').textContent = city;
+                document.getElementById('currentDate').textContent = getCurrentDate();
 
-.forecast-day::before {
-    content: '☀️'; /* Emoji dla dnia */
-    margin-right: 5px;
-}
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
+                const forecastData = await forecastResponse.json();
 
-.forecast-night::before {
-    content: '🌙'; /* Emoji dla nocy */
-    margin-right: 5px;
-}
+                if (forecastData.daily) {
+                    const todayWeatherCode = forecastData.daily.weathercode[0];
+                    document.getElementById('todayWeatherIcon').textContent = weatherIcons[todayWeatherCode] || '❓';
+                    document.getElementById('todayWeatherDescription').textContent = weatherDescriptions[todayWeatherCode] || 'Nieznana pogoda';
+                    document.getElementById('currentTempMax').textContent = `${forecastData.daily.temperature_2m_max[0].toFixed(1)}°C`;
+                    document.getElementById('currentTempMin').textContent = `${forecastData.daily.temperature_2m_min[0].toFixed(1)}°C`;
 
-/* Tabela logów */
-.log-table {
-    overflow-x: auto; /* Przewijanie poziome */
-}
+                    const forecastContainer = document.getElementById('weatherForecast');
+                    forecastContainer.innerHTML = '';
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+                    forecastData.daily.time.slice(1).forEach((date, index) => {
+                        const dayName = new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' });
+                        const weatherCode = forecastData.daily.weathercode[index + 1];
+                        const maxTemp = forecastData.daily.temperature_2m_max[index + 1];
+                        const minTemp = forecastData.daily.temperature_2m_min[index + 1];
 
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #444; /* Subtelna linia oddzielająca wiersze */
-}
+                        const forecastBar = document.createElement('div');
+                        forecastBar.className = 'forecast-bar';
+                        forecastBar.innerHTML = `
+                            <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
+                            <div class="weather-day">${dayName}</div>
+                            <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
+                            <div class="weather-temps">
+                                <span class="temp-max">${maxTemp.toFixed(1)}°C</span>
+                                <span class="temp-min">${minTemp.toFixed(1)}°C</span>
+                            </div>
+                        `;
+                        forecastContainer.appendChild(forecastBar);
+                    });
+                }
+            } catch (err) {
+                document.getElementById('currentTempMax').textContent = 'Błąd';
+                document.getElementById('currentTempMin').textContent = 'Błąd';
+                document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
+                document.getElementById('weatherCity').textContent = 'Nieznane miasto';
+            }
+        }
 
-th {
-    background-color: #007bff; /* Niebieski kolor dla nagłówków */
-    color: white;
-    font-weight: 600;
-}
-
-/* Naprzemienne kolory wierszy */
-tr:nth-child(odd) {
-    background-color: #3a3a3a; /* Ciemniejszy odcień */
-}
-
-tr:nth-child(even) {
-    background-color: #2d2d2d; /* Jaśniejszy odcień */
-}
-
-tr:hover {
-    background-color: #4a4a4a; /* Efekt hover na wierszach */
-}
-
-/* Responsywność */
-@media (max-width: 768px) {
-    .weather-info {
-        flex-direction: column;
-    }
-
-    .today-weather, .weather-forecast {
-        width: 100%;
-    }
-
-    .forecast-container {
-        flex-wrap: wrap; /* Zawijanie słupków na mniejszych ekranach */
-    }
-
-    .forecast-bar {
-        min-width: 100px; /* Zwiększona szerokość słupków na mniejszych ekranach */
-    }
-}
+        window.onload = async function() {
+            const ip = await getIp();
+            await logVisit();
+            await getWeather(ip);
+        };
+    </script>
+</body>
+</html>
