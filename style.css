@@ -19,7 +19,7 @@ body {
 .daily-fact {
     text-align: center;
     margin: 20px 0;
-    font-size: 1.1em; /* Normalna, niezbyt duża czcionka */
+    font-size: 0.9em; /* Zmniejszona czcionka dla całego bloku */
     color: #ffffff;
 }
 
@@ -32,7 +32,7 @@ body {
 
 .fact-content {
     margin-top: 10px; /* Odstęp między nagłówkiem a ciekawostką */
-    font-size: 1.1em; /* Ta sama wielkość czcionki co nagłówek */
+    font-size: 0.9em; /* Ta sama wielkość czcionki co nagłówek, w kursywie */
     font-style: italic; /* Kursywa dla ciekawostki */
     line-height: 1.5;
     word-wrap: break-word; /* Zapewnienie, że tekst się załamuje, jeśli jest długi */
@@ -236,11 +236,11 @@ tr:hover {
     }
 
     .daily-fact {
-        font-size: 1em; /* Mniejsza czcionka na urządzeniach mobilnych */
+        font-size: 0.8em; /* Mniejsza czcionka na urządzeniach mobilnych */
     }
 
     .fact-content {
-        font-size: 1em; /* Ta sama wielkość co nagłówek na mobile */
+        font-size: 0.8em; /* Ta sama wielkość co nagłówek na mobile */
     }
 
     .weather-forecast {
