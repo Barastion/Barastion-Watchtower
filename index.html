@@ -13,21 +13,8 @@
         
         <!-- Sekcja pogody -->
         <div class="weather-info">
-            <div class="today-weather">
-                <p class="today-date-label">Data:</p>
-                <div class="today-date" id="currentDate">25.02.2025</div>
-                <div class="weather-column">
-                    <span class="weather-icon" id="todayWeatherIcon">☀️</span>
-                    <span class="weather-day" id="todayWeatherDay">Dzisiaj</span>
-                    <span class="weather-description" id="todayWeatherDescription">Ładowanie...</span>
-                    <div class="weather-temps">
-                        <span class="temp-max" id="currentTempMax">10.5°C</span>
-                        <span class="temp-min" id="currentTempMin">1.0°C</span>
-                    </div>
-                </div>
-            </div>
             <div class="weather-forecast">
-                <h3 style="margin: 0;">Prognoza na następne dni:</h3>
+                <h3 style="margin: 0;">Pogoda:</h3>
                 <p id="weatherLocation" style="font-size: 14px; color: white; text-align: center; margin-top: -5px;">(Dla miejscowości: <span id="weatherCity">Ładowanie...</span>)</p>
                 <div class="forecast-container" id="weatherForecast"></div>
             </div>
@@ -90,8 +77,13 @@
             const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
             const logsRef = ref(database, 'logs');
             const newLogRef = push(logsRef);
-            await set(newLogRef, logEntry);
-            updateLogs();
+            try {
+                await set(newLogRef, logEntry);
+                console.log('Log zapisany:', logEntry);
+                updateLogs();
+            } catch (error) {
+                console.error('Błąd zapisu logu:', error);
+            }
         }
 
         async function updateLogs() {
@@ -123,6 +115,7 @@
                 `;
                 logTableBody.appendChild(row);
             });
+            console.log('Logi wyświetlone:', logs.length);
         }
 
         async function getIp() {
@@ -131,6 +124,7 @@
                 const data = await response.json();
                 return data.ip || 'Nieznany IP';
             } catch (err) {
+                console.error('Błąd pobierania IP:', err);
                 return 'Nieznany IP';
             }
         }
@@ -141,13 +135,9 @@
                 const data = await response.json();
                 return data.city && data.country_name ? `${data.city} / ${data.country_name}` : 'Nieznana lokalizacja';
             } catch (err) {
+                console.error('Błąd pobierania lokalizacji:', err);
                 return 'Nieznana lokalizacja';
             }
-        }
-
-        function getCurrentDate() {
-            const now = new Date();
-            return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
         const weatherIcons = {
@@ -173,44 +163,39 @@
                 const city = locationData.city || 'Nieznane miasto';
 
                 document.getElementById('weatherCity').textContent = city;
-                document.getElementById('currentDate').textContent = getCurrentDate();
 
                 const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
                 const forecastData = await forecastResponse.json();
 
                 if (forecastData.daily) {
-                    const todayWeatherCode = forecastData.daily.weathercode[0];
-                    document.getElementById('todayWeatherIcon').textContent = weatherIcons[todayWeatherCode] || '❓';
-                    document.getElementById('todayWeatherDescription').textContent = weatherDescriptions[todayWeatherCode] || 'Nieznana pogoda';
-                    document.getElementById('currentTempMax').textContent = `${forecastData.daily.temperature_2m_max[0].toFixed(1)}°C`;
-                    document.getElementById('currentTempMin').textContent = `${forecastData.daily.temperature_2m_min[0].toFixed(1)}°C`;
-
                     const forecastContainer = document.getElementById('weatherForecast');
                     forecastContainer.innerHTML = '';
 
-                    forecastData.daily.time.slice(1).forEach((date, index) => {
+                    // Wszystkie dni (w tym dzisiejszy)
+                    forecastData.daily.time.forEach((date, index) => {
+                        const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
                         const dayName = new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' });
-                        const weatherCode = forecastData.daily.weathercode[index + 1];
-                        const maxTemp = forecastData.daily.temperature_2m_max[index + 1];
-                        const minTemp = forecastData.daily.temperature_2m_min[index + 1];
+                        const weatherCode = forecastData.daily.weathercode[index];
+                        const maxTemp = forecastData.daily.temperature_2m_max[index];
+                        const minTemp = forecastData.daily.temperature_2m_min[index];
 
                         const forecastBar = document.createElement('div');
                         forecastBar.className = 'forecast-bar';
                         forecastBar.innerHTML = `
-                            <span class="weather-icon">${weatherIcons[weatherCode] || '❓'}</span>
-                            <span class="weather-day">${dayName}</span>
-                            <span class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</span>
+                            <div class="forecast-date">${formattedDate}</div>
+                            <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
+                            <div class="weather-day">${dayName}</div>
+                            <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
                             <div class="weather-temps">
-                                <span class="temp-max">${maxTemp.toFixed(1)}°C</span>
-                                <span class="temp-min">${minTemp.toFixed(1)}°C</span>
+                                <div class="temp-max">${maxTemp.toFixed(1)}°C</div>
+                                <div class="temp-min">${minTemp.toFixed(1)}°C</div>
                             </div>
                         `;
                         forecastContainer.appendChild(forecastBar);
                     });
                 }
             } catch (err) {
-                document.getElementById('currentTempMax').textContent = 'Błąd';
-                document.getElementById('currentTempMin').textContent = 'Błąd';
+                console.error('Błąd pobierania pogody:', err);
                 document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
                 document.getElementById('weatherCity').textContent = 'Nieznane miasto';
             }
