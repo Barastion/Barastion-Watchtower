@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Zaktualizowana polityka CSP z dodanym ipgeolocation.io -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.ipgeolocation.io; style-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ip-api.com https://api.open-meteo.com; style-src 'self' 'unsafe-inline';">
 </head>
 <body>
     <div class="container">
@@ -30,6 +29,7 @@
             </div>
             <div class="weather-forecast">
                 <h3>Prognoza na następne dni:</h3>
+                <p id="weatherLocation" style="font-size: 14px; color: #666;">(Dla miejscowości: <span id="weatherCity">Ładowanie...</span>)</p>
                 <div class="forecast-container" id="weatherForecast"></div>
             </div>
         </div>
@@ -52,7 +52,6 @@
         </div>
     </div>
 
-    <!-- Firebase i główny skrypt -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
         import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
@@ -92,18 +91,25 @@
             const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
             console.log('Log entry do zapisania:', logEntry);
 
-            if (checkDDoSProtection(ip)) {
+            // Sprawdzanie, czy zapisać nowy log (5 minut odstępu)
+            const lastLogTime = localStorage.getItem(`lastLogTime_${ip}`);
+            const currentTime = now.getTime();
+            const fiveMinutes = 5 * 60 * 1000; // 5 minut w milisekundach
+
+            if (!lastLogTime || (currentTime - lastLogTime > fiveMinutes)) {
                 const logsRef = ref(database, 'logs');
                 const newLogRef = push(logsRef);
                 try {
                     await set(newLogRef, logEntry);
                     console.log('Log zapisany w Firebase pod kluczem:', newLogRef.key);
+                    localStorage.setItem(`lastLogTime_${ip}`, currentTime);
                     updateLogs();
                 } catch (error) {
                     console.error('Błąd zapisu logu:', error);
                 }
             } else {
-                console.log('Zapis zablokowany przez ochronę DDoS');
+                console.log('Logowanie pominięte – zbyt wcześnie od ostatniego zapisu dla IP:', ip);
+                updateLogs();
             }
         }
 
@@ -144,20 +150,6 @@
             console.log('Logi wyświetlone w tabeli:', logs.length);
         }
 
-        let lastIpLogTime = {};
-        function checkDDoSProtection(ip) {
-            const currentTime = Date.now();
-            if (lastIpLogTime[ip]) {
-                const timeDiff = (currentTime - lastIpLogTime[ip]) / 1000 / 60;
-                if (timeDiff < 1) {
-                    console.log('Ograniczenie logowania – zbyt częste z tego samego IP');
-                    return false;
-                }
-            }
-            lastIpLogTime[ip] = currentTime;
-            return true;
-        }
-
         async function getIp() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
@@ -171,14 +163,16 @@
             }
         }
 
-        // Zaktualizowana funkcja getLocation z użyciem ipgeolocation.io
         async function getLocation(ip) {
             try {
-                const apiKey = 'TWÓJ_KLUCZ_API'; // Wstaw tutaj swój klucz API z ipgeolocation.io
-                const response = await fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=${apiKey}&ip=${ip}`);
+                const response = await fetch(`http://ip-api.com/json/${ip}`);
                 const data = await response.json();
-                console.log('Dane lokalizacji z ipgeolocation:', data);
-                return data.city && data.country_name ? `${data.city} / ${data.country_name}` : 'Nieznana lokalizacja';
+                console.log('Dane lokalizacji z ip-api.com:', data);
+                if (data.status === 'success') {
+                    return `${data.city} / ${data.country}`;
+                } else {
+                    return 'Nieznana lokalizacja';
+                }
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji:', err);
                 return 'Nieznana lokalizacja';
@@ -192,10 +186,17 @@
 
         async function getWeather(ip) {
             try {
-                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+                const locationResponse = await fetch(`http://ip-api.com/json/${ip}`);
                 const locationData = await locationResponse.json();
-                const lat = locationData.latitude;
-                const lon = locationData.longitude;
+                if (locationData.status !== 'success') {
+                    throw new Error('Nie udało się pobrać danych lokalizacji');
+                }
+                const lat = locationData.lat;
+                const lon = locationData.lon;
+                const city = locationData.city || 'Nieznane miasto';
+
+                // Ustawienie nazwy miasta w prognozie
+                document.getElementById('weatherCity').textContent = city;
 
                 const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
                 const forecastData = await forecastResponse.json();
@@ -247,6 +248,7 @@
                 document.getElementById('currentTempMax').textContent = 'Błąd';
                 document.getElementById('currentTempMin').textContent = 'Błąd';
                 document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
+                document.getElementById('weatherCity').textContent = 'Nieznane miasto';
             }
         }
 
