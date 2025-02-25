@@ -69,6 +69,11 @@ h1::after {
     color: #ffffff;
 }
 
+.today-temp span {
+    display: block; /* Każda temperatura w nowej linii */
+    margin: 5px 0;
+}
+
 /* Prawa strona: Prognoza na następne dni */
 .weather-forecast {
     flex: 2;
