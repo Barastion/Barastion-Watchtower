@@ -6,7 +6,7 @@
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="diabelek.png">
-    <meta name="description" content="Monitoruj wizyty i pogodę w czasie rzeczywistym!">
+    <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwile zobaczyć jak leci">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov data:;">
 </head>
@@ -18,7 +18,10 @@
             </div>
         </div>
 
-        <h1>Monitor Odwiedzin</h1>
+        <div class="daily-fact">
+            <span class="fact-header">💡 Ciekawostka na dziś:</span>
+            <div class="fact-content" id="dailyFact">Ładowanie...</div>
+        </div>
         
         <div class="content-frame">
             <div class="weather-info">
@@ -292,13 +295,34 @@
             }
         }
 
+        async function getDailyFact() {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Miesiąc zaczyna się od 0
+            const dateKey = `${day}/${month}`;
+
+            try {
+                const response = await fetch('calendar.json');
+                if (!response.ok) {
+                    throw new Error(`Błąd pobierania pliku: ${response.status}`);
+                }
+                const calendarData = await response.json();
+                const fact = calendarData[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
+                document.getElementById('dailyFact').textContent = fact;
+            } catch (err) {
+                console.error('Błąd pobierania ciekawostki:', err);
+                document.getElementById('dailyFact').textContent = 'Błąd ładowania ciekawostki';
+            }
+        }
+
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
             const ip = await getIp();
             console.log('IP przy załadowaniu:', ip);
             await logVisit();
             await getWeather(ip);
-            await getNasaApodImage(); // Z włączonymi ponownymi próbami
+            await getNasaApodImage();
+            await getDailyFact();
         };
     </script>
 </body>
