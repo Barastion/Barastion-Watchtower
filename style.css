@@ -39,7 +39,7 @@ h1::after {
 
 /* Nowy styl dla zdjęcia NASA */
 .nasa-container {
-    max-width: 720px; /* 10% mniej niż 800px */
+    max-width: 640px; /* 20% mniej niż 800px (800 * 0.8 = 640) */
     margin: 0 auto 20px;
     text-align: center;
 }
@@ -55,13 +55,13 @@ h1::after {
     border: 2px solid #555555; /* Cienka, ciemna ramka */
 }
 
-#nasaImage {
+.nasa-frame img {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    top: 50%;
+    left: 50%;
+    width: 90%; /* Zdjęcie wypełnia 90% szerokości ramki */
+    height: auto;
+    transform: translate(-50%, -50%); /* Wyśrodkowanie zdjęcia */
     border-radius: 6px; /* Lekko zaokrąglone rogi */
 }
 
