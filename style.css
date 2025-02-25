@@ -56,6 +56,12 @@ h1::after {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
+.today-date-label {
+    font-size: 16px;
+    color: #ffffff;
+    margin-bottom: 5px;
+}
+
 .today-date {
     font-size: 2em; /* Duża czcionka dla daty */
     font-weight: bold; /* Pogrubiona czcionka */
