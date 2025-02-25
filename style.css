@@ -39,7 +39,7 @@ h1::after {
 
 /* Nowy styl dla zdjęcia NASA */
 .nasa-container {
-    max-width: 800px;
+    max-width: 720px; /* 10% mniej niż 800px */
     margin: 0 auto 20px;
     text-align: center;
 }
