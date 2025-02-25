@@ -59,24 +59,38 @@ h1::after {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 90%; /* Zdjęcie wypełnia 90% szerokości ramki */
+    width: 100%; /* Zdjęcie wypełnia 100% szerokości ramki */
     height: auto;
     transform: translate(-50%, -50%); /* Wyśrodkowanie zdjęcia */
     border-radius: 6px; /* Lekko zaokrąglone rogi */
 }
 
-/* Reszta Twojego oryginalnego CSS */
+/* Wspólna ramka dla pogody i tabeli logów */
+.content-frame {
+    max-width: 800px; /* Szerokość ramki */
+    margin: 0 auto; /* Wyśrodkowanie */
+    background-color: #3a3a3a; /* Tło ramki */
+    padding: 20px; /* Wewnętrzny padding */
+    border-radius: 8px; /* Zaokrąglone rogi */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Cień */
+}
+
+/* Sekcja pogody */
 .weather-info {
     margin-bottom: 20px;
 }
 
 .weather-forecast {
-    background-color: #3a3a3a;
+    background-color: #2d2d2d; /* Tło sekcji pogody */
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 800px;
-    margin: 0 auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.weather-city {
+    text-align: center; /* Wyśrodkowanie napisu "Pogoda dla: <miasto>" */
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
 }
 
 .forecast-container {
@@ -88,7 +102,7 @@ h1::after {
 }
 
 .forecast-bar {
-    background-color: #2d2d2d;
+    background-color: #3a3a3a;
     border-radius: 8px;
     padding: 10px;
     text-align: center;
@@ -142,25 +156,31 @@ h1::after {
     font-size: 1em;
 }
 
+/* Tabela logów */
 .log-table {
     overflow-x: auto;
-    max-width: 800px;
-    margin: 0 auto;
+    background-color: #2d2d2d; /* Tło tabeli */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    -webkit-overflow-scrolling: touch; /* Lepsze przewijanie na mobilnych */
+}
+
+.table-container {
+    min-width: 800px; /* Wymusza poziome przewijanie */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
     table-layout: fixed;
+    border: 1px solid #ddd; /* Dodana jasna ramka wokół tabeli */
 }
 
 th, td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #444;
-    width: 16.66%;
-    box-sizing: border-box;
+    padding: 6px !important; /* Zmniejszony padding */
+    height: 40px !important; /* Stała wysokość wierszy */
+    vertical-align: middle;
 }
 
 th {
@@ -181,8 +201,35 @@ tr:hover {
     background-color: #4a4a4a;
 }
 
+/* Nowy styl dla lokalizacji */
+.location-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.city {
+    font-size: 0.9em;
+    word-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
+}
+
+.country {
+    font-size: 0.8em;
+    color: #cccccc;
+    margin-top: 2px;
+}
+
 @media (max-width: 768px) {
     .container {
+        padding: 10px;
+    }
+
+    .content-frame {
+        max-width: 100%;
         padding: 10px;
     }
 
@@ -214,8 +261,12 @@ tr:hover {
         max-width: 100%;
     }
 
+    .table-container {
+        min-width: 1000px; /* Większa szerokość dla lepszego przewijania */
+    }
+
     th, td {
         font-size: 0.8em;
-        padding: 8px;
+        padding: 6px;
     }
 }
