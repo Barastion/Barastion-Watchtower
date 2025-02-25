@@ -135,7 +135,7 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    table-layout: fixed; /* Zapewnia równe szerokości kolumn */
+    table-layout: fixed; /* Wymusza równe szerokości kolumn */
 }
 
 th, td {
@@ -143,6 +143,7 @@ th, td {
     text-align: center; /* Wyśrodkowanie tekstu */
     border-bottom: 1px solid #444; /* Subtelna linia oddzielająca wiersze */
     width: 16.66%; /* Równa szerokość dla każdej kolumny (100% / 6) */
+    box-sizing: border-box; /* Zapobiega rozszerzaniu przez padding */
 }
 
 th {
