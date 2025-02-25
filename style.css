@@ -163,21 +163,23 @@ h1::after {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    -webkit-overflow-scrolling: touch; /* Lepsze przewijanie na mobilnych */
+}
+
+.table-container {
+    min-width: 800px; /* Wymusza poziome przewijanie */
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
     table-layout: fixed;
 }
 
 th, td {
-    padding: 8px; /* Zmniejszony padding dla wierszy */
-    text-align: center;
-    border-bottom: 1px solid #444;
-    width: 16.66%;
-    box-sizing: border-box;
+    padding: 6px !important; /* Zmniejszony padding */
+    height: 40px !important; /* Stała wysokość wierszy */
+    vertical-align: middle;
 }
 
 th {
@@ -256,6 +258,10 @@ tr:hover {
 
     .log-table {
         max-width: 100%;
+    }
+
+    .table-container {
+        min-width: 1000px; /* Większa szerokość dla lepszego przewijania */
     }
 
     th, td {
