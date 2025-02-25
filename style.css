@@ -52,7 +52,7 @@ h1::after {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     background-color: #2d2d2d;
-    border: 4px solid #ffffff; /* Jasna ramka wokół zdjęcia */
+    border: 2px solid #555555; /* Cienka, ciemna ramka */
 }
 
 #nasaImage {
@@ -62,7 +62,7 @@ h1::after {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 4px; /* Mniejszy border-radius, aby pasował do ramki */
+    border-radius: 6px; /* Lekko zaokrąglone rogi */
 }
 
 /* Reszta Twojego oryginalnego CSS */
