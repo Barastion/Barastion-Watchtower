@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Ikona strony (favicon) -->
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/869/869213.png">
-    <!-- Opis widoczny w zakładce -->
     <meta name="description" content="Monitoruj wizyty i pogodę w czasie rzeczywistym!">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://apod.nasa.gov;">
 </head>
 <body>
     <div class="container">
         <!-- Zdjęcie NASA -->
-        <div class="nasa-image">
-            <img id="nasaImage" src="" alt="Zdjęcie dnia z NASA">
+        <div class="nasa-container">
+            <div class="nasa-frame">
+                <img id="nasaImage" src="" alt="Zdjęcie dnia z NASA">
+            </div>
         </div>
+
         <h1>Monitor Odwiedzin</h1>
         
         <!-- Sekcja pogody -->
