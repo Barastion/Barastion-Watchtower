@@ -1,4 +1,3 @@
-/* style.css - Ciemny motyw */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #1e1e1e;
@@ -37,9 +36,8 @@ h1::after {
     margin: 15px auto 0;
 }
 
-/* Nowy styl dla zdjęcia NASA */
 .nasa-container {
-    max-width: 640px; /* 20% mniej niż 800px (800 * 0.8 = 640) */
+    max-width: 640px;
     margin: 0 auto 20px;
     text-align: center;
 }
@@ -47,48 +45,46 @@ h1::after {
 .nasa-frame {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* Proporcje 16:9 (9/16 = 0.5625) */
+    padding-top: 56.25%;
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     background-color: #2d2d2d;
-    border: 2px solid #555555; /* Cienka, ciemna ramka */
+    border: 2px solid #555555;
 }
 
 .nasa-frame img {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 100%; /* Zdjęcie wypełnia 100% szerokości ramki */
+    width: 100%;
     height: auto;
-    transform: translate(-50%, -50%); /* Wyśrodkowanie zdjęcia */
-    border-radius: 6px; /* Lekko zaokrąglone rogi */
+    transform: translate(-50%, -50%);
+    border-radius: 6px;
 }
 
-/* Wspólna ramka dla pogody i tabeli logów */
 .content-frame {
-    max-width: 800px; /* Szerokość ramki */
-    margin: 0 auto; /* Wyśrodkowanie */
-    background-color: #3a3a3a; /* Tło ramki */
-    padding: 20px; /* Wewnętrzny padding */
-    border-radius: 8px; /* Zaokrąglone rogi */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Cień */
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #3a3a3a;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Sekcja pogody */
 .weather-info {
     margin-bottom: 20px;
 }
 
 .weather-forecast {
-    background-color: #2d2d2d; /* Tło sekcji pogody */
+    background-color: #2d2d2d;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .weather-city {
-    text-align: center; /* Wyśrodkowanie napisu "Pogoda dla: <miasto>" */
+    text-align: center;
     margin: 0 0 15px 0;
     font-size: 1.2em;
 }
@@ -156,31 +152,29 @@ h1::after {
     font-size: 1em;
 }
 
-/* Tabela logów */
 .log-table {
-    overflow-x: auto;
-    background-color: #2d2d2d; /* Tło tabeli */
+    background-color: #2d2d2d;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    -webkit-overflow-scrolling: touch; /* Lepsze przewijanie na mobilnych */
 }
 
 .table-container {
-    min-width: 800px; /* Wymusza poziome przewijanie */
+    width: 100%;
+    overflow: hidden;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
-    border: 1px solid #ddd; /* Dodana jasna ramka wokół tabeli */
 }
 
 th, td {
-    padding: 6px !important; /* Zmniejszony padding */
-    height: 40px !important; /* Stała wysokość wierszy */
+    padding: 6px;
+    height: 40px;
     vertical-align: middle;
+    text-align: center;
 }
 
 th {
@@ -201,7 +195,6 @@ tr:hover {
     background-color: #4a4a4a;
 }
 
-/* Nowy styl dla lokalizacji */
 .location-cell {
     display: flex;
     flex-direction: column;
@@ -262,7 +255,7 @@ tr:hover {
     }
 
     .table-container {
-        min-width: 1000px; /* Większa szerokość dla lepszego przewijania */
+        min-width: 1000px;
     }
 
     th, td {
