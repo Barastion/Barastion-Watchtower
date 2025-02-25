@@ -13,23 +13,18 @@
         
         <!-- Sekcja pogody -->
         <div class="weather-info">
-            <div class="today-weather">
-                <p class="today-date-label">Data:</p>
-                <div class="today-date" id="currentDate">25.02.2025</div>
-                <div class="today-temp">
-                    <div class="temp-row">
-                        <span class="temp-icon">☀️</span>
-                        <span id="currentTempMax">10.5°C</span>
-                    </div>
-                    <div class="temp-row">
-                        <span class="temp-icon">🌙</span>
-                        <span id="currentTempMin">1.0°C</span>
-                    </div>
+            <div class="today-weather weather-column">
+                <div class="weather-icon" id="todayWeatherIcon">☀️</div>
+                <div class="weather-day">Dzisiaj</div>
+                <div class="weather-description" id="todayWeatherDescription">Ładowanie...</div>
+                <div class="weather-temps">
+                    <span class="temp-max" id="currentTempMax">10.5°C</span>
+                    <span class="temp-min" id="currentTempMin">1.0°C</span>
                 </div>
             </div>
             <div class="weather-forecast">
-                <h3 style="margin: 0;">Prognoza na następne dni:</h3>
-                <p id="weatherLocation" style="font-size: 14px; color: white; text-align: center; margin-top: -5px;">(Dla miejscowości: <span id="weatherCity">Ładowanie...</span>)</p>
+                <h3>Prognoza na następne dni:</h3>
+                <p id="weatherLocation">(Dla miejscowości: <span id="weatherCity">Ładowanie...</span>)</p>
                 <div class="forecast-container" id="weatherForecast"></div>
             </div>
         </div>
@@ -89,33 +84,21 @@
             const device = getDeviceType(userAgent);
 
             const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
-            console.log('Log entry do zapisania:', logEntry);
-
             const logsRef = ref(database, 'logs');
             const newLogRef = push(logsRef);
-            try {
-                await set(newLogRef, logEntry);
-                console.log('Log zapisany w Firebase pod kluczem:', newLogRef.key);
-                updateLogs();
-            } catch (error) {
-                console.error('Błąd zapisu logu:', error);
-            }
+            await set(newLogRef, logEntry);
+            updateLogs();
         }
 
         async function updateLogs() {
             const logsRef = ref(database, 'logs');
             onValue(logsRef, (snapshot) => {
                 let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
-                console.log('Pobrane logi z Firebase:', logs);
                 logs.sort((a, b) => b.timestamp - a.timestamp);
                 if (logs.length > 100) {
                     const logsToDelete = logs.slice(100);
                     logs = logs.slice(0, 100);
-                    logsToDelete.forEach(log => {
-                        const logRef = ref(database, `logs/${log.key}`);
-                        remove(logRef).then(() => console.log('Usunięto stary log:', log.key))
-                            .catch(error => console.error('Błąd usuwania logu:', error));
-                    });
+                    logsToDelete.forEach(log => remove(ref(database, `logs/${log.key}`)));
                 }
                 displayLogs(logs);
             }, { onlyOnce: true });
@@ -136,18 +119,14 @@
                 `;
                 logTableBody.appendChild(row);
             });
-            console.log('Logi wyświetlone w tabeli:', logs.length);
         }
 
         async function getIp() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
-                console.log('Status odpowiedzi IP:', response.status);
                 const data = await response.json();
-                console.log('Dane IP:', data);
                 return data.ip || 'Nieznany IP';
             } catch (err) {
-                console.error('Błąd pobierania IP:', err);
                 return 'Nieznany IP';
             }
         }
@@ -156,84 +135,85 @@
             try {
                 const response = await fetch(`https://ipapi.co/${ip}/json/`);
                 const data = await response.json();
-                console.log('Dane lokalizacji z ipapi.co:', data);
-                if (data.city && data.country_name) {
-                    return `${data.city} / ${data.country_name}`;
-                } else {
-                    return 'Nieznana lokalizacja';
-                }
+                return data.city && data.country_name ? `${data.city} / ${data.country_name}` : 'Nieznana lokalizacja';
             } catch (err) {
-                console.error('Błąd pobierania lokalizacji:', err);
                 return 'Nieznana lokalizacja';
             }
         }
 
-        function getCurrentDate() {
-            const now = new Date();
-            return now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        }
+        const weatherDescriptions = {
+            0: 'Bezchmurnie',
+            1: 'Lekko zachmurzone',
+            2: 'Częściowo zachmurzone',
+            3: 'Zachmurzone',
+            45: 'Mgła',
+            48: 'Mgła z szronem',
+            51: 'Lekka mżawka',
+            53: 'Umiarkowana mżawka',
+            55: 'Intensywna mżawka',
+            61: 'Lekki deszcz',
+            63: 'Umiarkowany deszcz',
+            65: 'Ulewny deszcz',
+            71: 'Lekki śnieg',
+            73: 'Umiarkowany śnieg',
+            75: 'Intensywny śnieg',
+            80: 'Przelotne opady',
+            81: 'Umiarkowane opady',
+            82: 'Gwałtowne opady',
+            95: 'Burza',
+            96: 'Burza z gradem'
+        };
 
         async function getWeather(ip) {
             try {
                 const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
                 const locationData = await locationResponse.json();
-                console.log('Dane lokalizacji dla pogody:', locationData);
-                if (!locationData.latitude || !locationData.longitude) {
-                    throw new Error('Brakujące dane lokalizacji');
-                }
                 const lat = locationData.latitude;
                 const lon = locationData.longitude;
                 const city = locationData.city || 'Nieznane miasto';
 
                 document.getElementById('weatherCity').textContent = city;
 
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
                 const forecastData = await forecastResponse.json();
 
-                document.getElementById('currentDate').textContent = getCurrentDate();
-
-                if (forecastData.daily && forecastData.daily.temperature_2m_max && forecastData.daily.temperature_2m_min) {
+                if (forecastData.daily) {
+                    // Dzisiejsza pogoda
+                    const todayWeatherCode = forecastData.daily.weathercode[0];
+                    const todayDescription = weatherDescriptions[todayWeatherCode] || 'Nieznana pogoda';
+                    document.getElementById('todayWeatherIcon').textContent = getWeatherIcon(todayWeatherCode);
+                    document.getElementById('todayWeatherDescription').textContent = todayDescription;
                     document.getElementById('currentTempMax').textContent = `${forecastData.daily.temperature_2m_max[0].toFixed(1)}°C`;
                     document.getElementById('currentTempMin').textContent = `${forecastData.daily.temperature_2m_min[0].toFixed(1)}°C`;
-                } else {
-                    document.getElementById('currentTempMax').textContent = 'Błąd';
-                    document.getElementById('currentTempMin').textContent = 'Błąd';
-                }
 
-                const forecastContainer = document.getElementById('weatherForecast');
-                forecastContainer.innerHTML = '';
+                    // Prognoza na kolejne dni
+                    const forecastContainer = document.getElementById('weatherForecast');
+                    forecastContainer.innerHTML = '';
 
-                if (forecastData.daily && forecastData.daily.time) {
                     forecastData.daily.time.slice(1).forEach((date, index) => {
-                        const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric' });
+                        const dayName = new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' });
+                        const weatherCode = forecastData.daily.weathercode[index + 1];
+                        const description = weatherDescriptions[weatherCode] || 'Nieznana pogoda';
                         const maxTemp = forecastData.daily.temperature_2m_max[index + 1];
                         const minTemp = forecastData.daily.temperature_2m_min[index + 1];
 
                         const forecastBar = document.createElement('div');
-                        forecastBar.className = 'forecast-bar';
+                        forecastBar.className = 'forecast-bar weather-column';
 
-                        const forecastDate = document.createElement('div');
-                        forecastDate.className = 'forecast-date';
-                        forecastDate.textContent = formattedDate;
-                        forecastBar.appendChild(forecastDate);
-
-                        const forecastDay = document.createElement('div');
-                        forecastDay.className = 'forecast-day';
-                        forecastDay.textContent = `${maxTemp.toFixed(1)}°C`;
-                        forecastBar.appendChild(forecastDay);
-
-                        const forecastNight = document.createElement('div');
-                        forecastNight.className = 'forecast-night';
-                        forecastNight.textContent = `${minTemp.toFixed(1)}°C`;
-                        forecastBar.appendChild(forecastNight);
-
+                        forecastBar.innerHTML = `
+                            <div class="weather-icon">${getWeatherIcon(weatherCode)}</div>
+                            <div class="weather-day">${dayName}</div>
+                            <div class="weather-description">${description}</div>
+                            <div class="weather-temps">
+                                <span class="temp-max">${maxTemp.toFixed(1)}°C</span>
+                                <span class="temp-min">${minTemp.toFixed(1)}°C</span>
+                            </div>
+                        `;
                         forecastContainer.appendChild(forecastBar);
                     });
-                } else {
-                    forecastContainer.innerHTML = '<div>Błąd pobierania prognozy</div>';
                 }
             } catch (err) {
-                console.error('Błąd pobierania pogody:', err);
+                document.getElementById('todayWeatherDescription').textContent = 'Błąd';
                 document.getElementById('currentTempMax').textContent = 'Błąd';
                 document.getElementById('currentTempMin').textContent = 'Błąd';
                 document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
@@ -241,17 +221,17 @@
             }
         }
 
-        window.onload = async function() {
-            const logsRef = ref(database, 'logs');
-            onValue(logsRef, (snapshot) => {
-                let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
-                logs.sort((a, b) => b.timestamp - a.timestamp);
-                if (logs.length > 100) logs = logs.slice(0, 100);
-                displayLogs(logs);
-            });
+        function getWeatherIcon(code) {
+            const icons = {
+                0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️', 55: '🌧️',
+                61: '🌦️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '🌦️', 81: '🌧️', 82: '🌧️',
+                95: '⛈️', 96: '⛈️'
+            };
+            return icons[code] || '❓';
+        }
 
+        window.onload = async function() {
             const ip = await getIp();
-            console.log('Pobrane IP przy załadowaniu strony:', ip);
             await logVisit();
             await getWeather(ip);
         };
