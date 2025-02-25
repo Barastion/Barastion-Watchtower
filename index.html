@@ -26,26 +26,28 @@
             <!-- Sekcja pogody -->
             <div class="weather-info">
                 <div class="weather-forecast">
-                    <h3 style="margin: 0;">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
+                    <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
                 </div>
             </div>
 
             <!-- Tabela logów -->
             <div class="log-table">
-                <table id="logTable">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Dzień</th>
-                            <th>Godzina</th>
-                            <th>IP</th>
-                            <th>Lokalizacja</th>
-                            <th>Urządzenie</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTableBody"></tbody>
-                </table>
+                <div class="table-container">
+                    <table id="logTable">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Dzień</th>
+                                <th>Godzina</th>
+                                <th>IP</th>
+                                <th>Lokalizacja</th>
+                                <th>Urządzenie</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
