@@ -48,7 +48,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
@@ -104,9 +104,18 @@
             try {
                 onValue(logsRef, (snapshot) => {
                     const logsData = snapshot.val();
-                    const logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
-                    console.log('Pobrane logi z Firebase:', logs);
+                    let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
                     logs.sort((a, b) => b.timestamp - a.timestamp);
+
+                    // Ogranicz liczbę logów do 50
+                    if (logs.length > 50) {
+                        const logsToDelete = logs.slice(50);
+                        logs = logs.slice(0, 50);
+                        logsToDelete.forEach(log => {
+                            remove(ref(database, `logs/${log.key}`));
+                        });
+                    }
+
                     displayLogs(logs);
                 }, { onlyOnce: true });
             } catch (error) {
