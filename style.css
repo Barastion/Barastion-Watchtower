@@ -39,6 +39,20 @@ h1::after {
     margin: 15px auto 0; /* Wyśrodkowanie i większy odstęp od tekstu */
 }
 
+/* Zdjęcie NASA */
+.nasa-image {
+    max-width: 800px; /* Dopasowanie do szerokości tabeli */
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
+#nasaImage {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 /* Sekcja pogody */
 .weather-info {
     margin-bottom: 20px;
@@ -167,23 +181,44 @@ tr:hover {
 
 /* Responsywność */
 @media (max-width: 768px) {
+    .container {
+        padding: 10px; /* Mniejszy padding na telefonach */
+    }
+
     .weather-forecast {
-        width: 100%;
+        max-width: 100%; /* Pełna szerokość na telefonach */
+        padding: 10px;
     }
 
     .forecast-container {
-        flex-wrap: wrap; /* Zawijanie słupków na mniejszych ekranach */
+        flex-wrap: nowrap; /* Zachowanie poziomego układu na telefonach */
+        justify-content: flex-start; /* Wyrównanie od lewej */
+        gap: 5px; /* Mniejszy odstęp między słupkami */
     }
 
     .forecast-bar {
-        min-width: 100px; /* Zwiększona szerokość słupków na mniejszych ekranach */
+        min-width: 70px; /* Węższe słupki na telefonach */
+        padding: 5px;
+    }
+
+    .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
+        font-size: 0.65em; /* Mniejsza czcionka na telefonach */
+    }
+
+    .weather-icon {
+        font-size: 1.2em; /* Mniejsza ikona */
     }
 
     .log-table {
-        width: 100%;
+        max-width: 100%; /* Pełna szerokość na telefonach */
     }
 
     th, td {
-        font-size: 0.9em; /* Mniejsza czcionka na telefonach */
+        font-size: 0.8em; /* Mniejsza czcionka na telefonach */
+        padding: 8px; /* Mniejszy padding */
+    }
+
+    .nasa-image {
+        max-width: 100%; /* Dopasowanie zdjęcia NASA */
     }
 }
