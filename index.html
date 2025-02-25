@@ -32,7 +32,7 @@
 
             <!-- Prawa strona: Prognoza na następne dni -->
             <div class="weather-forecast">
-                <h3>Prognoza na następne dni:</h3> <!-- Dodano dwukropek -->
+                <h3>Prognoza na następne dni:</h3>
                 <div class="forecast-container" id="weatherForecast"></div>
             </div>
         </div>
@@ -59,7 +59,7 @@
     <script type="module">
         // Importuj funkcje Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
         // Konfiguracja Firebase
         const firebaseConfig = {
@@ -85,7 +85,7 @@
             } else if (userAgent.includes('iPad')) {
                 return 'Tablet';
             } else if (userAgent.includes('Macintosh')) {
-                return 'Mac'; // Mac jest osobną kategorią
+                return 'Mac';
             } else if (userAgent.includes('Windows') || userAgent.includes('Linux')) {
                 return 'PC';
             } else {
@@ -102,21 +102,34 @@
             const ip = await getIp();
             const location = await getLocation(ip);
             const userAgent = navigator.userAgent;
-            const device = getDeviceType(userAgent); // Określ typ urządzenia
+            const device = getDeviceType(userAgent);
 
-            const logEntry = { date, day, time, ip, location, device };
+            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
 
             if (checkDDoSProtection(ip)) {
                 const logsRef = ref(database, 'logs');
-                onValue(logsRef, (snapshot) => {
-                    let logs = snapshot.val() ? Object.values(snapshot.val()) : [];
-                    logs.unshift(logEntry); // Nowe logi na górze
-                    if (logs.length > 50) logs.pop(); // Ograniczenie do 50 logów
-                    set(logsRef, logs).then(() => {
-                        console.log('Log zapisany w Firebase!');
-                    }).catch((error) => {
-                        console.error('Błąd zapisu logu:', error);
-                    });
+                // Dodaj nowy log z unikalnym kluczem
+                const newLogRef = push(logsRef);
+                set(newLogRef, logEntry).then(() => {
+                    console.log('Log zapisany w Firebase!');
+                    // Pobierz i ogranicz logi
+                    onValue(logsRef, (snapshot) => {
+                        let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
+                        // Sortuj od najnowszych do najstarszych po timestampie
+                        logs.sort((a, b) => b.timestamp - a.timestamp);
+                        // Ogranicz do 100 logów
+                        if (logs.length > 100) {
+                            const logsToDelete = logs.slice(100);
+                            logs = logs.slice(0, 100);
+                            logsToDelete.forEach(log => {
+                                const logRef = ref(database, `logs/${log.key}`);
+                                remove(logRef);
+                            });
+                        }
+                        displayLogs(logs);
+                    }, { onlyOnce: true });
+                }).catch((error) => {
+                    console.error('Błąd zapisu logu:', error);
                 });
             }
         }
@@ -124,8 +137,7 @@
         // Funkcja do wyświetlania logów
         function displayLogs(logs) {
             const logTableBody = document.getElementById('logTableBody');
-            logTableBody.innerHTML = ''; // Wyczyść tabelę
-
+            logTableBody.innerHTML = '';
             logs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -145,10 +157,10 @@
         function checkDDoSProtection(ip) {
             const currentTime = Date.now();
             if (lastIpLogTime[ip]) {
-                const timeDiff = (currentTime - lastIpLogTime[ip]) / 1000 / 60; // W minutach
+                const timeDiff = (currentTime - lastIpLogTime[ip]) / 1000 / 60;
                 if (timeDiff < 1) {
                     console.log('Ograniczenie logowania – zbyt częste z tego samego IP');
-                    return false; // Nie zapisujemy, jeśli minęła mniej niż minuta
+                    return false;
                 }
             }
             lastIpLogTime[ip] = currentTime;
@@ -159,7 +171,9 @@
         async function getIp() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
+                console.log('Status odpowiedzi IP:', response.status);
                 const data = await response.json();
+                console.log('Dane IP:', data);
                 return data.ip || 'Nieznany IP';
             } catch (err) {
                 console.error('Błąd pobierania IP:', err);
@@ -167,12 +181,12 @@
             }
         }
 
-        // Pobierz lokalizację (Miasto/Kraj) na podstawie IP
+        // Pobierz lokalizację (Miasto / Kraj) na podstawie IP
         async function getLocation(ip) {
             try {
                 const response = await fetch(`https://ipapi.co/${ip}/json/`);
                 const data = await response.json();
-                return `${data.city}, ${data.country_name}` || 'Nieznana lokalizacja';
+                return data.city && data.country_name ? `${data.city} / ${data.country_name}` : 'Nieznana lokalizacja';
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji:', err);
                 return 'Nieznana lokalizacja';
@@ -211,38 +225,32 @@
 
                 // Pobierz prognozę na następne dni
                 const forecastContainer = document.getElementById('weatherForecast');
-                forecastContainer.innerHTML = ''; // Wyczyść kontener
+                forecastContainer.innerHTML = '';
 
                 if (forecastData.daily && forecastData.daily.time) {
-                    // Pomijamy dzisiejszą datę (pierwszy element)
                     forecastData.daily.time.slice(1).forEach((date, index) => {
                         const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric' });
-                        const maxTemp = forecastData.daily.temperature_2m_max[index + 1]; // Indeks + 1, bo pomijamy dzisiaj
+                        const maxTemp = forecastData.daily.temperature_2m_max[index + 1];
                         const minTemp = forecastData.daily.temperature_2m_min[index + 1];
 
-                        // Tworzymy pionowy słupek
                         const forecastBar = document.createElement('div');
                         forecastBar.className = 'forecast-bar';
 
-                        // Data
                         const forecastDate = document.createElement('div');
                         forecastDate.className = 'forecast-date';
                         forecastDate.textContent = formattedDate;
                         forecastBar.appendChild(forecastDate);
 
-                        // Temperatura w dzień
                         const forecastDay = document.createElement('div');
                         forecastDay.className = 'forecast-day';
                         forecastDay.textContent = `${maxTemp.toFixed(1)}°C`;
                         forecastBar.appendChild(forecastDay);
 
-                        // Temperatura w nocy
                         const forecastNight = document.createElement('div');
                         forecastNight.className = 'forecast-night';
                         forecastNight.textContent = `${minTemp.toFixed(1)}°C`;
                         forecastBar.appendChild(forecastNight);
 
-                        // Dodaj słupek do kontenera
                         forecastContainer.appendChild(forecastBar);
                     });
                 } else {
@@ -260,17 +268,18 @@
         window.onload = async function() {
             const logsRef = ref(database, 'logs');
             onValue(logsRef, (snapshot) => {
-                const logs = snapshot.val() ? Object.values(snapshot.val()) : [];
+                let logs = snapshot.val() ? Object.entries(snapshot.val()).map(([key, value]) => ({ key, ...value })) : [];
+                logs.sort((a, b) => b.timestamp - a.timestamp);
+                if (logs.length > 100) logs = logs.slice(0, 100);
                 displayLogs(logs);
             });
 
             const ip = await getIp();
+            console.log('Pobrane IP:', ip);
             if (checkDDoSProtection(ip)) {
-                logVisit(); // Zapisz log tylko jeśli ochrona DDoS pozwala
+                await logVisit();
             }
-
-            // Pobierz pogodę
-            getWeather(ip);
+            await getWeather(ip);
         };
     </script>
 </body>
