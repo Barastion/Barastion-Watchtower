@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor Odwiedzin</title> <!-- Usunięto emotkę z tytułu -->
+    <title>😈 Monitor Odwiedzin</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="diabelek.png"> <!-- Wstaw własną ścieżkę do ikony diabełka -->
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/869/869213.png">
     <meta name="description" content="Monitoruj wizyty i pogodę w czasie rzeczywistym!">
-    <meta name="title" content="Ja tylko na chwile zobaczyć jak leci">
+    <meta name="title" content="😈 Ja tylko na chwile zobaczyć jak leci">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://apod.nasa.gov;">
 </head>
 <body>
@@ -15,41 +15,44 @@
         <!-- Zdjęcie NASA -->
         <div class="nasa-container">
             <div class="nasa-frame">
-                <img id="nasaImage" src="" alt="Zdjęcie dnia z NASA" class="scaled-image">
+                <img id="nasaImage" src="" alt="Zdjęcie dnia z NASA">
             </div>
         </div>
 
         <h1>Monitor Odwiedzin</h1>
         
-        <!-- Sekcja pogody -->
-        <div class="weather-info">
-            <div class="weather-forecast">
-                <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
-                <div class="forecast-container" id="weatherForecast"></div>
+        <!-- Wspólna ramka dla pogody i tabeli logów -->
+        <div class="content-frame">
+            <!-- Sekcja pogody -->
+            <div class="weather-info">
+                <div class="weather-forecast">
+                    <h3 style="margin: 0;">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
+                    <div class="forecast-container" id="weatherForecast"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- Tabela logów -->
-        <div class="log-table">
-            <table id="logTable">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Dzień</th>
-                        <th>Godzina</th>
-                        <th>IP</th>
-                        <th>Lokalizacja</th>
-                        <th>Urządzenie</th>
-                    </tr>
-                </thead>
-                <tbody id="logTableBody"></tbody>
-            </table>
+            <!-- Tabela logów -->
+            <div class="log-table">
+                <table id="logTable">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Dzień</th>
+                            <th>Godzina</th>
+                            <th>IP</th>
+                            <th>Lokalizacja</th>
+                            <th>Urządzenie</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTableBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
