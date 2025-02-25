@@ -73,6 +73,12 @@ h1::after {
     font-size: 1.5em; /* Większa czcionka dla temperatury */
     font-weight: bold; /* Pogrubiona czcionka */
     color: #ffffff;
+    background-color: #2d2d2d; /* Przyciemnione tło dla temperatur */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin: 0 auto; /* Wyśrodkowanie względem daty */
+    width: fit-content; /* Dopasowanie szerokości do zawartości */
 }
 
 .temp-row {
