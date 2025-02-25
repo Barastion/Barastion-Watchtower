@@ -107,6 +107,7 @@ h1::after {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 5px;
 }
 
@@ -132,12 +133,17 @@ h1::after {
 .weather-description {
     font-size: 0.8em;
     word-wrap: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
 }
 
 .weather-temps {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    align-items: center;
 }
 
 .temp-max {
