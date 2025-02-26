@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net https://moon-phase.p.rapidapi.com https://rapidapi.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net https://lunar-api.herokuapp.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div class="container">
@@ -278,19 +278,14 @@
                 const lat = location.latitude || 50.6673; // Domyślne współrzędne Opola, jeśli nie można pobrać
                 const lon = location.longitude || 17.9265;
 
-                // Pobierz dane o księżycu z Moon Phase API przez RapidAPI
+                // Pobierz dane o księżycu z Lunar API
                 const today = new Date();
                 const year = today.getFullYear();
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
                 const date = `${year}-${month}-${day}`;
 
-                const moonResponse = await fetch(`https://moon-phase.p.rapidapi.com/advanced?lat=${lat}&lon=${lon}&date=${date}`, {
-                    headers: {
-                        'X-RapidAPI-Key': 'YOUR_RAPIDAPI_KEY', // Zastąp swoim kluczem API z RapidAPI
-                        'X-RapidAPI-Host': 'moon-phase.p.rapidapi.com'
-                    }
-                });
+                const moonResponse = await fetch(`https://lunar-api.herokuapp.com/moon?latitude=${lat}&longitude=${lon}&date=${date}`);
                 const moonData = await moonResponse.json();
 
                 if (moonData) {
