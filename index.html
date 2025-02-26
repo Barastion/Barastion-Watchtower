@@ -257,7 +257,7 @@
             }
         }
 
-        async function getNasaApodImage(retries = 3, delay = 1000) {
+        async function getNasaApodImage(retries = 5, delay = 2000) {
             const imgElement = document.getElementById('spaceImage');
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
@@ -266,7 +266,7 @@
                         throw new Error(`Błąd HTTP: ${response.status} - ${response.statusText}`);
                     }
                     const data = await response.json();
-                    console.log('Dane z NASA APOD:', data);
+                    console.log('Dane z NASA APOD:', JSON.stringify(data, null, 2));
 
                     if (data.media_type === 'image' && data.url) {
                         imgElement.src = data.url;
@@ -276,10 +276,18 @@
                             imgElement.src = 'diabelek.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                         };
+                        // Sprawdź, czy obrazek załadował się poprawnie po krótkim czasie
+                        setTimeout(() => {
+                            if (!imgElement.complete || imgElement.naturalWidth === 0) {
+                                console.error('Obrazek nie załadł się poprawnie, używam fallbacku');
+                                imgElement.src = 'diabelek.png';
+                                imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
+                            }
+                        }, 5000); // Czekaj 5 sekund na załadowanie obrazu
                     } else {
+                        console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
                         imgElement.src = 'diabelek.png';
                         imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
-                        console.warn('NASA APOD zwróciło wideo lub inny typ mediów.');
                     }
                     return; // Jeśli się powiedzie, zakończ funkcję
                 } catch (err) {
