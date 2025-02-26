@@ -185,7 +185,7 @@ body {
 
 .detail-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 5px;
     font-size: 0.85em;
 }
@@ -276,6 +276,12 @@ tr:hover {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
+}
+
+@media (min-width: 769px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
