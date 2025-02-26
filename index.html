@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
-    <meta name="title" content="Ja tylko na chwile zobaczyć jak leci">
+    <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebaseio.com https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov data:;">
 </head>
 <body>
@@ -32,20 +32,22 @@
             </div>
 
             <div class="log-table">
-                <div class="table-container">
-                    <table id="logTable">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Dzień</th>
-                                <th>Godzina</th>
-                                <th>IP</th>
-                                <th>Lokalizacja</th>
-                                <th>Urządzenie</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logTableBody"></tbody>
-                    </table>
+                <div class="table-wrapper">
+                    <div class="table-container">
+                        <table id="logTable">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Dzień</th>
+                                    <th>Godzina</th>
+                                    <th>IP</th>
+                                    <th>Lokalizacja</th>
+                                    <th>Urządzenie</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -267,29 +269,23 @@
 
                     const imgElement = document.getElementById('spaceImage');
                     
-                    if (data.media_type === 'image') {
-                        // Jeśli odpowiedź zawiera zdjęcie, ustaw URL jako źródło obrazu
+                    if (data.media_type === 'image' && data.url) {
                         imgElement.src = data.url;
                         imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-                    } else if (data.media_type === 'video') {
-                        // Jeśli odpowiedź zawiera wideo, ustaw placeholder lub komunikat
-                        imgElement.src = ''; // Wyczyść źródło
-                        imgElement.alt = 'NASA APOD zawiera wideo: ' + (data.title || 'Brak tytułu');
-                        console.warn('NASA APOD zwróciło wideo zamiast zdjęcia.');
                     } else {
-                        throw new Error('Nieznany typ mediów z NASA APOD');
+                        imgElement.src = 'diabelek.png';
+                        imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
+                        console.warn('NASA APOD zwróciło wideo lub inny typ mediów.');
                     }
-                    return; // Jeśli się powiedzie, zakończ funkcję
+                    return;
                 } catch (err) {
                     console.error(`Próba ${attempt} pobierania zdjęcia z NASA APOD nie powiodła się:`, err);
                     if (attempt === retries) {
-                        // Po wyczerpaniu prób ustaw fallback
                         const imgElement = document.getElementById('spaceImage');
+                        imgElement.src = 'diabelek.png';
                         imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                        imgElement.src = 'fallback-image.jpg'; // Upewnij się, że ten plik istnieje
                         return;
                     }
-                    // Poczekaj przed ponowną próbą
                     await new Promise(resolve => setTimeout(resolve, delay));
                 }
             }
@@ -298,7 +294,7 @@
         async function getDailyFact() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0'); // Miesiąc zaczyna się od 0
+            const month = String(now.getMonth() + 1).padStart(2, '0');
             const dateKey = `${day}/${month}`;
 
             try {
