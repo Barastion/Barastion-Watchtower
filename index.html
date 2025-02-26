@@ -218,7 +218,7 @@
                 document.getElementById('weatherCity').textContent = city;
 
                 const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
-                const forecastData = await response.json();
+                const forecastData = await forecastResponse.json();
                 console.log('Dane pogody:', forecastData);
 
                 if (forecastData.daily) {
