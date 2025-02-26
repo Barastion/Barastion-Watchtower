@@ -26,11 +26,50 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
+        .nasa-container {
+            max-width: 640px;
+            margin: 0 auto 20px;
+            text-align: center;
+        }
+
+        .nasa-frame {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            background-color: #2d2d2d;
+            border: 2px solid #555555;
+        }
+
+        .nasa-frame img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
         .daily-fact {
             text-align: center;
             margin: 20px 0;
             font-size: 0.9em;
-            color: #ffffff;
+        }
+
+        .fact-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .fact-content {
+            margin-top: 10px;
+            font-size: 0.9em;
+            font-style: italic;
         }
 
         .content-frame {
@@ -87,6 +126,12 @@
 
         .forecast-bar.today {
             border: 2px solid #007bff;
+        }
+
+        .forecast-date {
+            font-size: 0.7em;
+            color: #cccccc;
+            margin-bottom: 5px;
         }
 
         .weather-icon {
@@ -278,6 +323,12 @@
 </head>
 <body>
     <div class="container">
+        <div class="nasa-container">
+            <div class="nasa-frame">
+                <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
+            </div>
+        </div>
+
         <div class="daily-fact">
             <span class="fact-header">💡 Ciekawostka na dziś:</span>
             <div class="fact-content" id="dailyFact">Ładowanie...</div>
@@ -335,19 +386,46 @@
         </div>
     </div>
 
-    <script>
-        // Funkcja do pobierania IP
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
+            authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
+            databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "monitor-odwiedzin-405c9",
+            storageBucket: "monitor-odwiedzin-405c9.appspot.com",
+            messagingSenderId: "93459469114",
+            appId: "1:93459469114:web:0a709b6be237705bf8f603"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Funkcje pomocnicze
+        function getDeviceType(userAgent) {
+            if (userAgent.includes('Android')) return 'Android';
+            if (userAgent.includes('iPhone')) return 'iPhone';
+            if (userAgent.includes('iPad')) return 'Tablet';
+            if (userAgent.includes('Macintosh')) return 'Mac';
+            if (userAgent.includes('Windows') || userAgent.includes('Linux')) return 'PC';
+            return 'Inne';
+        }
+
         async function getIp() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
                 const data = await response.json();
                 return data.ip || 'Nieznany IP';
             } catch (err) {
+                console.error('Błąd pobierania IP:', err);
                 return 'Nieznany IP';
             }
         }
 
-        // Funkcja do pobierania lokalizacji na podstawie IP
         async function getLocation(ip) {
             try {
                 const response = await fetch(`https://ipapi.co/${ip}/json/`);
@@ -359,6 +437,7 @@
                     longitude: data.longitude || 17.9265
                 };
             } catch (err) {
+                console.error('Błąd pobierania lokalizacji:', err);
                 return {
                     city: 'Nieznane miasto',
                     country: 'Nieznany kraj',
@@ -368,210 +447,4 @@
             }
         }
 
-        // Funkcja do pobierania pogody
-        async function getWeather(lat, lon) {
-            try {
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&hourly=relative_humidity_2m&timezone=auto`);
-                const forecastData = await forecastResponse.json();
-
-                if (forecastData.daily) {
-                    const forecastContainer = document.getElementById('weatherForecast');
-                    forecastContainer.innerHTML = '';
-
-                    const today = new Date();
-                    const todayIndex = 0;
-
-                    document.getElementById('sunrise').textContent = forecastData.daily.sunrise[todayIndex].split('T')[1].slice(0, 5);
-                    document.getElementById('sunset').textContent = forecastData.daily.sunset[todayIndex].split('T')[1].slice(0, 5);
-                    document.getElementById('precipitationChance').textContent = `${forecastData.daily.precipitation_probability_max[todayIndex]}%`;
-                    document.getElementById('humidity').textContent = `${forecastData.hourly.relative_humidity_2m[0]}%`;
-                    document.getElementById('windSpeed').textContent = `${forecastData.daily.windspeed_10m_max[todayIndex]} km/h`;
-
-                    const dailyData = forecastData.daily.time.map((date, index) => ({
-                        date: date,
-                        dayName: new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }),
-                        weatherCode: forecastData.daily.weathercode[index],
-                        maxTemp: forecastData.daily.temperature_2m_max[index],
-                        minTemp: forecastData.daily.temperature_2m_min[index]
-                    }));
-
-                    dailyData.forEach((item, index) => {
-                        const isToday = index === 0;
-                        const forecastBar = document.createElement('div');
-                        forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
-                        forecastBar.innerHTML = `
-                            <div class="forecast-date">${new Date(item.date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
-                            <div class="weather-icon">${getWeatherIcon(item.weatherCode)}</div>
-                            <div class="weather-day">${item.dayName}</div>
-                            <div class="weather-description">${getWeatherDescription(item.weatherCode)}</div>
-                            <div class="weather-temps">
-                                <div class="temp-max">${item.maxTemp.toFixed(1)}°C</div>
-                                <div class="temp-min">${item.minTemp.toFixed(1)}°C</div>
-                            </div>
-                        `;
-                        forecastContainer.appendChild(forecastBar);
-                    });
-                }
-            } catch (err) {
-                console.error('Błąd pobierania pogody:', err);
-                document.getElementById('weatherCity').textContent = 'Błąd pobierania prognozy';
-            }
-        }
-
-        // Funkcja do pobierania danych o księżycu (lokalne obliczenia)
-        function getMoonData(lat, lon) {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = today.getMonth() + 1;
-            const day = today.getDate();
-
-            // Oblicz fazę księżyca
-            const phase = getMoonPhase(year, month, day);
-            const illumination = getMoonIllumination(phase);
-
-            // Oszacuj wschód i zachód księżyca
-            const { moonrise, moonset } = estimateMoonTimes(lat, lon, phase);
-
-            // Oblicz dni do pełni i nowiu
-            const { daysToFullMoon, daysToNewMoon } = calculateDaysToPhases(phase);
-
-            // Wyświetl dane w HTML
-            document.getElementById('moonrise').textContent = moonrise;
-            document.getElementById('moonset').textContent = moonset;
-            document.getElementById('moonPhase').textContent = `${illumination}%`;
-            document.getElementById('daysToFullMoon').textContent = `${daysToFullMoon} dni`;
-            document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
-        }
-
-        // Obliczanie fazy księżyca
-        function getMoonPhase(year, month, day) {
-            const jd = julianDate(year, month, day);
-            const newMoon = 2451550.1; // Data nowiu w juliańskich dniach
-            const synodicMonth = 29.53058867; // Długość miesiąca synodycznego
-            const age = (jd - newMoon) % synodicMonth;
-            return (age / synodicMonth) * 360; // Faza w stopniach (0-360)
-        }
-
-        // Obliczanie daty juliańskiej
-        function julianDate(year, month, day) {
-            if (month <= 2) {
-                year -= 1;
-                month += 12;
-            }
-            const A = Math.floor(year / 100);
-            const B = Math.floor(A / 4);
-            const C = 2 - A + B;
-            const E = Math.floor(365.25 * (year + 4716));
-            const F = Math.floor(30.6001 * (month + 1));
-            return C + day + E + F - 1524.5;
-        }
-
-        // Obliczanie oświetlenia księżyca
-        function getMoonIllumination(phase) {
-            return Math.round((1 - Math.cos(phase * Math.PI / 180)) * 50);
-        }
-
-        // Szacowanie wschodu i zachodu księżyca
-        function estimateMoonTimes(lat, lon, phase) {
-            const hoursInDay = 24;
-            const moonOffset = (phase / 360) * hoursInDay;
-            const riseHour = (6 + moonOffset) % hoursInDay;
-            const setHour = (riseHour + 12) % hoursInDay;
-            const rise = `${String(Math.floor(riseHour)).padStart(2, '0')}:00`;
-            const set = `${String(Math.floor(setHour)).padStart(2, '0')}:00`;
-            return { moonrise: rise, moonset: set };
-        }
-
-        // Obliczanie dni do pełni i nowiu
-        function calculateDaysToPhases(phase) {
-            const daysInCycle = 29.5;
-            const currentPhase = (phase / 360) * daysInCycle;
-            const daysToFullMoon = Math.round((daysInCycle / 2 - currentPhase + daysInCycle) % daysInCycle);
-            const daysToNewMoon = Math.round((daysInCycle - currentPhase) % daysInCycle);
-            return { daysToFullMoon, daysToNewMoon };
-        }
-
-        // Funkcja do pobierania ikony pogody
-        function getWeatherIcon(code) {
-            const icons = {
-                0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️', 55: '🌧️',
-                61: '🌦️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '🌦️', 81: '🌧️', 82: '🌧️',
-                95: '⛈️', 96: '⛈️'
-            };
-            return icons[code] || '❓';
-        }
-
-        // Funkcja do pobierania opisu pogody
-        function getWeatherDescription(code) {
-            const descriptions = {
-                0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
-                45: 'Mgła', 48: 'Mgła z szronem', 51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
-                61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz', 71: 'Lekki śnieg', 73: 'Umiarkowany śnieg',
-                75: 'Intensywny śnieg', 80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
-                95: 'Burza', 96: 'Burza z gradem'
-            };
-            return descriptions[code] || 'Nieznana pogoda';
-        }
-
-        // Funkcja do pobierania ciekawostki
-        async function getDailyFact() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const dateKey = `${day}/${month}`;
-
-            const facts = {
-                '26/02': 'W 2003 roku, 26 lutego, naukowcy zaobserwowali supernową SN 2003bg w pobliskiej galaktyce, dostarczając cennych danych o eksplozjach gwiazd.'
-            };
-
-            document.getElementById('dailyFact').textContent = facts[dateKey] || 'Brak ciekawostki na dziś.';
-        }
-
-        // Funkcja do logowania wizyty
-        async function logVisit() {
-            const now = new Date();
-            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const day = now.toLocaleDateString('pl-PL', { weekday: 'long' });
-            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-            const ip = await getIp();
-            const location = await getLocation(ip);
-            const userAgent = navigator.userAgent;
-            const device = getDeviceType(userAgent);
-
-            const logEntry = { date, day, time, ip, location: `${location.city}, ${location.country}`, device };
-            const logTableBody = document.getElementById('logTableBody');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${logEntry.date}</td>
-                <td>${logEntry.day}</td>
-                <td>${logEntry.time}</td>
-                <td>${logEntry.ip}</td>
-                <td>${logEntry.location}</td>
-                <td>${logEntry.device}</td>
-            `;
-            logTableBody.appendChild(row);
-        }
-
-        // Funkcja do pobierania typu urządzenia
-        function getDeviceType(userAgent) {
-            if (userAgent.includes('Android')) return 'Android';
-            if (userAgent.includes('iPhone')) return 'iPhone';
-            if (userAgent.includes('iPad')) return 'Tablet';
-            if (userAgent.includes('Macintosh')) return 'Mac';
-            if (userAgent.includes('Windows') || userAgent.includes('Linux')) return 'PC';
-            return 'Inne';
-        }
-
-        // Funkcja onload
-        window.onload = async function() {
-            const ip = await getIp();
-            const location = await getLocation(ip);
-            document.getElementById('weatherCity').textContent = location.city;
-            await getWeather(location.latitude, location.longitude);
-            getMoonData(location.latitude, location.longitude);
-            await getDailyFact();
-            await logVisit();
-        };
-    </script>
-</body>
-</html>
+        const weatherIcons = {
