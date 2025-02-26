@@ -4,20 +4,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Odwiedzin</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net https://lunar-api.herokuapp.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .daily-fact {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 0.9em;
+            color: #ffffff;
+        }
+
+        .content-frame {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #3a3a3a;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .weather-info {
+            margin-bottom: 20px;
+        }
+
+        .weather-forecast {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .weather-city {
+            text-align: center;
+            margin: 0 0 15px 0;
+            font-size: 1.2em;
+        }
+
+        .forecast-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+            justify-content: flex-start;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
+        }
+
+        .forecast-bar {
+            background-color: #3a3a3a;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            min-width: 80px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            scroll-snap-align: start;
+        }
+
+        .forecast-bar.today {
+            border: 2px solid #007bff;
+        }
+
+        .weather-icon {
+            font-size: 1.5em;
+        }
+
+        .weather-day {
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .weather-description {
+            font-size: 0.8em;
+            word-wrap: break-word;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+        }
+
+        .weather-temps {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .temp-max {
+            color: #ff4d4d;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .temp-min {
+            color: #4d94ff;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .weather-additional {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .weather-details, .moon-details {
+            flex: 1;
+            background-color: #2d2d2d;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 5px;
+            font-size: 0.85em;
+        }
+
+        .detail-item {
+            background-color: #3a3a3a;
+            padding: 5px 8px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .detail-item span:first-child {
+            font-weight: bold;
+            color: #cccccc;
+        }
+
+        .detail-item span:last-child {
+            color: #ffffff;
+        }
+
+        .log-table {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .table-container {
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 6px;
+            height: 40px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #3a3a3a;
+        }
+
+        tr:nth-child(even) {
+            background-color: #2d2d2d;
+        }
+
+        tr:hover {
+            background-color: #4a4a4a;
+        }
+
+        .location-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .city {
+            font-size: 0.9em;
+            word-wrap: break-word;
+        }
+
+        .country {
+            font-size: 0.8em;
+            color: #cccccc;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .content-frame {
+                padding: 10px;
+            }
+
+            .forecast-container {
+                gap: 5px;
+            }
+
+            .forecast-bar {
+                min-width: 70px;
+                padding: 5px;
+            }
+
+            .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
+                font-size: 0.65em;
+            }
+
+            .weather-icon {
+                font-size: 1.2em;
+            }
+
+            .detail-item {
+                font-size: 0.8em;
+                padding: 4px 6px;
+            }
+
+            .weather-additional {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            table {
+                min-width: 800px;
+            }
+
+            th, td {
+                font-size: 0.8em;
+                padding: 4px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="nasa-container">
-            <div class="nasa-frame">
-                <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
-            </div>
-        </div>
-
         <div class="daily-fact">
             <span class="fact-header">💡 Ciekawostka na dziś:</span>
             <div class="fact-content" id="dailyFact">Ładowanie...</div>
@@ -75,87 +335,8 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
-            authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
-            databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "monitor-odwiedzin-405c9",
-            storageBucket: "monitor-odwiedzin-405c9.appspot.com",
-            messagingSenderId: "93459469114",
-            appId: "1:93459469114:web:0a709b6be237705bf8f603"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        function getDeviceType(userAgent) {
-            if (userAgent.includes('Android')) return 'Android';
-            if (userAgent.includes('iPhone')) return 'iPhone';
-            if (userAgent.includes('iPad')) return 'Tablet';
-            if (userAgent.includes('Macintosh')) return 'Mac';
-            if (userAgent.includes('Windows') || userAgent.includes('Linux')) return 'PC';
-            return 'Inne';
-        }
-
-        async function logVisit() {
-            const now = new Date();
-            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
-            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-            const ip = await getIp();
-            const location = await getLocation(ip);
-            const userAgent = navigator.userAgent;
-            const device = getDeviceType(userAgent);
-
-            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
-            const logsRef = ref(database, 'logs');
-            const newLogRef = push(logsRef);
-
-            await set(newLogRef, logEntry);
-            await updateLogs();
-        }
-
-        async function updateLogs() {
-            const logsRef = ref(database, 'logs');
-            onValue(logsRef, (snapshot) => {
-                const logsData = snapshot.val();
-                let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
-                logs.sort((a, b) => b.timestamp - a.timestamp);
-
-                if (logs.length > 50) {
-                    const logsToDelete = logs.slice(50);
-                    logs = logs.slice(0, 50);
-                    logsToDelete.forEach(log => remove(ref(database, `logs/${log.key}`)));
-                }
-
-                displayLogs(logs);
-            }, { onlyOnce: true });
-        }
-
-        function displayLogs(logs) {
-            const logTableBody = document.getElementById('logTableBody');
-            logTableBody.innerHTML = '';
-            logs.forEach(log => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${log.date || 'Brak'}</td>
-                    <td>${log.day || 'Brak'}</td>
-                    <td>${log.time || 'Brak'}</td>
-                    <td>${log.ip || 'Brak'}</td>
-                    <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
-                    </td>
-                    <td>${log.device || 'Brak'}</td>
-                `;
-                logTableBody.appendChild(row);
-            });
-        }
-
+    <script>
+        // Funkcja do pobierania IP
         async function getIp() {
             try {
                 const response = await fetch('https://api.ipify.org?format=json');
@@ -166,6 +347,7 @@
             }
         }
 
+        // Funkcja do pobierania lokalizacji na podstawie IP
         async function getLocation(ip) {
             try {
                 const response = await fetch(`https://ipapi.co/${ip}/json/`);
@@ -177,39 +359,19 @@
                     longitude: data.longitude || 17.9265
                 };
             } catch (err) {
-                return { city: 'Nieznane miasto', country: 'Nieznany kraj', latitude: 50.6673, longitude: 17.9265 };
+                return {
+                    city: 'Nieznane miasto',
+                    country: 'Nieznany kraj',
+                    latitude: 50.6673,
+                    longitude: 17.9265
+                };
             }
         }
 
-        const weatherIcons = {
-            0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️', 55: '🌧️',
-            61: '🌦️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '🌦️', 81: '🌧️', 82: '🌧️',
-            95: '⛈️', 96: '⛈️'
-        };
-
-        const weatherDescriptions = {
-            0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
-            45: 'Mgła', 48: 'Mgła z szronem', 51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
-            61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz', 71: 'Lekki śnieg', 73: 'Umiarkowany śnieg',
-            75: 'Intensywny śnieg', 80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
-            95: 'Burza', 96: 'Burza z gradem'
-        };
-
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
-
-        async function getWeather(ip) {
+        // Funkcja do pobierania pogody
+        async function getWeather(lat, lon) {
             try {
-                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
-                const locationData = await locationResponse.json();
-                const lat = locationData.latitude;
-                const lon = locationData.longitude;
-                const city = locationData.city || 'Nieznane miasto';
-
-                document.getElementById('weatherCity').textContent = city;
-
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset,precipitation_probability_mean,windspeed_10m_max&hourly=relative_humidity_2m&timezone=auto`);
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset,precipitation_probability_max,windspeed_10m_max&hourly=relative_humidity_2m&timezone=auto`);
                 const forecastData = await forecastResponse.json();
 
                 if (forecastData.daily) {
@@ -221,26 +383,17 @@
 
                     document.getElementById('sunrise').textContent = forecastData.daily.sunrise[todayIndex].split('T')[1].slice(0, 5);
                     document.getElementById('sunset').textContent = forecastData.daily.sunset[todayIndex].split('T')[1].slice(0, 5);
-                    document.getElementById('precipitationChance').textContent = `${forecastData.daily.precipitation_probability_mean[todayIndex]}%`;
+                    document.getElementById('precipitationChance').textContent = `${forecastData.daily.precipitation_probability_max[todayIndex]}%`;
                     document.getElementById('humidity').textContent = `${forecastData.hourly.relative_humidity_2m[0]}%`;
                     document.getElementById('windSpeed').textContent = `${forecastData.daily.windspeed_10m_max[todayIndex]} km/h`;
 
-                    // Sortowanie i wyświetlanie prognozy, zaczynając od dnia dzisiejszego
-                    const todayDate = today.toISOString().split('T')[0];
                     const dailyData = forecastData.daily.time.map((date, index) => ({
                         date: date,
-                        dayName: capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' })),
+                        dayName: new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }),
                         weatherCode: forecastData.daily.weathercode[index],
                         maxTemp: forecastData.daily.temperature_2m_max[index],
                         minTemp: forecastData.daily.temperature_2m_min[index]
                     }));
-
-                    // Znajdź indeks dnia dzisiejszego i przesuń go na początek
-                    const todayIndexInArray = dailyData.findIndex(item => item.date === todayDate);
-                    if (todayIndexInArray > -1) {
-                        const todayItem = dailyData.splice(todayIndexInArray, 1)[0];
-                        dailyData.unshift(todayItem);
-                    }
 
                     dailyData.forEach((item, index) => {
                         const isToday = index === 0;
@@ -248,9 +401,9 @@
                         forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
                         forecastBar.innerHTML = `
                             <div class="forecast-date">${new Date(item.date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
-                            <div class="weather-icon">${weatherIcons[item.weatherCode] || '❓'}</div>
+                            <div class="weather-icon">${getWeatherIcon(item.weatherCode)}</div>
                             <div class="weather-day">${item.dayName}</div>
-                            <div class="weather-description">${weatherDescriptions[item.weatherCode] || 'Nieznana pogoda'}</div>
+                            <div class="weather-description">${getWeatherDescription(item.weatherCode)}</div>
                             <div class="weather-temps">
                                 <div class="temp-max">${item.maxTemp.toFixed(1)}°C</div>
                                 <div class="temp-min">${item.minTemp.toFixed(1)}°C</div>
@@ -261,104 +414,163 @@
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
-                document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
-                document.getElementById('weatherCity').textContent = 'Nieznane miasto';
-                document.getElementById('sunrise').textContent = 'Brak danych';
-                document.getElementById('sunset').textContent = 'Brak danych';
-                document.getElementById('precipitationChance').textContent = 'Brak danych';
-                document.getElementById('humidity').textContent = 'Brak danych';
-                document.getElementById('windSpeed').textContent = 'Brak danych';
+                document.getElementById('weatherCity').textContent = 'Błąd pobierania prognozy';
             }
         }
 
-        async function getMoonData(ip) {
-            try {
-                // Pobierz lokalizację na podstawie IP
-                const location = await getLocation(ip);
-                const lat = location.latitude || 50.6673; // Domyślne współrzędne Opola, jeśli nie można pobrać
-                const lon = location.longitude || 17.9265;
+        // Funkcja do pobierania danych o księżycu (lokalne obliczenia)
+        function getMoonData(lat, lon) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
 
-                // Pobierz dane o księżycu z Lunar API
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0');
-                const date = `${year}-${month}-${day}`;
+            // Oblicz fazę księżyca
+            const phase = getMoonPhase(year, month, day);
+            const illumination = getMoonIllumination(phase);
 
-                const moonResponse = await fetch(`https://lunar-api.herokuapp.com/moon?latitude=${lat}&longitude=${lon}&date=${date}`);
-                const moonData = await moonResponse.json();
+            // Oszacuj wschód i zachód księżyca
+            const { moonrise, moonset } = estimateMoonTimes(lat, lon, phase);
 
-                if (moonData) {
-                    // Wschód i zachód księżyca
-                    document.getElementById('moonrise').textContent = moonData.moonrise ? moonData.moonrise.slice(0, 5) : 'Brak danych';
-                    document.getElementById('moonset').textContent = moonData.moonset ? moonData.moonset.slice(0, 5) : 'Brak danych';
+            // Oblicz dni do pełni i nowiu
+            const { daysToFullMoon, daysToNewMoon } = calculateDaysToPhases(phase);
 
-                    // Widoczna powierzchnia księżyca (oświetlenie w %)
-                    const illumination = moonData.illumination * 100; // Przekształcenie na procenty
-                    document.getElementById('moonPhase').textContent = `${illumination.toFixed(0)}%`;
-
-                    // Obliczenie dni do pełni i nowiu na podstawie fazy
-                    const phase = moonData.phase; // Faza w stopniach (0-360) lub nazwa
-                    const daysInCycle = 29.5; // Średni cykl księżycowy w dniach
-                    const phaseInDays = (phase / 360) * daysInCycle; // Przeliczenie fazy na dni cyklu
-                    const currentDay = today.getDate();
-                    const fullMoonDay = Math.round((180 - phase) / 360 * daysInCycle + currentDay) % 30 || 30; // Dni do pełni
-                    const newMoonDay = Math.round((-phase) / 360 * daysInCycle + currentDay) % 30 || 30; // Dni do nowiu
-
-                    const daysToFullMoon = fullMoonDay > currentDay ? fullMoonDay - currentDay : 30 - (currentDay - fullMoonDay);
-                    const daysToNewMoon = newMoonDay > currentDay ? newMoonDay - currentDay : 30 - (currentDay - newMoonDay);
-
-                    document.getElementById('daysToFullMoon').textContent = `${daysToFullMoon} dni`;
-                    document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
-                }
-            } catch (err) {
-                console.error('Błąd pobierania danych o księżycu:', err);
-                document.getElementById('moonrise').textContent = 'Brak danych';
-                document.getElementById('moonset').textContent = 'Brak danych';
-                document.getElementById('moonPhase').textContent = 'Brak danych';
-                document.getElementById('daysToFullMoon').textContent = 'Brak danych';
-                document.getElementById('daysToNewMoon').textContent = 'Brak danych';
-            }
+            // Wyświetl dane w HTML
+            document.getElementById('moonrise').textContent = moonrise;
+            document.getElementById('moonset').textContent = moonset;
+            document.getElementById('moonPhase').textContent = `${illumination}%`;
+            document.getElementById('daysToFullMoon').textContent = `${daysToFullMoon} dni`;
+            document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
         }
 
-        async function getNasaApodImage() {
-            const imgElement = document.getElementById('spaceImage');
-            try {
-                const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY');
-                const data = await response.json();
-                if (data.media_type === 'image' && data.url) {
-                    imgElement.src = data.url;
-                    imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-                } else {
-                    imgElement.src = 'diabelek.png';
-                }
-            } catch (err) {
-                imgElement.src = 'diabelek.png';
-            }
+        // Obliczanie fazy księżyca
+        function getMoonPhase(year, month, day) {
+            const jd = julianDate(year, month, day);
+            const newMoon = 2451550.1; // Data nowiu w juliańskich dniach
+            const synodicMonth = 29.53058867; // Długość miesiąca synodycznego
+            const age = (jd - newMoon) % synodicMonth;
+            return (age / synodicMonth) * 360; // Faza w stopniach (0-360)
         }
 
+        // Obliczanie daty juliańskiej
+        function julianDate(year, month, day) {
+            if (month <= 2) {
+                year -= 1;
+                month += 12;
+            }
+            const A = Math.floor(year / 100);
+            const B = Math.floor(A / 4);
+            const C = 2 - A + B;
+            const E = Math.floor(365.25 * (year + 4716));
+            const F = Math.floor(30.6001 * (month + 1));
+            return C + day + E + F - 1524.5;
+        }
+
+        // Obliczanie oświetlenia księżyca
+        function getMoonIllumination(phase) {
+            return Math.round((1 - Math.cos(phase * Math.PI / 180)) * 50);
+        }
+
+        // Szacowanie wschodu i zachodu księżyca
+        function estimateMoonTimes(lat, lon, phase) {
+            const hoursInDay = 24;
+            const moonOffset = (phase / 360) * hoursInDay;
+            const riseHour = (6 + moonOffset) % hoursInDay;
+            const setHour = (riseHour + 12) % hoursInDay;
+            const rise = `${String(Math.floor(riseHour)).padStart(2, '0')}:00`;
+            const set = `${String(Math.floor(setHour)).padStart(2, '0')}:00`;
+            return { moonrise: rise, moonset: set };
+        }
+
+        // Obliczanie dni do pełni i nowiu
+        function calculateDaysToPhases(phase) {
+            const daysInCycle = 29.5;
+            const currentPhase = (phase / 360) * daysInCycle;
+            const daysToFullMoon = Math.round((daysInCycle / 2 - currentPhase + daysInCycle) % daysInCycle);
+            const daysToNewMoon = Math.round((daysInCycle - currentPhase) % daysInCycle);
+            return { daysToFullMoon, daysToNewMoon };
+        }
+
+        // Funkcja do pobierania ikony pogody
+        function getWeatherIcon(code) {
+            const icons = {
+                0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️', 55: '🌧️',
+                61: '🌦️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '🌦️', 81: '🌧️', 82: '🌧️',
+                95: '⛈️', 96: '⛈️'
+            };
+            return icons[code] || '❓';
+        }
+
+        // Funkcja do pobierania opisu pogody
+        function getWeatherDescription(code) {
+            const descriptions = {
+                0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
+                45: 'Mgła', 48: 'Mgła z szronem', 51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
+                61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz', 71: 'Lekki śnieg', 73: 'Umiarkowany śnieg',
+                75: 'Intensywny śnieg', 80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
+                95: 'Burza', 96: 'Burza z gradem'
+            };
+            return descriptions[code] || 'Nieznana pogoda';
+        }
+
+        // Funkcja do pobierania ciekawostki
         async function getDailyFact() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const dateKey = `${day}/${month}`;
 
-            try {
-                const response = await fetch('calendar.json');
-                const calendarData = await response.json();
-                document.getElementById('dailyFact').textContent = calendarData[dateKey] || 'Brak ciekawostki na dziś.';
-            } catch (err) {
-                document.getElementById('dailyFact').textContent = 'Błąd ładowania ciekawostki';
-            }
+            const facts = {
+                '26/02': 'W 2003 roku, 26 lutego, naukowcy zaobserwowali supernową SN 2003bg w pobliskiej galaktyce, dostarczając cennych danych o eksplozjach gwiazd.'
+            };
+
+            document.getElementById('dailyFact').textContent = facts[dateKey] || 'Brak ciekawostki na dziś.';
         }
 
+        // Funkcja do logowania wizyty
+        async function logVisit() {
+            const now = new Date();
+            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const day = now.toLocaleDateString('pl-PL', { weekday: 'long' });
+            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const ip = await getIp();
+            const location = await getLocation(ip);
+            const userAgent = navigator.userAgent;
+            const device = getDeviceType(userAgent);
+
+            const logEntry = { date, day, time, ip, location: `${location.city}, ${location.country}`, device };
+            const logTableBody = document.getElementById('logTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${logEntry.date}</td>
+                <td>${logEntry.day}</td>
+                <td>${logEntry.time}</td>
+                <td>${logEntry.ip}</td>
+                <td>${logEntry.location}</td>
+                <td>${logEntry.device}</td>
+            `;
+            logTableBody.appendChild(row);
+        }
+
+        // Funkcja do pobierania typu urządzenia
+        function getDeviceType(userAgent) {
+            if (userAgent.includes('Android')) return 'Android';
+            if (userAgent.includes('iPhone')) return 'iPhone';
+            if (userAgent.includes('iPad')) return 'Tablet';
+            if (userAgent.includes('Macintosh')) return 'Mac';
+            if (userAgent.includes('Windows') || userAgent.includes('Linux')) return 'PC';
+            return 'Inne';
+        }
+
+        // Funkcja onload
         window.onload = async function() {
             const ip = await getIp();
-            await logVisit();
-            await getWeather(ip);
-            await getMoonData(ip); // Używa IP do pobierania współrzędnych
-            await getNasaApodImage();
+            const location = await getLocation(ip);
+            document.getElementById('weatherCity').textContent = location.city;
+            await getWeather(location.latitude, location.longitude);
+            getMoonData(location.latitude, location.longitude);
             await getDailyFact();
+            await logVisit();
         };
     </script>
 </body>
