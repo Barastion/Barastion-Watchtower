@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net https://api.usno.navy.mil; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net https://moon-phase.p.rapidapi.com https://rapidapi.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div class="container">
@@ -278,53 +278,40 @@
                 const lat = location.latitude || 50.6673; // Domyślne współrzędne Opola, jeśli nie można pobrać
                 const lon = location.longitude || 17.9265;
 
-                // Pobierz dane o księżycu z USNO API
+                // Pobierz dane o księżycu z Moon Phase API przez RapidAPI
                 const today = new Date();
                 const year = today.getFullYear();
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
                 const date = `${year}-${month}-${day}`;
 
-                const moonResponse = await fetch(`https://api.usno.navy.mil/moon/phase?date=${date}&coords=${lat},${lon}`);
+                const moonResponse = await fetch(`https://moon-phase.p.rapidapi.com/advanced?lat=${lat}&lon=${lon}&date=${date}`, {
+                    headers: {
+                        'X-RapidAPI-Key': 'YOUR_RAPIDAPI_KEY', // Zastąp swoim kluczem API z RapidAPI
+                        'X-RapidAPI-Host': 'moon-phase.p.rapidapi.com'
+                    }
+                });
                 const moonData = await moonResponse.json();
 
-                if (moonData.phasedata && moonData.phasedata.length > 0) {
-                    const phaseData = moonData.phasedata[0];
-
+                if (moonData) {
                     // Wschód i zachód księżyca
-                    document.getElementById('moonrise').textContent = phaseData.rise ? phaseData.rise.split(' ')[1].slice(0, 5) : 'Brak danych';
-                    document.getElementById('moonset').textContent = phaseData.set ? phaseData.set.split(' ')[1].slice(0, 5) : 'Brak danych';
+                    document.getElementById('moonrise').textContent = moonData.moonrise ? moonData.moonrise.slice(0, 5) : 'Brak danych';
+                    document.getElementById('moonset').textContent = moonData.moonset ? moonData.moonset.slice(0, 5) : 'Brak danych';
 
                     // Widoczna powierzchnia księżyca (oświetlenie w %)
-                    const phaseName = phaseData.phase;
-                    let moonPhasePercent = 0;
-                    if (phaseName === 'New Moon') moonPhasePercent = 0;
-                    else if (phaseName === 'First Quarter') moonPhasePercent = 50;
-                    else if (phaseName === 'Full Moon') moonPhasePercent = 100;
-                    else if (phaseName === 'Last Quarter') moonPhasePercent = 50;
-                    else if (phaseName.includes('Crescent')) moonPhasePercent = 25;
-                    else if (phaseName.includes('Gibbous')) moonPhasePercent = 75;
-                    document.getElementById('moonPhase').textContent = `${moonPhasePercent}%`;
+                    const illumination = moonData.illumination * 100; // Przekształcenie na procenty
+                    document.getElementById('moonPhase').textContent = `${illumination.toFixed(0)}%`;
 
                     // Obliczenie dni do pełni i nowiu na podstawie fazy
-                    const phasesOrder = ['New Moon', 'First Quarter', 'Full Moon', 'Last Quarter'];
-                    const currentPhaseIndex = phasesOrder.indexOf(phaseName) !== -1 ? phasesOrder.indexOf(phaseName) : 0;
-                    const daysPerPhase = 7.375;
+                    const phase = moonData.phase; // Faza w stopniach (0-360) lub nazwa
+                    const daysInCycle = 29.5; // Średni cykl księżycowy w dniach
+                    const phaseInDays = (phase / 360) * daysInCycle; // Przeliczenie fazy na dni cyklu
+                    const currentDay = today.getDate();
+                    const fullMoonDay = Math.round((180 - phase) / 360 * daysInCycle + currentDay) % 30 || 30; // Dni do pełni
+                    const newMoonDay = Math.round((-phase) / 360 * daysInCycle + currentDay) % 30 || 30; // Dni do nowiu
 
-                    let daysToFullMoon = 0;
-                    let daysToNewMoon = 0;
-                    if (phaseName === 'Full Moon') {
-                        daysToFullMoon = 0;
-                        daysToNewMoon = Math.round(daysPerPhase * 1.5);
-                    } else if (phaseName === 'New Moon') {
-                        daysToFullMoon = Math.round(daysPerPhase * 1.5);
-                        daysToNewMoon = 0;
-                    } else {
-                        const fullMoonIndex = phasesOrder.indexOf('Full Moon');
-                        const newMoonIndex = phasesOrder.indexOf('New Moon');
-                        daysToFullMoon = Math.round(((fullMoonIndex - currentPhaseIndex + 4) % 4) * daysPerPhase);
-                        daysToNewMoon = Math.round(((newMoonIndex - currentPhaseIndex + 4) % 4) * daysPerPhase);
-                    }
+                    const daysToFullMoon = fullMoonDay > currentDay ? fullMoonDay - currentDay : 30 - (currentDay - fullMoonDay);
+                    const daysToNewMoon = newMoonDay > currentDay ? newMoonDay - currentDay : 30 - (currentDay - newMoonDay);
 
                     document.getElementById('daysToFullMoon').textContent = `${daysToFullMoon} dni`;
                     document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
