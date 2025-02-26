@@ -25,7 +25,7 @@ body {
 .nasa-frame {
     position: relative;
     width: 100%;
-    padding-top: 56.25%;
+    padding-top: 56.25%; /* Proporcje 16:9 */
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -39,7 +39,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* Obrazek wypełnia ramkę, zachowując proporcje */
     border-radius: 6px;
 }
 
@@ -47,6 +47,7 @@ body {
     text-align: center;
     margin: 20px 0;
     font-size: 0.9em;
+    color: #ffffff;
 }
 
 .fact-header {
@@ -60,6 +61,8 @@ body {
     margin-top: 10px;
     font-size: 0.9em;
     font-style: italic;
+    line-height: 1.5;
+    word-wrap: break-word;
 }
 
 .content-frame {
@@ -80,7 +83,6 @@ body {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-bottom: 10px;
 }
 
 .weather-city {
@@ -94,9 +96,8 @@ body {
     gap: 10px;
     overflow-x: auto;
     padding: 10px 0;
-    justify-content: flex-start;
+    justify-content: center;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
 }
 
 .forecast-bar {
@@ -111,7 +112,6 @@ body {
     align-items: center;
     justify-content: center;
     gap: 5px;
-    scroll-snap-align: start;
 }
 
 .forecast-bar.today {
@@ -161,46 +161,6 @@ body {
     font-size: 1em;
 }
 
-.weather-additional {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.weather-details, .moon-details {
-    flex: 1;
-    background-color: #2d2d2d;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.detail-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 5px;
-    font-size: 0.85em;
-}
-
-.detail-item {
-    background-color: #3a3a3a;
-    padding: 5px 8px;
-    border-radius: 4px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.detail-item span:first-child {
-    font-weight: bold;
-    color: #cccccc;
-}
-
-.detail-item span:last-child {
-    color: #ffffff;
-}
-
 .log-table {
     background-color: #2d2d2d;
     padding: 15px;
@@ -210,6 +170,7 @@ body {
 
 .table-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .table-container {
@@ -218,7 +179,9 @@ body {
 
 table {
     width: 100%;
+    min-width: 0; /* Usunięto minimalną szerokość, aby tabela dostosowywała się do zawartości na PC */
     border-collapse: collapse;
+    table-layout: auto; /* Zmieniono na auto, aby kolumny dostosowywały się do zawartości */
 }
 
 th, td {
@@ -251,11 +214,15 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    max-width: 150px; /* Ograniczenie szerokości, aby zapobiec zbyt dużemu rozciągnięciu */
 }
 
 .city {
     font-size: 0.9em;
     word-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
 }
 
 .country {
@@ -270,10 +237,26 @@ tr:hover {
     }
 
     .content-frame {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .daily-fact {
+        font-size: 0.8em;
+    }
+
+    .fact-content {
+        font-size: 0.8em;
+    }
+
+    .weather-forecast {
+        max-width: 100%;
         padding: 10px;
     }
 
     .forecast-container {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
         gap: 5px;
     }
 
@@ -290,18 +273,16 @@ tr:hover {
         font-size: 1.2em;
     }
 
-    .detail-item {
-        font-size: 0.8em;
-        padding: 4px 6px;
+    .log-table {
+        max-width: 100%;
     }
 
-    .weather-additional {
-        flex-direction: column;
-        gap: 8px;
+    .table-wrapper {
+        overflow-x: auto;
     }
 
     table {
-        min-width: 800px;
+        min-width: 800px; /* Minimalna szerokość na mobile, aby wymusić przewijanie */
     }
 
     th, td {
