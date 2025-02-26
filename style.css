@@ -94,9 +94,9 @@ body {
     gap: 10px;
     overflow-x: auto;
     padding: 10px 0;
-    justify-content: flex-start; /* Zmienione z center na flex-start, aby początek był widoczny */
+    justify-content: flex-start;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory; /* Dodano, aby ułatwić przewijanie */
+    scroll-snap-type: x mandatory;
 }
 
 .forecast-bar {
@@ -111,7 +111,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 5px;
-    scroll-snap-align: start; /* Ułatwia snapowanie przy przewijaniu */
+    scroll-snap-align: start;
 }
 
 .forecast-bar.today {
