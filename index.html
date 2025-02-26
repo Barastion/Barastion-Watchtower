@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.usno.navy.mil; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div class="container">
@@ -63,16 +63,19 @@
                         <h3 class="weather-detail-header">Księżyc</h3>
                         <div class="detail-grid">
                             <div class="detail-item">
-                                <span>Wschód: <span id="moonrise">HH:MM</span></span>
+                                <span>Wschód księżyca: <span id="moonrise">HH:MM</span></span>
                             </div>
                             <div class="detail-item">
-                                <span>Zachód: <span id="moonset">HH:MM</span></span>
+                                <span>Zachód księżyca: <span id="moonset">HH:MM</span></span>
                             </div>
                             <div class="detail-item">
                                 <span>Faza: <span id="moonPhase">Brak danych</span></span>
                             </div>
                             <div class="detail-item">
-                                <span>Do nowiu: <span id="daysToNewMoon">XX dni</span></span>
+                                <span>Do następnej pełni: <span id="daysToFullMoon">XX dni</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Do następnego nowiu: <span id="daysToNewMoon">XX dni</span></span>
                             </div>
                         </div>
                     </div>
@@ -333,35 +336,77 @@
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
 
-                const response = await fetch(`https://api.usno.navy.mil/moon/phase?date=${year}-${month}-${day}&coords=${lat},${lon}`);
-                const data = await response.json();
-                console.log('Dane o księżycu:', data);
+                // Pobierz dane o fazach księżyca
+                const moonResponse = await fetch(`https://api.farmsense.net/v1/moonphases/?d=${year}-${month}-${day}`);
+                const moonData = await moonResponse.json();
+                console.log('Dane o księżycu:', moonData);
 
-                if (data.phasedata) {
-                    const phase = data.phasedata.find(p => p.date === `${month}/${day}/${year}`);
-                    if (phase) {
-                        document.getElementById('moonrise').textContent = phase.rise ? phase.rise.split(' ')[1] : 'Brak danych';
-                        document.getElementById('moonset').textContent = phase.set ? phase.set.split(' ')[1] : 'Brak danych';
-                        document.getElementById('moonPhase').textContent = phase.phase || 'Brak danych';
+                if (moonData.length > 0) {
+                    const phase = moonData[0];
+                    const moonPhases = {
+                        'New Moon': 'Nów',
+                        'First Quarter': 'Pierwsza kwadra',
+                        'Full Moon': 'Pełnia',
+                        'Last Quarter': 'Ostatnia kwadra'
+                    };
+                    const currentPhase = moonPhases[phase.Phase] || 'Nieznana faza';
 
-                        // Szacunkowa liczba dni do nowiu (proste obliczenie na podstawie fazy)
-                        const phases = ['New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous', 'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'];
-                        const currentPhaseIndex = phases.indexOf(phase.phase);
-                        const daysToNewMoon = currentPhaseIndex < 0 ? 'Brak danych' : Math.round((8 - currentPhaseIndex) % 8 * 3.7); // Przybliżenie, 29.5 dni / 8 faz ≈ 3.7 dni
-                        document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
+                    // Szacunkowe wschód i zachód księżyca (przybliżenie na podstawie fazy i lokalizacji)
+                    const hoursInDay = 24;
+                    const moonRiseSet = estimateMoonRiseSet(lat, lon, today, currentPhase);
+                    document.getElementById('moonrise').textContent = moonRiseSet.rise;
+                    document.getElementById('moonset').textContent = moonRiseSet.set;
+
+                    document.getElementById('moonPhase').textContent = currentPhase;
+
+                    // Obliczenie dni do następnej pełni i nowiu
+                    const phasesOrder = ['New Moon', 'First Quarter', 'Full Moon', 'Last Quarter'];
+                    const currentIndex = phasesOrder.indexOf(phase.Phase);
+                    const daysPerPhase = 7.375; // Przybliżona liczba dni na fazę (29.5 / 4)
+
+                    let daysToFullMoon = 0;
+                    let daysToNewMoon = 0;
+                    if (currentPhase === 'Pełnia') {
+                        daysToFullMoon = 0;
+                        daysToNewMoon = daysPerPhase * 1.5; // Do nowiu po pełni
+                    } else if (currentPhase === 'Nów') {
+                        daysToFullMoon = daysPerPhase * 1.5; // Do pełni po nowiu
+                        daysToNewMoon = 0;
                     } else {
-                        throw new Error('Brak danych o fazie księżyca');
+                        const fullMoonIndex = phasesOrder.indexOf('Full Moon');
+                        const newMoonIndex = phasesOrder.indexOf('New Moon');
+                        const distanceToFull = (fullMoonIndex - currentIndex + 4) % 4;
+                        const distanceToNew = (newMoonIndex - currentIndex + 4) % 4;
+                        daysToFullMoon = Math.round(distanceToFull * daysPerPhase);
+                        daysToNewMoon = Math.round(distanceToNew * daysPerPhase);
                     }
+
+                    document.getElementById('daysToFullMoon').textContent = `${daysToFullMoon} dni`;
+                    document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
                 } else {
-                    throw new Error('Nieprawidłowe dane z API księżyca');
+                    throw new Error('Brak danych o fazach księżyca');
                 }
             } catch (err) {
                 console.error('Błąd pobierania danych o księżycu:', err);
                 document.getElementById('moonrise').textContent = 'Brak danych';
                 document.getElementById('moonset').textContent = 'Brak danych';
                 document.getElementById('moonPhase').textContent = 'Brak danych';
+                document.getElementById('daysToFullMoon').textContent = 'Brak danych';
                 document.getElementById('daysToNewMoon').textContent = 'Brak danych';
             }
+        }
+
+        function estimateMoonRiseSet(lat, lon, date, phase) {
+            // Proste przybliżenie wschodu i zachodu księżyca na podstawie fazy i lokalizacji
+            const hours = date.getHours();
+            const isDaytime = hours >= 6 && hours < 18;
+            const moonOffset = phase === 'Pełnia' || phase === 'Ostatnia kwadra' ? 12 : 0; // Przybliżenie
+            const riseHour = (isDaytime ? 18 : 6) + moonOffset;
+            const setHour = riseHour + 12;
+
+            const rise = `${String(riseHour).padStart(2, '0')}:00`;
+            const set = `${String(setHour % 24).padStart(2, '0')}:00`;
+            return { rise, set };
         }
 
         async function getNasaApodImage(retries = 5, delay = 2000) {
@@ -434,7 +479,7 @@
             console.log('IP przy załadowaniu:', ip);
             await logVisit();
             await getWeather(ip);
-            await getMoonData(50.6673, 17.9265); // Używam przykładowych współrzędnych Opola (możesz dynamicznie pobrać z getLocation)
+            await getMoonData(50.6673, 17.9265); // Używam przykładowych współrzędnych Opola
             await getNasaApodImage();
             await getDailyFact();
         };
