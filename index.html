@@ -271,50 +271,50 @@
 
         async function getMoonData(lat, lon) {
             try {
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = String(today.getMonth() + 1).padStart(2, '0');
-                const day = String(today.getDate()).padStart(2, '0');
-
-                const moonResponse = await fetch(`https://api.farmsense.net/v1/moonphases/?d=${year}-${month}-${day}`);
+                const moonResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=moonrise,moonset&timezone=auto`);
                 const moonData = await moonResponse.json();
 
-                if (moonData.length > 0) {
-                    const phase = moonData[0];
-                    const moonOffset = phase.Phase === 'Full Moon' || phase.Phase === 'Last Quarter' ? 12 : 0;
-                    const riseHour = (6 + moonOffset) % 24;
-                    const setHour = (riseHour + 12) % 24;
+                if (moonData.daily) {
+                    const todayIndex = 0;
+                    // Pobieranie wschodu i zachodu księżyca
+                    document.getElementById('moonrise').textContent = moonData.daily.moonrise[todayIndex]?.split('T')[1]?.slice(0, 5) || 'Brak danych';
+                    document.getElementById('moonset').textContent = moonData.daily.moonset[todayIndex]?.split('T')[1]?.slice(0, 5) || 'Brak danych';
 
-                    document.getElementById('moonrise').textContent = `${String(riseHour).padStart(2, '0')}:00`;
-                    document.getElementById('moonset').textContent = `${String(setHour).padStart(2, '0')}:00`;
-
-                    // Obliczanie widocznej powierzchni księżyca w procentach na podstawie fazy
-                    const phasePercentages = {
-                        'New Moon': 0,
-                        'First Quarter': 50,
-                        'Full Moon': 100,
-                        'Last Quarter': 50
-                    };
-                    const moonPhasePercent = phasePercentages[phase.Phase] || 0;
+                    // Szacowanie widoczności na podstawie fazy księżyca
+                    const phaseResponse = await fetch(`https://api.farmsense.net/v1/moonphases/?d=${new Date().toISOString().split('T')[0]}`);
+                    const phaseData = await phaseResponse.json();
+                    let moonPhasePercent = 0;
+                    if (phaseData.length > 0) {
+                        const phase = phaseData[0].Phase;
+                        const phasePercentages = {
+                            'New Moon': 0,
+                            'First Quarter': 50,
+                            'Full Moon': 100,
+                            'Last Quarter': 50
+                        };
+                        moonPhasePercent = phasePercentages[phase] || 0;
+                    }
                     document.getElementById('moonPhase').textContent = `${moonPhasePercent}%`;
 
+                    // Obliczenie dni do pełni i nowiu
+                    const today = new Date();
                     const phasesOrder = ['New Moon', 'First Quarter', 'Full Moon', 'Last Quarter'];
-                    const currentIndex = phasesOrder.indexOf(phase.Phase);
+                    const currentPhaseIndex = phasesOrder.indexOf(phaseData[0]?.Phase || 'New Moon');
                     const daysPerPhase = 7.375;
 
                     let daysToFullMoon = 0;
                     let daysToNewMoon = 0;
-                    if (phase.Phase === 'Full Moon') {
+                    if (phaseData[0]?.Phase === 'Full Moon') {
                         daysToFullMoon = 0;
-                        daysToNewMoon = daysPerPhase * 1.5;
-                    } else if (phase.Phase === 'New Moon') {
-                        daysToFullMoon = daysPerPhase * 1.5;
+                        daysToNewMoon = Math.round(daysPerPhase * 1.5);
+                    } else if (phaseData[0]?.Phase === 'New Moon') {
+                        daysToFullMoon = Math.round(daysPerPhase * 1.5);
                         daysToNewMoon = 0;
                     } else {
                         const fullMoonIndex = phasesOrder.indexOf('Full Moon');
                         const newMoonIndex = phasesOrder.indexOf('New Moon');
-                        daysToFullMoon = Math.round(((fullMoonIndex - currentIndex + 4) % 4) * daysPerPhase);
-                        daysToNewMoon = Math.round(((newMoonIndex - currentIndex + 4) % 4) * daysPerPhase);
+                        daysToFullMoon = Math.round(((fullMoonIndex - currentPhaseIndex + 4) % 4) * daysPerPhase);
+                        daysToNewMoon = Math.round(((newMoonIndex - currentPhaseIndex + 4) % 4) * daysPerPhase);
                     }
 
                     document.getElementById('daysToFullMoon').textContent = `${daysToFullMoon} dni`;
