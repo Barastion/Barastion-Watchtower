@@ -214,37 +214,48 @@
                     const forecastContainer = document.getElementById('weatherForecast');
                     forecastContainer.innerHTML = '';
 
+                    const today = new Date();
                     const todayIndex = 0;
+
                     document.getElementById('sunrise').textContent = forecastData.daily.sunrise[todayIndex].split('T')[1].slice(0, 5);
                     document.getElementById('sunset').textContent = forecastData.daily.sunset[todayIndex].split('T')[1].slice(0, 5);
                     document.getElementById('precipitationChance').textContent = `${forecastData.daily.precipitation_probability_mean[todayIndex]}%`;
-                    document.getElementById('humidity').textContent = `${forecastData.hourly.relative_humidity_2m[0]}%`; // Pierwsza godzina jako przybliżenie
+                    document.getElementById('humidity').textContent = `${forecastData.hourly.relative_humidity_2m[0]}%`;
                     document.getElementById('windSpeed').textContent = `${forecastData.daily.windspeed_10m_max[todayIndex]} km/h`;
 
-                    forecastData.daily.time.forEach((date, index) => {
-                        const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                        const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
-                        const weatherCode = forecastData.daily.weathercode[index];
-                        const maxTemp = forecastData.daily.temperature_2m_max[index];
-                        const minTemp = forecastData.daily.temperature_2m_min[index];
-                        const isToday = index === 0;
+                    // Sortowanie i wyświetlanie prognozy, zaczynając od dnia dzisiejszego
+                    const todayDate = today.toISOString().split('T')[0];
+                    const dailyData = forecastData.daily.time.map((date, index) => ({
+                        date: date,
+                        dayName: capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' })),
+                        weatherCode: forecastData.daily.weathercode[index],
+                        maxTemp: forecastData.daily.temperature_2m_max[index],
+                        minTemp: forecastData.daily.temperature_2m_min[index]
+                    }));
 
+                    // Znajdź indeks dnia dzisiejszego i przesuń go na początek
+                    const todayIndexInArray = dailyData.findIndex(item => item.date === todayDate);
+                    if (todayIndexInArray > -1) {
+                        const todayItem = dailyData.splice(todayIndexInArray, 1)[0];
+                        dailyData.unshift(todayItem);
+                    }
+
+                    dailyData.forEach((item, index) => {
+                        const isToday = index === 0;
                         const forecastBar = document.createElement('div');
                         forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
                         forecastBar.innerHTML = `
-                            <div class="forecast-date">${formattedDate}</div>
-                            <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
-                            <div class="weather-day">${dayName}</div>
-                            <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
+                            <div class="forecast-date">${new Date(item.date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+                            <div class="weather-icon">${weatherIcons[item.weatherCode] || '❓'}</div>
+                            <div class="weather-day">${item.dayName}</div>
+                            <div class="weather-description">${weatherDescriptions[item.weatherCode] || 'Nieznana pogoda'}</div>
                             <div class="weather-temps">
-                                <div class="temp-max">${maxTemp.toFixed(1)}°C</div>
-                                <div class="temp-min">${minTemp.toFixed(1)}°C</div>
+                                <div class="temp-max">${item.maxTemp.toFixed(1)}°C</div>
+                                <div class="temp-min">${item.minTemp.toFixed(1)}°C</div>
                             </div>
                         `;
                         forecastContainer.appendChild(forecastBar);
                     });
-                } else {
-                    throw new Error('Brak danych pogodowych');
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
@@ -276,7 +287,16 @@
 
                     document.getElementById('moonrise').textContent = `${String(riseHour).padStart(2, '0')}:00`;
                     document.getElementById('moonset').textContent = `${String(setHour).padStart(2, '0')}:00`;
-                    document.getElementById('moonPhase').textContent = `${(phase.Illumination * 100).toFixed(0)}%`;
+
+                    // Obliczanie widocznej powierzchni księżyca w procentach na podstawie fazy
+                    const phasePercentages = {
+                        'New Moon': 0,
+                        'First Quarter': 50,
+                        'Full Moon': 100,
+                        'Last Quarter': 50
+                    };
+                    const moonPhasePercent = phasePercentages[phase.Phase] || 0;
+                    document.getElementById('moonPhase').textContent = `${moonPhasePercent}%`;
 
                     const phasesOrder = ['New Moon', 'First Quarter', 'Full Moon', 'Last Quarter'];
                     const currentIndex = phasesOrder.indexOf(phase.Phase);
