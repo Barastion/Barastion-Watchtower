@@ -94,7 +94,9 @@ body {
     gap: 10px;
     overflow-x: auto;
     padding: 10px 0;
-    justify-content: center;
+    justify-content: flex-start; /* Zmienione z center na flex-start, aby początek był widoczny */
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory; /* Dodano, aby ułatwić przewijanie */
 }
 
 .forecast-bar {
@@ -109,6 +111,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 5px;
+    scroll-snap-align: start; /* Ułatwia snapowanie przy przewijaniu */
 }
 
 .forecast-bar.today {
@@ -181,10 +184,10 @@ body {
 
 .detail-item {
     background-color: #3a3a3a;
-    padding: 5px 8px; /* Więcej paddingu po bokach dla lepszego wyglądu */
+    padding: 5px 8px;
     border-radius: 4px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    white-space: nowrap; /* Wydarzenie i wartość w jednej linii */
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
