@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.farmsense.net https://api.moon-api.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div class="container">
@@ -172,10 +172,12 @@
                 const data = await response.json();
                 return {
                     city: data.city || 'Nieznane miasto',
-                    country: data.country_name || 'Nieznany kraj'
+                    country: data.country_name || 'Nieznany kraj',
+                    latitude: data.latitude || 50.6673, // Domyślne współrzędne Opola
+                    longitude: data.longitude || 17.9265
                 };
             } catch (err) {
-                return { city: 'Nieznane miasto', country: 'Nieznany kraj' };
+                return { city: 'Nieznane miasto', country: 'Nieznany kraj', latitude: 50.6673, longitude: 17.9265 };
             }
         }
 
@@ -269,53 +271,36 @@
             }
         }
 
-        async function getMoonData(lat, lon) {
+        async function getMoonData(ip) {
             try {
-                const moonResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=moonrise,moonset&timezone=auto`);
+                // Pobierz lokalizację na podstawie IP
+                const location = await getLocation(ip);
+                const lat = location.latitude || 50.6673; // Domyślne współrzędne Opola, jeśli nie można pobrać
+                const lon = location.longitude || 17.9265;
+
+                // Pobierz dane o księżycu z Moon API
+                const moonResponse = await fetch(`https://api.moon-api.com/v1/moon?latitude=${lat}&longitude=${lon}&date=${new Date().toISOString().split('T')[0]}`);
                 const moonData = await moonResponse.json();
 
-                if (moonData.daily) {
-                    const todayIndex = 0;
-                    // Pobieranie wschodu i zachodu księżyca
-                    document.getElementById('moonrise').textContent = moonData.daily.moonrise[todayIndex]?.split('T')[1]?.slice(0, 5) || 'Brak danych';
-                    document.getElementById('moonset').textContent = moonData.daily.moonset[todayIndex]?.split('T')[1]?.slice(0, 5) || 'Brak danych';
+                if (moonData) {
+                    // Wschód i zachód księżyca
+                    document.getElementById('moonrise').textContent = moonData.rise ? moonData.rise.slice(0, 5) : 'Brak danych';
+                    document.getElementById('moonset').textContent = moonData.set ? moonData.set.slice(0, 5) : 'Brak danych';
 
-                    // Szacowanie widoczności na podstawie fazy księżyca
-                    const phaseResponse = await fetch(`https://api.farmsense.net/v1/moonphases/?d=${new Date().toISOString().split('T')[0]}`);
-                    const phaseData = await phaseResponse.json();
-                    let moonPhasePercent = 0;
-                    if (phaseData.length > 0) {
-                        const phase = phaseData[0].Phase;
-                        const phasePercentages = {
-                            'New Moon': 0,
-                            'First Quarter': 50,
-                            'Full Moon': 100,
-                            'Last Quarter': 50
-                        };
-                        moonPhasePercent = phasePercentages[phase] || 0;
-                    }
-                    document.getElementById('moonPhase').textContent = `${moonPhasePercent}%`;
+                    // Widoczna powierzchnia księżyca (oświetlenie w %)
+                    const illumination = moonData.illumination * 100; // Przekształcenie na procenty
+                    document.getElementById('moonPhase').textContent = `${illumination.toFixed(0)}%`;
 
-                    // Obliczenie dni do pełni i nowiu
-                    const today = new Date();
-                    const phasesOrder = ['New Moon', 'First Quarter', 'Full Moon', 'Last Quarter'];
-                    const currentPhaseIndex = phasesOrder.indexOf(phaseData[0]?.Phase || 'New Moon');
-                    const daysPerPhase = 7.375;
+                    // Obliczenie dni do pełni i nowiu na podstawie fazy
+                    const phase = moonData.phase; // Faza w stopniach (0-360)
+                    const daysInCycle = 29.5; // Średni cykl księżycowy w dniach
+                    const phaseInDays = (phase / 360) * daysInCycle; // Przeliczenie fazy na dni cyklu
+                    const currentDay = new Date().getDate();
+                    const fullMoonDay = Math.round((180 - phase) / 360 * daysInCycle + currentDay) % 30 || 30; // Dni do pełni
+                    const newMoonDay = Math.round((-phase) / 360 * daysInCycle + currentDay) % 30 || 30; // Dni do nowiu
 
-                    let daysToFullMoon = 0;
-                    let daysToNewMoon = 0;
-                    if (phaseData[0]?.Phase === 'Full Moon') {
-                        daysToFullMoon = 0;
-                        daysToNewMoon = Math.round(daysPerPhase * 1.5);
-                    } else if (phaseData[0]?.Phase === 'New Moon') {
-                        daysToFullMoon = Math.round(daysPerPhase * 1.5);
-                        daysToNewMoon = 0;
-                    } else {
-                        const fullMoonIndex = phasesOrder.indexOf('Full Moon');
-                        const newMoonIndex = phasesOrder.indexOf('New Moon');
-                        daysToFullMoon = Math.round(((fullMoonIndex - currentPhaseIndex + 4) % 4) * daysPerPhase);
-                        daysToNewMoon = Math.round(((newMoonIndex - currentPhaseIndex + 4) % 4) * daysPerPhase);
-                    }
+                    const daysToFullMoon = fullMoonDay > currentDay ? fullMoonDay - currentDay : 30 - (currentDay - fullMoonDay);
+                    const daysToNewMoon = newMoonDay > currentDay ? newMoonDay - currentDay : 30 - (currentDay - newMoonDay);
 
                     document.getElementById('daysToFullMoon').textContent = `${daysToFullMoon} dni`;
                     document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
@@ -365,7 +350,7 @@
             const ip = await getIp();
             await logVisit();
             await getWeather(ip);
-            await getMoonData(50.6673, 17.9265); // Przykładowe współrzędne Opola
+            await getMoonData(ip); // Używa IP do pobierania współrzędnych
             await getNasaApodImage();
             await getDailyFact();
         };
