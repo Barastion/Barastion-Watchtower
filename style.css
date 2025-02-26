@@ -97,7 +97,7 @@ body {
     overflow-x: auto;
     padding: 10px 0;
     justify-content: center;
-    -webkit-overflow-scrolling: touch; /* Płynne przewijanie na iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
 .forecast-bar {
@@ -170,7 +170,7 @@ body {
 
 .table-wrapper {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* Płynne przewijanie na iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
 .table-container {
@@ -179,9 +179,9 @@ body {
 
 table {
     width: 100%;
+    min-width: 0; /* Usunięto minimalną szerokość, aby tabela dostosowywała się do zawartości na PC */
     border-collapse: collapse;
-    table-layout: fixed;
-    min-width: 800px; /* Tabela szersza na mobile, aby wymusić przewijanie */
+    table-layout: auto; /* Zmieniono na auto, aby kolumny dostosowywały się do zawartości */
 }
 
 th, td {
@@ -214,6 +214,7 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    max-width: 150px; /* Ograniczenie szerokości, aby zapobiec zbyt dużemu rozciągnięciu */
 }
 
 .city {
@@ -278,6 +279,10 @@ tr:hover {
 
     .table-wrapper {
         overflow-x: auto;
+    }
+
+    table {
+        min-width: 800px; /* Minimalna szerokość na mobile, aby wymusić przewijanie */
     }
 
     th, td {
