@@ -29,6 +29,54 @@
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
                 </div>
+
+                <!-- Nowa sekcja ze szczegółową pogodą na dziś -->
+                <div class="detailed-weather">
+                    <h3 class="weather-detail-header">Szczegóły pogody na dziś</h3>
+                    <div class="weather-details">
+                        <div class="weather-detail-item">
+                            <span>Dziś jest: <span id="currentDate">DD Miesiąc YYYY</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Wschód słońca: <span id="sunrise">HH:MM</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Zachód słońca: <span id="sunset">HH:MM</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Szansa na opady deszczu: <span id="precipitationChance">XX%</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Wilgotność powietrza: <span id="humidity">XX%</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Ciśnienie: <span id="pressure">XXX hPa</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Siła wiatru: <span id="windSpeed">XXX km/h</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Szczegóły księżyca -->
+                    <h3 class="weather-detail-header">Faza Księżyca</h3>
+                    <div class="moon-details">
+                        <div class="weather-detail-item">
+                            <span>Miasto: <span id="moonCity">Ładowanie...</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Wschód księżyca: <span id="moonrise">HH:MM</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Zachód księżyca: <span id="moonset">HH:MM</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Faza księżyca: <span id="moonPhase">XX% (tutaj pełnia to 100% now to 0%)</span></span>
+                        </div>
+                        <div class="weather-detail-item">
+                            <span>Ilość dni do następnego nowiu: <span id="daysToNewMoon">DD</span></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="log-table">
@@ -216,15 +264,53 @@
                 const city = locationData.city || 'Nieznane miasto';
 
                 document.getElementById('weatherCity').textContent = city;
+                document.getElementById('moonCity').textContent = city;
 
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset,precipitation_probability_mean,precipitation_hours,humidity,pressure_msl,wind_speed_10m_max&timezone=auto&daily=moonrise,moonset,moon_phase,moon_phase_day_number`);
                 const forecastData = await forecastResponse.json();
-                console.log('Dane pogody:', forecastData);
+                console.log('Dane pogody i księżyca:', forecastData);
 
                 if (forecastData.daily) {
                     const forecastContainer = document.getElementById('weatherForecast');
                     forecastContainer.innerHTML = '';
 
+                    const today = new Date();
+                    const todayDate = today.toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' });
+                    const todayIndex = 0;
+
+                    // Pogoda na dziś
+                    document.getElementById('currentDate').textContent = todayDate;
+                    document.getElementById('sunrise').textContent = forecastData.daily.sunrise[todayIndex].split('T')[1].slice(0, 5);
+                    document.getElementById('sunset').textContent = forecastData.daily.sunset[todayIndex].split('T')[1].slice(0, 5);
+                    document.getElementById('precipitationChance').textContent = `${forecastData.daily.precipitation_probability_mean[todayIndex]}%`;
+                    document.getElementById('humidity').textContent = `${forecastData.daily.humidity[todayIndex]}%`;
+                    document.getElementById('pressure').textContent = `${forecastData.daily.pressure_msl[todayIndex]} hPa`;
+                    document.getElementById('windSpeed').textContent = `${forecastData.daily.wind_speed_10m_max[todayIndex]} km/h`;
+
+                    // Dane o księżycu
+                    document.getElementById('moonrise').textContent = forecastData.daily.moonrise[todayIndex].split('T')[1].slice(0, 5) || 'Brak danych';
+                    document.getElementById('moonset').textContent = forecastData.daily.moonset[todayIndex].split('T')[1].slice(0, 5) || 'Brak danych';
+                    const moonPhase = forecastData.daily.moon_phase[todayIndex];
+                    const moonPhaseDay = forecastData.daily.moon_phase_day_number[todayIndex];
+                    let phaseText = '';
+                    switch (moonPhase) {
+                        case 'new_moon': phaseText = 'Nów (0%)'; break;
+                        case 'waxing_crescent': phaseText = 'Młody sierp (25%)'; break;
+                        case 'first_quarter': phaseText = 'Pierwsza kwadra (50%)'; break;
+                        case 'waxing_gibbous': phaseText = 'Woskowy księżyc (75%)'; break;
+                        case 'full_moon': phaseText = 'Pełnia (100%)'; break;
+                        case 'waning_gibbous': phaseText = 'Opadający księżyc (75%)'; break;
+                        case 'last_quarter': phaseText = 'Ostatnia kwadra (50%)'; break;
+                        case 'waning_crescent': phaseText = 'Stary sierp (25%)'; break;
+                        default: phaseText = 'Nieznana faza';
+                    }
+                    document.getElementById('moonPhase').textContent = phaseText;
+
+                    // Szacunkowa liczba dni do nowiu (proste obliczenie, może wymagać dodatkowego API)
+                    const daysToNewMoon = Math.round((29.5 - moonPhaseDay) % 29.5);
+                    document.getElementById('daysToNewMoon').textContent = daysToNewMoon;
+
+                    // Prognoza na kilka dni
                     forecastData.daily.time.forEach((date, index) => {
                         const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
                         const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
@@ -254,6 +340,17 @@
                 console.error('Błąd pobierania pogody:', err);
                 document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
                 document.getElementById('weatherCity').textContent = 'Nieznane miasto';
+                document.getElementById('currentDate').textContent = 'Brak danych';
+                document.getElementById('sunrise').textContent = 'Brak danych';
+                document.getElementById('sunset').textContent = 'Brak danych';
+                document.getElementById('precipitationChance').textContent = 'Brak danych';
+                document.getElementById('humidity').textContent = 'Brak danych';
+                document.getElementById('pressure').textContent = 'Brak danych';
+                document.getElementById('windSpeed').textContent = 'Brak danych';
+                document.getElementById('moonrise').textContent = 'Brak danych';
+                document.getElementById('moonset').textContent = 'Brak danych';
+                document.getElementById('moonPhase').textContent = 'Brak danych';
+                document.getElementById('daysToNewMoon').textContent = 'Brak danych';
             }
         }
 
@@ -276,20 +373,19 @@
                             imgElement.src = 'diabelek.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                         };
-                        // Sprawdź, czy obrazek załadował się poprawnie po krótkim czasie
                         setTimeout(() => {
                             if (!imgElement.complete || imgElement.naturalWidth === 0) {
                                 console.error('Obrazek nie załadł się poprawnie, używam fallbacku');
                                 imgElement.src = 'diabelek.png';
                                 imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                             }
-                        }, 5000); // Czekaj 5 sekund na załadowanie obrazu
+                        }, 5000);
                     } else {
                         console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
                         imgElement.src = 'diabelek.png';
                         imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
                     }
-                    return; // Jeśli się powiedzie, zakończ funkcję
+                    return;
                 } catch (err) {
                     console.error(`Próba ${attempt} pobierania zdjęcia z NASA APOD nie powiodła się:`, err);
                     if (attempt === retries) {
