@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.usno.navy.mil; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div class="container">
@@ -30,50 +30,50 @@
                     <div class="forecast-container" id="weatherForecast"></div>
                 </div>
 
-                <!-- Nowa sekcja ze szczegółową pogodą na dziś -->
-                <div class="detailed-weather">
-                    <h3 class="weather-detail-header">Szczegóły pogody na dziś</h3>
+                <!-- Sekcja ze szczegółową pogodą i księżycem jako dodatek -->
+                <div class="weather-additional">
                     <div class="weather-details">
-                        <div class="weather-detail-item">
-                            <span>Dziś jest: <span id="currentDate">DD Miesiąc YYYY</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Wschód słońca: <span id="sunrise">HH:MM</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Zachód słońca: <span id="sunset">HH:MM</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Szansa na opady deszczu: <span id="precipitationChance">XX%</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Wilgotność powietrza: <span id="humidity">XX%</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Ciśnienie: <span id="pressure">XXX hPa</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Siła wiatru: <span id="windSpeed">XXX km/h</span></span>
+                        <h3 class="weather-detail-header">Szczegóły na dziś</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span>Dziś: <span id="currentDate">DD Miesiąc YYYY</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Wschód słońca: <span id="sunrise">HH:MM</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Zachód słońca: <span id="sunset">HH:MM</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Szansa opadów: <span id="precipitationChance">XX%</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Wilgotność: <span id="humidity">XX%</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Ciśnienie: <span id="pressure">XXX hPa</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Wiatr: <span id="windSpeed">XXX km/h</span></span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Szczegóły księżyca -->
-                    <h3 class="weather-detail-header">Faza Księżyca</h3>
                     <div class="moon-details">
-                        <div class="weather-detail-item">
-                            <span>Miasto: <span id="moonCity">Ładowanie...</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Wschód księżyca: <span id="moonrise">HH:MM</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Zachód księżyca: <span id="moonset">HH:MM</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Faza księżyca: <span id="moonPhase">XX% (tutaj pełnia to 100% now to 0%)</span></span>
-                        </div>
-                        <div class="weather-detail-item">
-                            <span>Ilość dni do następnego nowiu: <span id="daysToNewMoon">DD</span></span>
+                        <h3 class="weather-detail-header">Księżyc</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span>Wschód: <span id="moonrise">HH:MM</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Zachód: <span id="moonset">HH:MM</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Faza: <span id="moonPhase">Brak danych</span></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Do nowiu: <span id="daysToNewMoon">XX dni</span></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -264,11 +264,10 @@
                 const city = locationData.city || 'Nieznane miasto';
 
                 document.getElementById('weatherCity').textContent = city;
-                document.getElementById('moonCity').textContent = city;
 
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset,precipitation_probability_mean,precipitation_hours,humidity,pressure_msl,wind_speed_10m_max&timezone=auto&daily=moonrise,moonset,moon_phase,moon_phase_day_number`);
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset,precipitation_probability_mean,humidity,pressure_msl,wind_speed_10m_max&timezone=auto`);
                 const forecastData = await forecastResponse.json();
-                console.log('Dane pogody i księżyca:', forecastData);
+                console.log('Dane pogody:', forecastData);
 
                 if (forecastData.daily) {
                     const forecastContainer = document.getElementById('weatherForecast');
@@ -286,29 +285,6 @@
                     document.getElementById('humidity').textContent = `${forecastData.daily.humidity[todayIndex]}%`;
                     document.getElementById('pressure').textContent = `${forecastData.daily.pressure_msl[todayIndex]} hPa`;
                     document.getElementById('windSpeed').textContent = `${forecastData.daily.wind_speed_10m_max[todayIndex]} km/h`;
-
-                    // Dane o księżycu
-                    document.getElementById('moonrise').textContent = forecastData.daily.moonrise[todayIndex].split('T')[1].slice(0, 5) || 'Brak danych';
-                    document.getElementById('moonset').textContent = forecastData.daily.moonset[todayIndex].split('T')[1].slice(0, 5) || 'Brak danych';
-                    const moonPhase = forecastData.daily.moon_phase[todayIndex];
-                    const moonPhaseDay = forecastData.daily.moon_phase_day_number[todayIndex];
-                    let phaseText = '';
-                    switch (moonPhase) {
-                        case 'new_moon': phaseText = 'Nów (0%)'; break;
-                        case 'waxing_crescent': phaseText = 'Młody sierp (25%)'; break;
-                        case 'first_quarter': phaseText = 'Pierwsza kwadra (50%)'; break;
-                        case 'waxing_gibbous': phaseText = 'Woskowy księżyc (75%)'; break;
-                        case 'full_moon': phaseText = 'Pełnia (100%)'; break;
-                        case 'waning_gibbous': phaseText = 'Opadający księżyc (75%)'; break;
-                        case 'last_quarter': phaseText = 'Ostatnia kwadra (50%)'; break;
-                        case 'waning_crescent': phaseText = 'Stary sierp (25%)'; break;
-                        default: phaseText = 'Nieznana faza';
-                    }
-                    document.getElementById('moonPhase').textContent = phaseText;
-
-                    // Szacunkowa liczba dni do nowiu (proste obliczenie, może wymagać dodatkowego API)
-                    const daysToNewMoon = Math.round((29.5 - moonPhaseDay) % 29.5);
-                    document.getElementById('daysToNewMoon').textContent = daysToNewMoon;
 
                     // Prognoza na kilka dni
                     forecastData.daily.time.forEach((date, index) => {
@@ -347,6 +323,40 @@
                 document.getElementById('humidity').textContent = 'Brak danych';
                 document.getElementById('pressure').textContent = 'Brak danych';
                 document.getElementById('windSpeed').textContent = 'Brak danych';
+            }
+        }
+
+        async function getMoonData(lat, lon) {
+            try {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+
+                const response = await fetch(`https://api.usno.navy.mil/moon/phase?date=${year}-${month}-${day}&coords=${lat},${lon}`);
+                const data = await response.json();
+                console.log('Dane o księżycu:', data);
+
+                if (data.phasedata) {
+                    const phase = data.phasedata.find(p => p.date === `${month}/${day}/${year}`);
+                    if (phase) {
+                        document.getElementById('moonrise').textContent = phase.rise ? phase.rise.split(' ')[1] : 'Brak danych';
+                        document.getElementById('moonset').textContent = phase.set ? phase.set.split(' ')[1] : 'Brak danych';
+                        document.getElementById('moonPhase').textContent = phase.phase || 'Brak danych';
+
+                        // Szacunkowa liczba dni do nowiu (proste obliczenie na podstawie fazy)
+                        const phases = ['New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous', 'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'];
+                        const currentPhaseIndex = phases.indexOf(phase.phase);
+                        const daysToNewMoon = currentPhaseIndex < 0 ? 'Brak danych' : Math.round((8 - currentPhaseIndex) % 8 * 3.7); // Przybliżenie, 29.5 dni / 8 faz ≈ 3.7 dni
+                        document.getElementById('daysToNewMoon').textContent = `${daysToNewMoon} dni`;
+                    } else {
+                        throw new Error('Brak danych o fazie księżyca');
+                    }
+                } else {
+                    throw new Error('Nieprawidłowe dane z API księżyca');
+                }
+            } catch (err) {
+                console.error('Błąd pobierania danych o księżycu:', err);
                 document.getElementById('moonrise').textContent = 'Brak danych';
                 document.getElementById('moonset').textContent = 'Brak danych';
                 document.getElementById('moonPhase').textContent = 'Brak danych';
@@ -424,6 +434,7 @@
             console.log('IP przy załadowaniu:', ip);
             await logVisit();
             await getWeather(ip);
+            await getMoonData(50.6673, 17.9265); // Używam przykładowych współrzędnych Opola (możesz dynamicznie pobrać z getLocation)
             await getNasaApodImage();
             await getDailyFact();
         };
