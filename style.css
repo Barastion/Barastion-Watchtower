@@ -25,7 +25,7 @@ body {
 .nasa-frame {
     position: relative;
     width: 100%;
-    padding-top: 56.25%; /* Proporcje 16:9 */
+    padding-top: 56.25%;
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -39,7 +39,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Obrazek wypełnia ramkę, zachowując proporcje */
+    object-fit: cover;
     border-radius: 6px;
 }
 
@@ -47,7 +47,6 @@ body {
     text-align: center;
     margin: 20px 0;
     font-size: 0.9em;
-    color: #ffffff;
 }
 
 .fact-header {
@@ -61,8 +60,6 @@ body {
     margin-top: 10px;
     font-size: 0.9em;
     font-style: italic;
-    line-height: 1.5;
-    word-wrap: break-word;
 }
 
 .content-frame {
@@ -98,7 +95,6 @@ body {
     overflow-x: auto;
     padding: 10px 0;
     justify-content: center;
-    -webkit-overflow-scrolling: touch;
 }
 
 .forecast-bar {
@@ -176,13 +172,6 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.weather-detail-header {
-    text-align: center;
-    margin: 0 0 10px 0;
-    font-size: 1em;
-    color: #007bff;
-}
-
 .detail-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -192,20 +181,21 @@ body {
 
 .detail-item {
     background-color: #3a3a3a;
-    padding: 5px;
+    padding: 5px 8px; /* Więcej paddingu po bokach dla lepszego wyglądu */
     border-radius: 4px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.detail-item span {
-    display: block;
-    color: #ffffff;
+    white-space: nowrap; /* Wydarzenie i wartość w jednej linii */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .detail-item span:first-child {
     font-weight: bold;
     color: #cccccc;
-    font-size: 0.9em;
+}
+
+.detail-item span:last-child {
+    color: #ffffff;
 }
 
 .log-table {
@@ -217,7 +207,6 @@ body {
 
 .table-wrapper {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
 }
 
 .table-container {
@@ -226,9 +215,7 @@ body {
 
 table {
     width: 100%;
-    min-width: 0;
     border-collapse: collapse;
-    table-layout: auto;
 }
 
 th, td {
@@ -261,15 +248,11 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 150px;
 }
 
 .city {
     font-size: 0.9em;
     word-wrap: break-word;
-    max-width: 100%;
-    white-space: normal;
-    line-height: 1.2;
 }
 
 .country {
@@ -278,38 +261,16 @@ tr:hover {
     margin-top: 2px;
 }
 
-@media (min-width: 769px) {
-    .detail-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 @media (max-width: 768px) {
     .container {
         padding: 10px;
     }
 
     .content-frame {
-        max-width: 100%;
         padding: 10px;
     }
 
-    .daily-fact {
-        font-size: 0.8em;
-    }
-
-    .fact-content {
-        font-size: 0.8em;
-    }
-
-    .weather-forecast, .weather-details, .moon-details {
-        max-width: 100%;
-        padding: 8px;
-    }
-
     .forecast-container {
-        flex-wrap: nowrap;
-        justify-content: flex-start;
         gap: 5px;
     }
 
@@ -326,26 +287,14 @@ tr:hover {
         font-size: 1.2em;
     }
 
-    .weather-detail-header {
-        font-size: 0.9em;
-    }
-
-    .detail-grid {
-        grid-template-columns: 1fr;
-        gap: 4px;
-    }
-
     .detail-item {
         font-size: 0.8em;
-        padding: 4px;
+        padding: 4px 6px;
     }
 
-    .log-table {
-        max-width: 100%;
-    }
-
-    .table-wrapper {
-        overflow-x: auto;
+    .weather-additional {
+        flex-direction: column;
+        gap: 8px;
     }
 
     table {
@@ -355,10 +304,5 @@ tr:hover {
     th, td {
         font-size: 0.8em;
         padding: 4px;
-    }
-
-    .weather-additional {
-        flex-direction: column;
-        gap: 8px;
     }
 }
