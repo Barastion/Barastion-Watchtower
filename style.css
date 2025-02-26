@@ -16,28 +16,6 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.daily-fact {
-    text-align: center;
-    margin: 20px 0;
-    font-size: 0.9em; /* Zmniejszona czcionka dla całego bloku */
-    color: #ffffff;
-}
-
-.fact-header {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px; /* Odstęp między ikoną a tekstem */
-    font-weight: 500; /* Lekko pogrubiony tekst */
-}
-
-.fact-content {
-    margin-top: 10px; /* Odstęp między nagłówkiem a ciekawostką */
-    font-size: 0.9em; /* Ta sama wielkość czcionki co nagłówek, w kursywie */
-    font-style: italic; /* Kursywa dla ciekawostki */
-    line-height: 1.5;
-    word-wrap: break-word; /* Zapewnienie, że tekst się załamuje, jeśli jest długi */
-}
-
 .nasa-container {
     max-width: 640px;
     margin: 0 auto 20px;
@@ -57,13 +35,34 @@ body {
 
 .nasa-frame img {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
-    object-fit: contain; /* Zachowuje proporcje i dopasowuje do szerokości */
-    transform: translate(-50%, -50%);
+    height: 100%;
+    object-fit: cover; /* Obrazek wypełnia ramkę, zachowując proporcje */
     border-radius: 6px;
+}
+
+.daily-fact {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 0.9em;
+    color: #ffffff;
+}
+
+.fact-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+}
+
+.fact-content {
+    margin-top: 10px;
+    font-size: 0.9em;
+    font-style: italic;
+    line-height: 1.5;
+    word-wrap: break-word;
 }
 
 .content-frame {
@@ -98,6 +97,7 @@ body {
     overflow-x: auto;
     padding: 10px 0;
     justify-content: center;
+    -webkit-overflow-scrolling: touch; /* Płynne przewijanie na iOS */
 }
 
 .forecast-bar {
@@ -168,15 +168,20 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Płynne przewijanie na iOS */
+}
+
 .table-container {
     width: 100%;
-    overflow: hidden;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
+    min-width: 800px; /* Tabela szersza na mobile, aby wymusić przewijanie */
 }
 
 th, td {
@@ -236,11 +241,11 @@ tr:hover {
     }
 
     .daily-fact {
-        font-size: 0.8em; /* Mniejsza czcionka na urządzeniach mobilnych */
+        font-size: 0.8em;
     }
 
     .fact-content {
-        font-size: 0.8em; /* Ta sama wielkość co nagłówek na mobile */
+        font-size: 0.8em;
     }
 
     .weather-forecast {
@@ -271,14 +276,12 @@ tr:hover {
         max-width: 100%;
     }
 
-    .table-container {
-        min-width: 1000px; /* Zachowujemy szerokość tabeli */
-        overflow-x: auto; /* Dodajemy poziome przewijanie */
-        -webkit-overflow-scrolling: touch; /* Wygładza przewijanie na iOS */
+    .table-wrapper {
+        overflow-x: auto;
     }
 
     th, td {
         font-size: 0.8em;
-        padding: 6px;
+        padding: 4px;
     }
 }
