@@ -83,6 +83,7 @@ body {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
 }
 
 .weather-city {
@@ -161,6 +162,48 @@ body {
     font-size: 1em;
 }
 
+.detailed-weather {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+}
+
+.weather-detail-header {
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+    color: #007bff;
+}
+
+.weather-details, .moon-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.weather-detail-item {
+    background-color: #3a3a3a;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-detail-item span {
+    display: block;
+    color: #ffffff;
+}
+
+.weather-detail-item span:first-child {
+    font-weight: bold;
+    color: #cccccc;
+}
+
 .log-table {
     background-color: #2d2d2d;
     padding: 15px;
@@ -179,9 +222,9 @@ body {
 
 table {
     width: 100%;
-    min-width: 0; /* Usunięto minimalną szerokość, aby tabela dostosowywała się do zawartości na PC */
+    min-width: 0;
     border-collapse: collapse;
-    table-layout: auto; /* Zmieniono na auto, aby kolumny dostosowywały się do zawartości */
+    table-layout: auto;
 }
 
 th, td {
@@ -214,7 +257,7 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 150px; /* Ograniczenie szerokości, aby zapobiec zbyt dużemu rozciągnięciu */
+    max-width: 150px;
 }
 
 .city {
@@ -249,7 +292,7 @@ tr:hover {
         font-size: 0.8em;
     }
 
-    .weather-forecast {
+    .weather-forecast, .detailed-weather {
         max-width: 100%;
         padding: 10px;
     }
@@ -273,6 +316,20 @@ tr:hover {
         font-size: 1.2em;
     }
 
+    .weather-detail-header {
+        font-size: 1em;
+    }
+
+    .weather-details, .moon-details {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .weather-detail-item {
+        font-size: 0.8em;
+        padding: 8px;
+    }
+
     .log-table {
         max-width: 100%;
     }
@@ -282,7 +339,7 @@ tr:hover {
     }
 
     table {
-        min-width: 800px; /* Minimalna szerokość na mobile, aby wymusić przewijanie */
+        min-width: 800px;
     }
 
     th, td {
