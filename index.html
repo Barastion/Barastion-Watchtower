@@ -18,11 +18,19 @@
             </div>
         </div>
 
+        <!-- Sekcja wyszukiwania -->
+        <div class="search-container">
+            <form action="https://www.google.com/search" method="get" target="_blank">
+                <label for="search-input">Szukaj w Google:</label>
+                <input type="text" id="search-input" name="q" placeholder="Wpisz frazę...">
+            </form>
+        </div>
+
         <div class="daily-fact">
             <span class="fact-header">💡 Ciekawostka na dziś:</span>
             <div class="fact-content" id="dailyFact">Ładowanie...</div>
         </div>
-        
+
         <div class="content-frame">
             <div class="weather-info">
                 <div class="weather-forecast">
@@ -276,20 +284,19 @@
                             imgElement.src = 'diabelek.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                         };
-                        // Sprawdź, czy obrazek załadował się poprawnie po krótkim czasie
                         setTimeout(() => {
                             if (!imgElement.complete || imgElement.naturalWidth === 0) {
                                 console.error('Obrazek nie załadł się poprawnie, używam fallbacku');
                                 imgElement.src = 'diabelek.png';
                                 imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                             }
-                        }, 5000); // Czekaj 5 sekund na załadowanie obrazu
+                        }, 5000);
                     } else {
                         console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
                         imgElement.src = 'diabelek.png';
                         imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
                     }
-                    return; // Jeśli się powiedzie, zakończ funkcję
+                    return;
                 } catch (err) {
                     console.error(`Próba ${attempt} pobierania zdjęcia z NASA APOD nie powiodła się:`, err);
                     if (attempt === retries) {
