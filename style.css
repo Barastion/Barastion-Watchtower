@@ -43,6 +43,37 @@ body {
     border-radius: 6px;
 }
 
+.search-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.search-container form {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-container label {
+    font-size: 0.9em;
+    color: #ffffff;
+}
+
+.search-container input[type="text"] {
+    padding: 5px 10px;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    background-color: #3a3a3a;
+    color: #ffffff;
+    font-size: 0.9em;
+    width: 200px;
+}
+
+.search-container input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
 .daily-fact {
     text-align: center;
     margin: 20px 0;
