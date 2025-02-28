@@ -15,6 +15,11 @@
         <div class="nasa-container">
             <div class="nasa-frame">
                 <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
+                <div class="nasa-ticker">
+                    <div id="nasaTickerContent">
+                        <span class="ticker-segment">Ładowanie opisu...</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -129,7 +134,6 @@
                     let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
                     logs.sort((a, b) => b.timestamp - a.timestamp);
 
-                    // Zmieniono limit z 50 na 100
                     if (logs.length > 50) {
                         const logsToDelete = logs.slice(50);
                         logs = logs.slice(0, 50);
@@ -161,11 +165,9 @@
                 return;
             }
 
-            // Domyślnie pokazujemy 10 najnowszych logów
             const visibleLogs = logs.slice(0, 5);
-            const hiddenLogs = logs.slice(5); // Teraz do 45 ukrytych
+            const hiddenLogs = logs.slice(5);
 
-            // Wyświetlamy widoczne logi
             visibleLogs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -182,7 +184,6 @@
                 logTableBody.appendChild(row);
             });
 
-            // Jeśli są ukryte logi, dodajemy je z klasą hidden-log
             if (hiddenLogs.length > 0) {
                 hiddenLogs.forEach(log => {
                     const row = document.createElement('tr');
@@ -201,15 +202,12 @@
                     logTableBody.appendChild(row);
                 });
 
-                // Ustawiamy początkowy stan przycisku
                 toggleButton.style.display = 'block';
                 toggleButton.textContent = 'Rozwiń listę';
 
-                // Upewniamy się, że ukryte wiersze są niewidoczne na starcie
                 const hiddenRows = document.querySelectorAll('.hidden-log');
                 hiddenRows.forEach(row => row.style.display = 'none');
 
-                // Obsługa kliknięcia w przycisk
                 toggleButton.onclick = () => {
                     if (toggleButton.textContent === 'Rozwiń listę') {
                         hiddenRows.forEach(row => row.style.display = 'table-row');
@@ -265,17 +263,31 @@
         }
 
         const weatherIcons = {
-            0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 45: '🌫️', 48: '🌫️', 51: '🌦️', 53: '🌧️', 55: '🌧️',
-            61: '🌦️', 63: '🌧️', 65: '🌧️', 71: '🌨️', 73: '🌨️', 75: '🌨️', 80: '🌦️', 81: '🌧️', 82: '🌧️',
-            95: '⛈️', 96: '⛈️'
+            0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+            45: '🌫️', 48: '🌫️',
+            51: '🌦️', 53: '🌧️', 55: '🌧️',
+            56: '🌧️', 57: '🌧️', // Added for light/intense freezing drizzle
+            61: '🌦️', 63: '🌧️', 65: '🌧️',
+            66: '🌧️', 67: '🌧️', // Added for light/heavy freezing rain
+            71: '🌨️', 73: '🌨️', 75: '🌨️',
+            77: '🌨️', // Added for snow grains
+            80: '🌦️', 81: '🌧️', 82: '🌧️',
+            85: '🌨️', 86: '🌨️', // Added for light/heavy snow showers
+            95: '⛈️', 96: '⛈️', 99: '⛈️' // Added for thunderstorms with hail
         };
 
         const weatherDescriptions = {
             0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
-            45: 'Mgła', 48: 'Mgła z szronem', 51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
-            61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz', 71: 'Lekki śnieg', 73: 'Umiarkowany śnieg',
-            75: 'Intensywny śnieg', 80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
-            95: 'Burza', 96: 'Burza z gradem'
+            45: 'Mgła', 48: 'Mgła z szronem',
+            51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
+            56: 'Lekka mżawka marznąca', 57: 'Intensywna mżawka marznąca', // Added
+            61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz',
+            66: 'Lekki deszcz marznący', 67: 'Ciężki deszcz marznący', // Added
+            71: 'Lekki śnieg', 73: 'Umiarkowany śnieg', 75: 'Intensywny śnieg',
+            77: 'Śnieg ziarnisty', // Added
+            80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
+            85: 'Lekkie opady śniegu', 86: 'Ciężkie opady śniegu', // Added
+            95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem' // Added
         };
 
         function capitalizeFirstLetter(string) {
@@ -317,6 +329,7 @@
                         const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
                         const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
                         const weatherCode = forecastData.daily.weathercode[index];
+                        console.log(`Weather code for ${formattedDate}: ${weatherCode}`); // Log the weather code
                         const maxTemp = forecastData.daily.temperature_2m_max[index];
                         const minTemp = forecastData.daily.temperature_2m_min[index];
                         const isToday = index === 0;
@@ -372,6 +385,7 @@
 
         async function getNasaApodImage(retries = 5, delay = 2000) {
             const imgElement = document.getElementById('spaceImage');
+            const tickerElement = document.getElementById('nasaTickerContent');
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
@@ -384,22 +398,29 @@
                     if (data.media_type === 'image' && data.url) {
                         imgElement.src = data.url;
                         imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
+                        // Update the ticker with the description
+                        const description = data.explanation || 'Brak opisu dla tego zdjęcia.';
+                        const tickerText = `<span class="ticker-segment">${description}</span>`;
+                        tickerElement.innerHTML = tickerText.repeat(5); // Repeat for smooth looping
                         imgElement.onerror = () => {
                             console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
                             imgElement.src = 'diabelek.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
+                            tickerElement.innerHTML = '<span class="ticker-segment">Błąd pobierania opisu zdjęcia z NASA</span>';
                         };
                         setTimeout(() => {
                             if (!imgElement.complete || imgElement.naturalWidth === 0) {
                                 console.error('Obrazek nie załadł się poprawnie, używam fallbacku');
                                 imgElement.src = 'diabelek.png';
                                 imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
+                                tickerElement.innerHTML = '<span class="ticker-segment">Błąd pobierania opisu zdjęcia z NASA</span>';
                             }
                         }, 5000);
                     } else {
                         console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
                         imgElement.src = 'diabelek.png';
                         imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
+                        tickerElement.innerHTML = '<span class="ticker-segment">NASA APOD zawiera wideo lub inny typ mediów</span>';
                     }
                     return;
                 } catch (err) {
@@ -407,6 +428,7 @@
                     if (attempt === retries) {
                         imgElement.src = 'diabelek.png';
                         imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
+                        tickerElement.innerHTML = '<span class="ticker-segment">Błąd pobierania opisu zdjęcia z NASA</span>';
                         return;
                     }
                     await new Promise(resolve => setTimeout(resolve, delay));
