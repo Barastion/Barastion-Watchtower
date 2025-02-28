@@ -281,7 +281,7 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 150px; /* Ograniczenie szerokości, aby zapobiec zbyt dużemu rozciągnięciu */
+    max-width: 145px; /* Zmniejszono z 150px na 145px, aby "ukraść" 5px */
 }
 
 .city {
@@ -358,12 +358,12 @@ tr:hover {
     }
 
     th, td {
-        padding: 4px; /* Mniejszy padding dla kompaktowości */
+        padding: 2px; /* Zmniejszono z 4px na 2px */
         font-size: 0.75em; /* Zmniejszenie tekstu w komórkach */
     }
 
     .location-cell {
-        max-width: 100px; /* Zmniejszenie maksymalnej szerokości komórki lokalizacji */
+        max-width: 95px; /* Zmniejszono z 100px na 95px, aby "ukraść" 5px */
     }
 
     .city, .country {
