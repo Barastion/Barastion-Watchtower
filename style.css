@@ -38,32 +38,34 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 80%;
+    height: 100%;
     object-fit: cover; /* Obrazek wypełnia ramkę, zachowując proporcje */
     border-radius: 6px;
 }
 
 .nasa-ticker {
     background-color: #3a3a3a;
-    padding: 5px 0;
-    margin-top: 1px;
+    padding: 2px 0; /* Zmniejszony padding, aby ticker był niższy */
+    margin-top: 0; /* Usunięty margines, aby ticker dotykał ramki */
     overflow: hidden;
     white-space: nowrap;
-    border-radius: 5px;
+    border-radius: 0 0 5px 5px; /* Zaokrąglenie tylko dolnych rogów */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    width: 100%; /* Tą samą szerokość co ramka */
+    width: calc(100% + 4px); /* Dodajemy 4px, aby uwzględnić border ramki zdjęcia */
+    margin-left: -2px; /* Przesuwamy ticker w lewo, aby wyrównać z zewnętrzną krawędzią ramki */
     box-sizing: border-box;
 }
 
 #nasaTickerContent {
     display: inline-block;
-    animation: ticker 180s linear infinite; /* Krótszy czas dla lepszego efektu */
+    animation: ticker 30s linear infinite; /* Animacja bez zmian */
 }
 
 #nasaTickerText {
-    font-size: 0.8em; /* Mniejszy tekst */
+    font-size: 0.7em; /* Mniejszy rozmiar czcionki, aby ticker był niższy */
     color: #aaaaaa; /* Szary kolor */
-    padding-right: 180px; /* Odstęp między powtórzeniami */
+    padding-right: 100px; /* Odstęp między powtórzeniami */
+    line-height: 1; /* Zmniejszona wysokość linii, aby ticker był bardziej kompaktowy */
 }
 
 .search-container {
@@ -368,7 +370,8 @@ tr:hover {
     }
 
     #nasaTickerText {
-        font-size: 0.7em; /* Jeszcze mniejszy tekst na mobile */
+        font-size: 0.6em; /* Jeszcze mniejszy tekst na mobile */
+        line-height: 1; /* Zachowana kompaktowa wysokość */
     }
 
     .log-table {
