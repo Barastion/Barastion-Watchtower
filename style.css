@@ -317,10 +317,11 @@ tr:hover {
     font-size: 0.9em;
     font-weight: 600; /* Taka sama waga czcionki jak w nagłówkach */
     transition: background-color 0.3s;
+    min-width: 120px; /* Minimalna szerokość dla spójności */
 }
 
 .toggle-button:hover {
-    background-color: #0056b3; /* Ten sam efekt hover co wcześniej */
+    background-color: #0056b3; /* Efekt hover */
 }
 
 @media (max-width: 768px) {
@@ -398,5 +399,6 @@ tr:hover {
     .toggle-button {
         padding: 4px 10px; /* Mniejszy padding na mobile */
         font-size: 0.8em;
+        min-width: 100px; /* Mniejsza minimalna szerokość na mobile */
     }
 }
