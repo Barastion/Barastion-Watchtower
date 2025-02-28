@@ -227,7 +227,7 @@
             if (degrees >= 202.5 && degrees < 247.5) return 'Południowy Zachód';
             if (degrees >= 247.5 && degrees < 292.5) return 'Zachód';
             if (degrees >= 292.5 && degrees < 337.5) return 'Północny Zachód';
-            return 'N'; // Domyślnie, jeśli coś pójdzie nie tak
+            return 'N';
         }
 
         async function getWeather(ip) {
@@ -271,7 +271,6 @@
                         `;
                         forecastContainer.appendChild(forecastBar);
 
-                        // Ticker dla dzisiejszej pogody (tylko dla pierwszego dnia, czyli dziś)
                         if (isToday) {
                             const todayDate = formattedDate;
                             const sunrise = new Date(forecastData.daily.sunrise[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
@@ -281,19 +280,17 @@
                             const windSpeed = forecastData.daily.windspeed_10m_max[0];
                             const windDirection = degreesToDirection(forecastData.daily.winddirection_10m_dominant[0]);
 
-                            // Budowanie tickerowego tekstu z segmentami
                             const tickerText = `
                                 <span class="ticker-segment">
                                     🌍 Warunki pogodowe dla <span class="ticker-value">${todayDate}</span> • 
                                     🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
                                     🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
                                     🌡️ Temperatura odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
-                                    🌧️ Suma opadów deszcz/śnieg: <span class="ticker-value">${precipitation.toFixed(1)} mm</span> • 
+                                    🌧️ Suma opadów: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
                                     💨 Maksymalna prędkość wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
                                     🪁 Wiatr wieje z kierunku: <span class="ticker-value">${windDirection}</span>
                                 </span>
                             `;
-                            // Powtarzamy segment 5 razy dla płynności
                             const repeatedTickerText = tickerText.repeat(5);
                             document.getElementById('tickerContent').innerHTML = repeatedTickerText;
                         }
