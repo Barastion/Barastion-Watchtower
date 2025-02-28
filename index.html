@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app https://translate.googleapis.com; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://translate.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div class="container">
@@ -298,9 +298,6 @@
                             `;
                             const repeatedTickerText = tickerText.repeat(5);
                             document.getElementById('tickerContent').innerHTML = repeatedTickerText;
-
-                            // Rozpocznij animację tickera pogody
-                            startTicker('tickerContent');
                         }
                     });
                 } else {
@@ -325,67 +322,16 @@
                 .replace(/\n/g, ' '); // Usuwanie nowych linii
         }
 
-        // Funkcja do tłumaczenia tekstu na język polski za pomocą Google Translate API
-        async function translateToPolish(text) {
-            try {
-                const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pl&dt=t&q=${encodeURIComponent(text)}`);
-                const data = await response.json();
-                if (data && data[0] && data[0][0] && data[0][0][0]) {
-                    return data[0][0][0]; // Zwrócony przetłumaczony tekst
-                }
-                throw new Error('Brak tłumaczenia w odpowiedzi API');
-            } catch (err) {
-                console.error('Błąd tłumaczenia:', err);
-                return text + " (Błąd tłumaczenia)";
-            }
-        }
-
-        // Funkcja do animowania tickera za pomocą JavaScript
-        function startTicker(elementId) {
-            const tickerContent = document.getElementById(elementId);
-            if (!tickerContent) return;
-
-            let position = tickerContent.scrollWidth;
-            let lastTime = performance.now();
-            let isPaused = false;
-
-            function animate(currentTime) {
-                if (isPaused) return;
-
-                const deltaTime = currentTime - lastTime;
-                lastTime = currentTime;
-
-                // Prędkość przewijania: 180 sekund na pełny cykl
-                const speed = tickerContent.scrollWidth / 180000; // px/ms (180000 ms = 180s)
-                position -= speed * deltaTime;
-
-                // Jeśli tekst przesunął się poza ekran, resetujemy pozycję
-                if (position < -tickerContent.scrollWidth) {
-                    position = tickerContent.scrollWidth;
-                }
-
-                tickerContent.style.transform = `translateX(${position}px)`;
-
-                // Kontynuuj animację
-                requestAnimationFrame(animate);
-            }
-
-            // Rozpocznij animację
-            requestAnimationFrame(animate);
-
-            // Wstrzymaj/wznów animację при przełączaniu zakładek
-            document.addEventListener('visibilitychange', () => {
-                isPaused = document.hidden;
-                if (!isPaused) {
-                    lastTime = performance.now();
-                    requestAnimationFrame(animate);
-                }
-            });
-        }
-
         async function getNasaApodImage(retries = 5, delay = 2000) {
             const imgElement = document.getElementById('spaceImage');
             const tickerTextElement = document.getElementById('nasaTickerText');
+
+            // Ręczne tłumaczenia opisów (dla przykładu)
+            const translations = {
+                "Planet Earth hangs in the background of this space age selfie. The snapshot was captured by the IM-2 Nova-C Lander Athena, just after stage separation following its February 26 launch to the Moon. A tall robotic lander, Athena is scheduled to touch down on Thursday, March 6, in Mons Mouton, a plateau near the Moon's South Pole. The intended landing site is in the central portion of one of the Artemis 3 potential landing regions. Athena carries rovers and experiments as part of NASA's Commercial Lunar Payload Services program, including a drill intended to explore beneath the lunar surface in a search for evidence of frozen water. It also carries a propulsive drone dubbed the Micro Nova Hopper. After release to the lunar surface, the autonomous drone is intended to hop into a nearby crater and send science data back to the lander.":
+                "Planeta Ziemia widoczna jest w tle tego kosmicznego selfie. Zdjęcie zostało zrobione przez lądownik IM-2 Nova-C Athena tuż po oddzieleniu etapów po starcie 26 lutego na Księżyc. Wysoki lądownik robotyczny Athena ma wylądować w czwartek, 6 marca, w Mons Mouton, płaskowyżu blisko południowego bieguna Księżyca. Planowane miejsce lądowania znajduje się w centralnej części jednego z potencjalnych regionów lądowania Artemis 3. Athena przenosi łaziki i eksperymenty w ramach programu NASA's Commercial Lunar Payload Services, w tym wiertło przeznaczone do badania powierzchni Księżyca w poszukiwaniu śladów zamarzniętej wody. Lądownik posiada również drona napędowego nazwanego Micro Nova Hopper. Po wypuszczeniu na powierzchnię Księżyca, autonomiczny dron ma wskoczyć do pobliskiego krateru i przesłać dane naukowe z powrotem do lądownika."
+            };
+
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
@@ -398,10 +344,10 @@
                     if (data.media_type === 'image' && data.url) {
                         imgElement.src = data.url;
                         imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-                        const description = data.explanation || 'Brak opisu';
-                        // Tłumaczenie opisu na język polski
-                        const translatedDescription = await translateToPolish(description);
-                        tickerTextElement.textContent = sanitizeText(translatedDescription);
+                        let description = data.explanation || 'Brak opisu';
+                        // Użyj tłumaczenia, jeśli dostępne
+                        description = translations[description] || description;
+                        tickerTextElement.textContent = sanitizeText(description);
                         imgElement.onerror = () => {
                             console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
                             imgElement.src = 'diabelek.png';
@@ -416,9 +362,6 @@
                                 tickerTextElement.textContent = 'Błąd ładowania zdjęcia z NASA';
                             }
                         }, 5000);
-
-                        // Rozpocznij animację tickera NASA
-                        startTicker('nasaTickerContent');
                     } else {
                         console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
                         imgElement.src = 'diabelek.png';
@@ -458,6 +401,29 @@
                 document.getElementById('dailyFact').textContent = 'Błąd ładowania ciekawostki';
             }
         }
+
+        // Reset animacji tickerów po powrocie do zakładki (zapobiega zacinaniu się)
+        function resetTickers() {
+            const nasaTicker = document.getElementById('nasaTickerContent');
+            const weatherTicker = document.getElementById('tickerContent');
+            if (nasaTicker) {
+                nasaTicker.style.animation = 'none';
+                void nasaTicker.offsetWidth; // Wymusza ponowne uruchomienie animacji
+                nasaTicker.style.animation = 'ticker-nasa 180s linear infinite';
+            }
+            if (weatherTicker) {
+                weatherTicker.style.animation = 'none';
+                void weatherTicker.offsetWidth; // Wymusza ponowne uruchomienie animacji
+                weatherTicker.style.animation = 'ticker 180s linear infinite';
+            }
+        }
+
+        // Obsługa zdarzenia visibilitychange
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                resetTickers();
+            }
+        });
 
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
