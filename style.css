@@ -353,11 +353,20 @@ tr:hover {
     }
 
     table {
-        min-width: 800px; /* Minimalna szerokość na mobile, aby wymusić przewijanie */
+        width: 100%; /* Tabela zajmuje 100% dostępnej szerokości */
+        font-size: 0.75em; /* Zmniejszenie rozmiaru tekstu na mobile */
     }
 
     th, td {
-        font-size: 0.8em;
-        padding: 4px;
+        padding: 4px; /* Mniejszy padding dla kompaktowości */
+        font-size: 0.75em; /* Zmniejszenie tekstu w komórkach */
+    }
+
+    .location-cell {
+        max-width: 100px; /* Zmniejszenie maksymalnej szerokości komórki lokalizacji */
+    }
+
+    .city, .country {
+        font-size: 0.7em; /* Jeszcze mniejszy tekst w lokalizacji */
     }
 }
