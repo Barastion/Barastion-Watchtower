@@ -59,7 +59,7 @@ body {
 
 #nasaTickerContent {
     display: inline-block;
-    /* Animacja przeniesiona do JavaScript */
+    animation: ticker-nasa 180s linear infinite; /* Przywrócono animację CSS */
 }
 
 #nasaTickerText {
@@ -231,7 +231,8 @@ body {
 
 #tickerContent {
     display: inline-block;
-    /* Animacja przeniesiona do JavaScript */
+    padding-left: 100%;
+    animation: ticker 180s linear infinite; /* Przywrócono animację CSS */
 }
 
 .ticker-segment {
@@ -241,6 +242,26 @@ body {
 
 .ticker-value {
     font-weight: bold;
+}
+
+/* Animacja dla tickera pogody */
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Animacja dla tickera NASA */
+@keyframes ticker-nasa {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
 .log-table {
