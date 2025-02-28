@@ -130,9 +130,9 @@
                     logs.sort((a, b) => b.timestamp - a.timestamp);
 
                     // Zmieniono limit z 50 na 100
-                    if (logs.length > 100) {
-                        const logsToDelete = logs.slice(100);
-                        logs = logs.slice(0, 100);
+                    if (logs.length > 50) {
+                        const logsToDelete = logs.slice(50);
+                        logs = logs.slice(0, 50);
                         logsToDelete.forEach(log => {
                             remove(ref(database, `logs/${log.key}`));
                         });
@@ -162,8 +162,8 @@
             }
 
             // Domyślnie pokazujemy 10 najnowszych logów
-            const visibleLogs = logs.slice(0, 10);
-            const hiddenLogs = logs.slice(10); // Teraz do 90 ukrytych
+            const visibleLogs = logs.slice(0, 5);
+            const hiddenLogs = logs.slice(5); // Teraz do 45 ukrytych
 
             // Wyświetlamy widoczne logi
             visibleLogs.forEach(log => {
