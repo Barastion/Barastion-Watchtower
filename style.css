@@ -43,6 +43,35 @@ body {
     border-radius: 6px;
 }
 
+.nasa-ticker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #3a3a3a;
+    padding: 5px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Ensure the ticker is attached to the bottom of the frame */
+    margin-top: 0;
+}
+
+#nasaTickerContent {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 180s linear infinite;
+    font-size: 0.8em;
+    color: #cccccc; /* Light gray text to match the frame border */
+}
+
+.nasa-ticker .ticker-segment {
+    display: inline-block;
+    padding-right: 180px;
+}
+
 .search-container {
     text-align: center;
     margin: 20px 0;
@@ -308,20 +337,20 @@ tr:hover {
 }
 
 .toggle-button {
-    background-color: #007bff; /* Taki sam kolor jak nagłówki tabeli */
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 6px 12px; /* Dopasowane do wysokości nagłówków */
+    padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9em;
-    font-weight: 600; /* Taka sama waga czcionki jak w nagłówkach */
+    font-weight: 600;
     transition: background-color 0.3s;
-    min-width: 120px; /* Minimalna szerokość dla spójności */
+    min-width: 120px;
 }
 
 .toggle-button:hover {
-    background-color: #0056b3; /* Efekt hover */
+    background-color: #0056b3;
 }
 
 @media (max-width: 768px) {
@@ -397,8 +426,12 @@ tr:hover {
     }
 
     .toggle-button {
-        padding: 4px 10px; /* Mniejszy padding na mobile */
+        padding: 4px 10px;
         font-size: 0.8em;
-        min-width: 100px; /* Mniejsza minimalna szerokość na mobile */
+        min-width: 100px;
+    }
+
+    .nasa-ticker {
+        font-size: 0.7em;
     }
 }
