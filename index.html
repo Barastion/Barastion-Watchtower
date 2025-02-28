@@ -160,10 +160,11 @@
                 return;
             }
 
-            // Pokazujemy tylko 10 najnowszych domyślnie
+            // Domyślnie pokazujemy 10 najnowszych logów
             const visibleLogs = logs.slice(0, 10);
             const hiddenLogs = logs.slice(10);
 
+            // Wyświetlamy widoczne logi
             visibleLogs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -180,7 +181,7 @@
                 logTableBody.appendChild(row);
             });
 
-            // Jeśli są ukryte logi, dodajemy je z klasą hidden
+            // Jeśli są ukryte logi, dodajemy je z klasą hidden-log
             if (hiddenLogs.length > 0) {
                 hiddenLogs.forEach(log => {
                     const row = document.createElement('tr');
@@ -199,12 +200,16 @@
                     logTableBody.appendChild(row);
                 });
 
+                // Ustawiamy początkowy stan przycisku
                 toggleButton.style.display = 'block';
                 toggleButton.textContent = 'Rozwiń listę';
 
+                // Upewniamy się, że ukryte wiersze są niewidoczne na starcie
+                const hiddenRows = document.querySelectorAll('.hidden-log');
+                hiddenRows.forEach(row => row.style.display = 'none');
+
                 // Obsługa kliknięcia w przycisk
                 toggleButton.onclick = () => {
-                    const hiddenRows = document.querySelectorAll('.hidden-log');
                     if (toggleButton.textContent === 'Rozwiń listę') {
                         hiddenRows.forEach(row => row.style.display = 'table-row');
                         toggleButton.textContent = 'Zwiń listę';
