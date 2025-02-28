@@ -43,32 +43,6 @@ body {
     border-radius: 6px;
 }
 
-.nasa-ticker {
-    background-color: #3a3a3a;
-    padding: 1px 0; /* Zmniejszony padding, aby ticker był niższy */
-    margin-top: 0; /* Usunięty margines, aby ticker dotykał ramki */
-    overflow: hidden;
-    white-space: nowrap;
-    border-radius: 0 0 5px 5px; /* Zaokrąglenie tylko dolnych rogów */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    width: 100%; /* Szerokość taka sama jak ramka zdjęcia */
-    box-sizing: border-box;
-    border: none; /* Usunięto obramowanie, aby ticker pasował do ramki */
-    margin: 0 auto; /* Wyśrodkowanie tickera względem ramki */
-}
-
-#nasaTickerContent {
-    display: inline-block;
-    animation: ticker-nasa 180s linear infinite;
-}
-
-#nasaTickerText {
-    font-size: 0.6em; /* Jeszcze mniejszy rozmiar czcionki */
-    color: #aaaaaa; /* Szary kolor */
-    padding-right: 180px; /* Taka sama przerwa między powtórzeniami jak w tickerze pogody */
-    line-height: 1; /* Zmniejszona wysokość linii, aby ticker był bardziej kompaktowy */
-}
-
 .search-container {
     text-align: center;
     margin: 20px 0;
@@ -220,44 +194,34 @@ body {
 
 /* Style dla paska tickerowego */
 .weather-ticker {
-    background-color: #3a3a3a;
+    background-color: #3a3a3a; /* Jasniejszy szary, taki sam jak w forecast-bar */
     padding: 5px 0;
     margin-top: 10px;
     overflow: hidden;
     white-space: nowrap;
-    border-radius: 5px;
+    border-radius: 5px; /* Bardziej zaokrąglone rogi, pasujące do forecast-bar */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #tickerContent {
     display: inline-block;
-    padding-left: 100%;
-    animation: ticker 180s linear infinite;
+    padding-left: 100%; /* Zaczynamy poza ekranem */
+    animation: ticker 180s linear infinite; /* Animacja przewijania */
+    font-size: 0.9em;
 }
 
 .ticker-segment {
     display: inline-block;
-    padding-right: 180px;
+    padding-right: 180px; /* Odstęp między powtórzeniami */
 }
 
 .ticker-value {
     font-weight: bold;
 }
 
-/* Animacja dla tickera pogody */
 @keyframes ticker {
     0% {
         transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
-}
-
-/* Animacja dla tickera NASA */
-@keyframes ticker-nasa {
-    0% {
-        transform: translateX(100%);
     }
     100% {
         transform: translateX(-100%);
@@ -282,9 +246,9 @@ body {
 
 table {
     width: 100%;
-    min-width: 0;
+    min-width: 0; /* Usunięto minimalną szerokość, aby tabela dostosowywała się do zawartości na PC */
     border-collapse: collapse;
-    table-layout: auto;
+    table-layout: auto; /* Zmieniono na auto, aby kolumny dostosowywały się do zawartości */
 }
 
 th, td {
@@ -317,7 +281,7 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 150px;
+    max-width: 150px; /* Ograniczenie szerokości, aby zapobiec zbyt dużemu rozciągnięciu */
 }
 
 .city {
@@ -380,11 +344,6 @@ tr:hover {
         font-size: 0.8em;
     }
 
-    #nasaTickerText {
-        font-size: 0.5em; /* Jeszcze mniejszy tekst na mobile */
-        line-height: 1; /* Zachowana kompaktowa wysokość */
-    }
-
     .log-table {
         max-width: 100%;
     }
@@ -394,22 +353,11 @@ tr:hover {
     }
 
     table {
-        width: 100%;
-        min-width: 0;
+        min-width: 800px; /* Minimalna szerokość na mobile, aby wymusić przewijanie */
     }
 
     th, td {
-        font-size: 0.7em;
-        padding: 3px;
-        white-space: normal;
-        word-wrap: break-word;
-    }
-
-    .location-cell {
-        max-width: 100px;
-    }
-
-    .city, .country {
-        font-size: 0.7em;
+        font-size: 0.8em;
+        padding: 4px;
     }
 }
