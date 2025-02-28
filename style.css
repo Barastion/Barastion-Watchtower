@@ -194,7 +194,7 @@ body {
 
 /* Style dla paska tickerowego */
 .weather-ticker {
-    background-color: #2d2d2d;
+    background-color: #252525; /* Ciemniejsze tło dla estetyki */
     padding: 5px 0;
     margin-top: 10px;
     overflow: hidden;
@@ -206,8 +206,17 @@ body {
 #tickerContent {
     display: inline-block;
     padding-left: 100%; /* Zaczynamy poza ekranem */
-    animation: ticker 20s linear infinite; /* Animacja przewijania */
+    animation: ticker 30s linear infinite; /* Animacja przewijania */
     font-size: 0.9em;
+}
+
+.ticker-segment {
+    display: inline-block;
+    padding-right: 20px; /* Odstęp między powtórzeniami */
+}
+
+.ticker-value {
+    font-weight: bold;
 }
 
 @keyframes ticker {
@@ -215,7 +224,7 @@ body {
         transform: translateX(0);
     }
     100% {
-        transform: translateX(-100%); /* Przesuwamy w lewo */
+        transform: translateX(-100%);
     }
 }
 
