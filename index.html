@@ -219,14 +219,14 @@
         }
 
         function degreesToDirection(degrees) {
-            if (degrees >= 337.5 || degrees < 22.5) return 'N';
-            if (degrees >= 22.5 && degrees < 67.5) return 'NE';
-            if (degrees >= 67.5 && degrees < 112.5) return 'E';
-            if (degrees >= 112.5 && degrees < 157.5) return 'SE';
-            if (degrees >= 157.5 && degrees < 202.5) return 'S';
-            if (degrees >= 202.5 && degrees < 247.5) return 'SW';
-            if (degrees >= 247.5 && degrees < 292.5) return 'W';
-            if (degrees >= 292.5 && degrees < 337.5) return 'NW';
+            if (degrees >= 337.5 || degrees < 22.5) return 'Północ';
+            if (degrees >= 22.5 && degrees < 67.5) return 'Północny Wschód';
+            if (degrees >= 67.5 && degrees < 112.5) return 'Wschód';
+            if (degrees >= 112.5 && degrees < 157.5) return 'Południowy Wschód';
+            if (degrees >= 157.5 && degrees < 202.5) return 'Południe';
+            if (degrees >= 202.5 && degrees < 247.5) return 'Południowy Zachód';
+            if (degrees >= 247.5 && degrees < 292.5) return 'Zachód';
+            if (degrees >= 292.5 && degrees < 337.5) return 'Północny Zachód';
             return 'N'; // Domyślnie, jeśli coś pójdzie nie tak
         }
 
