@@ -212,7 +212,7 @@ body {
 
 .ticker-segment {
     display: inline-block;
-    padding-right: 360px; /* Odstęp między powtórzeniami */
+    padding-right: 180px; /* Odstęp między powtórzeniami */
 }
 
 .ticker-value {
