@@ -104,7 +104,7 @@
             const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
             let ip = 'Nieznany IP';
             let location = { city: 'Nieznane miasto', country: 'Nieznany kraj' };
-            
+
             try {
                 ip = await getIp();
                 location = await getLocation(ip);
@@ -305,7 +305,11 @@
                                 </span>
                             `;
                             const repeatedTickerText = tickerText.repeat(5);
-                            document.getElementById('tickerContent').innerHTML = repeatedTickerText;
+                            const tickerContent = document.getElementById('tickerContent');
+                            tickerContent.innerHTML = repeatedTickerText;
+
+                            // Reset ticker pogody po ustawieniu treści
+                            resetTickers();
                         }
                     });
                 } else {
@@ -373,6 +377,8 @@
                                 imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                                 tickerTextElement.textContent = 'Błąd ładowania zdjęcia z NASA';
                             }
+                            // Reset ticker NASA po ustawieniu treści
+                            resetTickers();
                         }, 5000);
                     } else {
                         console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
@@ -414,20 +420,22 @@
             }
         }
 
-        // Reset animacji tickerów po powrocie do zakładki (zapobiega zacinaniu się)
+        // Reset animacji tickerów po powrocie do zakładki lub po załadowaniu treści
         function resetTickers() {
-            const nasaTicker = document.getElementById('nasaTickerContent');
-            const weatherTicker = document.getElementById('tickerContent');
-            if (nasaTicker) {
-                nasaTicker.style.animation = 'none';
-                void nasaTicker.offsetWidth; // Wymusza ponowne uruchomienie animacji
-                nasaTicker.style.animation = 'ticker-nasa 180s linear infinite';
-            }
-            if (weatherTicker) {
-                weatherTicker.style.animation = 'none';
-                void weatherTicker.offsetWidth; // Wymusza ponowne uruchomienie animacji
-                weatherTicker.style.animation = 'ticker 180s linear infinite';
-            }
+            setTimeout(() => {
+                const nasaTicker = document.getElementById('nasaTickerContent');
+                const weatherTicker = document.getElementById('tickerContent');
+                if (nasaTicker) {
+                    nasaTicker.style.animation = 'none';
+                    void nasaTicker.offsetWidth; // Wymusza ponowne uruchomienie animacji
+                    nasaTicker.style.animation = 'ticker-nasa 180s linear infinite';
+                }
+                if (weatherTicker) {
+                    weatherTicker.style.animation = 'none';
+                    void weatherTicker.offsetWidth; // Wymusza ponowne uruchomienie animacji
+                    weatherTicker.style.animation = 'ticker 180s linear infinite';
+                }
+            }, 1000); // Zwiększone opóźnienie na 1000ms
         }
 
         // Obsługa zdarzenia visibilitychange
@@ -445,6 +453,8 @@
             await getWeather(ip);
             await getNasaApodImage();
             await getDailyFact();
+            // Inicjalny reset tickerów po załadowaniu strony
+            resetTickers();
         };
     </script>
 </body>
