@@ -18,7 +18,6 @@
             </div>
         </div>
 
-        <!-- Sekcja wyszukiwania -->
         <div class="search-container">
             <form action="https://www.google.com/search" method="get" target="_blank">
                 <label for="search-input">Szukaj w Google:</label>
@@ -36,6 +35,10 @@
                 <div class="weather-forecast">
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
+                    <!-- Nowy pasek z lejącymi napisami -->
+                    <div class="weather-ticker">
+                        <div id="tickerContent">Ładowanie...</div>
+                    </div>
                 </div>
             </div>
 
@@ -214,6 +217,18 @@
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
+        function degreesToDirection(degrees) {
+            if (degrees >= 337.5 || degrees < 22.5) return 'N';
+            if (degrees >= 22.5 && degrees < 67.5) return 'NE';
+            if (degrees >= 67.5 && degrees < 112.5) return 'E';
+            if (degrees >= 112.5 && degrees < 157.5) return 'SE';
+            if (degrees >= 157.5 && degrees < 202.5) return 'S';
+            if (degrees >= 202.5 && degrees < 247.5) return 'SW';
+            if (degrees >= 247.5 && degrees < 292.5) return 'W';
+            if (degrees >= 292.5 && degrees < 337.5) return 'NW';
+            return 'N'; // Domyślnie, jeśli coś pójdzie nie tak
+        }
+
         async function getWeather(ip) {
             try {
                 const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
@@ -225,7 +240,7 @@
 
                 document.getElementById('weatherCity').textContent = city;
 
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`);
+                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
                 const forecastData = await forecastResponse.json();
                 console.log('Dane pogody:', forecastData);
 
@@ -254,6 +269,20 @@
                             </div>
                         `;
                         forecastContainer.appendChild(forecastBar);
+
+                        // Ticker dla dzisiejszej pogody (tylko dla pierwszego dnia, czyli dziś)
+                        if (isToday) {
+                            const todayDate = formattedDate;
+                            const sunrise = new Date(forecastData.daily.sunrise[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+                            const sunset = new Date(forecastData.daily.sunset[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+                            const apparentTemp = forecastData.daily.apparent_temperature_max[0];
+                            const precipitation = forecastData.daily.precipitation_sum[0];
+                            const windSpeed = forecastData.daily.windspeed_10m_max[0];
+                            const windDirection = degreesToDirection(forecastData.daily.winddirection_10m_dominant[0]);
+
+                            const tickerText = `Warunki pogodowe dla ${todayDate} • 🌅 Wschód słońca: ${sunrise} • 🌇 Zachód słońca: ${sunset} • 🌡️ Temperatura odczuwalna: ${apparentTemp.toFixed(1)}°C • Suma opadów deszcz/śnieg: ${precipitation.toFixed(1)} mm • 💨 Maksymalna prędkość wiatru: ${windSpeed.toFixed(1)} km/h • 🌀 Wiatr wieje od strony: ${windDirection}`;
+                            document.getElementById('tickerContent').textContent = tickerText;
+                        }
                     });
                 } else {
                     throw new Error('Brak danych pogodowych');
@@ -262,6 +291,7 @@
                 console.error('Błąd pobierania pogody:', err);
                 document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
                 document.getElementById('weatherCity').textContent = 'Nieznane miasto';
+                document.getElementById('tickerContent').textContent = 'Błąd pobierania szczegółów pogody';
             }
         }
 
