@@ -53,13 +53,13 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     width: 100%; /* Szerokość taka sama jak ramka zdjęcia */
     box-sizing: border-box;
-    border: 2px solid #555555; /* Dodajemy obramowanie, takie jak w ramce zdjęcia */
-    border-top: none; /* Usuwamy górne obramowanie, aby ticker przylegał do ramki */
+    border: none; /* Usunięto obramowanie, aby ticker pasował do ramki */
+    margin: 0 auto; /* Wyśrodkowanie tickera względem ramki */
 }
 
 #nasaTickerContent {
     display: inline-block;
-    animation: ticker-nasa 180s linear infinite; /* Przywrócono animację CSS */
+    animation: ticker-nasa 180s linear infinite;
 }
 
 #nasaTickerText {
@@ -232,7 +232,7 @@ body {
 #tickerContent {
     display: inline-block;
     padding-left: 100%;
-    animation: ticker 180s linear infinite; /* Przywrócono animację CSS */
+    animation: ticker 180s linear infinite;
 }
 
 .ticker-segment {
