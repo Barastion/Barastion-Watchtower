@@ -45,26 +45,27 @@ body {
 
 .nasa-ticker {
     background-color: #3a3a3a;
-    padding: 2px 0; /* Zmniejszony padding, aby ticker był niższy */
+    padding: 1px 0; /* Jeszcze mniejszy padding, aby ticker był niższy */
     margin-top: 0; /* Usunięty margines, aby ticker dotykał ramki */
     overflow: hidden;
     white-space: nowrap;
     border-radius: 0 0 5px 5px; /* Zaokrąglenie tylko dolnych rogów */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    width: calc(100% + 4px); /* Dodajemy 4px, aby uwzględnić border ramki zdjęcia */
-    margin-left: -2px; /* Przesuwamy ticker w lewo, aby wyrównać z zewnętrzną krawędzią ramki */
+    width: 100%; /* Szerokość taka sama jak ramka zdjęcia */
     box-sizing: border-box;
+    border: 2px solid #555555; /* Dodajemy obramowanie, takie jak w ramce zdjęcia */
+    border-top: none; /* Usuwamy górne obramowanie, aby ticker przylegał do ramki */
 }
 
 #nasaTickerContent {
     display: inline-block;
-    animation: ticker 30s linear infinite; /* Animacja bez zmian */
+    animation: ticker-nasa 180s linear infinite; /* Nowa animacja dla tickera NASA, 180s */
 }
 
 #nasaTickerText {
-    font-size: 0.7em; /* Mniejszy rozmiar czcionki, aby ticker był niższy */
+    font-size: 0.6em; /* Jeszcze mniejszy rozmiar czcionki */
     color: #aaaaaa; /* Szary kolor */
-    padding-right: 100px; /* Odstęp między powtórzeniami */
+    padding-right: 180px; /* Taka sama przerwa między powtórzeniami jak w tickerze pogody */
     line-height: 1; /* Zmniejszona wysokość linii, aby ticker był bardziej kompaktowy */
 }
 
@@ -217,7 +218,7 @@ body {
     font-size: 1em;
 }
 
-/* Style dla paska tickerowego */
+/* Style dla paska tickerowego pogody */
 .weather-ticker {
     background-color: #3a3a3a;
     padding: 5px 0;
@@ -230,21 +231,32 @@ body {
 
 #tickerContent {
     display: inline-block;
-    padding-left: 100%;
-    animation: ticker 180s linear infinite;
+    padding-left: 100%; /* Przesunięcie początkowe poza ekran */
+    animation: ticker 180s linear infinite; /* Pierwotna animacja dla tickera pogody */
     font-size: 0.9em;
 }
 
 .ticker-segment {
     display: inline-block;
-    padding-right: 180px;
+    padding-right: 180px; /* Przerwa między powtórzeniami */
 }
 
 .ticker-value {
     font-weight: bold;
 }
 
+/* Animacja dla tickera pogody */
 @keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Animacja dla tickera NASA */
+@keyframes ticker-nasa {
     0% {
         transform: translateX(100%);
     }
@@ -370,7 +382,7 @@ tr:hover {
     }
 
     #nasaTickerText {
-        font-size: 0.6em; /* Jeszcze mniejszy tekst na mobile */
+        font-size: 0.5em; /* Jeszcze mniejszy tekst na mobile */
         line-height: 1; /* Zachowana kompaktowa wysokość */
     }
 
