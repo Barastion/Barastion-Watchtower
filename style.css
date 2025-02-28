@@ -192,27 +192,26 @@ body {
     font-size: 1em;
 }
 
-/* Style dla paska tickerowego */
 .weather-ticker {
-    background-color: #3a3a3a; /* Jasniejszy szary, taki sam jak w forecast-bar */
+    background-color: #3a3a3a;
     padding: 5px 0;
     margin-top: 10px;
     overflow: hidden;
     white-space: nowrap;
-    border-radius: 5px; /* Bardziej zaokrąglone rogi, pasujące do forecast-bar */
+    border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #tickerContent {
     display: inline-block;
-    padding-left: 100%; /* Zaczynamy poza ekranem */
-    animation: ticker 180s linear infinite; /* Animacja przewijania */
+    padding-left: 100%;
+    animation: ticker 180s linear infinite;
     font-size: 0.9em;
 }
 
 .ticker-segment {
     display: inline-block;
-    padding-right: 180px; /* Odstęp między powtórzeniami */
+    padding-right: 180px;
 }
 
 .ticker-value {
@@ -246,9 +245,9 @@ body {
 
 table {
     width: 100%;
-    min-width: 0; /* Usunięto minimalną szerokość, aby tabela dostosowywała się do zawartości na PC */
+    min-width: 0;
     border-collapse: collapse;
-    table-layout: auto; /* Zmieniono na auto, aby kolumny dostosowywały się do zawartości */
+    table-layout: auto;
 }
 
 th, td {
@@ -281,7 +280,7 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 140px; /* Zmniejszono z 150px na 145px, aby "ukraść" 5px */
+    max-width: 140px;
 }
 
 .city {
@@ -296,6 +295,30 @@ tr:hover {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
+}
+
+.hidden-log {
+    display: none;
+}
+
+.toggle-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.toggle-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.toggle-button:hover {
+    background-color: #0056b3;
 }
 
 @media (max-width: 768px) {
@@ -353,20 +376,25 @@ tr:hover {
     }
 
     table {
-        width: 100%; /* Tabela zajmuje 100% dostępnej szerokości */
-        font-size: 0.75em; /* Zmniejszenie rozmiaru tekstu na mobile */
+        width: 100%;
+        font-size: 0.75em;
     }
 
     th, td {
-        padding: 2px; /* Zmniejszono z 4px na 2px */
-        font-size: 0.75em; /* Zmniejszenie tekstu w komórkach */
+        padding: 2px;
+        font-size: 0.75em;
     }
 
     .location-cell {
-        max-width: 95px; /* Zmniejszono z 100px na 95px, aby "ukraść" 5px */
+        max-width: 95px;
     }
 
     .city, .country {
-        font-size: 0.7em; /* Jeszcze mniejszy tekst w lokalizacji */
+        font-size: 0.7em;
+    }
+
+    .toggle-button {
+        padding: 6px 12px;
+        font-size: 0.8em;
     }
 }
