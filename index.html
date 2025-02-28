@@ -102,8 +102,16 @@
             const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
             const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
             const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-            const ip = await getIp();
-            const location = await getLocation(ip);
+            let ip = 'Nieznany IP';
+            let location = { city: 'Nieznane miasto', country: 'Nieznany kraj' };
+            
+            try {
+                ip = await getIp();
+                location = await getLocation(ip);
+            } catch (err) {
+                console.error('Błąd podczas pobierania IP lub lokalizacji:', err);
+            }
+
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
 
@@ -165,8 +173,8 @@
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
+                        <div class="city">${log.location?.city || 'Nieznane miasto'}</div>
+                        <div class="country">${log.location?.country || 'Nieznany kraj'}</div>
                     </td>
                     <td>${log.device || 'Brak'}</td>
                 `;
@@ -313,13 +321,17 @@
 
         // Funkcja do oczyszczania tekstu z potencjalnie problematycznych znaków
         function sanitizeText(text) {
+            if (typeof text !== 'string') {
+                return 'Brak opisu';
+            }
             return text
                 .replace(/&/g, '&') // Zamiana znaków specjalnych HTML
                 .replace(/</g, '<')
                 .replace(/>/g, '>')
                 .replace(/"/g, '"')
-                .replace(/'/g, ''')
-                .replace(/\n/g, ' '); // Usuwanie nowych linii
+                .replace(/'/g, '')
+                .replace(/[\n\r\t]/g, ' ') // Usuwanie nowych linii, tabulatorów
+                .replace(/[^\x20-\x7E]/g, ''); // Usuwanie znaków spoza ASCII
         }
 
         async function getNasaApodImage(retries = 5, delay = 2000) {
