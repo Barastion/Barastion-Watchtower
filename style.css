@@ -302,23 +302,25 @@ tr:hover {
 }
 
 .toggle-container {
-    text-align: center;
+    display: flex;
+    justify-content: center;
     margin-top: 10px;
 }
 
 .toggle-button {
-    background-color: #007bff;
+    background-color: #007bff; /* Taki sam kolor jak nagłówki tabeli */
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 6px 12px; /* Dopasowane do wysokości nagłówków */
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9em;
+    font-weight: 600; /* Taka sama waga czcionki jak w nagłówkach */
     transition: background-color 0.3s;
 }
 
 .toggle-button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Ten sam efekt hover co wcześniej */
 }
 
 @media (max-width: 768px) {
@@ -394,7 +396,7 @@ tr:hover {
     }
 
     .toggle-button {
-        padding: 6px 12px;
+        padding: 4px 10px; /* Mniejszy padding na mobile */
         font-size: 0.8em;
     }
 }
