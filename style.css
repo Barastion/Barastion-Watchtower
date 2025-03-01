@@ -279,7 +279,7 @@ table {
 
 th, td {
     padding: 4px;
-    height: 30px;
+    height: 35px;
     vertical-align: middle;
     text-align: center;
     font-size: 0.85em;
@@ -413,7 +413,7 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        height: 25px;
+        height: 30px;
         font-size: 0.7em;
     }
 
