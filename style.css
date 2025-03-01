@@ -219,8 +219,8 @@ body {
 .weather-ticker {
     background-color: #3a3a3a;
     padding: 4px 0;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 3px;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 5px;
