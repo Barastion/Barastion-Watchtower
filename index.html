@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:; media-src 'self' https://apod.nasa.gov https://*.nasa.gov;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:; media-src 'self' https://apod.nasa.gov https://*.nasa.gov; frame-src 'self' https://apod.nasa.gov https://*.nasa.gov;">
 </head>
 <body>
     <div class="container">
@@ -415,7 +415,7 @@
                             console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
                             nasaFrame.innerHTML = '';
                             const fallbackImg = document.createElement('img');
-                            fallbackImg.src = 'diabelek.png';
+                            fallbackImg.src = 'planeta.png';
                             fallbackImg.alt = 'Błąd pobierania zdjęcia z NASA';
                             nasaFrame.appendChild(fallbackImg);
                             tickerElement.innerHTML = '<span class="ticker-segment">Błąd pobierania opisu zdjęcia z NASA</span>';
@@ -426,14 +426,14 @@
                                 console.error('Obrazek nie załadł się poprawnie, używam fallbacku');
                                 nasaFrame.innerHTML = '';
                                 const fallbackImg = document.createElement('img');
-                                fallbackImg.src = 'diabelek.png';
+                                fallbackImg.src = 'planeta.png';
                                 fallbackImg.alt = 'Błąd pobierania zdjęcia z NASA';
                                 nasaFrame.appendChild(fallbackImg);
                                 tickerElement.innerHTML = '<span class="ticker-segment">Błąd pobierania opisu zdjęcia z NASA</span>';
                             }
                         }, 5000);
                     } else if (data.media_type === 'video' && data.url) {
-                        // Jeśli to wideo, tworzymy element <iframe> (bo URL z APOD to zazwyczaj osadzony odtwarzacz, np. YouTube)
+                        // Jeśli to wideo, tworzymy element <iframe>
                         const videoElement = document.createElement('iframe');
                         videoElement.src = data.url;
                         videoElement.title = data.title || 'NASA Astronomy Picture of the Day Video';
@@ -446,7 +446,7 @@
                             console.error('Błąd ładowania wideo z NASA, używam fallbacku');
                             nasaFrame.innerHTML = '';
                             const fallbackImg = document.createElement('img');
-                            fallbackImg.src = 'diabelek.png';
+                            fallbackImg.src = 'planeta.png';
                             fallbackImg.alt = 'Błąd pobierania wideo z NASA';
                             nasaFrame.appendChild(fallbackImg);
                             tickerElement.innerHTML = '<span class="ticker-segment">Błąd pobierania wideo z NASA</span>';
@@ -455,7 +455,7 @@
                         // Jeśli to ani obraz, ani wideo, używamy fallbacku
                         console.warn('NASA APOD zwróciło nieobsługiwany typ mediów, używam fallbacku');
                         const fallbackImg = document.createElement('img');
-                        fallbackImg.src = 'diabelek.png';
+                        fallbackImg.src = 'planeta.png';
                         fallbackImg.alt = 'NASA APOD zawiera nieobsługiwany typ mediów';
                         nasaFrame.appendChild(fallbackImg);
                         tickerElement.innerHTML = '<span class="ticker-segment">NASA APOD zawiera nieobsługiwany typ mediów</span>';
@@ -466,7 +466,7 @@
                     if (attempt === retries) {
                         nasaFrame.innerHTML = '';
                         const fallbackImg = document.createElement('img');
-                        fallbackImg.src = 'diabelek.png';
+                        fallbackImg.src = 'planeta.png';
                         fallbackImg.alt = 'Błąd pobierania treści z NASA';
                         nasaFrame.appendChild(fallbackImg);
                         tickerElement.innerHTML = '<span class="ticker-segment">Błąd pobierania opisu z NASA</span>';
