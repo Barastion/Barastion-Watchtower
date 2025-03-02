@@ -74,7 +74,7 @@ body {
 
 .search-container {
     text-align: center;
-    margin: 20px 0 10px 0; /* Dolny margines zmniejszony do 10px */
+    margin: 20px 0 10px 0;
 }
 
 .search-container form {
@@ -105,7 +105,7 @@ body {
 
 .daily-fact {
     text-align: center;
-    margin: 10px 5px 10px 5px; /* Dolny margines 30px – odstęp od ramki poniżej */
+    margin: 10px 5px 30px 5px; /* Minimalne marginesy boczne: 5px, dolny: 30px */
     font-size: 0.9em;
     color: #ffffff;
 }
@@ -118,7 +118,7 @@ body {
 }
 
 .fact-content {
-    margin: 5px 5px 0 5px; /* Zmniejszony górny margines do 5px + brak dolnego marginesu */
+    margin: 5px 5px 0 5px; /* Minimalne marginesy boczne: 5px */
     font-size: 0.9em;
     font-style: italic;
     line-height: 1.5;
@@ -127,7 +127,7 @@ body {
 
 .content-frame {
     max-width: 800px;
-    margin: 0 auto; /* Brak górnego marginesu */
+    margin: 0 auto;
     background-color: #3a3a3a;
     padding: 20px;
     border-radius: 8px;
@@ -369,10 +369,12 @@ tr:hover {
 
     .daily-fact {
         font-size: 0.8em;
+        /* Usunięto osobne marginesy boczne – używamy tych z głównego CSS */
     }
 
     .fact-content {
         font-size: 0.8em;
+        /* Usunięto osobne marginesy boczne – używamy tych z głównego CSS */
     }
 
     .weather-forecast {
