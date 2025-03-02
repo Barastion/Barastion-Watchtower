@@ -127,7 +127,7 @@ body {
 
 .content-frame {
     max-width: 800px;
-    margin: 10px auto 0 auto; /* Dodaj górny margines */
+    margin: 0 auto 0 auto; /* Dodaj górny margines */
     background-color: #3a3a3a;
     padding: 20px;
     border-radius: 8px;
