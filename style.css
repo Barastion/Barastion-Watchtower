@@ -105,7 +105,7 @@ body {
 
 .daily-fact {
     text-align: center;
-    margin: 10px 5px 30px 5px; /* Minimalne marginesy boczne: 5px, dolny: 30px na komputerze */
+    margin: 10px 5px 20px 5px; /* Minimalne marginesy boczne: 5px, dolny: 30px na komputerze */
     font-size: 0.9em;
     color: #ffffff;
 }
@@ -373,7 +373,7 @@ tr:hover {
 
     .daily-fact {
         font-size: 0.75em;
-        margin-bottom: 15px; /* Zmniejszony odstęp od dolnej ramki na telefonach */
+        margin-bottom: 10px; /* Zmniejszony odstęp od dolnej ramki na telefonach */
     }
 
     .fact-content {
