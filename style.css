@@ -105,7 +105,7 @@ body {
 
 .daily-fact {
     text-align: center;
-    margin: 10px 5px 30px 5px; /* Minimalne marginesy boczne: 5px, dolny: 30px */
+    margin: 10px 5px 30px 5px; /* Minimalne marginesy boczne: 5px, dolny: 30px na komputerze */
     font-size: 0.9em;
     color: #ffffff;
 }
@@ -359,11 +359,11 @@ tr:hover {
 
 @media (max-width: 768px) {
     body {
-        padding: 10px; /* Zmniejsz padding body na telefonach */
+        padding: 10px;
     }
 
     .container {
-        padding: 10px; /* Zmniejsz padding kontenera na telefonach */
+        padding: 10px;
     }
 
     .content-frame {
@@ -372,12 +372,13 @@ tr:hover {
     }
 
     .daily-fact {
-        font-size: 0.75em; /* Zmniejsz nieco rozmiar czcionki dla lepszej kompaktowości */
+        font-size: 0.75em;
+        margin-bottom: 15px; /* Zmniejszony odstęp od dolnej ramki na telefonach */
     }
 
     .fact-content {
-        font-size: 0.75em; /* Zmniejsz rozmiar czcionki */
-        line-height: 1.3; /* Zmniejsz line-height dla mniejszego rozciągnięcia */
+        font-size: 0.75em;
+        line-height: 1.3;
     }
 
     .weather-forecast {
