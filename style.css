@@ -118,7 +118,7 @@ body {
 }
 
 .fact-content {
-    margin: 10px 50 20px 50; /* góra, prawo, dół, lewo */
+    margin: 10px 50 25px 50; /* góra, prawo, dół, lewo */
     font-size: 0.9em;
     font-style: italic;
     line-height: 1.5;
