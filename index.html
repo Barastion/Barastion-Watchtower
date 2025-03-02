@@ -265,28 +265,28 @@
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
         45: '🌫️', 48: '🌫️',
         51: '🌦️', 53: '🌧️', 55: '🌧️',
-        56: '🌧️', 57: '🌧️', // Added for light/intense freezing drizzle
+        56: '🌧️', 57: '🌧️',
         61: '🌦️', 63: '🌧️', 65: '🌧️',
-        66: '🌧️', 67: '🌧️', // Added for light/heavy freezing rain
+        66: '🌧️', 67: '🌧️',
         71: '🌨️', 73: '🌨️', 75: '🌨️',
-        77: '🌨️', // Added for snow grains
+        77: '🌨️',
         80: '🌦️', 81: '🌧️', 82: '🌧️',
-        85: '🌨️', 86: '🌨️', // Added for light/heavy snow showers
-        95: '⛈️', 96: '⛈️', 99: '⛈️' // Added for thunderstorms with hail
+        85: '🌨️', 86: '🌨️',
+        95: '⛈️', 96: '⛈️', 99: '⛈️'
     };
 
     const weatherDescriptions = {
         0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
         45: 'Mgła', 48: 'Mgła z szronem',
         51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
-        56: 'Lekka mżawka marznąca', 57: 'Intensywna mżawka marznąca', // Added
+        56: 'Lekka mżawka marznąca', 57: 'Intensywna mżawka marznąca',
         61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz',
-        66: 'Lekki deszcz marznący', 67: 'Ciężki deszcz marznący', // Added
+        66: 'Lekki deszcz marznący', 67: 'Ciężki deszcz marznący',
         71: 'Lekki śnieg', 73: 'Umiarkowany śnieg', 75: 'Intensywny śnieg',
-        77: 'Śnieg ziarnisty', // Added
+        77: 'Śnieg ziarnisty',
         80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
-        85: 'Lekkie opady śniegu', 86: 'Ciężkie opady śniegu', // Added
-        95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem' // Added
+        85: 'Lekkie opady śniegu', 86: 'Ciężkie opady śniegu',
+        95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem'
     };
 
     function capitalizeFirstLetter(string) {
@@ -328,7 +328,7 @@
                     const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
                     const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
                     const weatherCode = forecastData.daily.weathercode[index];
-                    console.log(`Weather code for ${formattedDate}: ${weatherCode}`); // Log the weather code
+                    console.log(`Weather code for ${formattedDate}: ${weatherCode}`);
                     const maxTemp = forecastData.daily.temperature_2m_max[index];
                     const minTemp = forecastData.daily.temperature_2m_min[index];
                     const isToday = index === 0;
@@ -397,10 +397,9 @@
                 if (data.media_type === 'image' && data.url) {
                     imgElement.src = data.url;
                     imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-                    // Update the ticker with the description
                     const description = data.explanation || 'Brak opisu dla tego zdjęcia.';
                     const tickerText = `<span class="ticker-segment">${description}</span>`;
-                    tickerElement.innerHTML = tickerText.repeat(5); // Repeat for smooth looping
+                    tickerElement.innerHTML = tickerText.repeat(5);
                     imgElement.onerror = () => {
                         console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
                         imgElement.src = 'planeta.png';
