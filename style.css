@@ -105,7 +105,7 @@ body {
 
 .daily-fact {
     text-align: center;
-    margin: 10px 50px 20px 50px; /* Zwiększ dolny margines, np. do 60px */
+    margin: 10px 50px 10px 50px; /* Zwiększ dolny margines, np. do 60px */
     font-size: 0.9em;
     color: #ffffff;
 }
@@ -118,7 +118,7 @@ body {
 }
 
 .fact-content {
-    margin: 10px 50px 20px 50px; /* góra, prawo, dół, lewo */
+    margin: 10px 50px 10px 50px; /* góra, prawo, dół, lewo */
     font-size: 0.9em;
     font-style: italic;
     line-height: 1.5;
@@ -127,7 +127,7 @@ body {
 
 .content-frame {
     max-width: 800px;
-    margin: 20px auto 0 auto; /* Dodaj górny margines */
+    margin: 10px auto 0 auto; /* Dodaj górny margines */
     background-color: #3a3a3a;
     padding: 20px;
     border-radius: 8px;
