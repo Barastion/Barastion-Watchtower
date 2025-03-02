@@ -369,12 +369,10 @@ tr:hover {
 
     .daily-fact {
         font-size: 0.8em;
-        /* Usunięto osobne marginesy boczne – używamy tych z głównego CSS */
     }
 
     .fact-content {
         font-size: 0.8em;
-        /* Usunięto osobne marginesy boczne – używamy tych z głównego CSS */
     }
 
     .weather-forecast {
