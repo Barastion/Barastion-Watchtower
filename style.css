@@ -105,7 +105,8 @@ body {
 
 .daily-fact {
     text-align: center;
-    margin: 10px 50px 20px 50px; /* Zwiększ dolny margines, np. do 60px */
+    margin: 10px 50px 0 50px; /* Usuń dolny margines */
+    padding-bottom: 10px; /* Dodaj padding zamiast marginesu */
     font-size: 0.9em;
     color: #ffffff;
 }
