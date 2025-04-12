@@ -316,7 +316,7 @@ body {
 
 .crypto-tile.positive-high {
     background-color: rgba(0, 225, 0, 0.9); /* Jasny, wyraźny zielony dla >15% */
-    animation: pulse 1s infinite; /* Efekt pulsującego cienia */
+    animation: pulse-positive 2s infinite; /* Zielony pulsujący cień */
 }
 
 .crypto-tile.negative-low {
@@ -329,25 +329,25 @@ body {
 
 .crypto-tile.negative-high {
     background-color: rgba(225, 0, 0, 0.9); /* Jasny, wyraźny czerwony dla >15% */
-    animation: pulse 1s infinite; /* Efekt pulsującego cienia */
+    animation: pulse-negative 2s infinite; /* Czerwony pulsujący cień */
 }
 
 .crypto-symbol {
     font-size: 0.8em;
     font-weight: bold;
     margin-bottom: 2px;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 1); /* Zwiększony cień wokół tekstu */
+    text-shadow: 0 0 3px rgba(0, 0, 0, 1); /* Czarny cień dla lepszej czytelności */
 }
 
 .crypto-price {
     font-size: 0.7em;
     margin-bottom: 2px;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 1); /* Zwiększony cień wokół tekstu */
+    text-shadow: 0 0 3px rgba(0, 0, 0, 1); /* Czarny cień dla lepszej czytelności */
 }
 
 .crypto-change {
     font-size: 0.6em;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 1); /* Zwiększony cień wokół tekstu */
+    text-shadow: 0 0 3px rgba(0, 0, 0, 1); /* Czarny cień dla lepszej czytelności */
 }
 
 .crypto-error {
@@ -474,10 +474,16 @@ tr:hover {
     }
 }
 
-@keyframes pulse {
-    0% { box-shadow: 0 0 6px rgba(255, 255, 255, 0.5); }
-    50% { box-shadow: 0 0 12px rgba(255, 255, 255, 0.8); }
-    100% { box-shadow: 0 0 6px rgba(255, 255, 255, 0.5); }
+@keyframes pulse-positive {
+    0% { box-shadow: 0 0 6px rgba(0, 225, 0, 0.5); }
+    50% { box-shadow: 0 0 12px rgba(0, 225, 0, 0.8); }
+    100% { box-shadow: 0 0 6px rgba(0, 225, 0, 0.5); }
+}
+
+@keyframes pulse-negative {
+    0% { box-shadow: 0 0 6px rgba(225, 0, 0, 0.5); }
+    50% { box-shadow: 0 0 12px rgba(225, 0, 0, 0.8); }
+    100% { box-shadow: 0 0 6px rgba(225, 0, 0, 0.5); }
 }
 
 @media (max-width: 768px) {
