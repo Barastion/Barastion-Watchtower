@@ -1,4 +1,3 @@
-/* Weryfikowany arkusz stylów - dostosowano sekcję kryptowalut */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #1e1e1e;
@@ -103,7 +102,7 @@ body {
 
 .search-container input[type="text"]:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #5a6268;
 }
 
 .daily-fact {
@@ -178,7 +177,7 @@ body {
 }
 
 .forecast-bar.today {
-    border: 2px solid #007bff;
+    border: 2px solid #5a6268;
 }
 
 .forecast-date {
@@ -260,6 +259,14 @@ body {
     margin-bottom: 20px;
 }
 
+.crypto-header {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
 .crypto-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -323,13 +330,6 @@ body {
     font-size: 0.6em;
 }
 
-.crypto-footer {
-    font-size: 0.9em;
-    text-align: center;
-    margin: 1px 0;
-    color: #cccccc;
-}
-
 .crypto-error {
     text-align: center;
     font-size: 0.9em;
@@ -370,7 +370,7 @@ th, td {
 }
 
 th {
-    background-color: #007bff;
+    background-color: #5a6268;
     color: white;
     font-weight: 600;
 }
@@ -420,7 +420,7 @@ tr:hover {
 }
 
 .toggle-button {
-    background-color: #007bff;
+    background-color: #5a6268;
     color: white;
     border: none;
     padding: 6px 12px;
@@ -433,7 +433,7 @@ tr:hover {
 }
 
 .toggle-button:hover {
-    background-color: #0056b3;
+    background-color: #6c757d;
 }
 
 @keyframes ticker {
@@ -473,6 +473,10 @@ tr:hover {
         margin-bottom: 10px;
     }
 
+    .fact-header {
+        font-size: 0.75em;
+    }
+
     .fact-content {
         font-size: 0.75em;
         line-height: 1.3;
@@ -510,6 +514,11 @@ tr:hover {
         padding: 10px;
     }
 
+    .crypto-header {
+        font-size: 0.75em;
+        margin-bottom: 5px;
+    }
+
     .crypto-grid {
         grid-template-columns: repeat(4, 1fr);
         gap: 6px;
@@ -531,11 +540,6 @@ tr:hover {
 
     .crypto-change {
         font-size: 0.5em;
-    }
-
-    .crypto-footer {
-        font-size: 0.75em;
-        margin: 0.5px 0;
     }
 
     .crypto-error {
