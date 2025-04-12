@@ -11,6 +11,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
+    <div id="networkStatus" class="network-status"></div>
     <div class="container">
         <div class="nasa-container">
             <div class="nasa-frame">
@@ -563,15 +564,56 @@
             }
         }
 
+        // Funkcja obsługująca status sieci
+        let isReloading = false;
+        async function handleNetworkStatus() {
+            const networkStatus = document.getElementById('networkStatus');
+            if (navigator.onLine) {
+                console.log('Połączenie z internetem przywrócone');
+                networkStatus.style.display = 'none';
+                networkStatus.textContent = '';
+                if (!isReloading) {
+                    isReloading = true;
+                    try {
+                        const ip = await getIp();
+                        console.log('IP po przywróceniu połączenia:', ip);
+                        await Promise.all([
+                            logVisit(),
+                            getWeather(ip),
+                            getNasaApodImage(),
+                            getDailyFact(),
+                            getCryptoData()
+                        ]);
+                        console.log('Wszystkie dane załadowane po przywróceniu połączenia');
+                    } catch (err) {
+                        console.error('Błąd podczas ponownego ładowania danych:', err);
+                    } finally {
+                        isReloading = false;
+                    }
+                }
+            } else {
+                console.log('Utracono połączenie z internetem');
+                networkStatus.textContent = 'Brak połączenia z internetem';
+                networkStatus.style.display = 'block';
+            }
+        }
+
+        // Automatyczna aktualizacja kafelków kryptowalut co 5 minut
+        function startCryptoUpdateInterval() {
+            getCryptoData(); // Pierwsze wywołanie natychmiastowe
+            setInterval(() => {
+                console.log('Aktualizuję dane kryptowalut...');
+                getCryptoData();
+            }, 300000); // 5 minut = 300000 ms
+        }
+
+        // Inicjalizacja strony
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
-            const ip = await getIp();
-            console.log('IP przy załadowaniu:', ip);
-            await logVisit();
-            await getWeather(ip);
-            await getNasaApodImage();
-            await getDailyFact();
-            await getCryptoData();
+            handleNetworkStatus(); // Sprawdzenie stanu sieci na starcie
+            startCryptoUpdateInterval(); // Rozpoczęcie aktualizacji kafelków
+            window.addEventListener('online', handleNetworkStatus);
+            window.addEventListener('offline', handleNetworkStatus);
         };
 
         window.addEventListener('load', checkCSSLoaded);
