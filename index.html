@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ip-api.com https://api.open-meteo.com https://api.nasa.gov https://api.coincap.io; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ip-api.com https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -284,19 +284,23 @@
                 }
                 const location = {
                     city: data.city || 'Nieznane miasto',
-                    country: data.country || 'Nieznany kraj'
+                    country: data.country || 'Nieznany kraj',
+                    lat: data.lat || null,
+                    lon: data.lon || null
                 };
                 localStorage.setItem(cacheKey, JSON.stringify(location));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
                 return location;
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
-                if (err.message.includes('429')) {
-                    console.warn('Przekroczono limit API ip-api.com');
+                if (err.message.includes('429') || err.message.includes('403')) {
+                    console.warn('Limit API ip-api.com lub blokada IP');
                 }
                 return {
                     city: 'Nieznane miasto',
-                    country: 'Nieznany kraj'
+                    country: 'Nieznany kraj',
+                    lat: null,
+                    lon: null
                 };
             }
         }
@@ -343,10 +347,10 @@
 
         async function getWeather(ip) {
             try {
-                const locationData = await retryFetch(`https://ip-api.com/json/${ip}`);
+                const locationData = await getLocation(ip);
                 console.log('Dane lokalizacji:', locationData);
-                if (locationData.status !== 'success') {
-                    throw new Error('Błąd lokalizacji: ' + (locationData.message || 'Nieznany powód'));
+                if (!locationData.lat || !locationData.lon) {
+                    throw new Error('Brak współrzędnych dla lokalizacji');
                 }
                 const lat = locationData.lat;
                 const lon = locationData.lon;
@@ -484,14 +488,26 @@
         }
 
         async function getCryptoData() {
+            const cacheKey = 'crypto_data';
+            const cached = localStorage.getItem(cacheKey);
+            const cacheTime = localStorage.getItem(`${cacheKey}_time`);
+            const now = Date.now();
+            const cacheDuration = 15 * 60 * 1000; // 15 minut
+
+            if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
+                console.log('Używam danych kryptowalut z cache');
+                displayCryptoData(JSON.parse(cached));
+                return;
+            }
+
             try {
-                const data = await retryFetch('https://api.coincap.io/v2/assets?limit=50');
-                console.log('Dane kryptowalut:', data.data);
+                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1');
+                console.log('Dane kryptowalut:', data);
 
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 20 : 28;
-                const filteredCoins = data.data.filter(coin => {
-                    const price = parseFloat(coin.priceUsd);
+                const filteredCoins = data.filter(coin => {
+                    const price = parseFloat(coin.current_price);
                     return (
                         (price < 0.99 || price > 1.01) &&
                         price > 0.0001
@@ -499,15 +515,22 @@
                 }).slice(0, limit).map(coin => ({
                     id: coin.id,
                     symbol: coin.symbol,
-                    current_price: parseFloat(coin.priceUsd),
-                    price_change_percentage_24h: parseFloat(coin.changePercent24Hr)
+                    current_price: parseFloat(coin.current_price),
+                    price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
                 }));
 
+                localStorage.setItem(cacheKey, JSON.stringify(filteredCoins));
+                localStorage.setItem(`${cacheKey}_time`, now.toString());
                 displayCryptoData(filteredCoins);
             } catch (err) {
                 console.error('Błąd pobierania danych kryptowalut:', err);
-                const cryptoGrid = document.getElementById('cryptoGrid');
-                cryptoGrid.innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut. Spróbuj ponownie później.</div>';
+                if (cached) {
+                    console.log('Używam danych kryptowalut z cache po błędzie');
+                    displayCryptoData(JSON.parse(cached));
+                } else {
+                    const cryptoGrid = document.getElementById('cryptoGrid');
+                    cryptoGrid.innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut. Spróbuj ponownie później.</div>';
+                }
             }
         }
 
@@ -560,7 +583,7 @@
                     <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%</div>
                 `;
                 cryptoTile.addEventListener('click', () => {
-                    window.open(`https://coincap.io/assets/${coin.id}`, '_blank');
+                    window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
                 });
                 cryptoGrid.appendChild(cryptoTile);
             });
@@ -625,13 +648,13 @@
             }
         }
 
-        // Automatyczna aktualizacja kafelków kryptowalut co 5 minut
+        // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
         function startCryptoUpdateInterval() {
             getCryptoData();
             setInterval(() => {
                 console.log('Aktualizuję dane kryptowalut...');
                 getCryptoData();
-            }, 300000);
+            }, 900000); // 15 minut
         }
 
         // Inicjalizacja strony
