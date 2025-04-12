@@ -277,6 +277,7 @@ body {
     align-items: center;
     min-height: 40px;
     transition: transform 0.2s;
+    cursor: pointer;
 }
 
 .crypto-tile:hover {
@@ -323,9 +324,9 @@ body {
 }
 
 .crypto-footer {
-    font-size: 0.6em;
+    font-size: 0.9em;
     text-align: center;
-    margin: 4px 0;
+    margin: 2px 0;
     color: #cccccc;
 }
 
@@ -533,8 +534,8 @@ tr:hover {
     }
 
     .crypto-footer {
-        font-size: 0.5em;
-        margin: 3px 0;
+        font-size: 0.75em;
+        margin: 1px 0;
     }
 
     .crypto-error {
