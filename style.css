@@ -50,8 +50,8 @@ body {
 
 .nasa-ticker {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Zmienione tło na półprzezroczyste dla lepszego kontrastu */
-    padding: 5px 0; /* Lekko zwiększony padding */
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 0;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 5px;
@@ -64,8 +64,8 @@ body {
     padding-left: 100%;
     animation: ticker 360s linear infinite;
     font-size: 0.7em;
-    color: #ffffff; /* Zmieniono kolor na biały dla lepszej widoczności */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* Mocniejszy cień */
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
 }
 
 .nasa-ticker .ticker-segment {
@@ -106,7 +106,7 @@ body {
 
 .daily-fact {
     text-align: center;
-    margin: 20px 5px 20px 5px; /* Minimalne marginesy boczne: 5px, dolny: 30px na komputerze */
+    margin: 20px 5px 20px 5px;
     font-size: 0.9em;
     color: #ffffff;
 }
@@ -119,7 +119,7 @@ body {
 }
 
 .fact-content {
-    margin: 5px 5px 0 5px; /* Minimalne marginesy boczne: 5px */
+    margin: 5px 5px 0 5px;
     font-size: 0.9em;
     font-style: italic;
     line-height: 1.5;
@@ -249,13 +249,69 @@ body {
     font-weight: bold;
 }
 
-@keyframes ticker {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+.crypto-info {
+    margin-bottom: 20px;
+}
+
+.crypto-header {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+
+.crypto-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    padding: 10px;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.crypto-tile {
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+    transition: transform 0.2s;
+}
+
+.crypto-tile:hover {
+    transform: scale(1.05);
+}
+
+.crypto-tile.positive {
+    background-color: rgba(0, 128, 0, 0.3);
+}
+
+.crypto-tile.negative {
+    background-color: rgba(255, 0, 0, 0.3);
+}
+
+.crypto-symbol {
+    fontthe crypto-price {
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.crypto-price {
+    font-size: 0.9em;
+}
+
+.crypto-change {
+    font-size: 0.8em;
+}
+
+.crypto-error {
+    text-align: center;
+    font-size: 0.9em;
+    color: #ff4d4d;
 }
 
 .log-table {
@@ -358,6 +414,15 @@ tr:hover {
     background-color: #0056b3;
 }
 
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -374,7 +439,7 @@ tr:hover {
 
     .daily-fact {
         font-size: 0.75em;
-        margin-bottom: 10px; /* Zmniejszony odstęp od dolnej ramki na telefonach */
+        margin-bottom: 10px;
     }
 
     .fact-content {
@@ -407,6 +472,33 @@ tr:hover {
     }
 
     .weather-ticker {
+        font-size: 0.8em;
+    }
+
+    .crypto-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .crypto-tile {
+        min-height: 70px;
+        padding: 8px;
+    }
+
+    .crypto-symbol {
+        font-size: 0.9em;
+    }
+
+    .crypto-price {
+        font-size: 0.8em;
+    }
+
+    .crypto-change {
+        font-size: 0.7em;
+    }
+
+    .crypto-error {
         font-size: 0.8em;
     }
 
