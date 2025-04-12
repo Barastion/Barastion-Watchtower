@@ -228,7 +228,7 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
-                logTableBody.appendChild(row);
+                    logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -520,11 +520,20 @@
             try {
                 // Pobierz dane rynkowe z Binance
                 const tickerData = await retryFetch('https://data-api.binance.vision/api/v3/ticker/24hr');
-                // Filtruj pary z USDT i statusem TRADING
+                // Filtruj pary z USDT i poprawnymi danymi
                 const filteredCoins = tickerData
-                    .filter(ticker => ticker.symbol.endsWith('USDT') && ticker.count > 0) // count > 0 oznacza aktywność handlową
+                    .filter(ticker => 
+                        ticker && 
+                        ticker.symbol && 
+                        ticker.symbol.endsWith('USDT') && 
+                        ticker.count > 0 && 
+                        ticker.baseAsset && 
+                        typeof ticker.baseAsset === 'string' && 
+                        ticker.lastPrice && 
+                        ticker.priceChangePercent
+                    )
                     .map(ticker => ({
-                        id: ticker.baseAsset.toLowerCase(), // dla CoinGecko linków
+                        id: ticker.baseAsset.toLowerCase(),
                         symbol: ticker.baseAsset.toUpperCase(),
                         current_price: parseFloat(ticker.lastPrice),
                         price_change_percentage_24h: parseFloat(ticker.priceChangePercent)
@@ -532,7 +541,7 @@
                     .filter(coin => {
                         const price = coin.current_price;
                         return (price < 0.99 || price > 1.01) && price > 0.0001;
-                    }); // Zachowaj oryginalny filtr cen
+                    });
 
                 // Ogranicz liczbę kafelków
                 const isMobile = window.innerWidth <= 768;
