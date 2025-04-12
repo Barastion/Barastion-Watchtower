@@ -307,28 +307,28 @@ body {
 }
 
 .crypto-tile.positive-low {
-    background-color: rgba(0, 100, 0, 0.6); /* Ciemniejszy zielony dla 0-5% */
+    background-color: rgba(0, 150, 0, 0.6); /* Ciemniejszy zielony dla 0-5% */
 }
 
 .crypto-tile.positive-mid {
-    background-color: rgba(0, 150, 0, 0.75); /* Średni, intensywny zielony dla 5-10% */
+    background-color: rgba(0, 200, 0, 0.75); /* Średni, intensywny zielony dla 5-10% */
 }
 
 .crypto-tile.positive-high {
-    background-color: rgba(0, 200, 0, 0.9); /* Jasny, wyraźny zielony dla >15% */
+    background-color: rgba(0, 250, 0, 0.9); /* Jasny, bardzo wyraźny zielony dla >15% */
     animation: pulse 1s infinite; /* Efekt pulsującego cienia */
 }
 
 .crypto-tile.negative-low {
-    background-color: rgba(100, 0, 0, 0.6); /* Ciemniejszy czerwony dla 0-5% */
+    background-color: rgba(150, 0, 0, 0.6); /* Ciemniejszy czerwony dla 0-5% */
 }
 
 .crypto-tile.negative-mid {
-    background-color: rgba(150, 0, 0, 0.75); /* Średni, intensywny czerwony dla 5-10% */
+    background-color: rgba(200, 0, 0, 0.75); /* Średni, intensywny czerwony dla 5-10% */
 }
 
 .crypto-tile.negative-high {
-    background-color: rgba(200, 0, 0, 0.9); /* Jasny, wyraźny czerwony dla >15% */
+    background-color: rgba(250, 0, 0, 0.9); /* Jasny, bardzo wyraźny czerwony dla >15% */
     animation: pulse 1s infinite; /* Efekt pulsującego cienia */
 }
 
@@ -472,9 +472,9 @@ tr:hover {
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
-    50% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); }
-    100% { box-shadow: 0 0 8px rgba(255, 255, 255, 0.3); }
+    0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+    100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
 }
 
 @media (max-width: 768px) {
@@ -548,7 +548,9 @@ tr:hover {
     }
 
     .crypto-grid {
-        grid-template-columns: repeat(4, 1fr);
+       
+
+System: grid-template-columns: repeat(4, 1fr);
         gap: 6px;
         padding: 8px;
     }
