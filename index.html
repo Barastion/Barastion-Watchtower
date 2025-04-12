@@ -201,6 +201,7 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
+                    logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -466,10 +467,12 @@
                 console.log('Dane kryptowalut:', data);
 
                 // Filtrowanie stablecoinów i niskowartościowych coinów
+                const isMobile = window.innerWidth <= 768;
+                const limit = isMobile ? 16 : 21; // 16 dla mobile (4x4), 21 dla desktop (3x7)
                 const filteredCoins = data.filter(coin => {
                     const price = coin.current_price;
                     return price < 0.99 || price > 1.01 && price > 0.0001; // Pomija stablecoiny (~$1.00) i coiny < $0.0001
-                }).slice(0, 16); // Limit do 16 dla 4 rzędów po 4 kolumny
+                }).slice(0, limit);
 
                 displayCryptoData(filteredCoins);
             } catch (err) {
@@ -480,10 +483,29 @@
         }
 
         function formatPrice(price) {
+            if (price === 0) return '$0.00';
+            let formatted;
             if (price < 0.01 && price > 0) {
-                return `$${price.toFixed(6)}`; // Większa precyzja dla niskich cen
+                formatted = `$${price.toFixed(6)}`; // Większa precyzja dla niskich cen
+            } else {
+                formatted = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; // Format z przerwami
             }
-            return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; // Format z przerwami
+            // Ograniczenie do 10 znaków
+            if (formatted.length > 10) {
+                if (price < 0.01) {
+                    const decimals = Math.max(2, 10 - 3 - Math.floor(Math.log10(price))); // 3 to "$0."
+                    formatted = `$${price.toFixed(decimals)}`;
+                    if (formatted.length > 10) {
+                        formatted = formatted.substring(0, 10);
+                    }
+                } else {
+                    formatted = `$${Math.round(price * 100) / 100}`; // Zaokrąglenie do 2 miejsc
+                    if (formatted.length > 10) {
+                        formatted = formatted.substring(0, 10);
+                    }
+                }
+            }
+            return formatted;
         }
 
         function getChangeClass(change) {
@@ -522,7 +544,7 @@
                 style.textContent = `
                     body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
                     .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
-                    .crypto-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+                    .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
                     .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; }
                     .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
                     .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
@@ -530,6 +552,7 @@
                     .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                     .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
+                    .crypto-footer { font-size: 0.6em; text-align: center; margin: 4px 0; color: #cccccc; }
                 `;
                 document.head.appendChild(style);
             }
