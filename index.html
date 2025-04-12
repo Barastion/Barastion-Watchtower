@@ -201,7 +201,7 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
-                    logTableBody.appendChild(row);
+                logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -274,7 +274,7 @@
             71: '🌨️', 73: '🌨️', 75: '🌨️',
             77: '🌨️',
             80: '🌦️', 81: '🌧️', 82: '🌧️',
-        85: '🌨️', 86: '🌨️',
+            85: '🌨️', 86: '🌨️',
             95: '⛈️', 96: '⛈️', 99: '⛈️'
         };
 
@@ -469,7 +469,7 @@
                 // Filtrowanie stablecoinów i niskowartościowych coinów
                 const filteredCoins = data.filter(coin => {
                     const price = coin.current_price;
-                    return price !== 1 && price > 0.0001;
+                    return price < 0.99 || price > 1.01 && price > 0.0001; // Pomija stablecoiny (~$1.00) i coiny < $0.0001
                 }).slice(0, 21); // Limit do 21 po filtrowaniu
 
                 displayCryptoData(filteredCoins);
