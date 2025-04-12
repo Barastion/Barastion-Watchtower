@@ -65,6 +65,7 @@ body {
     animation: ticker 360s linear infinite;
     font-size: 0.7em;
     color: #cccccc;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Dodany cień */
 }
 
 .nasa-ticker .ticker-segment {
