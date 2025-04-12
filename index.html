@@ -228,7 +228,7 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
-                    logTableBody.appendChild(row);
+                logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -320,16 +320,34 @@
         };
 
         const weatherDescriptions = {
-            0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
-            45: 'Mgła', 48: 'Mgła z szronem',
-            51 | 53 | 55: 'Mżawka',
-            56 | 57: 'Mżawka marznąca',
-            61 | 63 | 65: 'Deszcz',
-            66 | 67: 'Deszcz marznący',
-            71 | 73 | 75 | 77: 'Śnieg',
-            80 | 81 | 82: 'Przelotne opady',
-            85 | 86: 'Opady śniegu',
-            95 | 96 | 99: 'Burza'
+            0: 'Bezchmurnie',
+            1: 'Lekko zachmurzone',
+            2: 'Częściowo zachmurzone',
+            3: 'Zachmurzone',
+            45: 'Mgła',
+            48: 'Mgła z szronem',
+            51: 'Mżawka',
+            53: 'Mżawka',
+            55: 'Mżawka',
+            56: 'Mżawka marznąca',
+            57: 'Mżawka marznąca',
+            61: 'Deszcz',
+            63: 'Deszcz',
+            65: 'Deszcz',
+            66: 'Deszcz marznący',
+            67: 'Deszcz marznący',
+            71: 'Śnieg',
+            73: 'Śnieg',
+            75: 'Śnieg',
+            77: 'Śnieg',
+            80: 'Przelotne opady',
+            81: 'Przelotne opady',
+            82: 'Przelotne opady',
+            85: 'Opady śniegu',
+            86: 'Opady śniegu',
+            95: 'Burza',
+            96: 'Burza',
+            99: 'Burza'
         };
 
         function degreesToDirection(degrees) {
