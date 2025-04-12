@@ -238,6 +238,15 @@ body {
     font-size: 1em;
 }
 
+/* Styl dla komunikatu błędu w sekcji forecast-container */
+.forecast-error {
+    font-size: 0.8em; /* Mniejszy rozmiar czcionki */
+    color: #999999; /* Szary kolor */
+    text-align: center; /* Wyśrodkowanie */
+    padding: 10px;
+    width: 100%; /* Zapewnia, że tekst zajmuje całą szerokość */
+}
+
 .weather-ticker {
     background-color: #3a3a3a;
     padding: 4px 0;
@@ -336,18 +345,18 @@ body {
     font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 2px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Zmniejszono promień cienia z 4px na 3.5px */
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 2px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Zmniejszono promień cienia z 4px na 3.5px */
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-change {
     font-size: 0.65em;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Zmniejszono promień cienia z 4px na 3.5px */
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-error {
@@ -465,7 +474,7 @@ tr:hover {
     }
 }
 
-@-webkit@keyframes ticker {
+@-webkit-keyframes ticker {
     0% {
         -webkit-transform: translateX(0);
     }
@@ -545,6 +554,15 @@ tr:hover {
 
     .weather-ticker {
         font-size: 0.8em;
+    }
+
+    /* Styl dla komunikatu błędu w wersji mobilnej */
+    .forecast-error {
+        font-size: 0.7em; /* Jeszcze mniejszy w wersji mobilnej */
+        color: #999999; /* Szary kolor */
+        text-align: center; /* Wyśrodkowanie w wersji mobilnej */
+        padding: 8px;
+        width: 100%;
     }
 
     .crypto-info {
