@@ -417,7 +417,7 @@
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
-                document.getElementById('weatherForecast').innerHTML = '<div>Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
+                document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
                 document.getElementById('weatherCity').textContent = 'Nieznane miasto';
                 const errorTickerText = `<span class="ticker-segment">Błąd pobierania szczegółów pogody, spróbuj ponownie później lub wyjrzyj za okno i sam się przekonaj, jaka jest pogoda.</span>`;
                 document.getElementById('tickerContent').innerHTML = errorTickerText.repeat(5);
