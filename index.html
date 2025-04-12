@@ -112,7 +112,7 @@
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
 
-            const logEntry = { date, day, time, ip, location, device, timestamp большей степени: now.getTime() };
+            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
             console.log('Log do zapisania:', logEntry);
 
             const logsRef = ref(database, 'logs');
@@ -274,7 +274,7 @@
             71: '🌨️', 73: '🌨️', 75: '🌨️',
             77: '🌨️',
             80: '🌦️', 81: '🌧️', 82: '🌧️',
-            85: '🌨️', 86: '🌨️',
+        85: '🌨️', 86: '🌨️',
             95: '⛈️', 96: '⛈️', 99: '⛈️'
         };
 
@@ -464,7 +464,7 @@
                     throw new Error(`Błąd HTTP: ${response.status} - ${response.statusText}`);
                 }
                 const data = await response.json();
-                console.log('Dane kryptowalut:',data);
+                console.log('Dane kryptowalut:', data);
 
                 // Filtrowanie stablecoinów i niskowartościowych coinów
                 const filteredCoins = data.filter(coin => {
