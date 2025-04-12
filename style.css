@@ -16,6 +16,21 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
+.network-status {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ff4d4d;
+    color: #ffffff;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9em;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
 .nasa-container {
     max-width: 640px;
     margin: 0 auto 20px;
@@ -461,6 +476,11 @@ tr:hover {
 
     .container {
         padding: 10px;
+    }
+
+    .network-status {
+        font-size: 0.8em;
+        padding: 6px;
     }
 
     .content-frame {
