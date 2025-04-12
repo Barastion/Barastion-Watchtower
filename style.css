@@ -50,8 +50,8 @@ body {
 
 .nasa-ticker {
     width: 100%;
-    background-color: #3a3a3a;
-    padding: 2.5px 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Zmienione tło na półprzezroczyste dla lepszego kontrastu */
+    padding: 5px 0; /* Lekko zwiększony padding */
     overflow: hidden;
     white-space: nowrap;
     border-radius: 5px;
@@ -64,8 +64,8 @@ body {
     padding-left: 100%;
     animation: ticker 360s linear infinite;
     font-size: 0.7em;
-    color: #cccccc;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Dodany cień */
+    color: #ffffff; /* Zmieniono kolor na biały dla lepszej widoczności */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); /* Mocniejszy cień */
 }
 
 .nasa-ticker .ticker-segment {
