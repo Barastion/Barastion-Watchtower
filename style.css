@@ -132,7 +132,7 @@ body {
     background-color: #3a3a3a;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(eldercare: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .weather-info {
@@ -271,14 +271,14 @@ body {
 }
 
 .crypto-tile {
-    padding: 8px;
+    padding: 6px;
     border-radius: 6px;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 60px;
+    min-height: 50px;
     transition: transform 0.2s;
 }
 
@@ -287,42 +287,42 @@ body {
 }
 
 .crypto-tile.positive-low {
-    background-color: rgba(0, 128, 0, 0.2);
+    background-color: rgba(0, 200, 0, 0.4);
 }
 
 .crypto-tile.positive-mid {
-    background-color: rgba(0, 128, 0, 0.4);
+    background-color: rgba(0, 200, 0, 0.6);
 }
 
 .crypto-tile.positive-high {
-    background-color: rgba(0, 128, 0, 0.6);
+    background-color: rgba(0, 200, 0, 0.8);
 }
 
 .crypto-tile.negative-low {
-    background-color: rgba(255, 0, 0, 0.2);
+    background-color: rgba(255, 50, 50, 0.4);
 }
 
 .crypto-tile.negative-mid {
-    background-color: rgba(255, 0, 0, 0.4);
+    background-color: rgba(255, 50, 50, 0.6);
 }
 
 .crypto-tile.negative-high {
-    background-color: rgba(255, 0, 0, 0.6);
+    background-color: rgba(255, 50, 50, 0.8);
 }
 
 .crypto-symbol {
-    font-size: 0.9em;
+    font-size: 0.85em;
     font-weight: bold;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 
 .crypto-price {
-    font-size: 0.8em;
-    margin-bottom: 3px;
+    font-size: 0.75em;
+    margin-bottom: 2px;
 }
 
 .crypto-change {
-    font-size: 0.7em;
+    font-size: 0.65em;
 }
 
 .crypto-error {
@@ -503,20 +503,20 @@ tr:hover {
     }
 
     .crypto-tile {
-        min-height: 50px;
-        padding: 6px;
+        min-height: 40px;
+        padding: 4px;
     }
 
     .crypto-symbol {
-        font-size: 0.8em;
+        font-size: 0.75em;
     }
 
     .crypto-price {
-        font-size: 0.7em;
+        font-size: 0.65em;
     }
 
     .crypto-change {
-        font-size: 0.6em;
+        font-size: 0.55em;
     }
 
     .crypto-error {
