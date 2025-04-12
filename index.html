@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org http://ip-api.com https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ip-api.com https://api.open-meteo.com https://api.nasa.gov https://api.coincap.io; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -135,7 +135,7 @@
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
 
-            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
+            const logEntry = { date | day | time | ip | location | device | timestamp: now.getTime() };
             console.log('Log do zapisania:', logEntry);
 
             const logsRef = ref(database, 'logs');
@@ -224,7 +224,7 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
-                logTableBody.appendChild(row);
+                    logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -261,18 +261,37 @@
         }
 
         async function getLocation(ip) {
+            // Cache w localStorage
+            const cacheKey = `location_${ip}`;
+            const cached = localStorage.getItem(cacheKey);
+            const cacheTime = localStorage.getItem(`${cacheKey}_time`);
+            const now = Date.now();
+            const cacheDuration = 60 * 60 * 1000; // 1 godzina
+
+            if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
+                console.log('Używam danych lokalizacji z cache:', ip);
+                return JSON.parse(cached);
+            }
+
             try {
-                const data = await retryFetch(`http://ip-api.com/json/${ip}`);
+                const data = await retryFetch(`https://ip-api.com/json/${ip}`);
                 console.log('Dane lokalizacji dla IP:', ip, data);
                 if (data.status !== 'success') {
                     throw new Error('Błąd API: ' + (data.message || 'Nieznany powód'));
                 }
-                return {
+                const location = {
                     city: data.city || 'Nieznane miasto',
                     country: data.country || 'Nieznany kraj'
                 };
+                // Zapis do cache
+                localStorage.setItem(cacheKey, JSON.stringify(location));
+                localStorage.setItem(`${cacheKey}_time`, now.toString());
+                return location;
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
+                if (err.message.includes('429')) {
+                    console.warn('Przekroczono limit API ip-api.com');
+                }
                 return {
                     city: 'Nieznane miasto',
                     country: 'Nieznany kraj'
@@ -326,7 +345,7 @@
 
         async function getWeather(ip) {
             try {
-                const locationData = await retryFetch(`http://ip-api.com/json/${ip}`);
+                const locationData = await retryFetch(`https://ip-api.com/json/${ip}`);
                 console.log('Dane lokalizacji:', locationData);
                 if (locationData.status !== 'success') {
                     throw new Error('Błąd lokalizacji: ' + (locationData.message || 'Nieznany powód'));
@@ -468,18 +487,23 @@
 
         async function getCryptoData() {
             try {
-                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h', {}, 3, 2000, 10000);
-                console.log('Dane kryptowalut:', data);
+                const data = await retryFetch('https://api.coincap.io/v2/assets?limit=50');
+                console.log('Dane kryptowalut:', data.data);
 
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 20 : 28;
-                const filteredCoins = data.filter(coin => {
-                    const price = coin.current_price;
+                const filteredCoins = data.data.filter(coin => {
+                    const price = parseFloat(coin.priceUsd);
                     return (
                         (price < 0.99 || price > 1.01) &&
                         price > 0.0001
                     );
-                }).slice(0, limit);
+                }).slice(0, limit).map(coin => ({
+                    id: coin.id,
+                    symbol: coin.symbol,
+                    current_price: parseFloat(coin.priceUsd),
+                    price_change_percentage_24h: parseFloat(coin.changePercent24Hr)
+                }));
 
                 displayCryptoData(filteredCoins);
             } catch (err) {
@@ -538,7 +562,7 @@
                     <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%</div>
                 `;
                 cryptoTile.addEventListener('click', () => {
-                    window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
+                    window.open(`https://coincap.io/assets/${coin.id}`, '_blank');
                 });
                 cryptoGrid.appendChild(cryptoTile);
             });
@@ -577,6 +601,8 @@
                 if (!isReloading) {
                     isReloading = true;
                     try {
+                        // Opóźnienie 2s dla stabilizacji sieci
+                        await new Promise(resolve => setTimeout(resolve, 2000));
                         const ip = await getIp();
                         console.log('IP po przywróceniu połączenia:', ip);
                         await Promise.all([
