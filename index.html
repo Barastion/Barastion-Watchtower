@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ip-api.com https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ip-api.com https://api.open-meteo.com https://api.nasa.gov https://data-api.binance.vision; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -322,15 +322,14 @@
         const weatherDescriptions = {
             0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
             45: 'Mgła', 48: 'Mgła z szronem',
-            51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
-            56: 'Lekka mżawka marznąca', 57: 'Intensywna mżawka marznąca',
-            61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz',
-            66: 'Lekki deszcz marznący', 67: 'Ciężki deszcz marznący',
-            71: 'Lekki śnieg', 73: 'Umiarkowany śnieg', 75: 'Intensywny śnieg',
-            77: 'Śnieg ziarnisty',
-            80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
-            85: 'Lekkie opady śniegu', 86: 'Ciężkie opady śniegu',
-            95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem'
+            51 | 53 | 55: 'Mżawka',
+            56 | 57: 'Mżawka marznąca',
+            61 | 63 | 65: 'Deszcz',
+            66 | 67: 'Deszcz marznący',
+            71 | 73 | 75 | 77: 'Śnieg',
+            80 | 81 | 82: 'Przelotne opady',
+            85 | 86: 'Opady śniegu',
+            95 | 96 | 99: 'Burza'
         };
 
         function degreesToDirection(degrees) {
@@ -501,29 +500,35 @@
             }
 
             try {
-                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1');
-                console.log('Dane kryptowalut:', data);
+                // Pobierz dane rynkowe z Binance
+                const tickerData = await retryFetch('https://data-api.binance.vision/api/v3/ticker/24hr');
+                // Filtruj pary z USDT i statusem TRADING
+                const filteredCoins = tickerData
+                    .filter(ticker => ticker.symbol.endsWith('USDT') && ticker.count > 0) // count > 0 oznacza aktywność handlową
+                    .map(ticker => ({
+                        id: ticker.baseAsset.toLowerCase(), // dla CoinGecko linków
+                        symbol: ticker.baseAsset.toUpperCase(),
+                        current_price: parseFloat(ticker.lastPrice),
+                        price_change_percentage_24h: parseFloat(ticker.priceChangePercent)
+                    }))
+                    .filter(coin => {
+                        const price = coin.current_price;
+                        return (price < 0.99 || price > 1.01) && price > 0.0001;
+                    }); // Zachowaj oryginalny filtr cen
 
+                // Ogranicz liczbę kafelków
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 20 : 28;
-                const filteredCoins = data.filter(coin => {
-                    const price = parseFloat(coin.current_price);
-                    return (
-                        (price < 0.99 || price > 1.01) &&
-                        price > 0.0001
-                    );
-                }).slice(0, limit).map(coin => ({
-                    id: coin.id,
-                    symbol: coin.symbol,
-                    current_price: parseFloat(coin.current_price),
-                    price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
-                }));
+                const limitedCoins = filteredCoins.slice(0, limit);
 
-                localStorage.setItem(cacheKey, JSON.stringify(filteredCoins));
+                // Zapisz do cache
+                localStorage.setItem(cacheKey, JSON.stringify(limitedCoins));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
-                displayCryptoData(filteredCoins);
+                console.log('Dane kryptowalut z Binance:', limitedCoins);
+
+                displayCryptoData(limitedCoins);
             } catch (err) {
-                console.error('Błąd pobierania danych kryptowalut:', err);
+                console.error('Błąd pobierania danych kryptowalut z Binance:', err);
                 if (cached) {
                     console.log('Używam danych kryptowalut z cache po błędzie');
                     displayCryptoData(JSON.parse(cached));
