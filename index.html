@@ -45,10 +45,10 @@
                 </div>
             </div>
             <div class="crypto-info">
-                <h3 class="crypto-header">Top 21 Kryptowalut</h3>
                 <div class="crypto-grid" id="cryptoGrid">
                     <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
                 </div>
+                <div class="crypto-footer">Last 24 hours.</div>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
@@ -201,7 +201,6 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
-                    logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -470,7 +469,7 @@
                 const filteredCoins = data.filter(coin => {
                     const price = coin.current_price;
                     return price < 0.99 || price > 1.01 && price > 0.0001; // Pomija stablecoiny (~$1.00) i coiny < $0.0001
-                }).slice(0, 21); // Limit do 21 po filtrowaniu
+                }).slice(0, 16); // Limit do 16 dla 4 rzędów po 4 kolumny
 
                 displayCryptoData(filteredCoins);
             } catch (err) {
@@ -523,8 +522,8 @@
                 style.textContent = `
                     body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
                     .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
-                    .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-                    .crypto-tile { padding: 6px; border-radius: 6px; text-align: center; min-height: 50px; }
+                    .crypto-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+                    .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; }
                     .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
                     .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
                     .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
