@@ -326,7 +326,7 @@ body {
 .crypto-footer {
     font-size: 0.9em;
     text-align: center;
-    margin: 2px 0;
+    margin: 1px 0;
     color: #cccccc;
 }
 
@@ -535,7 +535,7 @@ tr:hover {
 
     .crypto-footer {
         font-size: 0.75em;
-        margin: 1px 0;
+        margin: 0.5px 0;
     }
 
     .crypto-error {
