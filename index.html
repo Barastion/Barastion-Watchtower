@@ -201,7 +201,7 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
-                    logTableBody.appendChild(row);
+                logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -457,6 +457,14 @@
             }
         }
 
+        // Lista popularnych kryptowalut notowanych na Binance (na podstawie publicznie dostępnych danych)
+        const binanceCoins = [
+            'bitcoin', 'ethereum', 'binancecoin', 'ripple', 'cardano', 'solana', 'dogecoin', 'polkadot',
+            'tron', 'avalanche', 'chainlink', 'polygon', 'litecoin', 'cosmos', 'stellar', 'vechain',
+            'algorand', 'hedera', 'fantom', 'the-graph', 'decentraland', 'axie-infinity', 'sandbox',
+            'eos', 'iota', 'neo', 'tezos', 'zcash'
+        ];
+
         async function getCryptoData() {
             try {
                 const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h');
@@ -466,12 +474,16 @@
                 const data = await response.json();
                 console.log('Dane kryptowalut:', data);
 
-                // Filtrowanie stablecoinów i niskowartościowych coinów
+                // Filtrowanie stablecoinów, niskowartościowych coinów i coinów nie notowanych na Binance
                 const isMobile = window.innerWidth <= 768;
-                const limit = isMobile ? 16 : 21; // 16 dla mobile (4x4), 21 dla desktop (3x7)
+                const limit = isMobile ? 20 : 28; // 20 dla mobile (5x4), 28 dla desktop (4x7)
                 const filteredCoins = data.filter(coin => {
                     const price = coin.current_price;
-                    return price < 0.99 || price > 1.01 && price > 0.0001; // Pomija stablecoiny (~$1.00) i coiny < $0.0001
+                    return (
+                        (price < 0.99 || price > 1.01) && // Pomija stablecoiny (~$1.00)
+                        price > 0.0001 && // Pomija coiny < $0.0001
+                        binanceCoins.includes(coin.id) // Tylko coiny notowane na Binance
+                    );
                 }).slice(0, limit);
 
                 displayCryptoData(filteredCoins);
@@ -555,7 +567,7 @@
                     .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                     .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                    .crypto-footer { font-size: 0.9em; text-align: center; margin: 2px 0; color: #cccccc; }
+                    .crypto-footer { font-size: 0.9em; text-align: center; margin: 1px 0; color: #cccccc; }
                 `;
                 document.head.appendChild(style);
             }
