@@ -333,21 +333,21 @@ body {
 }
 
 .crypto-symbol {
-    font-size: 0.85em; /* Zwiększono z 0.8em */
+    font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 2px;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 4px rgba(0, 0, 0, 1); /* Zwiększono promień cienia z 3px na 4px */
 }
 
 .crypto-price {
-    font-size: 0.75em; /* Zwiększono z 0.7em */
+    font-size: 0.75em;
     margin-bottom: 2px;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 4px rgba(0, 0, 0, 1); /* Zwiększono promień cienia z 3px na 4px */
 }
 
 .crypto-change {
-    font-size: 0.65em; /* Zwiększono z 0.6em */
-    text-shadow: 0 0 3px rgba(0, 0, 0, 1);
+    font-size: 0.65em;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 1); /* Zwiększono promień cienia z 3px na 4px */
 }
 
 .crypto-error {
@@ -475,15 +475,15 @@ tr:hover {
 }
 
 @keyframes pulse-positive {
-    0% { box-shadow: 0 0 6px rgba(0, 225, 0, 0.7); }
-    50% { box-shadow: 0 0 12px rgba(0, 225, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(0, 225, 0, 0.7); }
+    0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
+    50% { box-shadow: 0 0 12px rgba(0, 255, 0, 1); }
+    100% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
 }
 
 @keyframes pulse-negative {
-    0% { box-shadow: 0 0 6px rgba(225, 0, 0, 0.7); }
-    50% { box-shadow: 0 0 12px rgba(225, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(225, 0, 0, 0.7); }
+    0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
+    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
 
 @media (max-width: 768px) {
@@ -568,15 +568,15 @@ tr:hover {
     }
 
     .crypto-symbol {
-        font-size: 0.7em; /* Dostosowano dla widoku mobilnego */
+        font-size: 0.7em;
     }
 
     .crypto-price {
-        font-size: 0.65em; /* Dostosowano dla widoku mobilnego */
+        font-size: 0.65em;
     }
 
     .crypto-change {
-        font-size: 0.55em; /* Dostosowano dla widoku mobilnego */
+        font-size: 0.55em;
     }
 
     .crypto-error {
