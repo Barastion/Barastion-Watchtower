@@ -336,18 +336,18 @@ body {
     font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 2px;
-    text-shadow: 0 0 4px rgba(0, 0, 0, 1); /* Zwiększono promień cienia z 3px na 4px */
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Zmniejszono promień cienia z 4px na 3.5px */
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 2px;
-    text-shadow: 0 0 4px rgba(0, 0, 0, 1); /* Zwiększono promień cienia z 3px na 4px */
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Zmniejszono promień cienia z 4px na 3.5px */
 }
 
 .crypto-change {
     font-size: 0.65em;
-    text-shadow: 0 0 4px rgba(0, 0, 0, 1); /* Zwiększono promień cienia z 3px na 4px */
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Zmniejszono promień cienia z 4px na 3.5px */
 }
 
 .crypto-error {
