@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org http://ip-api.com https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -92,6 +92,28 @@
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+
+        // Funkcja do ponawiania żądań z timeoutem
+        async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 10000) {
+            for (let attempt = 1; attempt <= retries; attempt++) {
+                try {
+                    const controller = new AbortController();
+                    const id = setTimeout(() => controller.abort(), timeout);
+                    const response = await fetch(url, { ...options, signal: controller.signal });
+                    clearTimeout(id);
+                    if (!response.ok) {
+                        throw new Error(`Błąd HTTP: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (err) {
+                    console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
+                    if (attempt === retries) {
+                        throw err;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
 
         function getDeviceType(userAgent) {
             if (userAgent.includes('Android')) return 'Android';
@@ -202,7 +224,7 @@
                         </td>
                         <td>${log.device || 'Brak'}</td>
                     `;
-                    logTableBody.appendChild(row);
+                logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -229,8 +251,7 @@
 
         async function getIp() {
             try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
+                const data = await retryFetch('https://api.ipify.org?format=json');
                 console.log('IP pobrane:', data.ip);
                 return data.ip || 'Nieznany IP';
             } catch (err) {
@@ -241,20 +262,14 @@
 
         async function getLocation(ip) {
             try {
-                const response = await fetch(`https://ipapi.co/${ip}/json/`);
-                if (!response.ok) {
-                    throw new Error(`Błąd HTTP: ${response.status} - ${response.statusText}`);
+                const data = await retryFetch(`http://ip-api.com/json/${ip}`);
+                console.log('Dane lokalizacji dla IP:', ip, data);
+                if (data.status !== 'success') {
+                    throw new Error('Błąd API: ' + (data.message || 'Nieznany powód'));
                 }
-                const data = await response.json();
-                console.log('Pełna odpowiedź z ipapi.co dla IP:', ip, JSON.stringify(data, null, 2));
-
-                if (data.error) {
-                    throw new Error(`Błąd API: ${data.reason || 'Nieznany powód'}`);
-                }
-
                 return {
                     city: data.city || 'Nieznane miasto',
-                    country: data.country_name || 'Nieznany kraj'
+                    country: data.country || 'Nieznany kraj'
                 };
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
@@ -311,17 +326,18 @@
 
         async function getWeather(ip) {
             try {
-                const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
-                const locationData = await locationResponse.json();
+                const locationData = await retryFetch(`http://ip-api.com/json/${ip}`);
                 console.log('Dane lokalizacji:', locationData);
-                const lat = locationData.latitude;
-                const lon = locationData.longitude;
+                if (locationData.status !== 'success') {
+                    throw new Error('Błąd lokalizacji: ' + (locationData.message || 'Nieznany powód'));
+                }
+                const lat = locationData.lat;
+                const lon = locationData.lon;
                 const city = locationData.city || 'Nieznane miasto';
 
                 document.getElementById('weatherCity').textContent = city;
 
-                const forecastResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
-                const forecastData = await forecastResponse.json();
+                const forecastData = await retryFetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
                 console.log('Dane pogody:', forecastData);
 
                 if (forecastData.daily) {
@@ -380,7 +396,7 @@
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
-                document.getElementById('weatherForecast').innerHTML = '<div>Błąd pobierania prognozy</div>';
+                document.getElementById('weatherForecast').innerHTML = '<div>Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
                 document.getElementById('weatherCity').textContent = 'Nieznane miasto';
                 document.getElementById('tickerContent').innerHTML = '<span class="ticker-segment">Błąd pobierania szczegółów pogody</span>';
             }
@@ -391,11 +407,7 @@
             const tickerElement = document.getElementById('nasaTickerContent');
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
-                    const response = await fetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
-                    if (!response.ok) {
-                        throw new Error(`Błąd HTTP: ${response.status} - ${response.statusText}`);
-                    }
-                    const data = await response.json();
+                    const data = await retryFetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
                     console.log('Dane z NASA APOD:', JSON.stringify(data, null, 2));
 
                     if (data.media_type === 'image' && data.url) {
@@ -445,12 +457,8 @@
             const dateKey = `${day}/${month}`;
 
             try {
-                const response = await fetch('calendar.json');
-                if (!response.ok) {
-                    throw new Error(`Błąd pobierania pliku: ${response.status}`);
-                }
-                const calendarData = await response.json();
-                const fact = calendarData[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
+                const data = await retryFetch('calendar.json');
+                const fact = data[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
                 document.getElementById('dailyFact').textContent = fact;
             } catch (err) {
                 console.error('Błąd pobierania ciekawostki:', err);
@@ -460,21 +468,16 @@
 
         async function getCryptoData() {
             try {
-                const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h');
-                if (!response.ok) {
-                    throw new Error(`Błąd HTTP: ${response.status} - ${response.statusText}`);
-                }
-                const data = await response.json();
+                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false&price_change_percentage=24h', {}, 3, 2000, 10000);
                 console.log('Dane kryptowalut:', data);
 
-                // Filtrowanie stablecoinów i niskowartościowych coinów
                 const isMobile = window.innerWidth <= 768;
-                const limit = isMobile ? 20 : 28; // 20 dla mobile (5x4), 28 dla desktop (4x7)
+                const limit = isMobile ? 20 : 28;
                 const filteredCoins = data.filter(coin => {
                     const price = coin.current_price;
                     return (
-                        (price < 0.99 || price > 1.01) && // Pomija stablecoiny (~$1.00)
-                        price > 0.0001 // Pomija coiny < $0.0001
+                        (price < 0.99 || price > 1.01) &&
+                        price > 0.0001
                     );
                 }).slice(0, limit);
 
@@ -482,7 +485,7 @@
             } catch (err) {
                 console.error('Błąd pobierania danych kryptowalut:', err);
                 const cryptoGrid = document.getElementById('cryptoGrid');
-                cryptoGrid.innerHTML = '<div class="crypto-error">Błąd pobierania danych kryptowalut</div>';
+                cryptoGrid.innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut. Spróbuj ponownie później.</div>';
             }
         }
 
@@ -490,20 +493,19 @@
             if (price === 0) return '$0.00';
             let formatted;
             if (price < 0.01 && price > 0) {
-                formatted = `$${price.toFixed(6)}`; // Większa precyzja dla niskich cen
+                formatted = `$${price.toFixed(6)}`;
             } else {
-                formatted = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`; // Format z przerwami
+                formatted = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
-            // Ograniczenie do 10 znaków
             if (formatted.length > 10) {
                 if (price < 0.01) {
-                    const decimals = Math.max(2, 10 - 3 - Math.floor(Math.log10(price))); // 3 to "$0."
+                    const decimals = Math.max(2, 10 - 3 - Math.floor(Math.log10(price)));
                     formatted = `$${price.toFixed(decimals)}`;
                     if (formatted.length > 10) {
                         formatted = formatted.substring(0, 10);
                     }
                 } else {
-                    formatted = `$${Math.round(price * 100) / 100}`; // Zaokrąglenie do 2 miejsc
+                    formatted = `$${Math.round(price * 100) / 100}`;
                     if (formatted.length > 10) {
                         formatted = formatted.substring(0, 10);
                     }
@@ -587,6 +589,8 @@
                         console.log('Wszystkie dane załadowane po przywróceniu połączenia');
                     } catch (err) {
                         console.error('Błąd podczas ponownego ładowania danych:', err);
+                        networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie później.';
+                        networkStatus.style.display = 'block';
                     } finally {
                         isReloading = false;
                     }
@@ -600,18 +604,18 @@
 
         // Automatyczna aktualizacja kafelków kryptowalut co 5 minut
         function startCryptoUpdateInterval() {
-            getCryptoData(); // Pierwsze wywołanie natychmiastowe
+            getCryptoData();
             setInterval(() => {
                 console.log('Aktualizuję dane kryptowalut...');
                 getCryptoData();
-            }, 300000); // 5 minut = 300000 ms
+            }, 300000);
         }
 
         // Inicjalizacja strony
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
-            handleNetworkStatus(); // Sprawdzenie stanu sieci na starcie
-            startCryptoUpdateInterval(); // Rozpoczęcie aktualizacji kafelków
+            handleNetworkStatus();
+            startCryptoUpdateInterval();
             window.addEventListener('online', handleNetworkStatus);
             window.addEventListener('offline', handleNetworkStatus);
         };
