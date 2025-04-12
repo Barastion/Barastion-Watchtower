@@ -124,6 +124,10 @@
             return 'Inne';
         }
 
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
         async function logVisit() {
             console.log('Rozpoczynam zapis logu...');
             const now = new Date();
@@ -135,7 +139,7 @@
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
 
-            const logEntry = { date | day | time | ip | location | device | timestamp: now.getTime() };
+            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
             console.log('Log do zapisania:', logEntry);
 
             const logsRef = ref(database, 'logs');
@@ -261,7 +265,6 @@
         }
 
         async function getLocation(ip) {
-            // Cache w localStorage
             const cacheKey = `location_${ip}`;
             const cached = localStorage.getItem(cacheKey);
             const cacheTime = localStorage.getItem(`${cacheKey}_time`);
@@ -283,7 +286,6 @@
                     city: data.city || 'Nieznane miasto',
                     country: data.country || 'Nieznany kraj'
                 };
-                // Zapis do cache
                 localStorage.setItem(cacheKey, JSON.stringify(location));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
                 return location;
@@ -326,10 +328,6 @@
             85: 'Lekkie opady śniegu', 86: 'Ciężkie opady śniegu',
             95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem'
         };
-
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
 
         function degreesToDirection(degrees) {
             if (degrees >= 337.5 || degrees < 22.5) return 'Północ';
@@ -427,7 +425,7 @@
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const data = await retryFetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
-                    console.log('Dane z NASA APOD:', JSON.stringify(data, null, 2));
+                    console.log('Dane z NASA APOD:', data);
 
                     if (data.media_type === 'image' && data.url) {
                         imgElement.src = data.url;
@@ -601,7 +599,6 @@
                 if (!isReloading) {
                     isReloading = true;
                     try {
-                        // Opóźnienie 2s dla stabilizacji sieci
                         await new Promise(resolve => setTimeout(resolve, 2000));
                         const ip = await getIp();
                         console.log('IP po przywróceniu połączenia:', ip);
