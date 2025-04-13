@@ -626,6 +626,7 @@ tr:hover {
     table {
         width: 100%;
         font-size: 0.75em;
+        table-layout: fixed;
     }
 
     th, td {
@@ -636,31 +637,35 @@ tr:hover {
     }
 
     th:nth-child(1), td:nth-child(1) { /* Data */
-        min-width: 60px;
-    }
-
-    th:nth-child(2), td:nth-child(2) { /* Dzień */
-        min-width: 60px;
-    }
-
-    th:nth-child(3), td:nth-child(3) { /* Godzina */
+        width: 50px;
         min-width: 50px;
     }
 
+    th:nth-child(2), td:nth-child(2) { /* Dzień */
+        width: 50px;
+        min-width: 50px;
+    }
+
+    th:nth-child(3), td:nth-child(3) { /* Godzina */
+        width: 40px;
+        min-width: 40px;
+    }
+
     th:nth-child(4), td:nth-child(4) { /* IP */
-        min-width: 70px;
+        width: 60px;
+        min-width: 60px;
     }
 
     th.location-header, td.location-cell { /* Lokalizacja */
-        max-width: 80px;
+        min-width: 90px;
     }
 
     th:nth-child(6), td:nth-child(6) { /* Urządzenie */
-        max-width: 80px;
+        min-width: 90px;
     }
 
     .location-cell {
-        max-width: 80px;
+        min-width: 90px;
     }
 
     .city {
