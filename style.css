@@ -386,8 +386,7 @@ body {
 table {
     width: 100%;
     min-width: 0;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
     table-layout: auto;
 }
 
@@ -397,7 +396,6 @@ th, td {
     vertical-align: middle;
     text-align: center;
     font-size: 0.85em;
-    border: 1px solid #444444;
 }
 
 th {
@@ -407,7 +405,7 @@ th {
 }
 
 th.location-header, th.device-header {
-    min-width: 140px;
+    width: 140px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji desktopowej */
 }
 
 tr:nth-child(odd) {
@@ -428,7 +426,6 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
-    min-width: 140px;
 }
 
 .device-cell {
@@ -437,10 +434,9 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
-    min-width: 140px;
 }
 
-.city, .device-type {
+.city, .device {
     font-size: 0.9em;
     overflow-wrap: break-word;
     max-width: 100%;
@@ -638,26 +634,22 @@ tr:hover {
         padding: 2px;
         height: 35px;
         font-size: 0.7em;
-        border: 1px solid #444444;
     }
 
     th.location-header, th.device-header {
-        min-width: 95px;
+        width: 95px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji mobilnej */
     }
 
     .location-cell, .device-cell {
         max-width: 95px;
-        min-width: 95px;
     }
 
-    .city, .device-type {
+    .city, .device {
         font-size: 0.7em;
-        line-height: 1.2;
     }
 
     .country, .isp {
         font-size: 0.65em;
-        line-height: 1.2;
     }
 
     .toggle-button {
