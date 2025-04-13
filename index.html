@@ -139,23 +139,7 @@
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
 
-            // Sprawdzenie, czy istnieje log z tego samego IP i urządzenia w ciągu ostatnich 5 minut
-            const logKey = `lastLog_${ip}_${device}`;
-            const lastLog = localStorage.getItem(logKey);
-            const currentTime = now.getTime();
-            const fiveMinutes = 5 * 60 * 1000; // 5 minut w milisekundach
-
-            if (lastLog) {
-                const lastLogTime = parseInt(lastLog);
-                if (currentTime - lastLogTime < fiveMinutes) {
-                    console.log('Pomijam zapis logu - zbyt krótki odstęp czasu dla tego IP i urządzenia:', ip, device);
-                    await updateLogs(); // Nadal aktualizujemy tabelę logów
-                    return;
-                }
-            }
-
-            // Jeśli minęło więcej niż 5 minut lub nie ma poprzedniego logu, zapisujemy nowy
-            const logEntry = { date, day, time, ip, location, device, timestamp: currentTime };
+            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
             console.log('Log do zapisania:', logEntry);
 
             const logsRef = ref(database, 'logs');
@@ -164,8 +148,6 @@
             try {
                 await set(newLogRef, logEntry);
                 console.log('Log zapisany pomyślnie:', logEntry);
-                // Zapisz czas ostatniego logu w localStorage
-                localStorage.setItem(logKey, currentTime.toString());
                 await updateLogs();
             } catch (error) {
                 console.error('Błąd zapisu logu:', error);
@@ -226,10 +208,7 @@
                         <div class="city">${log.location.city || 'Nieznane miasto'}</div>
                         <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
-                    <td class="device-cell">
-                        <div class="device-type">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
-                    </td>
+                    <td>${log.device || 'Brak'}</td>
                 `;
                 logTableBody.appendChild(row);
             });
@@ -247,12 +226,9 @@
                             <div class="city">${log.location.city || 'Nieznane miasto'}</div>
                             <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                         </td>
-                        <td class="device-cell">
-                            <div class="device-type">${log.device || 'Brak'}</div>
-                            <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
-                        </td>
+                        <td>${log.device || 'Brak'}</td>
                     `;
-                    logTableBody.appendChild(row);
+                logTableBody.appendChild(row);
                 });
 
                 toggleButton.style.display = 'block';
@@ -310,8 +286,7 @@
                     city: data.city || 'Nieznane miasto',
                     country: data.country_name || 'Nieznany kraj',
                     lat: data.latitude || null,
-                    lon: data.longitude || null,
-                    isp: data.org || 'Nieznany dostawca' // Dodajemy ISP
+                    lon: data.longitude || null
                 };
                 localStorage.setItem(cacheKey, JSON.stringify(location));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
@@ -325,8 +300,7 @@
                     city: 'Nieznane miasto',
                     country: 'Nieznany kraj',
                     lat: null,
-                    lon: null,
-                    isp: 'Nieznany dostawca'
+                    lon: null
                 };
             }
         }
