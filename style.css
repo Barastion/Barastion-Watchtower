@@ -421,26 +421,28 @@ tr:hover {
 }
 
 .location-cell {
-    max-width: 140px; /* Zachowujemy ograniczenie szerokości */
-    /* Usunięto display: flex i powiązane właściwości */
+    max-width: 140px;
 }
 
 .city {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
+    display: block; /* Zapewniamy naturalne ułożenie */
 }
 
 .device {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
+    display: block; /* Dla spójności z .city */
 }
 
 .country {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
+    display: block; /* Zapewniamy naturalne ułożenie */
 }
 
 .hidden-log {
@@ -623,6 +625,7 @@ tr:hover {
         padding: 2px;
         height: 28px;
         font-size: 0.7em;
+        vertical-align: middle; /* Potwierdzamy, że działa */
     }
 
     th.location-header {
@@ -631,15 +634,20 @@ tr:hover {
 
     .location-cell {
         max-width: 95px;
-        /* Usunięto justify-content, padding-top i vertical-align, bo nie są już potrzebne */
+        line-height: 1.1; /* Dodajemy, aby lepiej kontrolować odstępy w pionie */
     }
 
     .city, .country {
         font-size: 0.7em;
+        line-height: 1.1; /* Spójność z .location-cell */
     }
 
     .country {
         font-size: 0.8em; /* Zachowujemy spójność z isp */
+    }
+
+    .device {
+        line-height: 1.1; /* Dla spójności z .city */
     }
 
     .toggle-button {
