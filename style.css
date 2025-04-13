@@ -238,13 +238,12 @@ body {
     font-size: 1em;
 }
 
-/* Styl dla komunikatu błędu w sekcji forecast-container */
 .forecast-error {
-    font-size: 0.8em; /* Mniejszy rozmiar czcionki */
-    color: #999999; /* Szary kolor */
-    text-align: center; /* Wyśrodkowanie */
+    font-size: 0.8em;
+    color: #999999;
+    text-align: center;
     padding: 10px;
-    width: 100%; /* Zapewnia, że tekst zajmuje całą szerokość */
+    width: 100%;
 }
 
 .weather-ticker {
@@ -316,29 +315,29 @@ body {
 }
 
 .crypto-tile.positive-low {
-    background-color: rgba(0, 125, 0, 0.6); /* Ciemniejszy zielony dla 0-5% */
+    background-color: rgba(0, 125, 0, 0.6);
 }
 
 .crypto-tile.positive-mid {
-    background-color: rgba(0, 175, 0, 0.75); /* Średni, intensywny zielony dla 5-10% */
+    background-color: rgba(0, 175, 0, 0.75);
 }
 
 .crypto-tile.positive-high {
-    background-color: rgba(0, 225, 0, 0.9); /* Jasny, wyraźny zielony dla >15% */
-    animation: pulse-positive 2s infinite; /* Zielony pulsujący cień */
+    background-color: rgba(0, 225, 0, 0.9);
+    animation: pulse-positive 2s infinite;
 }
 
 .crypto-tile.negative-low {
-    background-color: rgba(125, 0, 0, 0.6); /* Ciemniejszy czerwony dla 0-5% */
+    background-color: rgba(125, 0, 0, 0.6);
 }
 
 .crypto-tile.negative-mid {
-    background-color: rgba(175, 0, 0, 0.75); /* Średni, intensywny czerwony dla 5-10% */
+    background-color: rgba(175, 0, 0, 0.75);
 }
 
 .crypto-tile.negative-high {
-    background-color: rgba(225, 0, 0, 0.9); /* Jasny, wyraźny czerwony dla >15% */
-    animation: pulse-negative 2s infinite; /* Czerwony pulsujący cień */
+    background-color: rgba(225, 0, 0, 0.9);
+    animation: pulse-negative 2s infinite;
 }
 
 .crypto-symbol {
@@ -404,8 +403,8 @@ th {
     font-weight: 600;
 }
 
-th.location-header {
-    width: 140px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji desktopowej */
+th.device-header {
+    width: 140px;
 }
 
 tr:nth-child(odd) {
@@ -420,7 +419,7 @@ tr:hover {
     background-color: #4a4a4a;
 }
 
-.location-cell {
+.location-cell, .device-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -428,7 +427,7 @@ tr:hover {
     max-width: 140px;
 }
 
-.city {
+.city, .device-type {
     font-size: 0.9em;
     overflow-wrap: break-word;
     max-width: 100%;
@@ -436,7 +435,7 @@ tr:hover {
     line-height: 1.2;
 }
 
-.country {
+.country, .isp {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
@@ -470,21 +469,13 @@ tr:hover {
 }
 
 @keyframes ticker {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
 @-webkit-keyframes ticker {
-    0% {
-        -webkit-transform: translateX(0);
-    }
-    100% {
-        -webkit-transform: translateX(-100%);
-    }
+    0% { -webkit-transform: translateX(0); }
+    100% { -webkit-transform: translateX(-100%); }
 }
 
 @keyframes pulse-positive {
@@ -508,89 +499,72 @@ tr:hover {
         padding: 10px;
     }
 
-    .network-status {
+    .nasa-container {
+        max-width: 100%;
+    }
+
+    .nasa-frame {
+        padding-top: 75%;
+    }
+
+    .search-container input[type="text"] {
+        width: 150px;
         font-size: 0.8em;
-        padding: 6px;
     }
 
     .content-frame {
-        max-width: 100%;
         padding: 10px;
     }
 
-    .daily-fact {
-        font-size: 0.75em;
-        margin-bottom: 10px;
-    }
-
-    .fact-header {
-        font-size: 0.75em;
-    }
-
-    .fact-content {
-        font-size: 0.75em;
-        line-height: 1.3;
-    }
-
-    .weather-forecast {
-        max-width: 100%;
-        padding: 10px;
-    }
-
-    .forecast-container {
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        gap: 5px;
+    .weather-city {
+        font-size: 1em;
     }
 
     .forecast-bar {
         min-width: 70px;
-        padding: 5px;
+        padding: 8px;
     }
 
-    .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
-        font-size: 0.65em;
+    .forecast-date {
+        font-size: 0.6em;
     }
 
     .weather-icon {
         font-size: 1.2em;
     }
 
-    .weather-ticker {
+    .weather-day {
         font-size: 0.8em;
     }
 
-    /* Styl dla komunikatu błędu w wersji mobilnej */
-    .forecast-error {
-        font-size: 0.7em; /* Jeszcze mniejszy w wersji mobilnej */
-        color: #999999; /* Szary kolor */
-        text-align: center; /* Wyśrodkowanie w wersji mobilnej */
-        padding: 8px;
-        width: 100%;
+    .weather-description {
+        font-size: 0.7em;
+        height: 35px;
     }
 
-    .crypto-info {
-        padding: 10px;
+    .temp-max, .temp-min {
+        font-size: 0.9em;
     }
 
-    .crypto-header {
-        font-size: 0.75em;
-        margin-bottom: 5px;
+    .weather-ticker {
+        margin-top: 5px;
+    }
+
+    #tickerContent {
+        font-size: 0.7em;
     }
 
     .crypto-grid {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         gap: 6px;
-        padding: 8px;
     }
 
     .crypto-tile {
-        min-height: 30px;
-        padding: 3px;
+        min-height: 35px;
     }
 
     .crypto-symbol {
-        font-size: 0.7em;
+        font-size: 0.75em;
     }
 
     .crypto-price {
@@ -598,55 +572,38 @@ tr:hover {
     }
 
     .crypto-change {
-        font-size: 0.55em;
-    }
-
-    .crypto-error {
-        font-size: 0.8em;
+        font-size: 0.6em;
     }
 
     .log-table {
-        max-width: 100%;
-    }
-
-    .table-wrapper {
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        font-size: 0.75em;
+        padding: 10px;
     }
 
     th, td {
-        padding: 2px;
-        height: 35px;
-        font-size: 0.7em;
+        font-size: 0.75em;
+        padding: 4px;
+        height: 30px;
     }
 
-    th.location-header {
-        width: 95px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji mobilnej */
+    th.device-header {
+        width: 95px;
     }
 
-    .location-cell {
+    .location-cell, .device-cell {
         max-width: 95px;
     }
 
-    .city, .country {
+    .city, .device-type {
+        font-size: 0.7em;
+    }
+
+    .country, .isp {
         font-size: 0.7em;
     }
 
     .toggle-button {
-        padding: 4px 10px;
+        padding: 5px 10px;
         font-size: 0.8em;
         min-width: 100px;
-    }
-
-    .nasa-ticker {
-        font-size: 0.6em;
-    }
-
-    .nasa-container {
-        max-width: 100%;
     }
 }
