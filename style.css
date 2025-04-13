@@ -434,17 +434,12 @@ tr:hover {
     max-width: 100%;
     white-space: normal;
     line-height: 1.2;
-    color: #ffffff; /* Jawne określenie koloru */
 }
 
 .country {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
-    overflow-wrap: break-word;
-    max-width: 100%;
-    white-space: normal;
-    line-height: 1.2;
 }
 
 .device-cell {
@@ -461,17 +456,12 @@ tr:hover {
     max-width: 100%;
     white-space: normal;
     line-height: 1.2;
-    color: #ffffff; /* Dopasowanie koloru do .city */
 }
 
 .isp {
     font-size: 0.8em;
-    color: #cccccc; /* Dopasowanie koloru do .country */
+    color: #cccccc;
     margin-top: 2px;
-    overflow-wrap: break-word;
-    max-width: 100%;
-    white-space: normal;
-    line-height: 1.2;
 }
 
 .hidden-log {
@@ -674,7 +664,6 @@ tr:hover {
 
     .device-type, .isp {
         font-size: 0.7em;
-        /* Kolory już zdefiniowane powyżej, więc nie trzeba ich tutaj zmieniać */
     }
 
     .toggle-button {
