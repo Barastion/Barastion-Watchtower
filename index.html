@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -245,13 +245,11 @@
             const hiddenLogs = logs.slice(5);
 
             visibleLogs.forEach(log => {
-                // Pobieranie danych z poprawnych pól
                 const city = log.location && log.location.city ? log.location.city : 'Nieznane miasto';
                 const country = log.location && log.location.country ? log.location.country : 'Nieznany kraj';
                 const device = log.device || 'Brak';
                 const isp = log.isp || 'Nieznany dostawca';
 
-                // Dodatkowe logi dla debugowania
                 console.log('Generuję wiersz tabeli:');
                 console.log(`- Data: ${log.date}`);
                 console.log(`- Dzień: ${log.day}`);
@@ -266,16 +264,17 @@
                     <td class="day-cell">${log.day || 'Brak'}</td>
                     <td class="time-cell">${log.time || 'Brak'}</td>
                     <td class="ip-cell">${log.ip || 'Brak'}</td>
-                    <td class="location-cell">
+                    <td class="location-cell" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                         <div class="city">${city}</div>
                         <div class="country">${country}</div>
                     </td>
-                    <td class="device-cell">
+                    <td class="device-cell" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                         <div class="device">${device}</div>
                         <div class="isp">${isp}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
+                console.log('Wygenerowany HTML wiersza:', row.outerHTML);
             });
 
             if (hiddenLogs.length > 0) {
@@ -292,11 +291,11 @@
                         <td class="day-cell">${log.day || 'Brak'}</td>
                         <td class="time-cell">${log.time || 'Brak'}</td>
                         <td class="ip-cell">${log.ip || 'Brak'}</td>
-                        <td class="location-cell">
+                        <td class="location-cell" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div class="city">${city}</div>
                             <div class="country">${country}</div>
                         </td>
-                        <td class="device-cell">
+                        <td class="device-cell" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <div class="device">${device}</div>
                             <div class="isp">${isp}</div>
                         </td>
