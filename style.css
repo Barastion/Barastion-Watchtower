@@ -392,8 +392,8 @@ table {
 
 th, td {
     padding: 5px;
-    height: 50px; /* Zwiększona wysokość, aby pomieścić dwie linie tekstu */
-    vertical-align: middle; /* Wyrównanie w pionie dla wszystkich komórek */
+    height: 35px;
+    vertical-align: middle;
     text-align: center;
     font-size: 0.85em;
 }
@@ -426,7 +426,6 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
-    min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
 }
 
 .city {
@@ -435,7 +434,7 @@ tr:hover {
     max-width: 100%;
     white-space: normal;
     line-height: 1.2;
-    color: #ffffff;
+    color: #ffffff; /* Jawne określenie koloru */
 }
 
 .country {
@@ -454,7 +453,6 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
-    min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
 }
 
 .device-type {
@@ -654,9 +652,8 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        height: 50px; /* Zwiększona wysokość w wersji mobilnej */
+        height: 35px;
         font-size: 0.7em;
-        vertical-align: middle; /* Wyrównanie w pionie dla wersji mobilnej */
     }
 
     th.location-header {
@@ -665,7 +662,6 @@ tr:hover {
 
     .location-cell {
         max-width: 95px;
-        min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
     }
 
     .city, .country {
@@ -674,11 +670,11 @@ tr:hover {
 
     .device-cell {
         max-width: 95px;
-        min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
     }
 
     .device-type, .isp {
         font-size: 0.7em;
+        /* Kolory już zdefiniowane powyżej, więc nie trzeba ich tutaj zmieniać */
     }
 
     .toggle-button {
