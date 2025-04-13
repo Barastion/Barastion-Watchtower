@@ -223,12 +223,12 @@
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city">${log.location?.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location?.country || 'Nieznany kraj'}</div>
+                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td class="device-cell">
                         <div class="device-type">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.location?.isp || 'Nieznany dostawca'}</div>
+                        <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
@@ -244,12 +244,12 @@
                         <td>${log.time || 'Brak'}</td>
                         <td>${log.ip || 'Brak'}</td>
                         <td class="location-cell">
-                            <div class="city">${log.location?.city || 'Nieznane miasto'}</div>
-                            <div class="country">${log.location?.country || 'Nieznany kraj'}</div>
+                            <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                            <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                         </td>
                         <td class="device-cell">
                             <div class="device-type">${log.device || 'Brak'}</div>
-                            <div class="isp">${log.location?.isp || 'Nieznany dostawca'}</div>
+                            <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
                         </td>
                     `;
                     logTableBody.appendChild(row);
@@ -311,7 +311,7 @@
                     country: data.country_name || 'Nieznany kraj',
                     lat: data.latitude || null,
                     lon: data.longitude || null,
-                    isp: data.org || 'Nieznany dostawca'
+                    isp: data.org || 'Nieznany dostawca' // Dodajemy ISP
                 };
                 localStorage.setItem(cacheKey, JSON.stringify(location));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
@@ -587,7 +587,6 @@
                     }
                 }
             }
-            formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return formatted;
         }
 
