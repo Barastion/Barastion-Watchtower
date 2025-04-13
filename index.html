@@ -245,6 +245,14 @@
             const hiddenLogs = logs.slice(5);
 
             visibleLogs.forEach(log => {
+                // Obsługa różnych struktur danych
+                const city = log.location && log.location.city ? log.location.city : (log.location && typeof log.location === 'string' ? log.location : 'Nieznane miasto');
+                const country = log.location && log.location.country ? log.location.country : (log.location && typeof log.location === 'string' ? '' : 'Nieznany kraj');
+                const device = log.device || (log.location && log.location.device ? log.location.device : 'Brak');
+                const isp = log.isp || (log.location && log.location.isp ? log.location.isp : 'Nieznany dostawca');
+
+                console.log(`Przetwarzam log:`, { city, country, device, isp });
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${log.date || 'Brak'}</td>
@@ -252,12 +260,12 @@
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city">${log.location && log.location.city ? log.location.city : 'Nieznane miasto'}</div>
-                        <div class="country">${log.location && log.location.country ? log.location.country : 'Nieznany kraj'}</div>
+                        <div class="city">${city}</div>
+                        <div class="country">${country}</div>
                     </td>
                     <td class="device-cell">
-                        <div class="device">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
+                        <div class="device">${device}</div>
+                        <div class="isp">${isp}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
@@ -265,6 +273,11 @@
 
             if (hiddenLogs.length > 0) {
                 hiddenLogs.forEach(log => {
+                    const city = log.location && log.location.city ? log.location.city : (log.location && typeof log.location === 'string' ? log.location : 'Nieznane miasto');
+                    const country = log.location && log.location.country ? log.location.country : (log.location && typeof log.location === 'string' ? '' : 'Nieznany kraj');
+                    const device = log.device || (log.location && log.location.device ? log.location.device : 'Brak');
+                    const isp = log.isp || (log.location && log.location.isp ? log.location.isp : 'Nieznany dostawca');
+
                     const row = document.createElement('tr');
                     row.classList.add('hidden-log');
                     row.innerHTML = `
@@ -273,12 +286,12 @@
                         <td>${log.time || 'Brak'}</td>
                         <td>${log.ip || 'Brak'}</td>
                         <td class="location-cell">
-                            <div class="city">${log.location && log.location.city ? log.location.city : 'Nieznane miasto'}</div>
-                            <div class="country">${log.location && log.location.country ? log.location.country : 'Nieznany kraj'}</div>
+                            <div class="city">${city}</div>
+                            <div class="country">${country}</div>
                         </td>
                         <td class="device-cell">
-                            <div class="device">${log.device || 'Brak'}</div>
-                            <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
+                            <div class="device">${device}</div>
+                            <div class="isp">${isp}</div>
                         </td>
                     `;
                     logTableBody.appendChild(row);
