@@ -157,10 +157,10 @@
             const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
             const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
             const ip = await getIp();
-            const location = await getLocation(ip);
+            const locationData = await getLocation(ip);
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
-            const isp = location.isp || 'Nieznany dostawca';
+            const isp = locationData.isp || 'Nieznany dostawca';
 
             // Sprawdzenie duplikatu logu
             const isDuplicate = await checkDuplicateLog(ip, device);
@@ -170,8 +170,23 @@
                 return;
             }
 
-            const logEntry = { date, day, time, ip, location, device, isp, timestamp: now.getTime() };
-            console.log('Log do zapisania:', logEntry);
+            // Tworzenie obiektu logu z wyraźnym podziałem na pola
+            const logEntry = {
+                date: date,
+                day: day,
+                time: time,
+                ip: ip,
+                location: {
+                    city: locationData.city || 'Nieznane miasto',
+                    country: locationData.country || 'Nieznany kraj',
+                    lat: locationData.lat || null,
+                    lon: locationData.lon || null
+                },
+                device: device,
+                isp: isp,
+                timestamp: now.getTime()
+            };
+            console.log('Log do zapisania:', JSON.stringify(logEntry, null, 2));
 
             const logsRef = ref(database, 'logs');
             const newLogRef = push(logsRef);
@@ -192,6 +207,7 @@
                 onValue(logsRef, (snapshot) => {
                     const logsData = snapshot.val();
                     let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
+                    console.log('Pobrane logi:', JSON.stringify(logs, null, 2));
                     logs.sort((a, b) => b.timestamp - a.timestamp);
 
                     if (logs.length > 50) {
@@ -236,8 +252,8 @@
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
+                        <div class="city">${log.location && log.location.city ? log.location.city : 'Nieznane miasto'}</div>
+                        <div class="country">${log.location && log.location.country ? log.location.country : 'Nieznany kraj'}</div>
                     </td>
                     <td class="device-cell">
                         <div class="device">${log.device || 'Brak'}</div>
@@ -257,8 +273,8 @@
                         <td>${log.time || 'Brak'}</td>
                         <td>${log.ip || 'Brak'}</td>
                         <td class="location-cell">
-                            <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                            <div class="country">${log.location.country || 'Nieznany kraj'}</div>
+                            <div class="city">${log.location && log.location.city ? log.location.city : 'Nieznane miasto'}</div>
+                            <div class="country">${log.location && log.location.country ? log.location.country : 'Nieznany kraj'}</div>
                         </td>
                         <td class="device-cell">
                             <div class="device">${log.device || 'Brak'}</div>
