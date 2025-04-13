@@ -392,7 +392,7 @@ table {
 
 th, td {
     padding: 5px;
-    height: 35px;
+    height: 50px; /* Zwiększona wysokość, aby pomieścić dwie linie tekstu */
     vertical-align: middle; /* Wyrównanie w pionie dla wszystkich komórek */
     text-align: center;
     font-size: 0.85em;
@@ -426,7 +426,7 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
-    min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
+    min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
 }
 
 .city {
@@ -454,7 +454,7 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
-    min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
+    min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
 }
 
 .device-type {
@@ -654,7 +654,7 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        height: 35px;
+        height: 50px; /* Zwiększona wysokość w wersji mobilnej */
         font-size: 0.7em;
         vertical-align: middle; /* Wyrównanie w pionie dla wersji mobilnej */
     }
@@ -665,7 +665,7 @@ tr:hover {
 
     .location-cell {
         max-width: 95px;
-        min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
+        min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
     }
 
     .city, .country {
@@ -674,7 +674,7 @@ tr:hover {
 
     .device-cell {
         max-width: 95px;
-        min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
+        min-height: 50px; /* Minimalna wysokość, aby zapewnić spójność */
     }
 
     .device-type, .isp {
