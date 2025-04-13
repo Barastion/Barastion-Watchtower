@@ -61,7 +61,7 @@
                                     <th>Dzień</th>
                                     <th>Godzina</th>
                                     <th>IP</th>
-                                    <th>Lokalizacja</th>
+                                    <th class="location-header">Lokalizacja</th>
                                     <th>Urządzenie</th>
                                 </tr>
                             </thead>
@@ -240,7 +240,7 @@
                     </td>
                     <td>
                         <div class="device">${log.device || 'Brak'}</div>
-                        <div style="font-size: 0.8em; color: #cccccc; margin-top: 2px;">${log.isp || 'Nieznany dostawca'}</div>
+                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
@@ -261,7 +261,7 @@
                         </td>
                         <td>
                             <div class="device">${log.device || 'Brak'}</div>
-                            <div style="font-size: 0.8em; color: #cccccc; margin-top: 2px;">${log.isp || 'Nieznany dostawca'}</div>
+                            <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                         </td>
                     `;
                     logTableBody.appendChild(row);
