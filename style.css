@@ -223,71 +223,68 @@ body {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    align-items: center;
 }
 
 .temp-max {
-    color: #ff4d4d;
-    font-weight: bold;
-    font-size: 1em;
+    font-size: 0.9em;
+    color: #ff6f61;
 }
 
 .temp-min {
-    color: #4d94ff;
-    font-weight: bold;
-    font-size: 1em;
-}
-
-.forecast-error {
     font-size: 0.8em;
-    color: #999999;
-    text-align: center;
-    padding: 10px;
-    width: 100%;
+    color: #6b7280;
 }
 
 .weather-ticker {
-    background-color: #3a3a3a;
-    padding: 4px 0;
-    margin-top: 10px;
-    margin-bottom: 3px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 0;
     overflow: hidden;
     white-space: nowrap;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-top: 10px;
 }
 
 #tickerContent {
     display: inline-block;
     padding-left: 100%;
-    animation: ticker 180s linear infinite;
-    -webkit-animation: ticker 180s linear infinite;
-    font-size: 0.8em;
+    animation: ticker 60s linear infinite;
+    -webkit-animation: ticker 60s linear infinite;
+    font-size: 0.7em;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
 }
 
-.ticker-segment {
+.weather-ticker .ticker-segment {
     display: inline-block;
     padding-right: 180px;
 }
 
 .ticker-value {
     font-weight: bold;
+    color: #ffeb3b;
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+        -webkit-transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+        -webkit-transform: translateX(-100%);
+    }
 }
 
 .crypto-info {
-    background-color: #2d2d2d;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
 }
 
 .crypto-header {
     text-align: center;
-    font-size: 0.9em;
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: #ffffff;
+    margin: 10px 0;
+    font-size: 1.2em;
 }
 
 .crypto-grid {
@@ -295,73 +292,71 @@ body {
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
     padding: 10px;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .crypto-tile {
     padding: 4px;
     border-radius: 6px;
     text-align: center;
+    min-height: 40px;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 40px;
-    transition: transform 0.2s;
-    cursor: pointer;
+    font-size: 0.9em;
 }
 
 .crypto-tile:hover {
-    transform: scale(1.05);
-}
-
-.crypto-tile.positive-low {
-    background-color: rgba(0, 125, 0, 0.6);
-}
-
-.crypto-tile.positive-mid {
-    background-color: rgba(0, 175, 0, 0.75);
-}
-
-.crypto-tile.positive-high {
-    background-color: rgba(0, 225, 0, 0.9);
-    animation: pulse-positive 2s infinite;
-}
-
-.crypto-tile.negative-low {
-    background-color: rgba(125, 0, 0, 0.6);
-}
-
-.crypto-tile.negative-mid {
-    background-color: rgba(175, 0, 0, 0.75);
-}
-
-.crypto-tile.negative-high {
-    background-color: rgba(225, 0, 0, 0.9);
-    animation: pulse-negative 2s infinite;
+    filter: brightness(1.2);
 }
 
 .crypto-symbol {
-    font-size: 0.85em;
+    font-size: 0.9em;
     font-weight: bold;
-    margin-bottom: 2px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-price {
-    font-size: 0.75em;
-    margin-bottom: 2px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    font-size: 0.8em;
+    margin: 2px 0;
 }
 
 .crypto-change {
-    font-size: 0.65em;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    font-size: 0.8em;
+}
+
+.crypto-tile.positive-low {
+    background-color: rgba(0, 200, 0, 0.4);
+}
+
+.crypto-tile.positive-mid {
+    background-color: rgba(0, 200, 0, 0.6);
+}
+
+.crypto-tile.positive-high {
+    background-color: rgba(0, 200, 0, 0.8);
+}
+
+.crypto-tile.negative-low {
+    background-color: rgba(255, 50, 50, 0.4);
+}
+
+.crypto-tile.negative-mid {
+    background-color: rgba(255, 50, 50, 0.6);
+}
+
+.crypto-tile.negative-high {
+    background-color: rgba(255, 50, 50, 0.8);
 }
 
 .crypto-error {
     text-align: center;
-    font-size: 0.9em;
+    font-style: italic;
     color: #ff4d4d;
+    padding: 10px;
 }
 
 .log-table {
@@ -394,7 +389,7 @@ th, td {
     vertical-align: middle;
     text-align: center;
     font-size: 0.85em;
-    border: 1px solid #555; /* Obramowanie dla debugowania */
+    box-sizing: border-box; /* Upewniamy się, że padding nie zwiększa szerokości */
 }
 
 th {
@@ -403,7 +398,7 @@ th {
     font-weight: 600;
 }
 
-/* Definiowanie szerokości kolumn */
+/* Definiowanie szerokości kolumn - zbalansowane wartości */
 .date-header, .date-cell {
     width: 15%;
 }
@@ -413,7 +408,7 @@ th {
 }
 
 .time-header, .time-cell {
-    width: 10%;
+    width: 15%;
 }
 
 .ip-header, .ip-cell {
@@ -421,7 +416,7 @@ th {
 }
 
 .location-header, .location-cell {
-    width: 20%;
+    width: 15%;
 }
 
 .device-header, .device-cell {
@@ -440,13 +435,14 @@ tr:hover {
     background-color: #4a4a4a;
 }
 
+/* Style dla komórek z danymi lokalizacji i urządzenia */
 .location-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 100%;
-    background-color: rgba(0, 255, 0, 0.1); /* Tło dla debugowania */
+    width: 100%; /* Wymuszenie pełnej szerokości komórki */
+    box-sizing: border-box;
 }
 
 .device-cell {
@@ -454,8 +450,8 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 100%;
-    background-color: rgba(0, 0, 255, 0.1); /* Tło dla debugowania */
+    width: 100%; /* Wymuszenie pełnej szerokości komórki */
+    box-sizing: border-box;
 }
 
 .city, .device {
@@ -503,71 +499,68 @@ tr:hover {
     background-color: #6c757d;
 }
 
-@keyframes ticker {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
-}
-
-@-webkit-keyframes ticker {
-    0% {
-        -webkit-transform: translateX(0);
-    }
-    100% {
-        -webkit-transform: translateX(-100%);
-    }
-}
-
-@keyframes pulse-positive {
-    0% {
-        box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 15px rgba(0, 255, 0, 1);
-    }
-    100% {
-        box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-    }
-}
-
-@keyframes pulse-negative {
-    0% {
-        box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 15px rgba(255, 0, 0, 1);
-    }
-    100% {
-        box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-    }
-}
-
+/* Media queries dla mniejszych ekranów */
 @media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
     .container {
         padding: 10px;
+    }
+
+    .nasa-container {
+        margin: 0 auto 10px;
+    }
+
+    .nasa-frame {
+        padding-top: 56.25%;
+    }
+
+    #nasaTickerContent {
+        font-size: 0.65em;
+        animation: ticker 300s linear infinite;
+        -webkit-animation: ticker 300s linear infinite;
+    }
+
+    .nasa-ticker .ticker-segment {
+        padding-right: 120px;
+    }
+
+    .search-container {
+        margin: 10px 0;
+    }
+
+    .search-container input[type="text"] {
+        width: 150px;
+        font-size: 0.8em;
+    }
+
+    .daily-fact {
+        margin: 10px 5px;
+        font-size: 0.8em;
+    }
+
+    .fact-content {
+        margin: 5px 5px 0 5px;
+        font-size: 0.8em;
     }
 
     .content-frame {
         padding: 10px;
     }
 
-    .nasa-frame {
-        padding-top: 75%;
-    }
-
-    .search-container input[type="text"] {
-        width: 150px;
+    .weather-forecast {
+        padding: 10px;
     }
 
     .weather-city {
-        font-size: 1em;
+        font-size: 1.1em;
     }
 
     .forecast-bar {
         min-width: 70px;
+        padding: 8px;
     }
 
     .forecast-date {
@@ -575,7 +568,7 @@ tr:hover {
     }
 
     .weather-icon {
-        font-size: 1.2em;
+        font-size: 1.3em;
     }
 
     .weather-day {
@@ -587,28 +580,49 @@ tr:hover {
         height: 35px;
     }
 
-    .temp-max, .temp-min {
-        font-size: 0.9em;
+    .temp-max {
+        font-size: 0.8em;
+    }
+
+    .temp-min {
+        font-size: 0.7em;
+    }
+
+    #tickerContent {
+        font-size: 0.65em;
+        animation: ticker 50s linear infinite;
+        -webkit-animation: ticker 50s linear infinite;
+    }
+
+    .weather-ticker .ticker-segment {
+        padding-right: 120px;
     }
 
     .crypto-grid {
         grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        padding: 8px;
     }
 
     .crypto-tile {
+        font-size: 0.8em;
         min-height: 35px;
     }
 
     .crypto-symbol {
-        font-size: 0.75em;
+        font-size: 0.8em;
     }
 
     .crypto-price {
-        font-size: 0.65em;
+        font-size: 0.7em;
     }
 
     .crypto-change {
-        font-size: 0.6em;
+        font-size: 0.7em;
+    }
+
+    .log-table {
+        padding: 10px;
     }
 
     th, td {
@@ -632,28 +646,66 @@ tr:hover {
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+
     .container {
         padding: 5px;
+    }
+
+    .nasa-container {
+        margin: 0 auto 5px;
+    }
+
+    .nasa-frame {
+        padding-top: 56.25%;
+    }
+
+    #nasaTickerContent {
+        font-size: 0.6em;
+        animation: ticker 240s linear infinite;
+        -webkit-animation: ticker 240s linear infinite;
+    }
+
+    .nasa-ticker .ticker-segment {
+        padding-right: 90px;
+    }
+
+    .search-container {
+        margin: 5px 0;
+    }
+
+    .search-container input[type="text"] {
+        width: 120px;
+        font-size: 0.75em;
+    }
+
+    .daily-fact {
+        margin: 5px 5px;
+        font-size: 0.75em;
+    }
+
+    .fact-content {
+        margin: 5px 5px 0 5px;
+        font-size: 0.75em;
     }
 
     .content-frame {
         padding: 5px;
     }
 
-    .nasa-frame {
-        padding-top: 100%;
-    }
-
-    .search-container input[type="text"] {
-        width: 120px;
+    .weather-forecast {
+        padding: 5px;
     }
 
     .weather-city {
-        font-size: 0.9em;
+        font-size: 1em;
     }
 
     .forecast-bar {
         min-width: 60px;
+        padding: 5px;
     }
 
     .forecast-date {
@@ -661,7 +713,7 @@ tr:hover {
     }
 
     .weather-icon {
-        font-size: 1em;
+        font-size: 1.2em;
     }
 
     .weather-day {
@@ -673,28 +725,49 @@ tr:hover {
         height: 30px;
     }
 
-    .temp-max, .temp-min {
-        font-size: 0.8em;
+    .temp-max {
+        font-size: 0.7em;
+    }
+
+    .temp-min {
+        font-size: 0.65em;
+    }
+
+    #tickerContent {
+        font-size: 0.6em;
+        animation: ticker 40s linear infinite;
+        -webkit-animation: ticker 40s linear infinite;
+    }
+
+    .weather-ticker .ticker-segment {
+        padding-right: 90px;
     }
 
     .crypto-grid {
         grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+        padding: 5px;
     }
 
     .crypto-tile {
+        font-size: 0.75em;
         min-height: 30px;
     }
 
     .crypto-symbol {
-        font-size: 0.7em;
+        font-size: 0.75em;
     }
 
     .crypto-price {
-        font-size: 0.6em;
+        font-size: 0.65em;
     }
 
     .crypto-change {
-        font-size: 0.55em;
+        font-size: 0.65em;
+    }
+
+    .log-table {
+        padding: 5px;
     }
 
     th, td {
