@@ -386,7 +386,8 @@ body {
 table {
     width: 100%;
     min-width: 0;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: auto;
 }
 
@@ -396,6 +397,7 @@ th, td {
     vertical-align: middle;
     text-align: center;
     font-size: 0.85em;
+    border: 1px solid #444444;
 }
 
 th {
@@ -404,8 +406,8 @@ th {
     font-weight: 600;
 }
 
-th.location-header {
-    width: 140px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji desktopowej */
+th.location-header, th.device-header {
+    min-width: 140px;
 }
 
 tr:nth-child(odd) {
@@ -420,12 +422,22 @@ tr:hover {
     background-color: #4a4a4a;
 }
 
-.location-cell, .device-cell {
+.location-cell {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     max-width: 140px;
+    min-width: 140px;
+}
+
+.device-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 140px;
+    min-width: 140px;
 }
 
 .city, .device-type {
@@ -440,6 +452,10 @@ tr:hover {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
 }
 
 .hidden-log {
@@ -622,22 +638,26 @@ tr:hover {
         padding: 2px;
         height: 35px;
         font-size: 0.7em;
+        border: 1px solid #444444;
     }
 
-    th.location-header {
-        width: 95px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji mobilnej */
+    th.location-header, th.device-header {
+        min-width: 95px;
     }
 
     .location-cell, .device-cell {
         max-width: 95px;
+        min-width: 95px;
     }
 
     .city, .device-type {
         font-size: 0.7em;
+        line-height: 1.2;
     }
 
     .country, .isp {
         font-size: 0.65em;
+        line-height: 1.2;
     }
 
     .toggle-button {
