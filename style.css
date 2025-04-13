@@ -393,7 +393,7 @@ table {
 th, td {
     padding: 5px;
     height: 35px;
-    vertical-align: middle;
+    vertical-align: middle; /* Wyrównanie w pionie dla wszystkich komórek */
     text-align: center;
     font-size: 0.85em;
 }
@@ -426,6 +426,7 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
+    min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
 }
 
 .city {
@@ -434,12 +435,17 @@ tr:hover {
     max-width: 100%;
     white-space: normal;
     line-height: 1.2;
+    color: #ffffff;
 }
 
 .country {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
 }
 
 .device-cell {
@@ -448,6 +454,7 @@ tr:hover {
     align-items: center;
     justify-content: center;
     max-width: 140px;
+    min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
 }
 
 .device-type {
@@ -461,8 +468,12 @@ tr:hover {
 
 .isp {
     font-size: 0.8em;
-    color: #cccccc;
+    color: #cccccc; /* Dopasowanie koloru do .country */
     margin-top: 2px;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
 }
 
 .hidden-log {
@@ -645,6 +656,7 @@ tr:hover {
         padding: 2px;
         height: 35px;
         font-size: 0.7em;
+        vertical-align: middle; /* Wyrównanie w pionie dla wersji mobilnej */
     }
 
     th.location-header {
@@ -653,6 +665,7 @@ tr:hover {
 
     .location-cell {
         max-width: 95px;
+        min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
     }
 
     .city, .country {
@@ -661,6 +674,7 @@ tr:hover {
 
     .device-cell {
         max-width: 95px;
+        min-height: 35px; /* Minimalna wysokość, aby zapewnić spójność */
     }
 
     .device-type, .isp {
