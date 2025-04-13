@@ -456,6 +456,7 @@ tr:hover {
     max-width: 100%;
     white-space: normal;
     line-height: 1.2;
+    color: #ffffff; /* Dopasowanie koloru do .city */
 }
 
 .isp {
