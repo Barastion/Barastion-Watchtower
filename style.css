@@ -395,7 +395,7 @@ th, td {
     height: 35px;
     vertical-align: middle;
     text-align: center;
-    font-size: 0.85em;
+    font-size: 0.9em; /* Zmieniono z 0.85em na 0.9em dla spójności */
 }
 
 th {
@@ -424,12 +424,19 @@ tr:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     max-width: 140px;
+    /* Usunięto justify-content: center, aby wyrównać do góry */
 }
 
 .city {
-    font-size: 0.9em;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
+    /* Usunięto font-size: 0.9em, bo dziedziczone z td */
+}
+
+.device {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
@@ -621,7 +628,7 @@ tr:hover {
     th, td {
         padding: 2px;
         height: 35px;
-        font-size: 0.7em;
+        font-size: 0.7em; /* Dostosowano dla wersji mobilnej */
     }
 
     th.location-header {
