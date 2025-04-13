@@ -429,6 +429,8 @@ tr:hover {
     white-space: normal;
     display: block;
     font-size: 0.9em;
+    line-height: 1.2;
+    hyphens: auto;
 }
 
 .device {
@@ -437,6 +439,8 @@ tr:hover {
     white-space: normal;
     display: block;
     font-size: 0.9em;
+    line-height: 1.2;
+    hyphens: auto;
 }
 
 .country {
@@ -444,6 +448,8 @@ tr:hover {
     color: #cccccc;
     margin-top: 2px;
     display: block;
+    line-height: 1.2;
+    hyphens: auto;
 }
 
 .isp {
@@ -451,6 +457,8 @@ tr:hover {
     color: #cccccc;
     margin-top: 2px;
     display: block;
+    line-height: 1.2;
+    hyphens: auto;
 }
 
 .hidden-log {
@@ -631,7 +639,7 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        height: 28px;
+        min-height: 24px;
         font-size: 0.7em;
         vertical-align: middle;
     }
@@ -673,6 +681,8 @@ tr:hover {
         display: block;
         overflow-wrap: break-word;
         white-space: normal;
+        line-height: 1.1;
+        hyphens: auto;
     }
 
     .device {
@@ -680,20 +690,26 @@ tr:hover {
         display: block;
         overflow-wrap: break-word;
         white-space: normal;
+        line-height: 1.1;
+        hyphens: auto;
     }
 
     .country {
         font-size: 0.65em;
         color: #cccccc;
-        margin-top: 2px;
+        margin-top: 0;
         display: block;
+        line-height: 1.1;
+        hyphens: auto;
     }
 
     .isp {
         font-size: 0.65em;
         color: #cccccc;
-        margin-top: 2px;
+        margin-top: 0;
         display: block;
+        line-height: 1.1;
+        hyphens: auto;
     }
 
     .toggle-button {
