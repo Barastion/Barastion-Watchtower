@@ -306,7 +306,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 40px;
-    transition: transform: 0.2s;
+    transition: transform 0.2s;
     cursor: pointer;
 }
 
@@ -515,7 +515,7 @@ tr:hover {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
 
 @media (max-width: 768px) {
@@ -639,7 +639,7 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        min-height: 24px;
+        min-height: 20px;
         font-size: 0.7em;
         vertical-align: middle;
     }
@@ -677,7 +677,7 @@ tr:hover {
     }
 
     .city {
-        font-size: 0.75em;
+        font-size: 0.7em;
         display: block;
         overflow-wrap: break-word;
         white-space: normal;
@@ -686,7 +686,7 @@ tr:hover {
     }
 
     .device {
-        font-size: 0.75em;
+        font-size: 0.7em;
         display: block;
         overflow-wrap: break-word;
         white-space: normal;
