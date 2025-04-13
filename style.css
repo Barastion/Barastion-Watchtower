@@ -238,12 +238,13 @@ body {
     font-size: 1em;
 }
 
+/* Styl dla komunikatu błędu w sekcji forecast-container */
 .forecast-error {
-    font-size: 0.8em;
-    color: #999999;
-    text-align: center;
+    font-size: 0.8em; /* Mniejszy rozmiar czcionki */
+    color: #999999; /* Szary kolor */
+    text-align: center; /* Wyśrodkowanie */
     padding: 10px;
-    width: 100%;
+    width: 100%; /* Zapewnia, że tekst zajmuje całą szerokość */
 }
 
 .weather-ticker {
@@ -315,29 +316,29 @@ body {
 }
 
 .crypto-tile.positive-low {
-    background-color: rgba(0, 125, 0, 0.6);
+    background-color: rgba(0, 125, 0, 0.6); /* Ciemniejszy zielony dla 0-5% */
 }
 
 .crypto-tile.positive-mid {
-    background-color: rgba(0, 175, 0, 0.75);
+    background-color: rgba(0, 175, 0, 0.75); /* Średni, intensywny zielony dla 5-10% */
 }
 
 .crypto-tile.positive-high {
-    background-color: rgba(0, 225, 0, 0.9);
-    animation: pulse-positive 2s infinite;
+    background-color: rgba(0, 225, 0, 0.9); /* Jasny, wyraźny zielony dla >15% */
+    animation: pulse-positive 2s infinite; /* Zielony pulsujący cień */
 }
 
 .crypto-tile.negative-low {
-    background-color: rgba(125, 0, 0, 0.6);
+    background-color: rgba(125, 0, 0, 0.6); /* Ciemniejszy czerwony dla 0-5% */
 }
 
 .crypto-tile.negative-mid {
-    background-color: rgba(175, 0, 0, 0.75);
+    background-color: rgba(175, 0, 0, 0.75); /* Średni, intensywny czerwony dla 5-10% */
 }
 
 .crypto-tile.negative-high {
-    background-color: rgba(225, 0, 0, 0.9);
-    animation: pulse-negative 2s infinite;
+    background-color: rgba(225, 0, 0, 0.9); /* Jasny, wyraźny czerwony dla >15% */
+    animation: pulse-negative 2s infinite; /* Czerwony pulsujący cień */
 }
 
 .crypto-symbol {
@@ -397,8 +398,26 @@ th, td {
     font-size: 0.85em;
 }
 
+th {
+    background-color: #5a6268;
+    color: white;
+    font-weight: 600;
+}
+
 th.location-header {
     width: 140px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji desktopowej */
+}
+
+tr:nth-child(odd) {
+    background-color: #3a3a3a;
+}
+
+tr:nth-child(even) {
+    background-color: #2d2d2d;
+}
+
+tr:hover {
+    background-color: #4a4a4a;
 }
 
 .location-cell {
@@ -541,10 +560,11 @@ th.location-header {
         font-size: 0.8em;
     }
 
+    /* Styl dla komunikatu błędu w wersji mobilnej */
     .forecast-error {
-        font-size: 0.7em;
-        color: #999999;
-        text-align: center;
+        font-size: 0.7em; /* Jeszcze mniejszy w wersji mobilnej */
+        color: #999999; /* Szary kolor */
+        text-align: center; /* Wyśrodkowanie w wersji mobilnej */
         padding: 8px;
         width: 100%;
     }
