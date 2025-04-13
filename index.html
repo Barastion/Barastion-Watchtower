@@ -239,7 +239,7 @@
                         <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td>
-                        <div>${log.device || 'Brak'}</div>
+                        <div class="device">${log.device || 'Brak'}</div>
                         <div style="font-size: 0.8em; color: #cccccc; margin-top: 2px;">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
@@ -260,7 +260,7 @@
                             <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                         </td>
                         <td>
-                            <div>${log.device || 'Brak'}</div>
+                            <div class="device">${log.device || 'Brak'}</div>
                             <div style="font-size: 0.8em; color: #cccccc; margin-top: 2px;">${log.isp || 'Nieznany dostawca'}</div>
                         </td>
                     `;
@@ -323,7 +323,7 @@
                     country: data.country_name || 'Nieznany kraj',
                     lat: data.latitude || null,
                     lon: data.longitude || null,
-                    isp: data.org || 'Nieznany dostawca' // Dodane pole isp
+                    isp: data.org || 'Nieznany dostawca'
                 };
                 localStorage.setItem(cacheKey, JSON.stringify(location));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
