@@ -639,7 +639,7 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        min-height: 20px;
+        height: 28px; /* ZMIANA: Zmniejszono wysokość wierszy z 35px (domyślne) na 28px */
         font-size: 0.7em;
         vertical-align: middle;
     }
@@ -681,7 +681,7 @@ tr:hover {
         display: block;
         overflow-wrap: break-word;
         white-space: normal;
-        line-height: 1.15; /* Zwiększono z 1.1 na 1.15 */
+        line-height: 1.15;
         hyphens: auto;
     }
 
@@ -690,7 +690,7 @@ tr:hover {
         display: block;
         overflow-wrap: break-word;
         white-space: normal;
-        line-height: 1.15; /* Zwiększono z 1.1 na 1.15 */
+        line-height: 1.15;
         hyphens: auto;
     }
 
@@ -699,7 +699,7 @@ tr:hover {
         color: #cccccc;
         margin-top: 0;
         display: block;
-        line-height: 1.15; /* Zwiększono z 1.1 na 1.15 */
+        line-height: 1.15;
         hyphens: auto;
     }
 
@@ -708,7 +708,7 @@ tr:hover {
         color: #cccccc;
         margin-top: 0;
         display: block;
-        line-height: 1.15; /* Zwiększono z 1.1 na 1.15 */
+        line-height: 1.15;
         hyphens: auto;
     }
 
