@@ -197,7 +197,7 @@
         }
 
         function displayLogs(logs) {
-            console.log('Próba wyświetlenia logów...');
+            console.log('Próba wyświetlenia logów...', logs);
             const logTableBody = document.getElementById('logTableBody');
             const toggleButton = document.getElementById('toggleLogs');
             if (!logTableBody || !toggleButton) {
@@ -216,6 +216,7 @@
             const hiddenLogs = logs.slice(5);
 
             visibleLogs.forEach(log => {
+                console.log('Generowanie wiersza dla logu:', log);
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${log.date || 'Brak'}</td>
@@ -223,12 +224,12 @@
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
+                        <div class="city">${log.location?.city || 'Nieznane miasto'}</div>
+                        <div class="country">${log.location?.country || 'Nieznany kraj'}</div>
                     </td>
                     <td class="device-cell">
                         <div class="device-type">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
+                        <div class="isp">${log.location?.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
@@ -236,6 +237,7 @@
 
             if (hiddenLogs.length > 0) {
                 hiddenLogs.forEach(log => {
+                    console.log('Generowanie ukrytego wiersza dla logu:', log);
                     const row = document.createElement('tr');
                     row.classList.add('hidden-log');
                     row.innerHTML = `
@@ -244,12 +246,12 @@
                         <td>${log.time || 'Brak'}</td>
                         <td>${log.ip || 'Brak'}</td>
                         <td class="location-cell">
-                            <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                            <div class="country">${log.location.country || 'Nieznany kraj'}</div>
+                            <div class="city">${log.location?.city || 'Nieznane miasto'}</div>
+                            <div class="country">${log.location?.country || 'Nieznany kraj'}</div>
                         </td>
                         <td class="device-cell">
                             <div class="device-type">${log.device || 'Brak'}</div>
-                            <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
+                            <div class="isp">${log.location?.isp || 'Nieznany dostawca'}</div>
                         </td>
                     `;
                     logTableBody.appendChild(row);
@@ -311,7 +313,7 @@
                     country: data.country_name || 'Nieznany kraj',
                     lat: data.latitude || null,
                     lon: data.longitude || null,
-                    isp: data.org || 'Nieznany dostawca' // Dodajemy ISP
+                    isp: data.org || 'Nieznany dostawca'
                 };
                 localStorage.setItem(cacheKey, JSON.stringify(location));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
