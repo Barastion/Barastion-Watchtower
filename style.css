@@ -421,24 +421,20 @@ tr:hover {
 }
 
 .location-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 140px;
+    max-width: 140px; /* Zachowujemy ograniczenie szerokości */
+    /* Usunięto display: flex i powiązane właściwości */
 }
 
 .city {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
-    /* Usunięto line-height: 1.2 dla spójności czcionki */
 }
 
 .device {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
-    /* Usunięto line-height: 1.2 dla spójności czcionki */
 }
 
 .country {
@@ -625,7 +621,7 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        height: 28px; /* Zmniejszono z 35px, aby lepiej pasowało do mniejszego tekstu */
+        height: 28px;
         font-size: 0.7em;
     }
 
@@ -635,7 +631,7 @@ tr:hover {
 
     .location-cell {
         max-width: 95px;
-        justify-content: flex-start; /* Wyrównanie do góry w kontrolowany sposób */
+        /* Usunięto justify-content, padding-top i vertical-align, bo nie są już potrzebne */
     }
 
     .city, .country {
