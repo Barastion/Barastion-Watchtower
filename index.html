@@ -57,12 +57,12 @@
                         <table id="logTable">
                             <thead>
                                 <tr>
-                                    <th>Data</th>
-                                    <th>Dzień</th>
-                                    <th>Godzina</th>
-                                    <th>IP</th>
-                                    <th>Lokalizacja</th>
-                                    <th>Urządzenie</th>
+                                    <th class="date-header">Data</th>
+                                    <th class="day-header">Dzień</th>
+                                    <th class="time-header">Godzina</th>
+                                    <th class="ip-header">IP</th>
+                                    <th class="location-header">Lokalizacja</th>
+                                    <th class="device-header">Urządzenie</th>
                                 </tr>
                             </thead>
                             <tbody id="logTableBody"></tbody>
@@ -251,14 +251,21 @@
                 const device = log.device || 'Brak';
                 const isp = log.isp || 'Nieznany dostawca';
 
-                console.log(`Przetwarzam log:`, { date: log.date, ip: log.ip, city, country, device, isp });
+                // Dodatkowe logi dla debugowania
+                console.log('Generuję wiersz tabeli:');
+                console.log(`- Data: ${log.date}`);
+                console.log(`- Dzień: ${log.day}`);
+                console.log(`- Godzina: ${log.time}`);
+                console.log(`- IP: ${log.ip}`);
+                console.log(`- Lokalizacja: ${city}, ${country}`);
+                console.log(`- Urządzenie: ${device}, ISP: ${isp}`);
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${log.date || 'Brak'}</td>
-                    <td>${log.day || 'Brak'}</td>
-                    <td>${log.time || 'Brak'}</td>
-                    <td>${log.ip || 'Brak'}</td>
+                    <td class="date-cell">${log.date || 'Brak'}</td>
+                    <td class="day-cell">${log.day || 'Brak'}</td>
+                    <td class="time-cell">${log.time || 'Brak'}</td>
+                    <td class="ip-cell">${log.ip || 'Brak'}</td>
                     <td class="location-cell">
                         <div class="city">${city}</div>
                         <div class="country">${country}</div>
@@ -281,10 +288,10 @@
                     const row = document.createElement('tr');
                     row.classList.add('hidden-log');
                     row.innerHTML = `
-                        <td>${log.date || 'Brak'}</td>
-                        <td>${log.day || 'Brak'}</td>
-                        <td>${log.time || 'Brak'}</td>
-                        <td>${log.ip || 'Brak'}</td>
+                        <td class="date-cell">${log.date || 'Brak'}</td>
+                        <td class="day-cell">${log.day || 'Brak'}</td>
+                        <td class="time-cell">${log.time || 'Brak'}</td>
+                        <td class="ip-cell">${log.ip || 'Brak'}</td>
                         <td class="location-cell">
                             <div class="city">${city}</div>
                             <div class="country">${country}</div>
