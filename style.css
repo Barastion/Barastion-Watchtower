@@ -238,13 +238,12 @@ body {
     font-size: 1em;
 }
 
-/* Styl dla komunikatu błędu w sekcji forecast-container */
 .forecast-error {
-    font-size: 0.8em; /* Mniejszy rozmiar czcionki */
-    color: #999999; /* Szary kolor */
-    text-align: center; /* Wyśrodkowanie */
+    font-size: 0.8em;
+    color: #999999;
+    text-align: center;
     padding: 10px;
-    width: 100%; /* Zapewnia, że tekst zajmuje całą szerokość */
+    width: 100%;
 }
 
 .weather-ticker {
@@ -316,29 +315,29 @@ body {
 }
 
 .crypto-tile.positive-low {
-    background-color: rgba(0, 125, 0, 0.6); /* Ciemniejszy zielony dla 0-5% */
+    background-color: rgba(0, 125, 0, 0.6);
 }
 
 .crypto-tile.positive-mid {
-    background-color: rgba(0, 175, 0, 0.75); /* Średni, intensywny zielony dla 5-10% */
+    background-color: rgba(0, 175, 0, 0.75);
 }
 
 .crypto-tile.positive-high {
-    background-color: rgba(0, 225, 0, 0.9); /* Jasny, wyraźny zielony dla >15% */
-    animation: pulse-positive 2s infinite; /* Zielony pulsujący cień */
+    background-color: rgba(0, 225, 0, 0.9);
+    animation: pulse-positive 2s infinite;
 }
 
 .crypto-tile.negative-low {
-    background-color: rgba(125, 0, 0, 0.6); /* Ciemniejszy czerwony dla 0-5% */
+    background-color: rgba(125, 0, 0, 0.6);
 }
 
 .crypto-tile.negative-mid {
-    background-color: rgba(175, 0, 0, 0.75); /* Średni, intensywny czerwony dla 5-10% */
+    background-color: rgba(175, 0, 0, 0.75);
 }
 
 .crypto-tile.negative-high {
-    background-color: rgba(225, 0, 0, 0.9); /* Jasny, wyraźny czerwony dla >15% */
-    animation: pulse-negative 2s infinite; /* Czerwony pulsujący cień */
+    background-color: rgba(225, 0, 0, 0.9);
+    animation: pulse-negative 2s infinite;
 }
 
 .crypto-symbol {
@@ -405,7 +404,7 @@ th {
 }
 
 th.location-header {
-    width: 140px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji desktopowej */
+    width: 140px;
 }
 
 tr:nth-child(odd) {
@@ -428,21 +427,30 @@ tr:hover {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
-    display: block; /* Zapewniamy naturalne ułożenie */
+    display: block;
+    font-size: 0.9em;
 }
 
 .device {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
-    display: block; /* Dla spójności z .city */
+    display: block;
+    font-size: 0.9em;
 }
 
 .country {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
-    display: block; /* Zapewniamy naturalne ułożenie */
+    display: block;
+}
+
+.isp {
+    font-size: 0.8em;
+    color: #cccccc;
+    margin-top: 2px;
+    display: block;
 }
 
 .hidden-log {
@@ -563,11 +571,10 @@ tr:hover {
         font-size: 0.8em;
     }
 
-    /* Styl dla komunikatu błędu w wersji mobilnej */
     .forecast-error {
-        font-size: 0.7em; /* Jeszcze mniejszy w wersji mobilnej */
-        color: #999999; /* Szary kolor */
-        text-align: center; /* Wyśrodkowanie w wersji mobilnej */
+        font-size: 0.7em;
+        color: #999999;
+        text-align: center;
         padding: 8px;
         width: 100%;
     }
@@ -625,29 +632,43 @@ tr:hover {
         padding: 2px;
         height: 28px;
         font-size: 0.7em;
-        vertical-align: middle; /* Potwierdzamy, że działa */
+        vertical-align: middle;
     }
 
     th.location-header {
-        width: 95px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji mobilnej */
+        width: 95px;
     }
 
     .location-cell {
         max-width: 95px;
-        line-height: 1.1; /* Dodajemy, aby lepiej kontrolować odstępy w pionie */
     }
 
-    .city, .country {
+    .city {
         font-size: 0.7em;
-        line-height: 1.1; /* Spójność z .location-cell */
-    }
-
-    .country {
-        font-size: 0.8em; /* Zachowujemy spójność z isp */
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
     }
 
     .device {
-        line-height: 1.1; /* Dla spójności z .city */
+        font-size: 0.7em;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+    .country {
+        font-size: 0.65em;
+        color: #cccccc;
+        margin-top: 2px;
+        display: block;
+    }
+
+    .isp {
+        font-size: 0.65em;
+        color: #cccccc;
+        margin-top: 2px;
+        display: block;
     }
 
     .toggle-button {
