@@ -128,6 +128,28 @@
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
+        async function checkDuplicateLog(ip, device) {
+            const logsRef = ref(database, 'logs');
+            return new Promise((resolve) => {
+                onValue(logsRef, (snapshot) => {
+                    const logsData = snapshot.val();
+                    if (!logsData) {
+                        resolve(false);
+                        return;
+                    }
+                    const logs = Object.values(logsData);
+                    const now = Date.now();
+                    const fiveMinutesAgo = now - 5 * 60 * 1000; // 5 minut w milisekundach
+                    const hasRecentLog = logs.some(log => 
+                        log.ip === ip && 
+                        log.device === device && 
+                        log.timestamp >= fiveMinutesAgo
+                    );
+                    resolve(hasRecentLog);
+                }, { onlyOnce: true });
+            });
+        }
+
         async function logVisit() {
             console.log('Rozpoczynam zapis logu...');
             const now = new Date();
@@ -138,24 +160,17 @@
             const location = await getLocation(ip);
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
+            const isp = location.isp || 'Nieznany dostawca';
 
-            // Sprawdzenie, czy istnieje log z tego samego IP i urządzenia w ciągu ostatnich 5 minut
-            const logKey = `lastLog_${ip}_${device}`;
-            const lastLog = localStorage.getItem(logKey);
-            const currentTime = now.getTime();
-            const fiveMinutes = 5 * 60 * 1000; // 5 minut w milisekundach
-
-            if (lastLog) {
-                const lastLogTime = parseInt(lastLog);
-                if (currentTime - lastLogTime < fiveMinutes) {
-                    console.log('Pomijam zapis logu - zbyt krótki odstęp czasu dla tego IP i urządzenia:', ip, device);
-                    await updateLogs(); // Nadal aktualizujemy tabelę logów
-                    return;
-                }
+            // Sprawdzenie duplikatu logu
+            const isDuplicate = await checkDuplicateLog(ip, device);
+            if (isDuplicate) {
+                console.log('Znaleziono niedawny log z tego samego IP i urządzenia, pomijam zapis.');
+                await updateLogs();
+                return;
             }
 
-            // Jeśli minęło więcej niż 5 minut lub nie ma poprzedniego logu, zapisujemy nowy
-            const logEntry = { date, day, time, ip, location, device, timestamp: currentTime };
+            const logEntry = { date, day, time, ip, location, device, isp, timestamp: now.getTime() };
             console.log('Log do zapisania:', logEntry);
 
             const logsRef = ref(database, 'logs');
@@ -164,8 +179,6 @@
             try {
                 await set(newLogRef, logEntry);
                 console.log('Log zapisany pomyślnie:', logEntry);
-                // Zapisz czas ostatniego logu w localStorage
-                localStorage.setItem(logKey, currentTime.toString());
                 await updateLogs();
             } catch (error) {
                 console.error('Błąd zapisu logu:', error);
@@ -197,7 +210,7 @@
         }
 
         function displayLogs(logs) {
-            console.log('Próba wyświetlenia logów...', logs);
+            console.log('Próba wyświetlenia logów...');
             const logTableBody = document.getElementById('logTableBody');
             const toggleButton = document.getElementById('toggleLogs');
             if (!logTableBody || !toggleButton) {
@@ -216,7 +229,6 @@
             const hiddenLogs = logs.slice(5);
 
             visibleLogs.forEach(log => {
-                console.log('Generowanie wiersza dla logu:', log);
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${log.date || 'Brak'}</td>
@@ -224,12 +236,12 @@
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city">${log.location?.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location?.country || 'Nieznany kraj'}</div>
+                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td class="device-cell">
-                        <div class="device-type">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.location?.isp || 'Nieznany dostawca'}</div>
+                        <div class="device">${log.device || 'Brak'}</div>
+                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
@@ -237,7 +249,6 @@
 
             if (hiddenLogs.length > 0) {
                 hiddenLogs.forEach(log => {
-                    console.log('Generowanie ukrytego wiersza dla logu:', log);
                     const row = document.createElement('tr');
                     row.classList.add('hidden-log');
                     row.innerHTML = `
@@ -246,12 +257,12 @@
                         <td>${log.time || 'Brak'}</td>
                         <td>${log.ip || 'Brak'}</td>
                         <td class="location-cell">
-                            <div class="city">${log.location?.city || 'Nieznane miasto'}</div>
-                            <div class="country">${log.location?.country || 'Nieznany kraj'}</div>
+                            <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                            <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                         </td>
                         <td class="device-cell">
-                            <div class="device-type">${log.device || 'Brak'}</div>
-                            <div class="isp">${log.location?.isp || 'Nieznany dostawca'}</div>
+                            <div class="device">${log.device || 'Brak'}</div>
+                            <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                         </td>
                     `;
                     logTableBody.appendChild(row);
