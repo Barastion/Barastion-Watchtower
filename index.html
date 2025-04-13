@@ -245,13 +245,13 @@
             const hiddenLogs = logs.slice(5);
 
             visibleLogs.forEach(log => {
-                // Obsługa różnych struktur danych
-                const city = log.location && log.location.city ? log.location.city : (log.location && typeof log.location === 'string' ? log.location : 'Nieznane miasto');
-                const country = log.location && log.location.country ? log.location.country : (log.location && typeof log.location === 'string' ? '' : 'Nieznany kraj');
-                const device = log.device || (log.location && log.location.device ? log.location.device : 'Brak');
-                const isp = log.isp || (log.location && log.location.isp ? log.location.isp : 'Nieznany dostawca');
+                // Pobieranie danych z poprawnych pól
+                const city = log.location && log.location.city ? log.location.city : 'Nieznane miasto';
+                const country = log.location && log.location.country ? log.location.country : 'Nieznany kraj';
+                const device = log.device || 'Brak';
+                const isp = log.isp || 'Nieznany dostawca';
 
-                console.log(`Przetwarzam log:`, { city, country, device, isp });
+                console.log(`Przetwarzam log:`, { date: log.date, ip: log.ip, city, country, device, isp });
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -273,10 +273,10 @@
 
             if (hiddenLogs.length > 0) {
                 hiddenLogs.forEach(log => {
-                    const city = log.location && log.location.city ? log.location.city : (log.location && typeof log.location === 'string' ? log.location : 'Nieznane miasto');
-                    const country = log.location && log.location.country ? log.location.country : (log.location && typeof log.location === 'string' ? '' : 'Nieznany kraj');
-                    const device = log.device || (log.location && log.location.device ? log.location.device : 'Brak');
-                    const isp = log.isp || (log.location && log.location.isp ? log.location.isp : 'Nieznany dostawca');
+                    const city = log.location && log.location.city ? log.location.city : 'Nieznane miasto';
+                    const country = log.location && log.location.country ? log.location.country : 'Nieznany kraj';
+                    const device = log.device || 'Brak';
+                    const isp = log.isp || 'Nieznany dostawca';
 
                     const row = document.createElement('tr');
                     row.classList.add('hidden-log');
