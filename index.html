@@ -65,7 +65,12 @@
                                     <th>Urządzenie</th>
                                 </tr>
                             </thead>
-                            <tbody id="logTableBody"></tbody>
+                            <tbody id="logTableBody">
+                                <!-- ZMIANA: Dodano placeholder dla logów -->
+                                <tr>
+                                    <td colspan="6">Ładowanie logów...</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                     <div class="toggle-container">
@@ -94,7 +99,7 @@
         const database = getDatabase(app);
 
         // Funkcja do ponawiania żądań z timeoutem
-        async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 10000) {
+        async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 5000) { // ZMIANA: Timeout skrócony z 10s do 5s
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const controller = new AbortController();
@@ -205,6 +210,11 @@
                 }, { onlyOnce: true });
             } catch (error) {
                 console.error('Błąd pobierania logów:', error);
+                // ZMIANA: Dodano komunikat błędu w przypadku niepowodzenia ładowania logów
+                const logTableBody = document.getElementById('logTableBody');
+                if (logTableBody) {
+                    logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                }
             }
         }
 
@@ -217,10 +227,11 @@
                 return;
             }
 
-            logTableBody.innerHTML = '';
+            logTableBody.innerHTML = ''; // ZMIANA: Czyszczenie placeholder'a
             if (logs.length === 0) {
                 console.log('Brak logów do wyświetlenia.');
                 toggleButton.style.display = 'none';
+                logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>'; // ZMIANA: Komunikat w przypadku braku logów
                 return;
             }
 
@@ -665,16 +676,46 @@
                 if (!isReloading) {
                     isReloading = true;
                     try {
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        const ip = await getIp();
-                        console.log('IP po przywróceniu połączenia:', ip);
-                        await Promise.all([
-                            logVisit(),
-                            getWeather(ip),
-                            getNasaApodImage(),
-                            getDailyFact(),
-                            getCryptoData()
+                        // ZMIANA: Równoległe ładowanie API z Promise.allSettled
+                        const ipPromise = getIp();
+                        const nasaPromise = getNasaApodImage();
+                        const dailyFactPromise = getDailyFact();
+                        const cryptoPromise = getCryptoData();
+
+                        // Czekamy na IP, aby móc użyć go w getWeather
+                        const ip = await ipPromise;
+
+                        // Równoległe ładowanie pogody (zależy od IP)
+                        const weatherPromise = getWeather(ip);
+
+                        // Czekamy na zakończenie wszystkich żądań (lub ich fallbacki)
+                        const results = await Promise.allSettled([
+                            nasaPromise,
+                            ipPromise,
+                            weatherPromise,
+                            dailyFactPromise,
+                            cryptoPromise
                         ]);
+
+                        // Logujemy wyniki dla debugowania
+                        results.forEach((result, index) => {
+                            const apiNames = ['NASA', 'IP', 'Pogoda', 'Ciekawostka', 'Kryptowaluty'];
+                            console.log(`Wynik dla ${apiNames[index]}:`, result.status, result.reason || result.value);
+                        });
+
+                        // ZMIANA: Ładowanie logów z opóźnieniem 0.5 sekundy
+                        setTimeout(async () => {
+                            try {
+                                await logVisit();
+                            } catch (err) {
+                                console.error('Błąd podczas ładowania logów:', err);
+                                const logTableBody = document.getElementById('logTableBody');
+                                if (logTableBody) {
+                                    logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                                }
+                            }
+                        }, 500);
+
                         console.log('Wszystkie dane załadowane po przywróceniu połączenia');
                     } catch (err) {
                         console.error('Błąd podczas ponownego ładowania danych:', err);
