@@ -442,6 +442,28 @@ tr:hover {
     margin-top: 2px;
 }
 
+.device-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 140px;
+}
+
+.device-type {
+    font-size: 0.9em;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
+}
+
+.isp {
+    font-size: 0.8em;
+    color: #cccccc;
+    margin-top: 2px;
+}
+
 .hidden-log {
     display: none;
 }
@@ -633,6 +655,14 @@ tr:hover {
     }
 
     .city, .country {
+        font-size: 0.7em;
+    }
+
+    .device-cell {
+        max-width: 95px;
+    }
+
+    .device-type, .isp {
         font-size: 0.7em;
     }
 
