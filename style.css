@@ -395,7 +395,7 @@ th, td {
     height: 35px;
     vertical-align: middle;
     text-align: center;
-    font-size: 0.9em; /* Zmieniono z 0.85em na 0.9em dla spójności */
+    font-size: 0.9em;
 }
 
 th {
@@ -425,22 +425,20 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     max-width: 140px;
-    /* Usunięto justify-content: center, aby wyrównać do góry */
 }
 
 .city {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
-    line-height: 1.2;
-    /* Usunięto font-size: 0.9em, bo dziedziczone z td */
+    /* Usunięto line-height: 1.2 dla spójności czcionki */
 }
 
 .device {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
-    line-height: 1.2;
+    /* Usunięto line-height: 1.2 dla spójności czcionki */
 }
 
 .country {
@@ -627,8 +625,8 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        height: 35px;
-        font-size: 0.7em; /* Dostosowano dla wersji mobilnej */
+        height: 28px; /* Zmniejszono z 35px, aby lepiej pasowało do mniejszego tekstu */
+        font-size: 0.7em;
     }
 
     th.location-header {
@@ -637,10 +635,15 @@ tr:hover {
 
     .location-cell {
         max-width: 95px;
+        justify-content: flex-start; /* Wyrównanie do góry w kontrolowany sposób */
     }
 
     .city, .country {
         font-size: 0.7em;
+    }
+
+    .country {
+        font-size: 0.8em; /* Zachowujemy spójność z isp */
     }
 
     .toggle-button {
