@@ -47,7 +47,9 @@
             </div>
             <div class="crypto-info">
                 <div class="crypto-header">Zmiany notowań w ciągu ostatnich 24h</div>
-                <div class="crypto-grid" id="cryptoGrid"></div>
+                <div class="crypto-grid" id="cryptoGrid">
+                    <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
+                </div>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
@@ -60,7 +62,7 @@
                                     <th>Godzina</th>
                                     <th>IP</th>
                                     <th>Lokalizacja</th>
-                                    <th class="device-header">Urządzenie</th>
+                                    <th>Urządzenie</th>
                                 </tr>
                             </thead>
                             <tbody id="logTableBody"></tbody>
@@ -91,6 +93,7 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        // Funkcja do ponawiania żądań z timeoutem
         async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 10000) {
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
@@ -98,11 +101,15 @@
                     const id = setTimeout(() => controller.abort(), timeout);
                     const response = await fetch(url, { ...options, signal: controller.signal });
                     clearTimeout(id);
-                    if (!response.ok) throw new Error(`Błąd HTTP: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`Błąd HTTP: ${response.status}`);
+                    }
                     return await response.json();
                 } catch (err) {
                     console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
-                    if (attempt === retries) throw err;
+                    if (attempt === retries) {
+                        throw err;
+                    }
                     await new Promise(resolve => setTimeout(resolve, delay));
                 }
             }
@@ -121,25 +128,6 @@
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
-        async function checkRecentLog(ip, device) {
-            const logsRef = ref(database, 'logs');
-            return new Promise((resolve) => {
-                onValue(logsRef, (snapshot) => {
-                    const logsData = snapshot.val();
-                    if (!logsData) return resolve(false);
-                    const logs = Object.values(logsData);
-                    const now = Date.now();
-                    const fiveMinutes = 5 * 60 * 1000;
-                    const recentLog = logs.find(log =>
-                        log.ip === ip &&
-                        log.device === device &&
-                        (now - log.timestamp) <= fiveMinutes
-                    );
-                    resolve(!!recentLog);
-                }, { onlyOnce: true });
-            });
-        }
-
         async function logVisit() {
             console.log('Rozpoczynam zapis logu...');
             const now = new Date();
@@ -151,23 +139,23 @@
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
 
-            const hasRecentLog = await checkRecentLog(ip, device);
-            if (hasRecentLog) {
-                console.log('Znaleziono niedawny log dla IP:', ip, 'i urządzenia:', device, 'pomijam zapis.');
-                await updateLogs();
-                return;
+            // Sprawdzenie, czy istnieje log z tego samego IP i urządzenia w ciągu ostatnich 5 minut
+            const logKey = `lastLog_${ip}_${device}`;
+            const lastLog = localStorage.getItem(logKey);
+            const currentTime = now.getTime();
+            const fiveMinutes = 5 * 60 * 1000; // 5 minut w milisekundach
+
+            if (lastLog) {
+                const lastLogTime = parseInt(lastLog);
+                if (currentTime - lastLogTime < fiveMinutes) {
+                    console.log('Pomijam zapis logu - zbyt krótki odstęp czasu dla tego IP i urządzenia:', ip, device);
+                    await updateLogs(); // Nadal aktualizujemy tabelę logów
+                    return;
+                }
             }
 
-            const logEntry = {
-                date,
-                day,
-                time,
-                ip,
-                location,
-                device,
-                isp: location.isp || 'Nieznany dostawca',
-                timestamp: now.getTime()
-            };
+            // Jeśli minęło więcej niż 5 minut lub nie ma poprzedniego logu, zapisujemy nowy
+            const logEntry = { date, day, time, ip, location, device, timestamp: currentTime };
             console.log('Log do zapisania:', logEntry);
 
             const logsRef = ref(database, 'logs');
@@ -176,6 +164,8 @@
             try {
                 await set(newLogRef, logEntry);
                 console.log('Log zapisany pomyślnie:', logEntry);
+                // Zapisz czas ostatniego logu w localStorage
+                localStorage.setItem(logKey, currentTime.toString());
                 await updateLogs();
             } catch (error) {
                 console.error('Błąd zapisu logu:', error);
@@ -238,7 +228,7 @@
                     </td>
                     <td class="device-cell">
                         <div class="device-type">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
+                        <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
@@ -259,7 +249,7 @@
                         </td>
                         <td class="device-cell">
                             <div class="device-type">${log.device || 'Brak'}</div>
-                            <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
+                            <div class="isp">${log.location.isp || 'Nieznany dostawca'}</div>
                         </td>
                     `;
                     logTableBody.appendChild(row);
@@ -303,7 +293,7 @@
             const cached = localStorage.getItem(cacheKey);
             const cacheTime = localStorage.getItem(`${cacheKey}_time`);
             const now = Date.now();
-            const cacheDuration = 60 * 60 * 1000;
+            const cacheDuration = 60 * 60 * 1000; // 1 godzina
 
             if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
                 console.log('Używam danych lokalizacji z cache:', ip);
@@ -313,20 +303,24 @@
             try {
                 const data = await retryFetch(`https://ipapi.co/${ip}/json/`);
                 console.log('Dane lokalizacji dla IP:', ip, data);
-                if (data.error) throw new Error('Błąd API: ' + (data.reason || 'Nieznany powód'));
+                if (data.error) {
+                    throw new Error('Błąd API: ' + (data.reason || 'Nieznany powód'));
+                }
                 const location = {
                     city: data.city || 'Nieznane miasto',
                     country: data.country_name || 'Nieznany kraj',
                     lat: data.latitude || null,
                     lon: data.longitude || null,
-                    isp: data.org || 'Nieznany dostawca'
+                    isp: data.org || 'Nieznany dostawca' // Dodajemy ISP
                 };
                 localStorage.setItem(cacheKey, JSON.stringify(location));
                 localStorage.setItem(`${cacheKey}_time`, now.toString());
                 return location;
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
-                if (err.message.includes('429')) console.warn('Przekroczono limit API ipapi.co');
+                if (err.message.includes('429')) {
+                    console.warn('Przekroczono limit API ipapi.co');
+                }
                 return {
                     city: 'Nieznane miasto',
                     country: 'Nieznany kraj',
@@ -529,7 +523,7 @@
             const cached = localStorage.getItem(cacheKey);
             const cacheTime = localStorage.getItem(`${cacheKey}_time`);
             const now = Date.now();
-            const cacheDuration = 15 * 60 * 1000;
+            const cacheDuration = 15 * 60 * 1000; // 15 minut
 
             if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
                 console.log('Używam danych kryptowalut z cache');
@@ -648,6 +642,7 @@
             }
         }
 
+        // Funkcja obsługująca status sieci
         let isReloading = false;
         async function handleNetworkStatus() {
             const networkStatus = document.getElementById('networkStatus');
@@ -684,14 +679,16 @@
             }
         }
 
+        // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
         function startCryptoUpdateInterval() {
             getCryptoData();
             setInterval(() => {
                 console.log('Aktualizuję dane kryptowalut...');
                 getCryptoData();
-            }, 900000);
+            }, 900000); // 15 minut
         }
 
+        // Inicjalizacja strony
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
