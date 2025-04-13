@@ -1,677 +1,632 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor Odwiedzin</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="diabelek.png">
-    <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
-    <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
-</head>
-<body>
-    <div id="networkStatus" class="network-status"></div>
-    <div class="container">
-        <div class="nasa-container">
-            <div class="nasa-frame">
-                <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
-                <div class="nasa-ticker">
-                    <div id="nasaTickerContent">
-                        <span class="ticker-segment">Ładowanie opisu...</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="search-container">
-            <form action="https://www.google.com/search" method="get" target="_blank">
-                <label for="search-input">🔍 Szukaj w Google:</label>
-                <input type="text" id="search-input" name="q" placeholder="Wpisz frazę...">
-            </form>
-        </div>
-        <div class="daily-fact">
-            <span class="fact-header">💡 Ciekawostka na dziś:</span>
-            <div class="fact-content" id="dailyFact">Ładowanie...</div>
-        </div>
-        <div class="content-frame">
-            <div class="weather-info">
-                <div class="weather-forecast">
-                    <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
-                    <div class="forecast-container" id="weatherForecast"></div>
-                    <div class="weather-ticker">
-                        <div id="tickerContent">
-                            <span class="ticker-segment">Ładowanie...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="crypto-info">
-                <div class="crypto-header">Zmiany notowań w ciągu ostatnich 24h</div>
-                <div class="crypto-grid" id="cryptoGrid">
-                    <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
-                </div>
-            </div>
-            <div class="log-table">
-                <div class="table-wrapper">
-                    <div class="table-container">
-                        <table id="logTable">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Dzień</th>
-                                    <th>Godzina</th>
-                                    <th>IP</th>
-                                    <th class="location-header">Lokalizacja</th>
-                                    <th>Urządzenie</th>
-                                </tr>
-                            </thead>
-                            <tbody id="logTableBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="toggle-container">
-                        <button id="toggleLogs" class="toggle-button">Rozwiń listę</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    background-color: #2d2d2d;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
-            authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
-            databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "monitor-odwiedzin-405c9",
-            storageBucket: "monitor-odwiedzin-405c9.appspot.com",
-            messagingSenderId: "93459469114",
-            appId: "1:93459469114:web:0a709b6be237705bf8f603"
-        };
+.network-status {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ff4d4d;
+    color: #ffffff;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9em;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
 
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+.nasa-container {
+    max-width: 640px;
+    margin: 0 auto 20px;
+    text-align: center;
+}
 
-        // Funkcja do ponawiania żądań z timeoutem
-        async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 10000) {
-            for (let attempt = 1; attempt <= retries; attempt++) {
-                try {
-                    const controller = new AbortController();
-                    const id = setTimeout(() => controller.abort(), timeout);
-                    const response = await fetch(url, { ...options, signal: controller.signal });
-                    clearTimeout(id);
-                    if (!response.ok) {
-                        throw new Error(`Błąd HTTP: ${response.status}`);
-                    }
-                    return await response.json();
-                } catch (err) {
-                    console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
-                    if (attempt === retries) {
-                        throw err;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-            }
-        }
+.nasa-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #2d2d2d;
+    border: 2px solid #555555;
+}
 
-        function getDeviceType(userAgent) {
-            if (userAgent.includes('Android')) return 'Android';
-            if (userAgent.includes('iPhone')) return 'iPhone';
-            if (userAgent.includes('iPad')) return 'Tablet';
-            if (userAgent.includes('Macintosh')) return 'Mac';
-            if (userAgent.includes('Windows') || userAgent.includes('Linux')) return 'PC';
-            return 'Inne';
-        }
+.nasa-frame img,
+.nasa-frame iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
 
-        function capitalizeFirstLetter(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        }
+.nasa-frame iframe {
+    object-fit: contain;
+}
 
-        async function logVisit() {
-            console.log('Rozpoczynam zapis logu...');
-            const now = new Date();
-            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
-            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-            const ip = await getIp();
-            const location = await getLocation(ip);
-            const userAgent = navigator.userAgent;
-            const device = getDeviceType(userAgent);
+.nasa-ticker {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-top: 0;
+}
 
-            const logEntry = { date, day, time, ip, location, device, timestamp: now.getTime() };
-            console.log('Log do zapisania:', logEntry);
+#nasaTickerContent {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 360s linear infinite;
+    -webkit-animation: ticker 360s linear infinite;
+    font-size: 0.7em;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+}
 
-            const logsRef = ref(database, 'logs');
-            const newLogRef = push(logsRef);
+.nasa-ticker .ticker-segment {
+    display: inline-block;
+    padding-right: 180px;
+}
 
-            try {
-                await set(newLogRef, logEntry);
-                console.log('Log zapisany pomyślnie:', logEntry);
-                await updateLogs();
-            } catch (error) {
-                console.error('Błąd zapisu logu:', error);
-            }
-        }
+.search-container {
+    text-align: center;
+    margin: 20px 0 10px 0;
+}
 
-        async function updateLogs() {
-            const logsRef = ref(database, 'logs');
-            console.log('Pobieram logi z Firebase...');
-            try {
-                onValue(logsRef, (snapshot) => {
-                    const logsData = snapshot.val();
-                    let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
-                    logs.sort((a, b) => b.timestamp - a.timestamp);
+.search-container form {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
 
-                    if (logs.length > 50) {
-                        const logsToDelete = logs.slice(50);
-                        logs = logs.slice(0, 50);
-                        logsToDelete.forEach(log => {
-                            remove(ref(database, `logs/${log.key}`));
-                        });
-                    }
+.search-container label {
+    font-size: 0.9em;
+    color: #ffffff;
+}
 
-                    displayLogs(logs);
-                }, { onlyOnce: true });
-            } catch (error) {
-                console.error('Błąd pobierania logów:', error);
-            }
-        }
+.search-container input[type="text"] {
+    padding: 5px 10px;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    background-color: #3a3a3a;
+    color: #ffffff;
+    font-size: 0.9em;
+    width: 200px;
+}
 
-        function displayLogs(logs) {
-            console.log('Próba wyświetlenia logów...');
-            const logTableBody = document.getElementById('logTableBody');
-            const toggleButton = document.getElementById('toggleLogs');
-            if (!logTableBody || !toggleButton) {
-                console.error('Brak elementu #logTableBody lub #toggleLogs w HTML');
-                return;
-            }
+.search-container input[type="text"]:focus {
+    outline: none;
+    border-color: #5a6268;
+}
 
-            logTableBody.innerHTML = '';
-            if (logs.length === 0) {
-                console.log('Brak logów do wyświetlenia.');
-                toggleButton.style.display = 'none';
-                return;
-            }
+.daily-fact {
+    text-align: center;
+    margin: 20px 5px 20px 5px;
+    font-size: 0.9em;
+    color: #ffffff;
+}
 
-            const visibleLogs = logs.slice(0, 5);
-            const hiddenLogs = logs.slice(5);
+.fact-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+}
 
-            visibleLogs.forEach(log => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${log.date || 'Brak'}</td>
-                    <td>${log.day || 'Brak'}</td>
-                    <td>${log.time || 'Brak'}</td>
-                    <td>${log.ip || 'Brak'}</td>
-                    <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
-                    </td>
-                    <td>${log.device || 'Brak'}</td>
-                `;
-                logTableBody.appendChild(row);
-            });
+.fact-content {
+    margin: 5px 5px 0 5px;
+    font-size: 0.9em;
+    font-style: italic;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+}
 
-            if (hiddenLogs.length > 0) {
-                hiddenLogs.forEach(log => {
-                    const row = document.createElement('tr');
-                    row.classList.add('hidden-log');
-                    row.innerHTML = `
-                        <td>${log.date || 'Brak'}</td>
-                        <td>${log.day || 'Brak'}</td>
-                        <td>${log.time || 'Brak'}</td>
-                        <td>${log.ip || 'Brak'}</td>
-                        <td class="location-cell">
-                            <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                            <div class="country">${log.location.country || 'Nieznany kraj'}</div>
-                        </td>
-                        <td>${log.device || 'Brak'}</td>
-                    `;
-                logTableBody.appendChild(row);
-                });
+.content-frame {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #3a3a3a;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
 
-                toggleButton.style.display = 'block';
-                toggleButton.textContent = 'Rozwiń listę';
+.weather-info {
+    margin-bottom: 20px;
+}
 
-                const hiddenRows = document.querySelectorAll('.hidden-log');
-                hiddenRows.forEach(row => row.style.display = 'none');
+.weather-forecast {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
 
-                toggleButton.onclick = () => {
-                    if (toggleButton.textContent === 'Rozwiń listę') {
-                        hiddenRows.forEach(row => row.style.display = 'table-row');
-                        toggleButton.textContent = 'Zwiń listę';
-                    } else {
-                        hiddenRows.forEach(row => row.style.display = 'none');
-                        toggleButton.textContent = 'Rozwiń listę';
-                    }
-                };
-            } else {
-                toggleButton.style.display = 'none';
-            }
+.weather-city {
+    text-align: center;
+    margin: 2px 0;
+    font-size: 1.2em;
+}
 
-            console.log('Logi wyświetlone:', logs.length);
-        }
+.forecast-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+    justify-content: center;
+    -webkit-overflow-scrolling: touch;
+}
 
-        async function getIp() {
-            try {
-                const data = await retryFetch('https://api.ipify.org?format=json');
-                console.log('IP pobrane:', data.ip);
-                return data.ip || 'Nieznany IP';
-            } catch (err) {
-                console.error('Błąd pobierania IP:', err);
-                return 'Nieznany IP';
-            }
-        }
+.forecast-bar {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    min-width: 80px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
 
-        async function getLocation(ip) {
-            const cacheKey = `location_${ip}`;
-            const cached = localStorage.getItem(cacheKey);
-            const cacheTime = localStorage.getItem(`${cacheKey}_time`);
-            const now = Date.now();
-            const cacheDuration = 60 * 60 * 1000; // 1 godzina
+.forecast-bar.today {
+    border: 2px solid #5a6268;
+}
 
-            if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
-                console.log('Używam danych lokalizacji z cache:', ip);
-                return JSON.parse(cached);
-            }
+.forecast-date {
+    font-size: 0.7em;
+    color: #cccccc;
+    margin-bottom: 5px;
+}
 
-            try {
-                const data = await retryFetch(`https://ipapi.co/${ip}/json/`);
-                console.log('Dane lokalizacji dla IP:', ip, data);
-                if (data.error) {
-                    throw new Error('Błąd API: ' + (data.reason || 'Nieznany powód'));
-                }
-                const location = {
-                    city: data.city || 'Nieznane miasto',
-                    country: data.country_name || 'Nieznany kraj',
-                    lat: data.latitude || null,
-                    lon: data.longitude || null
-                };
-                localStorage.setItem(cacheKey, JSON.stringify(location));
-                localStorage.setItem(`${cacheKey}_time`, now.toString());
-                return location;
-            } catch (err) {
-                console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
-                if (err.message.includes('429')) {
-                    console.warn('Przekroczono limit API ipapi.co');
-                }
-                return {
-                    city: 'Nieznane miasto',
-                    country: 'Nieznany kraj',
-                    lat: null,
-                    lon: null
-                };
-            }
-        }
+.weather-icon {
+    font-size: 1.5em;
+}
 
-        const weatherIcons = {
-            0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
-            45: '🌫️', 48: '🌫️',
-            51: '🌦️', 53: '🌧️', 55: '🌧️',
-            56: '🌧️', 57: '🌧️',
-            61: '🌦️', 63: '🌧️', 65: '🌧️',
-            66: '🌧️', 67: '🌧️',
-            71: '🌨️', 73: '🌨️', 75: '🌨️',
-            77: '🌨️',
-            80: '🌦️', 81: '🌧️', 82: '🌧️',
-            85: '🌨️', 86: '🌨️',
-            95: '⛈️', 96: '⛈️', 99: '⛈️'
-        };
+.weather-day {
+    font-size: 0.9em;
+    font-weight: bold;
+}
 
-        const weatherDescriptions = {
-            0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
-            45: 'Mgła', 48: 'Mgła z szronem',
-            51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
-            56: 'Lekka mżawka marznąca', 57: 'Intensywna mżawka marznąca',
-            61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz',
-            66: 'Lekki deszcz marznący', 67: 'Ciężki deszcz marznący',
-            71: 'Lekki śnieg', 73: 'Umiarkowany śnieg', 75: 'Intensywny śnieg',
-            77: 'Śnieg ziarnisty',
-            80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
-            85: 'Lekkie opady śniegu', 86: 'Ciężkie opady śniegu',
-            95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem'
-        };
+.weather-description {
+    font-size: 0.8em;
+    overflow-wrap: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+}
 
-        function degreesToDirection(degrees) {
-            if (degrees >= 337.5 || degrees < 22.5) return 'Północ';
-            if (degrees >= 22.5 && degrees < 67.5) return 'Północny Wschód';
-            if (degrees >= 67.5 && degrees < 112.5) return 'Wschód';
-            if (degrees >= 112.5 && degrees < 157.5) return 'Południowy Wschód';
-            if (degrees >= 157.5 && degrees < 202.5) return 'Południe';
-            if (degrees >= 202.5 && degrees < 247.5) return 'Południowy Zachód';
-            if (degrees >= 247.5 && degrees < 292.5) return 'Zachód';
-            if (degrees >= 292.5 && degrees < 337.5) return 'Północny Zachód';
-            return 'N';
-        }
+.weather-temps {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+}
 
-        async function getWeather(ip) {
-            try {
-                const locationData = await getLocation(ip);
-                console.log('Dane lokalizacji:', locationData);
-                if (!locationData.lat || !locationData.lon) {
-                    throw new Error('Brak współrzędnych dla lokalizacji');
-                }
-                const lat = locationData.lat;
-                const lon = locationData.lon;
-                const city = locationData.city || 'Nieznane miasto';
+.temp-max {
+    color: #ff4d4d;
+    font-weight: bold;
+    font-size: 1em;
+}
 
-                document.getElementById('weatherCity').textContent = city;
+.temp-min {
+    color: #4d94ff;
+    font-weight: bold;
+    font-size: 1em;
+}
 
-                const forecastData = await retryFetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
-                console.log('Dane pogody:', forecastData);
+.forecast-error {
+    font-size: 0.8em;
+    color: #999999;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
 
-                if (forecastData.daily) {
-                    const forecastContainer = document.getElementById('weatherForecast');
-                    forecastContainer.innerHTML = '';
+.weather-ticker {
+    background-color: #3a3a3a;
+    padding: 4px 0;
+    margin-top: 10px;
+    margin-bottom: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
 
-                    forecastData.daily.time.forEach((date, index) => {
-                        const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                        const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
-                        const weatherCode = forecastData.daily.weathercode[index];
-                        console.log(`Weather code for ${formattedDate}: ${weatherCode}`);
-                        const maxTemp = forecastData.daily.temperature_2m_max[index];
-                        const minTemp = forecastData.daily.temperature_2m_min[index];
-                        const isToday = index === 0;
+#tickerContent {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 180s linear infinite;
+    -webkit-animation: ticker 180s linear infinite;
+    font-size: 0.8em;
+}
 
-                        const forecastBar = document.createElement('div');
-                        forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
-                        forecastBar.innerHTML = `
-                            <div class="forecast-date">${formattedDate}</div>
-                            <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
-                            <div class="weather-day">${dayName}</div>
-                            <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
-                            <div class="weather-temps">
-                                <div class="temp-max">${maxTemp.toFixed(1)}°C</div>
-                                <div class="temp-min">${minTemp.toFixed(1)}°C</div>
-                            </div>
-                        `;
-                        forecastContainer.appendChild(forecastBar);
+.ticker-segment {
+    display: inline-block;
+    padding-right: 180px;
+}
 
-                        if (isToday) {
-                            const todayDate = formattedDate;
-                            const sunrise = new Date(forecastData.daily.sunrise[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-                            const sunset = new Date(forecastData.daily.sunset[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-                            const apparentTemp = forecastData.daily.apparent_temperature_max[0];
-                            const precipitation = forecastData.daily.precipitation_sum[0];
-                            const windSpeed = forecastData.daily.windspeed_10m_max[0];
-                            const windDirection = degreesToDirection(forecastData.daily.winddirection_10m_dominant[0]);
+.ticker-value {
+    font-weight: bold;
+}
 
-                            const tickerText = `
-                                <span class="ticker-segment">
-                                    🌍 Warunki pogodowe na dzień: <span class="ticker-value">${todayDate}</span> • 
-                                    🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
-                                    🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
-                                    🌡️ Temperatura odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
-                                    🌧️ Suma opadów: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
-                                    💨 Maksymalna prędkość wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
-                                    🪁 Wiatr wieje z kierunku: <span class="ticker-value">${windDirection}</span>
-                                </span>
-                            `;
-                            const repeatedTickerText = tickerText.repeat(5);
-                            document.getElementById('tickerContent').innerHTML = repeatedTickerText;
-                        }
-                    });
-                } else {
-                    throw new Error('Brak danych pogodowych');
-                }
-            } catch (err) {
-                console.error('Błąd pobierania pogody:', err);
-                document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
-                document.getElementById('weatherCity').textContent = 'Nieznane miasto';
-                const errorTickerText = `<span class="ticker-segment">Błąd pobierania szczegółów pogody, spróbuj ponownie później lub wyjrzyj za okno i sam się przekonaj, jaka jest pogoda.</span>`;
-                document.getElementById('tickerContent').innerHTML = errorTickerText.repeat(5);
-            }
-        }
+.crypto-info {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
 
-        async function getNasaApodImage(retries = 5, delay = 2000) {
-            const imgElement = document.getElementById('spaceImage');
-            const tickerElement = document.getElementById('nasaTickerContent');
-            for (let attempt = 1; attempt <= retries; attempt++) {
-                try {
-                    const data = await retryFetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
-                    console.log('Dane z NASA APOD:', data);
+.crypto-header {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
 
-                    if (data.media_type === 'image' && data.url) {
-                        imgElement.src = data.url;
-                        imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-                        const description = data.explanation || 'Brak opisu dla tego zdjęcia.';
-                        const tickerText = `<span class="ticker-segment">${description}</span>`;
-                        tickerElement.innerHTML = tickerText.repeat(5);
-                        imgElement.onerror = () => {
-                            console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
-                            imgElement.src = 'planeta.png';
-                            imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                            const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                            tickerElement.innerHTML = errorTickerText.repeat(5);
-                        };
-                        setTimeout(() => {
-                            if (!imgElement.complete || imgElement.naturalWidth === 0) {
-                                console.error('Obrazek nie załadł się poprawnie, używam fallbacku');
-                                imgElement.src = 'planeta.png';
-                                imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                                const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                                tickerElement.innerHTML = errorTickerText.repeat(5);
-                            }
-                        }, 5000);
-                    } else {
-                        console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
-                        imgElement.src = 'planeta.png';
-                        imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
-                        const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                        tickerElement.innerHTML = errorTickerText.repeat(5);
-                    }
-                    return;
-                } catch (err) {
-                    console.error(`Próba ${attempt} pobierania zdjęcia z NASA APOD nie powiodła się:`, err);
-                    if (attempt === retries) {
-                        imgElement.src = 'planeta.png';
-                        imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                        const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                        tickerElement.innerHTML = errorTickerText.repeat(5);
-                        return;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                }
-            }
-        }
+.crypto-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    padding: 10px;
+}
 
-        async function getDailyFact() {
-            const now = new Date();
-            const day = String(now.getDate()).padStart(2, '0');
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const dateKey = `${day}/${month}`;
+.crypto-tile {
+    padding: 4px;
+    border-radius: 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+    transition: transform 0.2s;
+    cursor: pointer;
+}
 
-            try {
-                const data = await retryFetch('calendar.json');
-                const fact = data[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
-                document.getElementById('dailyFact').textContent = fact;
-            } catch (err) {
-                console.error('Błąd pobierania ciekawostki:', err);
-                document.getElementById('dailyFact').textContent = 'Błąd ładowania ciekawostki';
-            }
-        }
+.crypto-tile:hover {
+    transform: scale(1.05);
+}
 
-        async function getCryptoData() {
-            const cacheKey = 'crypto_data';
-            const cached = localStorage.getItem(cacheKey);
-            const cacheTime = localStorage.getItem(`${cacheKey}_time`);
-            const now = Date.now();
-            const cacheDuration = 15 * 60 * 1000; // 15 minut
+.crypto-tile.positive-low {
+    background-color: rgba(0, 125, 0, 0.6);
+}
 
-            if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
-                console.log('Używam danych kryptowalut z cache');
-                displayCryptoData(JSON.parse(cached));
-                return;
-            }
+.crypto-tile.positive-mid {
+    background-color: rgba(0, 175, 0, 0.75);
+}
 
-            try {
-                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1');
-                console.log('Dane kryptowalut:', data);
+.crypto-tile.positive-high {
+    background-color: rgba(0, 225, 0, 0.9);
+    animation: pulse-positive 2s infinite;
+}
 
-                const isMobile = window.innerWidth <= 768;
-                const limit = isMobile ? 20 : 28;
-                const filteredCoins = data.filter(coin => {
-                    const price = parseFloat(coin.current_price);
-                    return (
-                        (price < 0.99 || price > 1.01) &&
-                        price > 0.0001
-                    );
-                }).slice(0, limit).map(coin => ({
-                    id: coin.id,
-                    symbol: coin.symbol,
-                    current_price: parseFloat(coin.current_price),
-                    price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
-                }));
+.crypto-tile.negative-low {
+    background-color: rgba(125, 0, 0, 0.6);
+}
 
-                localStorage.setItem(cacheKey, JSON.stringify(filteredCoins));
-                localStorage.setItem(`${cacheKey}_time`, now.toString());
-                displayCryptoData(filteredCoins);
-            } catch (err) {
-                console.error('Błąd pobierania danych kryptowalut:', err);
-                if (cached) {
-                    console.log('Używam danych kryptowalut z cache po błędzie');
-                    displayCryptoData(JSON.parse(cached));
-                } else {
-                    const cryptoGrid = document.getElementById('cryptoGrid');
-                    cryptoGrid.innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut. Spróbuj ponownie później.</div>';
-                }
-            }
-        }
+.crypto-tile.negative-mid {
+    background-color: rgba(175, 0, 0, 0.75);
+}
 
-        function formatPrice(price) {
-            if (price === 0) return '$0.00';
-            let formatted;
-            if (price < 0.01 && price > 0) {
-                formatted = `$${price.toFixed(6)}`;
-            } else {
-                formatted = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            }
-            if (formatted.length > 10) {
-                if (price < 0.01) {
-                    const decimals = Math.max(2, 10 - 3 - Math.floor(Math.log10(price)));
-                    formatted = `$${price.toFixed(decimals)}`;
-                    if (formatted.length > 10) {
-                        formatted = formatted.substring(0, 10);
-                    }
-                } else {
-                    formatted = `$${Math.round(price * 100) / 100}`;
-                    if (formatted.length > 10) {
-                        formatted = formatted.substring(0, 10);
-                    }
-                }
-            }
-            return formatted;
-        }
+.crypto-tile.negative-high {
+    background-color: rgba(225, 0, 0, 0.9);
+    animation: pulse-negative 2s infinite;
+}
 
-        function getChangeClass(change) {
-            const absChange = Math.abs(change);
-            if (absChange <= 5) {
-                return change >= 0 ? 'positive-low' : 'negative-low';
-            } else if (absChange <= 10) {
-                return change >= 0 ? 'positive-mid' : 'negative-mid';
-            } else {
-                return change >= 0 ? 'positive-high' : 'negative-high';
-            }
-        }
+.crypto-symbol {
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-bottom: 2px;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+}
 
-        function displayCryptoData(coins) {
-            const cryptoGrid = document.getElementById('cryptoGrid');
-            cryptoGrid.innerHTML = '';
+.crypto-price {
+    font-size: 0.75em;
+    margin-bottom: 2px;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+}
 
-            coins.forEach(coin => {
-                const cryptoTile = document.createElement('div');
-                cryptoTile.className = `crypto-tile ${getChangeClass(coin.price_change_percentage_24h)}`;
-                cryptoTile.innerHTML = `
-                    <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
-                    <div class="crypto-price">${formatPrice(coin.current_price)}</div>
-                    <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%</div>
-                `;
-                cryptoTile.addEventListener('click', () => {
-                    window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
-                });
-                cryptoGrid.appendChild(cryptoTile);
-            });
-        }
+.crypto-change {
+    font-size: 0.65em;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+}
 
-        function checkCSSLoaded() {
-            const container = document.querySelector('.container');
-            const computedStyle = window.getComputedStyle(container);
-            if (computedStyle.backgroundColor !== 'rgb(45, 45, 45)') {
-                console.warn('CSS nie załadował się poprawnie, ładuję fallback styles');
-                const style = document.createElement('style');
-                style.textContent = `
-                    body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
-                    .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
-                    .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-                    .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
-                    .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
-                    .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
-                    .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
-                    .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
-                    .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
-                    .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                `;
-                document.head.appendChild(style);
-            }
-        }
+.crypto-error {
+    text-align: center;
+    font-size: 0.9em;
+    color: #ff4d4d;
+}
 
-        // Funkcja obsługująca status sieci
-        let isReloading = false;
-        async function handleNetworkStatus() {
-            const networkStatus = document.getElementById('networkStatus');
-            if (navigator.onLine) {
-                console.log('Połączenie z internetem przywrócone');
-                networkStatus.style.display = 'none';
-                networkStatus.textContent = '';
-                if (!isReloading) {
-                    isReloading = true;
-                    try {
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        const ip = await getIp();
-                        console.log('IP po przywróceniu połączenia:', ip);
-                        await Promise.all([
-                            logVisit(),
-                            getWeather(ip),
-                            getNasaApodImage(),
-                            getDailyFact(),
-                            getCryptoData()
-                        ]);
-                        console.log('Wszystkie dane załadowane po przywróceniu połączenia');
-                    } catch (err) {
-                        console.error('Błąd podczas ponownego ładowania danych:', err);
-                        networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie później.';
-                        networkStatus.style.display = 'block';
-                    } finally {
-                        isReloading = false;
-                    }
-                }
-            } else {
-                console.log('Utracono połączenie z internetem');
-                networkStatus.textContent = 'Brak połączenia z internetem';
-                networkStatus.style.display = 'block';
-            }
-        }
+.log-table {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    margin: 0 auto;
+}
 
-        // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
-        function startCryptoUpdateInterval() {
-            getCryptoData();
-            setInterval(() => {
-                console.log('Aktualizuję dane kryptowalut...');
-                getCryptoData();
-            }, 900000); // 15 minut
-        }
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
 
-        // Inicjalizacja strony
-        window.onload = async function() {
-            console.log('Strona załadowana, uruchamiam funkcje...');
-            handleNetworkStatus();
-            startCryptoUpdateInterval();
-            window.addEventListener('online', handleNetworkStatus);
-            window.addEventListener('offline', handleNetworkStatus);
-        };
+.table-container {
+    width: 100%;
+}
 
-        window.addEventListener('load', checkCSSLoaded);
-    </script>
-</body>
-</html>
+table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+th, td {
+    padding: 5px;
+    height: 35px;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.85em;
+}
+
+th.location-header {
+    width: 140px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji desktopowej */
+}
+
+.location-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 140px;
+}
+
+.city {
+    font-size: 0.9em;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    line-height: 1.2;
+}
+
+.country {
+    font-size: 0.8em;
+    color: #cccccc;
+    margin-top: 2px;
+}
+
+.hidden-log {
+    display: none;
+}
+
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.toggle-button {
+    background-color: #5a6268;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: background-color 0.3s;
+    min-width: 120px;
+}
+
+.toggle-button:hover {
+    background-color: #6c757d;
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@-webkit-keyframes ticker {
+    0% {
+        -webkit-transform: translateX(0);
+    }
+    100% {
+        -webkit-transform: translateX(-100%);
+    }
+}
+
+@keyframes pulse-positive {
+    0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
+    50% { box-shadow: 0 0 12px rgba(0, 255, 0, 1); }
+    100% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
+}
+
+@keyframes pulse-negative {
+    0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
+    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .network-status {
+        font-size: 0.8em;
+        padding: 6px;
+    }
+
+    .content-frame {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .daily-fact {
+        font-size: 0.75em;
+        margin-bottom: 10px;
+    }
+
+    .fact-header {
+        font-size: 0.75em;
+    }
+
+    .fact-content {
+        font-size: 0.75em;
+        line-height: 1.3;
+    }
+
+    .weather-forecast {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .forecast-container {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 5px;
+    }
+
+    .forecast-bar {
+        min-width: 70px;
+        padding: 5px;
+    }
+
+    .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
+        font-size: 0.65em;
+    }
+
+    .weather-icon {
+        font-size: 1.2em;
+    }
+
+    .weather-ticker {
+        font-size: 0.8em;
+    }
+
+    .forecast-error {
+        font-size: 0.7em;
+        color: #999999;
+        text-align: center;
+        padding: 8px;
+        width: 100%;
+    }
+
+    .crypto-info {
+        padding: 10px;
+    }
+
+    .crypto-header {
+        font-size: 0.75em;
+        margin-bottom: 5px;
+    }
+
+    .crypto-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .crypto-tile {
+        min-height: 30px;
+        padding: 3px;
+    }
+
+    .crypto-symbol {
+        font-size: 0.7em;
+    }
+
+    .crypto-price {
+        font-size: 0.65em;
+    }
+
+    .crypto-change {
+        font-size: 0.55em;
+    }
+
+    .crypto-error {
+        font-size: 0.8em;
+    }
+
+    .log-table {
+        max-width: 100%;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        font-size: 0.75em;
+    }
+
+    th, td {
+        padding: 2px;
+        height: 35px;
+        font-size: 0.7em;
+    }
+
+    th.location-header {
+        width: 95px; /* Dopasowanie szerokości nagłówka do max-width komórek w wersji mobilnej */
+    }
+
+    .location-cell {
+        max-width: 95px;
+    }
+
+    .city, .country {
+        font-size: 0.7em;
+    }
+
+    .toggle-button {
+        padding: 4px 10px;
+        font-size: 0.8em;
+        min-width: 100px;
+    }
+
+    .nasa-ticker {
+        font-size: 0.6em;
+    }
+
+    .nasa-container {
+        max-width: 100%;
+    }
+}
