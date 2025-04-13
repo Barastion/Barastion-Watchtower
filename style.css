@@ -404,7 +404,7 @@ th {
 }
 
 th.location-header {
-    width: 140px;
+    max-width: 140px;
 }
 
 tr:nth-child(odd) {
@@ -635,12 +635,32 @@ tr:hover {
         vertical-align: middle;
     }
 
-    th.location-header {
-        width: 95px;
+    th:nth-child(1), td:nth-child(1) { /* Data */
+        min-width: 60px;
+    }
+
+    th:nth-child(2), td:nth-child(2) { /* Dzień */
+        min-width: 60px;
+    }
+
+    th:nth-child(3), td:nth-child(3) { /* Godzina */
+        min-width: 50px;
+    }
+
+    th:nth-child(4), td:nth-child(4) { /* IP */
+        min-width: 70px;
+    }
+
+    th.location-header, td.location-cell { /* Lokalizacja */
+        max-width: 80px;
+    }
+
+    th:nth-child(6), td:nth-child(6) { /* Urządzenie */
+        max-width: 80px;
     }
 
     .location-cell {
-        max-width: 95px;
+        max-width: 80px;
     }
 
     .city {
