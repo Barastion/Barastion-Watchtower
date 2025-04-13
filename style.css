@@ -384,9 +384,8 @@ body {
 
 table {
     width: 100%;
-    min-width: 0;
     border-collapse: collapse;
-    table-layout: auto;
+    table-layout: fixed; /* Wymuszenie stałego układu tabeli */
 }
 
 th, td {
@@ -395,6 +394,7 @@ th, td {
     vertical-align: middle;
     text-align: center;
     font-size: 0.85em;
+    border: 1px solid #555; /* Obramowanie dla debugowania */
 }
 
 th {
@@ -403,8 +403,29 @@ th {
     font-weight: 600;
 }
 
-th.location-header, th.device-header {
-    width: 140px;
+/* Definiowanie szerokości kolumn */
+.date-header, .date-cell {
+    width: 15%;
+}
+
+.day-header, .day-cell {
+    width: 15%;
+}
+
+.time-header, .time-cell {
+    width: 10%;
+}
+
+.ip-header, .ip-cell {
+    width: 20%;
+}
+
+.location-header, .location-cell {
+    width: 20%;
+}
+
+.device-header, .device-cell {
+    width: 20%;
 }
 
 tr:nth-child(odd) {
@@ -424,7 +445,8 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 140px;
+    max-width: 100%;
+    background-color: rgba(0, 255, 0, 0.1); /* Tło dla debugowania */
 }
 
 .device-cell {
@@ -432,7 +454,8 @@ tr:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 140px;
+    max-width: 100%;
+    background-color: rgba(0, 0, 255, 0.1); /* Tło dla debugowania */
 }
 
 .city, .device {
