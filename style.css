@@ -413,15 +413,13 @@ body {
 table {
     width: 100%;
     min-width: 0;
-    border-collapse: separate;
-    border-spacing: 0;
+    border-collapse: collapse;
     table-layout: auto;
+    overflow: hidden;
 }
 
-thead {
+thead tr {
     background: linear-gradient(135deg, #5a6268, #7a8288);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 th, td {
@@ -437,11 +435,22 @@ th {
     color: white;
     font-weight: 700;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transition: filter 0.3s ease;
 }
 
 th:hover {
     filter: brightness(1.1);
+}
+
+th:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+th:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 th.location-header {
@@ -525,15 +534,15 @@ tr:last-child td:last-child {
     background: linear-gradient(135deg, #5a6268, #7a8288);
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 0.85em;
     font-weight: 600;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    min-width: 120px;
+    min-width: 100px;
 }
 
 .toggle-button:hover {
@@ -710,12 +719,11 @@ tr:last-child td:last-child {
         width: 100%;
         font-size: 0.75em;
         table-layout: fixed;
+        overflow: hidden;
     }
 
-    thead {
+    thead tr {
         background: linear-gradient(135deg, #5a6268, #7a8288);
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     th, td {
@@ -730,11 +738,30 @@ tr:last-child td:last-child {
         color: white;
         font-weight: 700;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         transition: filter 0.3s ease;
     }
 
     th:hover {
         filter: brightness(1.1);
+    }
+
+    th:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    th:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    tr:last-child td:first-child {
+        border-bottom-left-radius: 8px;
+    }
+
+    tr:last-child td:last-child {
+        border-bottom-right-radius: 8px;
     }
 
     th:nth-child(1), td:nth-child(1) { /* Data */
@@ -767,14 +794,6 @@ tr:last-child td:last-child {
 
     .location-cell {
         min-width: 90px;
-    }
-
-    tr:last-child td:first-child {
-        border-bottom-left-radius: 8px;
-    }
-
-    tr:last-child td:last-child {
-        border-bottom-right-radius: 8px;
     }
 
     .city {
@@ -817,9 +836,9 @@ tr:last-child td:last-child {
         background: linear-gradient(135deg, #5a6268, #7a8288);
         color: white;
         border: none;
-        padding: 6px 12px;
+        padding: 4px 8px;
         border-radius: 8px;
-        font-size: 0.8em;
+        font-size: 0.75em;
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
