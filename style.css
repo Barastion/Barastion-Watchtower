@@ -879,7 +879,7 @@ tr:hover td:last-child {
         border: none;
         padding: 2px 4px;
         border-radius: 8px;
-        font-size: 0.6em;
+        font-size: 0.55em;
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
