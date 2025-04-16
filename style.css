@@ -304,6 +304,7 @@ body {
     min-height: 30px;
     text-align: center;
     font-size: 0.85em;
+    font-weight: normal;
     transition: background-color 0.3s ease;
     overflow: hidden;
     white-space: normal;
@@ -312,7 +313,7 @@ body {
 }
 
 .fear-greed-indicator .fear-greed-value {
-    font-weight: 600;
+    font-weight: 600 !important;
     text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
@@ -331,7 +332,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 40px;
+    min-height: 36px;
     box-sizing: border-box;
     transition: transform 0.2s, background-color 0.5s ease;
     cursor: pointer;
@@ -628,10 +629,11 @@ tr:hover {
         text-align: center;
         font-size: 0.75em;
         padding: 8px 10px;
+        font-weight: normal;
     }
 
     .fear-greed-indicator .fear-greed-value {
-        font-weight: 600;
+        font-weight: 600 !important;
     }
 
     .crypto-grid {
