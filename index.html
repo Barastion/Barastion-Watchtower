@@ -99,8 +99,8 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Funkcja do ponawiania żądań z timeoutem
-        async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 5000) {
+        // Funkcja do ponawiania żądań z timeoutem i zabezpieczeniem
+        async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const controller = new AbortController();
@@ -148,12 +148,12 @@
         async function updateFearGreedIndicator() {
             const cacheKey = 'fear_greed_data';
             const cacheTimeKey = 'fear_greed_time';
-            const cacheDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const cacheDuration = 3600000; // 1 godzina
             const now = Date.now();
             const cachedData = localStorage.getItem(cacheKey);
             const cachedTime = localStorage.getItem(cacheTimeKey);
-
             const indicator = document.getElementById('fearGreedIndicator');
+
             if (cachedData && cachedTime && (now - parseInt(cachedTime) < cacheDuration)) {
                 const average = parseInt(cachedData);
                 const { signal, color } = getSignalAndColor(average);
@@ -177,9 +177,6 @@
             localStorage.setItem(cacheKey, average.toString());
             localStorage.setItem(cacheTimeKey, now.toString());
         }
-
-        updateFearGreedIndicator();
-        setInterval(updateFearGreedIndicator, 24 * 60 * 60 * 1000); // Aktualizacja co 24 godziny
 
         // Pozostałe funkcje (logi, pogoda, NASA, ciekawostki)
         function getDeviceType(userAgent) {
@@ -797,11 +794,21 @@
             }, 900000); // 15 minut
         }
 
+        // Automatyczna aktualizacja Fear and Greed Index co 1 godzinę
+        function startFearGreedUpdateInterval() {
+            updateFearGreedIndicator();
+            setInterval(() => {
+                console.log('Aktualizuję Fear and Greed Index...');
+                updateFearGreedIndicator();
+            }, 3600000); // 1 godzina
+        }
+
         // Inicjalizacja strony
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
             startCryptoUpdateInterval();
+            startFearGreedUpdateInterval();
             window.addEventListener('online', handleNetworkStatus);
             window.addEventListener('offline', handleNetworkStatus);
         };
