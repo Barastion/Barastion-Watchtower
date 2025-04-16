@@ -332,7 +332,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 36px;
+    min-height: 34px;
     box-sizing: border-box;
     transition: transform 0.2s, background-color 0.5s ease;
     cursor: pointer;
@@ -371,13 +371,13 @@ body {
 .crypto-symbol {
     font-size: 0.85em;
     font-weight: bold;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-price {
     font-size: 0.75em;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
     text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
@@ -408,6 +408,7 @@ body {
 
 .table-container {
     width: 100%;
+    overflow: hidden;
 }
 
 table {
@@ -415,7 +416,6 @@ table {
     min-width: 0;
     border-collapse: collapse;
     table-layout: auto;
-    overflow: hidden;
 }
 
 thead tr {
@@ -457,6 +457,10 @@ th.location-header {
     max-width: 140px;
 }
 
+tr {
+    border-radius: 8px;
+}
+
 tr:nth-child(odd) {
     background-color: #3a3a3a;
 }
@@ -468,14 +472,6 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #4a4a4a;
     border-radius: 8px;
-}
-
-tr:last-child td:first-child {
-    border-bottom-left-radius: 8px;
-}
-
-tr:last-child td:last-child {
-    border-bottom-right-radius: 8px;
 }
 
 .location-cell {
@@ -678,15 +674,15 @@ tr:last-child td:last-child {
     }
 
     .crypto-tile {
-        min-height: 26px;
-        padding: 3px;
+        min-height: 22px;
+        padding: 2px;
         box-sizing: border-box;
         transition: transform 0.2s, background-color 0.5s ease;
     }
 
     .crypto-symbol {
         font-size: 0.7em;
-        margin-bottom: 1px;
+        margin-bottom: 0.5px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -695,7 +691,7 @@ tr:last-child td:last-child {
 
     .crypto-price {
         font-size: 0.65em;
-        margin-bottom: 1px;
+        margin-bottom: 0.5px;
     }
 
     .crypto-change {
@@ -715,11 +711,14 @@ tr:last-child td:last-child {
         overflow-x: auto;
     }
 
+    .table-container {
+        overflow: hidden;
+    }
+
     table {
         width: 100%;
         font-size: 0.75em;
         table-layout: fixed;
-        overflow: hidden;
     }
 
     thead tr {
@@ -756,12 +755,8 @@ tr:last-child td:last-child {
         border-bottom-right-radius: 8px;
     }
 
-    tr:last-child td:first-child {
-        border-bottom-left-radius: 8px;
-    }
-
-    tr:last-child td:last-child {
-        border-bottom-right-radius: 8px;
+    tr {
+        border-radius: 8px;
     }
 
     th:nth-child(1), td:nth-child(1) { /* Data */
