@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -46,7 +46,10 @@
                 </div>
             </div>
             <div class="crypto-info">
-                <div class="crypto-header">Zmiany notowań w ciągu ostatnich 24h</div>
+                <div class="crypto-header">
+                    <p class="crypto-note">Zmiany notowań w ciągu ostatnich 24h</p>
+                    <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sygnał: Ładowanie...</div>
+                </div>
                 <div class="crypto-grid" id="cryptoGrid">
                     <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
                 </div>
@@ -66,7 +69,6 @@
                                 </tr>
                             </thead>
                             <tbody id="logTableBody">
-                                <!-- ZMIANA: Dodano placeholder dla logów -->
                                 <tr>
                                     <td colspan="6">Ładowanie logów...</td>
                                 </tr>
@@ -99,7 +101,7 @@
         const database = getDatabase(app);
 
         // Funkcja do ponawiania żądań z timeoutem
-        async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 5000) { // ZMIANA: Timeout skrócony z 10s do 5s
+        async function retryFetch(url, options = {}, retries = 3, delay = 2000, timeout = 5000) {
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const controller = new AbortController();
@@ -120,6 +122,67 @@
             }
         }
 
+        // Fear and Greed Index
+        async function getFearAndGreedData() {
+            try {
+                const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
+                return data.data;
+            } catch (error) {
+                console.error('Błąd pobierania danych Fear and Greed Index:', error);
+                return null;
+            }
+        }
+
+        function calculateAverage(values) {
+            const sum = values.reduce((acc, val) => acc + parseInt(val.value), 0);
+            return Math.round(sum / values.length);
+        }
+
+        function getSignalAndColor(value) {
+            if (value <= 24) return { signal: 'OKAZJA!', color: '#28a745' };
+            if (value <= 49) return { signal: 'Rozważ zakup', color: '#6cc644' };
+            if (value <= 74) return { signal: 'Trzymaj', color: '#ffc107' };
+            if (value <= 89) return { signal: 'Rozważ sprzedaż', color: '#fd7e14' };
+            return { signal: 'SPRZEDAJ!', color: '#dc3545' };
+        }
+
+        async function updateFearGreedIndicator() {
+            const cacheKey = 'fear_greed_data';
+            const cacheTimeKey = 'fear_greed_time';
+            const cacheDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const now = Date.now();
+            const cachedData = localStorage.getItem(cacheKey);
+            const cachedTime = localStorage.getItem(cacheTimeKey);
+
+            const indicator = document.getElementById('fearGreedIndicator');
+            if (cachedData && cachedTime && (now - parseInt(cachedTime) < cacheDuration)) {
+                const average = parseInt(cachedData);
+                const { signal, color } = getSignalAndColor(average);
+                indicator.innerHTML = `Miesięczny sygnał: <strong>${average}</strong> – ${signal}`;
+                indicator.style.backgroundColor = color;
+                return;
+            }
+
+            const data = await getFearAndGreedData();
+            if (!data) {
+                indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
+                indicator.style.backgroundColor = '#808080';
+                return;
+            }
+
+            const average = calculateAverage(data);
+            const { signal, color } = getSignalAndColor(average);
+            indicator.innerHTML = `Miesięczny sygnał: <strong>${average}</strong> – ${signal}`;
+            indicator.style.backgroundColor = color;
+
+            localStorage.setItem(cacheKey, average.toString());
+            localStorage.setItem(cacheTimeKey, now.toString());
+        }
+
+        updateFearGreedIndicator();
+        setInterval(updateFearGreedIndicator, 24 * 60 * 60 * 1000); // Aktualizacja co 24 godziny
+
+        // Pozostałe funkcje (logi, pogoda, NASA, ciekawostki)
         function getDeviceType(userAgent) {
             if (userAgent.includes('Android')) return 'Android';
             if (userAgent.includes('iPhone')) return 'iPhone';
@@ -210,7 +273,6 @@
                 }, { onlyOnce: true });
             } catch (error) {
                 console.error('Błąd pobierania logów:', error);
-                // ZMIANA: Dodano komunikat błędu w przypadku niepowodzenia ładowania logów
                 const logTableBody = document.getElementById('logTableBody');
                 if (logTableBody) {
                     logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
@@ -227,11 +289,11 @@
                 return;
             }
 
-            logTableBody.innerHTML = ''; // ZMIANA: Czyszczenie placeholder'a
+            logTableBody.innerHTML = '';
             if (logs.length === 0) {
                 console.log('Brak logów do wyświetlenia.');
                 toggleButton.style.display = 'none';
-                logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>'; // ZMIANA: Komunikat w przypadku braku logów
+                logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>';
                 return;
             }
 
@@ -559,7 +621,7 @@
                 console.log('Dane kryptowalut:', data);
 
                 const isMobile = window.innerWidth <= 768;
-                const limit = isMobile ? 20 : 28;
+                const limit = isMobile ? 28 : 35;
                 const filteredCoins = data.filter(coin => {
                     const price = parseFloat(coin.current_price);
                     return (
@@ -676,34 +738,29 @@
                 if (!isReloading) {
                     isReloading = true;
                     try {
-                        // ZMIANA: Równoległe ładowanie API z Promise.allSettled
                         const ipPromise = getIp();
                         const nasaPromise = getNasaApodImage();
                         const dailyFactPromise = getDailyFact();
                         const cryptoPromise = getCryptoData();
+                        const fearGreedPromise = updateFearGreedIndicator();
 
-                        // Czekamy na IP, aby móc użyć go w getWeather
                         const ip = await ipPromise;
-
-                        // Równoległe ładowanie pogody (zależy od IP)
                         const weatherPromise = getWeather(ip);
 
-                        // Czekamy na zakończenie wszystkich żądań (lub ich fallbacki)
                         const results = await Promise.allSettled([
                             nasaPromise,
                             ipPromise,
                             weatherPromise,
                             dailyFactPromise,
-                            cryptoPromise
+                            cryptoPromise,
+                            fearGreedPromise
                         ]);
 
-                        // Logujemy wyniki dla debugowania
                         results.forEach((result, index) => {
-                            const apiNames = ['NASA', 'IP', 'Pogoda', 'Ciekawostka', 'Kryptowaluty'];
+                            const apiNames = ['NASA', 'IP', 'Pogoda', 'Ciekawostka', 'Kryptowaluty', 'Fear and Greed'];
                             console.log(`Wynik dla ${apiNames[index]}:`, result.status, result.reason || result.value);
                         });
 
-                        // ZMIANA: Ładowanie logów z opóźnieniem 0.5 sekundy
                         setTimeout(async () => {
                             try {
                                 await logVisit();
