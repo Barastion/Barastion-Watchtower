@@ -1,3 +1,11 @@
+:root {
+    --fear-greed-hold: #cccccc; /* Jasnoszary dla Trzymaj */
+    --fear-greed-consider-buy: rgba(0, 125, 0, 0.6); /* Zielony dla Rozważ zakup */
+    --fear-greed-opportunity: rgba(0, 225, 0, 0.9); /* Jasnozielony dla OKAZJA! */
+    --fear-greed-consider-sell: rgba(125, 0, 0, 0.6); /* Czerwony dla Rozważ sprzedaż */
+    --fear-greed-sell: rgba(225, 0, 0, 0.9); /* Intensywnie czerwony dla SPRZEDAJ! */
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #1e1e1e;
@@ -136,7 +144,7 @@ body {
 
 .fact-content {
     margin: 5px 5px 0 5px;
-    font-size: 0.9em;
+    font-size: 0.9em; /* Dopasowane do poprzedniego crypto-note */
     font-style: italic;
     line-height: 1.5;
     overflow-wrap: break-word;
@@ -283,40 +291,36 @@ body {
 }
 
 .crypto-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px; /* Zmniejszony odstęp dolny */
+    margin-bottom: 2px; /* Mniejszy margines pod kafelkiem indeksu */
 }
 
-.crypto-note {
-    font-size: 0.9em;
-    font-weight: 500;
-    color: #ffffff; /* Przywrócony biały kolor */
-    margin-left: 10px; /* Większy margines z lewej strony */
+.crypto-footer-note {
+    font-size: 0.75em;
+    color: #999999;
+    text-align: center;
+    margin: 2px 0; /* Minimalne marginesy górny i dolny */
 }
 
 .fear-greed-indicator {
     background-color: #808080;
     color: #ffffff;
-    padding: 6px; /* Zmniejszony padding */
+    padding: 8px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    max-width: 200px; /* Mniejszy kafelek */
-    min-height: 30px; /* Mniejsza wysokość */
-    text-align: right;
-    font-size: 0.85em; /* Nieco mniejsza czcionka dla proporcji */
+    width: 100%; /* Rozciągnięty na całą szerokość */
+    min-height: 30px;
+    text-align: center;
+    font-size: 0.85em;
     transition: background-color 0.3s ease;
     overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    white-space: normal;
     box-sizing: border-box;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Taki sam cień jak w kaflach kryptowalut */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 
 .fear-greed-indicator strong {
     font-weight: 600;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Cień dla pogrubionego tekstu */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 
 .crypto-grid {
@@ -576,7 +580,7 @@ tr:hover {
     }
 
     .fact-content {
-        font-size: 0.75em;
+        font-size: 0.75em; /* Dopasowane do mobilnego crypto-note */
         line-height: 1.3;
     }
 
@@ -621,24 +625,20 @@ tr:hover {
     }
 
     .crypto-header {
-        flex-direction: column;
-        align-items: center;
-        gap: 2px; /* Mniejszy odstęp między "Zmiany notowań..." a kafelkiem */
-        margin-bottom: 4px; /* Mniejszy odstęp dolny */
+        margin-bottom: 2px; /* Mniejszy margines pod kafelkiem indeksu */
     }
 
-    .crypto-note {
-        font-size: 0.75em;
-        text-align: center;
-        margin-left: 0; /* Brak marginesu z lewej w wersji mobilnej */
+    .crypto-footer-note {
+        font-size: 0.65em; /* Mniejsza czcionka w mobilnej */
+        color: #999999;
+        margin: 2px 0;
     }
 
     .fear-greed-indicator {
-        max-width: 90%; /* Mniejszy kafelek w wersji mobilnej */
-        min-height: 30px; /* Mniejsza wysokość */
+        width: 100%; /* Rozciągnięty na 4 kolumny */
+        min-height: 30px;
         text-align: center;
-        margin: 0 5px; /* Mniejsze marginesy */
-        font-size: 0.75em; /* Mniejsza czcionka dla proporcji */
+        font-size: 0.75em;
     }
 
     .crypto-grid {
