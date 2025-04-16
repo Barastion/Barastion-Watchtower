@@ -52,7 +52,6 @@
                 <div class="crypto-grid" id="cryptoGrid">
                     <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
                 </div>
-                <p class="crypto-footer-note">Zmiany notowań w ciągu ostatnich 24h</p>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
@@ -696,7 +695,7 @@
                 cryptoTile.innerHTML = `
                     <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
                     <div class="crypto-price">${formatPrice(coin.current_price)}</div>
-                    <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%</div>
+                    <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}% / 24h</div>
                 `;
                 cryptoTile.addEventListener('click', () => {
                     window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
