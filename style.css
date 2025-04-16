@@ -419,7 +419,7 @@ table {
 }
 
 thead tr {
-    background: linear-gradient(135deg, #5a6268, #7a8288);
+    background: linear-gradient(135deg, #5a6268, #4a5258);
 }
 
 th, td {
@@ -434,7 +434,7 @@ th {
     background: transparent;
     color: white;
     font-weight: 700;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transition: filter 0.3s ease;
 }
@@ -531,13 +531,13 @@ tr:last-child td:last-child {
 }
 
 .toggle-button {
-    background: linear-gradient(135deg, #5a6268, #7a8288);
+    background: linear-gradient(135deg, #5a6268, #4a5258);
     color: white;
     border: none;
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: 0.8em;
     font-weight: 600;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -723,7 +723,7 @@ tr:last-child td:last-child {
     }
 
     thead tr {
-        background: linear-gradient(135deg, #5a6268, #7a8288);
+        background: linear-gradient(135deg, #5a6268, #4a5258);
     }
 
     th, td {
@@ -737,7 +737,7 @@ tr:last-child td:last-child {
         background: transparent;
         color: white;
         font-weight: 700;
-        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         transition: filter 0.3s ease;
     }
@@ -833,17 +833,17 @@ tr:last-child td:last-child {
     }
 
     .toggle-button {
-        background: linear-gradient(135deg, #5a6268, #7a8288);
+        background: linear-gradient(135deg, #5a6268, #4a5258);
         color: white;
         border: none;
-        padding: 4px 8px;
+        padding: 3px 6px;
         border-radius: 8px;
-        font-size: 0.75em;
+        font-size: 0.7em;
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-        min-width: 100px;
+        min-width: 80px;
     }
 
     .toggle-button:hover {
