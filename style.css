@@ -415,6 +415,7 @@ table {
     width: 100%;
     min-width: 0;
     border-collapse: collapse;
+    border-spacing: 0;
     table-layout: auto;
 }
 
@@ -458,7 +459,11 @@ th.location-header {
 }
 
 tr {
+    display: block;
+    position: relative;
     border-radius: 8px;
+    overflow: hidden;
+    clip-path: inset(0 round 8px);
 }
 
 tr:nth-child(odd) {
@@ -472,6 +477,10 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #4a4a4a;
     border-radius: 8px;
+}
+
+td {
+    padding: 0 5px;
 }
 
 .location-cell {
@@ -756,7 +765,28 @@ tr:hover {
     }
 
     tr {
+        display: block;
+        position: relative;
         border-radius: 8px;
+        overflow: hidden;
+        clip-path: inset(0 round 8px);
+    }
+
+    tr:nth-child(odd) {
+        background-color: #3a3a3a;
+    }
+
+    tr:nth-child(even) {
+        background-color: #2d2d2d;
+    }
+
+    tr:hover {
+        background-color: #4a4a4a;
+        border-radius: 8px;
+    }
+
+    td {
+        padding: 0 2px;
     }
 
     th:nth-child(1), td:nth-child(1) { /* Data */
@@ -831,14 +861,14 @@ tr:hover {
         background: linear-gradient(135deg, #5a6268, #4a5258);
         color: white;
         border: none;
-        padding: 3px 6px;
+        padding: 2px 4px;
         border-radius: 8px;
-        font-size: 0.7em;
+        font-size: 0.65em;
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-        min-width: 80px;
+        min-width: 70px;
     }
 
     .toggle-button:hover {
