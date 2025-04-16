@@ -157,7 +157,7 @@
             if (cachedData && cachedTime && (now - parseInt(cachedTime) < cacheDuration)) {
                 const average = parseInt(cachedData);
                 const { signal, color } = getSignalAndColor(average);
-                indicator.innerHTML = `Miesięczny sygnał: <span class="fear-greed-value"><strong>${average}</strong> – ${signal}</span>`;
+                indicator.innerHTML = `Miesięczny sygnał: <span class="fear-greed-value">${average} – ${signal}</span>`;
                 indicator.style.backgroundColor = color;
                 return;
             }
@@ -171,7 +171,7 @@
 
             const average = calculateAverage(data);
             const { signal, color } = getSignalAndColor(average);
-            indicator.innerHTML = `Miesięczny sygnał: <strong>${average}</strong> – ${signal}`;
+            indicator.innerHTML = `Miesięczny sygnał: <span class="fear-greed-value">${average} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
 
             localStorage.setItem(cacheKey, average.toString());
