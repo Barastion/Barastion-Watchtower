@@ -283,11 +283,34 @@ body {
 }
 
 .crypto-header {
-    text-align: center;
-    font-size: 0.9em;
-    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
+}
+
+.crypto-note {
+    font-size: 0.9em;
+    color: #999999;
+}
+
+.fear-greed-indicator {
+    background-color: #808080;
     color: #ffffff;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    max-width: 260px;
+    text-align: right;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.fear-greed-indicator strong {
+    font-weight: 600;
 }
 
 .crypto-grid {
@@ -592,8 +615,20 @@ tr:hover {
     }
 
     .crypto-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .crypto-note {
         font-size: 0.75em;
-        margin-bottom: 5px;
+        text-align: center;
+    }
+
+    .fear-greed-indicator {
+        max-width: 100%;
+        text-align: center;
+        margin: 0 10px;
     }
 
     .crypto-grid {
@@ -639,7 +674,7 @@ tr:hover {
 
     th, td {
         padding: 2px;
-        height: 28px; /* ZMIANA: Zmniejszono wysokość wierszy z 35px (domyślne) na 28px */
+        height: 28px;
         font-size: 0.7em;
         vertical-align: middle;
     }
@@ -724,5 +759,11 @@ tr:hover {
 
     .nasa-container {
         max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .crypto-grid {
+        grid-template-columns: repeat(7, 1fr);
     }
 }
