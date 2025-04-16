@@ -286,31 +286,37 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 4px; /* Zmniejszony odstęp dolny */
 }
 
 .crypto-note {
     font-size: 0.9em;
-    color: #999999;
+    font-weight: 500;
+    color: #ffffff; /* Przywrócony biały kolor */
+    margin-left: 10px; /* Większy margines z lewej strony */
 }
 
 .fear-greed-indicator {
     background-color: #808080;
     color: #ffffff;
-    padding: 8px;
+    padding: 6px; /* Zmniejszony padding */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    max-width: 260px;
+    max-width: 200px; /* Mniejszy kafelek */
+    min-height: 30px; /* Mniejsza wysokość */
     text-align: right;
-    font-size: 0.9em;
+    font-size: 0.85em; /* Nieco mniejsza czcionka dla proporcji */
     transition: background-color 0.3s ease;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    box-sizing: border-box;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Taki sam cień jak w kaflach kryptowalut */
 }
 
 .fear-greed-indicator strong {
     font-weight: 600;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Cień dla pogrubionego tekstu */
 }
 
 .crypto-grid {
@@ -617,18 +623,22 @@ tr:hover {
     .crypto-header {
         flex-direction: column;
         align-items: center;
-        gap: 5px;
+        gap: 2px; /* Mniejszy odstęp między "Zmiany notowań..." a kafelkiem */
+        margin-bottom: 4px; /* Mniejszy odstęp dolny */
     }
 
     .crypto-note {
         font-size: 0.75em;
         text-align: center;
+        margin-left: 0; /* Brak marginesu z lewej w wersji mobilnej */
     }
 
     .fear-greed-indicator {
-        max-width: 100%;
+        max-width: 90%; /* Mniejszy kafelek w wersji mobilnej */
+        min-height: 30px; /* Mniejsza wysokość */
         text-align: center;
-        margin: 0 10px;
+        margin: 0 5px; /* Mniejsze marginesy */
+        font-size: 0.75em; /* Mniejsza czcionka dla proporcji */
     }
 
     .crypto-grid {
