@@ -393,10 +393,10 @@ body {
 }
 
 .log-table {
-    background-color: #2d2d2d;
-    padding: 15px;
+    background-color: #333333;
+    padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     max-width: 800px;
     margin: 0 auto;
 }
@@ -426,9 +426,24 @@ th, td {
 }
 
 th {
-    background-color: #5a6268;
+    background: linear-gradient(135deg, #5a6268, #7a8288);
     color: white;
-    font-weight: 600;
+    font-weight: 700;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: filter 0.3s ease;
+}
+
+th:hover {
+    filter: brightness(1.1);
+}
+
+th:first-child {
+    border-top-left-radius: 6px;
+}
+
+th:last-child {
+    border-top-right-radius: 6px;
 }
 
 th.location-header {
@@ -500,20 +515,24 @@ tr:hover {
 }
 
 .toggle-button {
-    background-color: #5a6268;
+    background: linear-gradient(135deg, #5a6268, #7a8288);
     color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 0.9em;
     font-weight: 600;
-    transition: background-color: 0.3s;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 120px;
 }
 
 .toggle-button:hover {
-    background-color: #6c757d;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
 }
 
 @keyframes ticker {
@@ -673,6 +692,7 @@ tr:hover {
 
     .log-table {
         max-width: 100%;
+        padding: 15px;
     }
 
     .table-wrapper {
@@ -690,6 +710,27 @@ tr:hover {
         height: 28px;
         font-size: 0.7em;
         vertical-align: middle;
+    }
+
+    th {
+        background: linear-gradient(135deg, #5a6268, #7a8288);
+        color: white;
+        font-weight: 700;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: filter 0.3s ease;
+    }
+
+    th:hover {
+        filter: brightness(1.1);
+    }
+
+    th:first-child {
+        border-top-left-radius: 6px;
+    }
+
+    th:last-child {
+        border-top-right-radius: 6px;
     }
 
     th:nth-child(1), td:nth-child(1) { /* Data */
@@ -761,9 +802,23 @@ tr:hover {
     }
 
     .toggle-button {
-        padding: 4px 10px;
+        background: linear-gradient(135deg, #5a6268, #7a8288);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
         font-size: 0.8em;
+        font-weight: 600;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         min-width: 100px;
+    }
+
+    .toggle-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        filter: brightness(1.1);
     }
 
     .nasa-ticker {
