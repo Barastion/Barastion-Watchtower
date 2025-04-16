@@ -311,7 +311,7 @@ body {
     text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
-.fear-greed-indicator strong {
+.fear-greed-indicator .fear-greed-value {
     font-weight: 600;
     text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
@@ -332,6 +332,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 40px;
+    box-sizing: border-box;
     transition: transform 0.2s, background-color 0.5s ease;
     cursor: pointer;
 }
@@ -629,6 +630,10 @@ tr:hover {
         padding: 8px 10px;
     }
 
+    .fear-greed-indicator .fear-greed-value {
+        font-weight: 600;
+    }
+
     .crypto-grid {
         grid-template-columns: repeat(4, 1fr);
         gap: 6px;
@@ -636,16 +641,24 @@ tr:hover {
     }
 
     .crypto-tile {
-        min-height: 30px;
+        min-height: 26px;
         padding: 3px;
+        box-sizing: border-box;
+        transition: transform 0.2s, background-color 0.5s ease;
     }
 
     .crypto-symbol {
         font-size: 0.7em;
+        margin-bottom: 1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
     }
 
     .crypto-price {
         font-size: 0.65em;
+        margin-bottom: 1px;
     }
 
     .crypto-change {
