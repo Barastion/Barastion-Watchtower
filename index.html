@@ -47,12 +47,12 @@
             </div>
             <div class="crypto-info">
                 <div class="crypto-header">
-                    <p class="crypto-note">Zmiany notowań w ciągu ostatnich 24h</p>
                     <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sygnał: Ładowanie...</div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid">
                     <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
                 </div>
+                <p class="crypto-footer-note">Zmiany notowań w ciągu ostatnich 24h</p>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
@@ -139,11 +139,11 @@
         }
 
         function getSignalAndColor(value) {
-            if (value <= 24) return { signal: 'OKAZJA!', color: '#28a745' };
-            if (value <= 49) return { signal: 'Rozważ zakup', color: '#6cc644' };
-            if (value <= 74) return { signal: 'Trzymaj', color: '#ffc107' };
-            if (value <= 89) return { signal: 'Rozważ sprzedaż', color: '#fd7e14' };
-            return { signal: 'SPRZEDAJ!', color: '#dc3545' };
+            if (value <= 24) return { signal: 'OKAZJA!', color: 'var(--fear-greed-opportunity)' };
+            if (value <= 49) return { signal: 'Rozważ zakup', color: 'var(--fear-greed-consider-buy)' };
+            if (value <= 74) return { signal: 'Trzymaj', color: 'var(--fear-greed-hold)' };
+            if (value <= 89) return { signal: 'Rozważ sprzedaż', color: 'var(--fear-greed-consider-sell)' };
+            return { signal: 'SPRZEDAJ!', color: 'var(--fear-greed-sell)' };
         }
 
         async function updateFearGreedIndicator() {
