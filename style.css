@@ -429,6 +429,7 @@ th, td {
     vertical-align: middle;
     text-align: center;
     font-size: 0.9em;
+    box-sizing: border-box;
 }
 
 th {
@@ -458,14 +459,6 @@ th.location-header {
     max-width: 140px;
 }
 
-tr {
-    display: block;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    clip-path: inset(0 round 8px);
-}
-
 tr:nth-child(odd) {
     background-color: #3a3a3a;
 }
@@ -476,11 +469,26 @@ tr:nth-child(even) {
 
 tr:hover {
     background-color: #4a4a4a;
-    border-radius: 8px;
 }
 
-td {
-    padding: 0 5px;
+tr:not(:first-child) td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+tr:not(:first-child) td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+tr:hover td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+tr:hover td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .location-cell {
@@ -739,6 +747,7 @@ td {
         height: 28px;
         font-size: 0.7em;
         vertical-align: middle;
+        box-sizing: border-box;
     }
 
     th {
@@ -764,14 +773,6 @@ td {
         border-bottom-right-radius: 8px;
     }
 
-    tr {
-        display: block;
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
-        clip-path: inset(0 round 8px);
-    }
-
     tr:nth-child(odd) {
         background-color: #3a3a3a;
     }
@@ -782,11 +783,26 @@ td {
 
     tr:hover {
         background-color: #4a4a4a;
-        border-radius: 8px;
     }
 
-    td {
-        padding: 0 2px;
+    tr:not(:first-child) td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    tr:not(:first-child) td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    tr:hover td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    tr:hover td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
     }
 
     th:nth-child(1), td:nth-child(1) { /* Data */
