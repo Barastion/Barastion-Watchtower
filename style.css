@@ -413,8 +413,15 @@ body {
 table {
     width: 100%;
     min-width: 0;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: auto;
+}
+
+thead {
+    background: linear-gradient(135deg, #5a6268, #7a8288);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 th, td {
@@ -426,24 +433,15 @@ th, td {
 }
 
 th {
-    background: linear-gradient(135deg, #5a6268, #7a8288);
+    background: transparent;
     color: white;
     font-weight: 700;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: filter 0.3s ease;
 }
 
 th:hover {
     filter: brightness(1.1);
-}
-
-th:first-child {
-    border-top-left-radius: 6px;
-}
-
-th:last-child {
-    border-top-right-radius: 6px;
 }
 
 th.location-header {
@@ -460,6 +458,15 @@ tr:nth-child(even) {
 
 tr:hover {
     background-color: #4a4a4a;
+    border-radius: 8px;
+}
+
+tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
 }
 
 .location-cell {
@@ -519,7 +526,7 @@ tr:hover {
     color: white;
     border: none;
     padding: 8px 16px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 0.9em;
     font-weight: 600;
@@ -705,6 +712,12 @@ tr:hover {
         table-layout: fixed;
     }
 
+    thead {
+        background: linear-gradient(135deg, #5a6268, #7a8288);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
     th, td {
         padding: 2px;
         height: 28px;
@@ -713,24 +726,15 @@ tr:hover {
     }
 
     th {
-        background: linear-gradient(135deg, #5a6268, #7a8288);
+        background: transparent;
         color: white;
         font-weight: 700;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         transition: filter 0.3s ease;
     }
 
     th:hover {
         filter: brightness(1.1);
-    }
-
-    th:first-child {
-        border-top-left-radius: 6px;
-    }
-
-    th:last-child {
-        border-top-right-radius: 6px;
     }
 
     th:nth-child(1), td:nth-child(1) { /* Data */
@@ -763,6 +767,14 @@ tr:hover {
 
     .location-cell {
         min-width: 90px;
+    }
+
+    tr:last-child td:first-child {
+        border-bottom-left-radius: 8px;
+    }
+
+    tr:last-child td:last-child {
+        border-bottom-right-radius: 8px;
     }
 
     .city {
@@ -806,7 +818,7 @@ tr:hover {
         color: white;
         border: none;
         padding: 6px 12px;
-        border-radius: 6px;
+        border-radius: 8px;
         font-size: 0.8em;
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
