@@ -121,13 +121,44 @@
             }
         }
 
+        // Funkcja sprawdzająca cache w localStorage
+        function getCachedData(cacheKey, cacheTimeKey, cacheDuration) {
+            const cachedData = localStorage.getItem(cacheKey);
+            const cachedTime = localStorage.getItem(cacheTimeKey);
+            const now = Date.now();
+
+            if (cachedData && cachedTime && (now - parseInt(cachedTime) < cacheDuration)) {
+                return JSON.parse(cachedData);
+            }
+            return null;
+        }
+
+        // Funkcja zapisująca dane do localStorage
+        function setCachedData(cacheKey, cacheTimeKey, data) {
+            localStorage.setItem(cacheKey, JSON.stringify(data));
+            localStorage.setItem(cacheTimeKey, Date.now().toString());
+        }
+
         // Fear and Greed Index
         async function getFearAndGreedData() {
+            const cacheKey = 'fear_greed_data';
+            const rawDataKey = 'fear_greed_raw_data';
+            const trendKey = 'fear_greed_trend';
+            const cacheTimeKey = 'fear_greed_time';
+            const cacheDuration = 3600000; // 1 godzina
+
+            const cachedData = getCachedData(rawDataKey, cacheTimeKey, cacheDuration);
+            if (cachedData) {
+                console.log('Używam danych Fear and Greed z cache');
+                return cachedData;
+            }
+
             try {
                 const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
                 if (!data.data || data.data.length < 21) {
                     throw new Error('Za mało danych do obliczenia trendu');
                 }
+                setCachedData(rawDataKey, cacheTimeKey, data.data);
                 return data.data;
             } catch (error) {
                 console.error('Błąd pobierania danych Fear and Greed Index:', error);
@@ -185,21 +216,20 @@
             const trendKey = 'fear_greed_trend';
             const cacheTimeKey = 'fear_greed_time';
             const cacheDuration = 3600000; // 1 godzina
-            const now = Date.now();
-            const cachedData = localStorage.getItem(cacheKey);
-            const cachedRawData = localStorage.getItem(rawDataKey);
-            const cachedTrend = localStorage.getItem(trendKey);
-            const cachedTime = localStorage.getItem(cacheTimeKey);
             const indicator = document.getElementById('fearGreedIndicator');
 
+            const cachedAverage = localStorage.getItem(cacheKey);
+            const cachedTrend = localStorage.getItem(trendKey);
+            const cachedTime = localStorage.getItem(cacheTimeKey);
+            const now = Date.now();
+
             if (
-                cachedData &&
-                cachedRawData &&
+                cachedAverage &&
                 cachedTrend &&
                 cachedTime &&
                 (now - parseInt(cachedTime) < cacheDuration)
             ) {
-                const average = parseInt(cachedData);
+                const average = parseInt(cachedAverage);
                 const trend = JSON.parse(cachedTrend);
                 const { signal, color } = getSignalAndColor(average);
                 indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
@@ -209,8 +239,8 @@
 
             const data = await getFearAndGreedData();
             if (!data) {
-                if (cachedData && cachedTrend) {
-                    const average = parseInt(cachedData);
+                if (cachedAverage && cachedTrend) {
+                    const average = parseInt(cachedAverage);
                     const trend = JSON.parse(cachedTrend);
                     const { signal, color } = getSignalAndColor(average);
                     indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
@@ -228,10 +258,8 @@
             indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
 
-            localStorage.setItem(cacheKey, average.toString());
-            localStorage.setItem(rawDataKey, JSON.stringify(data));
-            localStorage.setItem(trendKey, JSON.stringify(trend));
-            localStorage.setItem(cacheTimeKey, now.toString());
+            setCachedData(cacheKey, cacheTimeKey, average);
+            setCachedData(trendKey, cacheTimeKey, trend);
         }
 
         // Pozostałe funkcje (logi, pogoda, NASA, ciekawostki)
@@ -415,9 +443,20 @@
         }
 
         async function getIp() {
+            const cacheKey = 'ip_data';
+            const cacheTimeKey = 'ip_time';
+            const cacheDuration = 15 * 60 * 1000; // 15 minut
+
+            const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
+            if (cachedData) {
+                console.log('Używam IP z cache:', cachedData.ip);
+                return cachedData.ip;
+            }
+
             try {
                 const data = await retryFetch('https://api.ipify.org?format=json');
                 console.log('IP pobrane:', data.ip);
+                setCachedData(cacheKey, cacheTimeKey, data);
                 return data.ip || 'Nieznany IP';
             } catch (err) {
                 console.error('Błąd pobierania IP:', err);
@@ -427,14 +466,21 @@
 
         async function getLocation(ip) {
             const cacheKey = `location_${ip}`;
-            const cached = localStorage.getItem(cacheKey);
-            const cacheTime = localStorage.getItem(`${cacheKey}_time`);
-            const now = Date.now();
-            const cacheDuration = 60 * 60 * 1000; // 1 godzina
+            const cacheTimeKey = `${cacheKey}_time`;
+            const cacheDuration = 15 * 60 * 1000; // 15 minut
+            const userAgent = navigator.userAgent;
+            const device = getDeviceType(userAgent);
+            const cacheSignatureKey = `${cacheKey}_signature`;
+            const currentSignature = `${ip}_${device}`;
+            const cachedSignature = localStorage.getItem(cacheSignatureKey);
 
-            if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
-                console.log('Używam danych lokalizacji z cache:', ip);
-                return JSON.parse(cached);
+            // Sprawdzenie, czy IP i urządzenie się nie zmieniły
+            if (cachedSignature === currentSignature) {
+                const cachedLocation = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
+                if (cachedLocation) {
+                    console.log('Używam danych lokalizacji z cache:', ip);
+                    return cachedLocation;
+                }
             }
 
             try {
@@ -450,8 +496,8 @@
                     lon: data.longitude || null,
                     isp: data.org || 'Nieznany dostawca'
                 };
-                localStorage.setItem(cacheKey, JSON.stringify(location));
-                localStorage.setItem(`${cacheKey}_time`, now.toString());
+                setCachedData(cacheKey, cacheTimeKey, location);
+                localStorage.setItem(cacheSignatureKey, currentSignature);
                 return location;
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
@@ -509,6 +555,17 @@
         }
 
         async function getWeather(ip) {
+            const cacheKey = `weather_${ip}`;
+            const cacheTimeKey = `${cacheKey}_time`;
+            const cacheDuration = 3600000; // 1 godzina
+
+            const cachedWeather = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
+            if (cachedWeather) {
+                console.log('Używam danych pogodowych z cache:', ip);
+                displayWeather(cachedWeather, ip);
+                return;
+            }
+
             try {
                 const locationData = await getLocation(ip);
                 console.log('Dane lokalizacji:', locationData);
@@ -519,62 +576,13 @@
                 const lon = locationData.lon;
                 const city = locationData.city || 'Nieznane miasto';
 
-                document.getElementById('weatherCity').textContent = city;
-
                 const forecastData = await retryFetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
                 console.log('Dane pogody:', forecastData);
 
                 if (forecastData.daily) {
-                    const forecastContainer = document.getElementById('weatherForecast');
-                    forecastContainer.innerHTML = '';
-
-                    forecastData.daily.time.forEach((date, index) => {
-                        const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                        const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
-                        const weatherCode = forecastData.daily.weathercode[index];
-                        console.log(`Weather code for ${formattedDate}: ${weatherCode}`);
-                        const maxTemp = forecastData.daily.temperature_2m_max[index];
-                        const minTemp = forecastData.daily.temperature_2m_min[index];
-                        const isToday = index === 0;
-
-                        const forecastBar = document.createElement('div');
-                        forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
-                        forecastBar.innerHTML = `
-                            <div class="forecast-date">${formattedDate}</div>
-                            <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
-                            <div class="weather-day">${dayName}</div>
-                            <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
-                            <div class="weather-temps">
-                                <div class="temp-max">${maxTemp.toFixed(1)}°C</div>
-                                <div class="temp-min">${minTemp.toFixed(1)}°C</div>
-                            </div>
-                        `;
-                        forecastContainer.appendChild(forecastBar);
-
-                        if (isToday) {
-                            const todayDate = formattedDate;
-                            const sunrise = new Date(forecastData.daily.sunrise[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-                            const sunset = new Date(forecastData.daily.sunset[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-                            const apparentTemp = forecastData.daily.apparent_temperature_max[0];
-                            const precipitation = forecastData.daily.precipitation_sum[0];
-                            const windSpeed = forecastData.daily.windspeed_10m_max[0];
-                            const windDirection = degreesToDirection(forecastData.daily.winddirection_10m_dominant[0]);
-
-                            const tickerText = `
-                                <span class="ticker-segment">
-                                    🌍 Warunki pogodowe na dzień: <span class="ticker-value">${todayDate}</span> • 
-                                    🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
-                                    🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
-                                    🌡️ Temperatura odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
-                                    🌧️ Suma opadów: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
-                                    💨 Maksymalna prędkość wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
-                                    🪁 Wiatr wieje z kierunku: <span class="ticker-value">${windDirection}</span>
-                                </span>
-                            `;
-                            const repeatedTickerText = tickerText.repeat(5);
-                            document.getElementById('tickerContent').innerHTML = repeatedTickerText;
-                        }
-                    });
+                    const weatherData = { city, forecast: forecastData.daily };
+                    setCachedData(cacheKey, cacheTimeKey, weatherData);
+                    displayWeather(weatherData, ip);
                 } else {
                     throw new Error('Brak danych pogodowych');
                 }
@@ -587,9 +595,80 @@
             }
         }
 
+        function displayWeather(weatherData, ip) {
+            const city = weatherData.city;
+            const forecastData = weatherData.forecast;
+            document.getElementById('weatherCity').textContent = city;
+
+            const forecastContainer = document.getElementById('weatherForecast');
+            forecastContainer.innerHTML = '';
+
+            forecastData.time.forEach((date, index) => {
+                const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
+                const weatherCode = forecastData.weathercode[index];
+                console.log(`Weather code for ${formattedDate}: ${weatherCode}`);
+                const maxTemp = forecastData.temperature_2m_max[index];
+                const minTemp = forecastData.temperature_2m_min[index];
+                const isToday = index === 0;
+
+                const forecastBar = document.createElement('div');
+                forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
+                forecastBar.innerHTML = `
+                    <div class="forecast-date">${formattedDate}</div>
+                    <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
+                    <div class="weather-day">${dayName}</div>
+                    <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
+                    <div class="weather-temps">
+                        <div class="temp-max">${maxTemp.toFixed(1)}°C</div>
+                        <div class="temp-min">${minTemp.toFixed(1)}°C</div>
+                    </div>
+                `;
+                forecastContainer.appendChild(forecastBar);
+
+                if (isToday) {
+                    const todayDate = formattedDate;
+                    const sunrise = new Date(forecastData.sunrise[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+                    const sunset = new Date(forecastData.sunset[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+                    const apparentTemp = forecastData.apparent_temperature_max[0];
+                    const precipitation = forecastData.precipitation_sum[0];
+                    const windSpeed = forecastData.windspeed_10m_max[0];
+                    const windDirection = degreesToDirection(forecastData.winddirection_10m_dominant[0]);
+
+                    const tickerText = `
+                        <span class="ticker-segment">
+                            🌍 Warunki pogodowe na dzień: <span class="ticker-value">${todayDate}</span> • 
+                            🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
+                            🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
+                            🌡️ Temperatura odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
+                            🌧️ Suma opadów: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
+                            💨 Maksymalna prędkość wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
+                            🪁 Wiatr wieje z kierunku: <span class="ticker-value">${windDirection}</span>
+                        </span>
+                    `;
+                    const repeatedTickerText = tickerText.repeat(5);
+                    document.getElementById('tickerContent').innerHTML = repeatedTickerText;
+                }
+            });
+        }
+
         async function getNasaApodImage(retries = 5, delay = 2000) {
+            const cacheKey = 'nasa_apod_data';
+            const cacheTimeKey = 'nasa_apod_time';
+            const cacheDuration = 3600000; // 1 godzina
             const imgElement = document.getElementById('spaceImage');
             const tickerElement = document.getElementById('nasaTickerContent');
+
+            const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
+            if (cachedData) {
+                console.log('Używam danych NASA APOD z cache');
+                imgElement.src = cachedData.url;
+                imgElement.alt = cachedData.title || 'NASA Astronomy Picture of the Day';
+                const tickerText = `<span class="ticker-segment">${cachedData.explanation || 'Brak opisu dla tego zdjęcia.'}</span>`;
+                tickerElement.innerHTML = tickerText.repeat(5);
+                return;
+            }
+
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const data = await retryFetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
@@ -601,6 +680,11 @@
                         const description = data.explanation || 'Brak opisu dla tego zdjęcia.';
                         const tickerText = `<span class="ticker-segment">${description}</span>`;
                         tickerElement.innerHTML = tickerText.repeat(5);
+                        setCachedData(cacheKey, cacheTimeKey, {
+                            url: data.url,
+                            title: data.title,
+                            explanation: description
+                        });
                         imgElement.onerror = () => {
                             console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
                             imgElement.src = 'planeta.png';
@@ -630,7 +714,7 @@
                     if (attempt === retries) {
                         imgElement.src = 'planeta.png';
                         imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                        const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia antiseptic z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
+                        const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
                         tickerElement.innerHTML = errorTickerText.repeat(5);
                         return;
                     }
@@ -640,15 +724,27 @@
         }
 
         async function getDailyFact() {
+            const cacheKey = 'daily_fact';
+            const cacheTimeKey = 'daily_fact_time';
+            const cacheDuration = 3600000; // 1 godzina
+
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const dateKey = `${day}/${month}`;
 
+            const cachedFact = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
+            if (cachedFact && cachedFact.dateKey === dateKey) {
+                console.log('Używam ciekawostki z cache');
+                document.getElementById('dailyFact').textContent = cachedFact.fact;
+                return;
+            }
+
             try {
                 const data = await retryFetch('calendar.json');
                 const fact = data[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
                 document.getElementById('dailyFact').textContent = fact;
+                setCachedData(cacheKey, cacheTimeKey, { dateKey, fact });
             } catch (err) {
                 console.error('Błąd pobierania ciekawostki:', err);
                 document.getElementById('dailyFact').textContent = 'Błąd ładowania ciekawostki';
@@ -657,14 +753,13 @@
 
         async function getCryptoData() {
             const cacheKey = 'crypto_data';
-            const cached = localStorage.getItem(cacheKey);
-            const cacheTime = localStorage.getItem(`${cacheKey}_time`);
-            const now = Date.now();
+            const cacheTimeKey = 'crypto_time';
             const cacheDuration = 15 * 60 * 1000; // 15 minut
 
-            if (cached && cacheTime && (now - parseInt(cacheTime) < cacheDuration)) {
+            const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
+            if (cachedData) {
                 console.log('Używam danych kryptowalut z cache');
-                displayCryptoData(JSON.parse(cached));
+                displayCryptoData(cachedData);
                 return;
             }
 
@@ -676,10 +771,7 @@
                 const limit = isMobile ? 28 : 35;
                 const filteredCoins = data.filter(coin => {
                     const price = parseFloat(coin.current_price);
-                    return (
-                        (price < 0.99 || price > 1.01) &&
-                        price > 0.01
-                    );
+                    return price > 0.01;
                 }).slice(0, limit).map(coin => ({
                     id: coin.id,
                     symbol: coin.symbol,
@@ -687,14 +779,13 @@
                     price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
                 }));
 
-                localStorage.setItem(cacheKey, JSON.stringify(filteredCoins));
-                localStorage.setItem(`${cacheKey}_time`, now.toString());
+                setCachedData(cacheKey, cacheTimeKey, filteredCoins);
                 displayCryptoData(filteredCoins);
             } catch (err) {
                 console.error('Błąd pobierania danych kryptowalut:', err);
-                if (cached) {
+                if (cachedData) {
                     console.log('Używam danych kryptowalut z cache po błędzie');
-                    displayCryptoData(JSON.parse(cached));
+                    displayCryptoData(cachedData);
                 } else {
                     const cryptoGrid = document.getElementById('cryptoGrid');
                     cryptoGrid.innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut. Spróbuj ponownie później.</div>';
