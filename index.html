@@ -929,7 +929,7 @@
                 const limit = isMobile ? 28 : 35;
                 const filteredCoins = data.filter(coin => {
                     const price = parseFloat(coin.current_price);
-                    return price > 0.01;
+                    return price > 0.01 && (price < 0.99 || price > 1.01);
                 }).slice(0, limit).map(coin => ({
                     id: coin.id,
                     symbol: coin.symbol,
