@@ -318,20 +318,21 @@ body {
 }
 
 .fear-greed-indicator .trend-indicator {
-    font-size: 1.2em;
-    margin-right: 5px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
-    vertical-align: middle;
+    font-size: 1em; /* Zmniejszono, aby lepiej pasować do tekstu */
+    margin-right: 3px; /* Minimalny odstęp od liczby */
+    vertical-align: baseline; /* Wyrównanie do baseline tekstu */
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Biały kontur dla widoczności */
+    line-height: 1; /* Zapobiega przesunięciom */
 }
 
 .fear-greed-indicator .trend-up {
-    color: var(--fear-greed-opportunity);
-    animation: pulse-positive 2s infinite;
+    color: #00ff00; /* Jaśniejszy zielony dla lepszej widoczności */
+    animation: glow-positive 1.5s ease-in-out infinite; /* Nowa animacja migotania */
 }
 
 .fear-greed-indicator .trend-down {
     color: var(--fear-greed-sell);
-    animation: pulse-negative 2s infinite;
+    animation: glow-negative 1.5s ease-in-out infinite; /* Nowa animacja migotania */
 }
 
 .fear-greed-indicator .trend-neutral {
@@ -616,6 +617,18 @@ tr:hover td:last-child {
     100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
 
+@keyframes glow-positive {
+    0% { color: #00ff00; }
+    50% { color: #66ff66; }
+    100% { color: #00ff00; }
+}
+
+@keyframes glow-negative {
+    0% { color: var(--fear-greed-sell); }
+    50% { color: rgba(255, 100, 100, 0.9); }
+    100% { color: var(--fear-greed-sell); }
+}
+
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -707,8 +720,9 @@ tr:hover td:last-child {
     }
 
     .fear-greed-indicator .trend-indicator {
-        font-size: 1em;
-        margin-right: 3px;
+        font-size: 0.9em; /* Mniejszy rozmiar na mobilnych */
+        margin-right: 2px; /* Mniejszy odstęp na mobilnych */
+        vertical-align: baseline;
     }
 
     .crypto-grid {
