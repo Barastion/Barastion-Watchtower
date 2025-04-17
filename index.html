@@ -164,13 +164,13 @@
             const previous14Days = values.slice(7, 21).map(item => parseInt(item.value));
             const avgPrevious14 = previous14Days.reduce((sum, val) => sum + val, 0) / previous14Days.length;
 
-            // Określenie trendu
+            // Określenie trendu z nowymi symbolami
             if (avgLast7 > avgPrevious14) {
-                return { symbol: '↑', class: 'trend-up' };
+                return { symbol: '▲', class: 'trend-up' };
             } else if (avgLast7 < avgPrevious14) {
-                return { symbol: '↓', class: 'trend-down' };
+                return { symbol: '▼', class: 'trend-down' };
             } else {
-                return { symbol: '●', class: 'trend-neutral' };
+                return { symbol: '•', class: 'trend-neutral' };
             }
         }
 
@@ -206,7 +206,7 @@
                 const average = parseInt(cachedData);
                 const trend = JSON.parse(cachedTrend);
                 const { signal, color } = getSignalAndColor(average);
-                indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
+                indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span><span class="fear-greed-value">${average} – ${signal}</span>`;
                 indicator.style.backgroundColor = color;
                 return;
             }
@@ -219,7 +219,7 @@
                     const average = parseInt(cachedData);
                     const trend = JSON.parse(cachedTrend);
                     const { signal, color } = getSignalAndColor(average);
-                    indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
+                    indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span><span class="fear-greed-value">${average} – ${signal}</span>`;
                     indicator.style.backgroundColor = color;
                 } else {
                     indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
@@ -232,7 +232,7 @@
             const average = calculateWeightedIndex(data);
             const trend = calculateTrend(data);
             const { signal, color } = getSignalAndColor(average);
-            indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
+            indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span><span class="fear-greed-value">${average} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
 
             // Zapis do localStorage
@@ -630,7 +630,7 @@
                         imgElement.src = 'planeta.png';
                         imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
                         const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                        tickerElement.innerHTML = errorTickerText.repeat(5);
+                        tickerElement.innerHTML = brinkText.repeat(5);
                     }
                     return;
                 } catch (err) {
@@ -737,13 +737,16 @@
 
         function getChangeClass(change) {
             const absChange = Math.abs(change);
-            if (absChange <= 5) {
-                return change >= 0 ? 'positive-low' : 'negative-low';
-            } else if (absChange <= 10) {
-                return change >= 0 ? 'positive-mid' : 'negative-mid';
-            } else {
-                return change >= 0 ? 'positive-high' : 'negative-high';
+            if (change > 0) {
+                if (absChange >= 5) return 'positive-high';
+                if (absChange >= 2) return 'positive-mid';
+                return 'positive-low';
+            } else if (change < 0) {
+                if (absChange >= 5) return 'negative-high';
+                if (absChange >= 2) return 'negative-mid';
+                return 'negative-low';
             }
+            return '';
         }
 
         function displayCryptoData(coins) {
@@ -751,133 +754,62 @@
             cryptoGrid.innerHTML = '';
 
             coins.forEach(coin => {
-                const cryptoTile = document.createElement('div');
-                cryptoTile.className = `crypto-tile ${getChangeClass(coin.price_change_percentage_24h)}`;
-                cryptoTile.innerHTML = `
+                const changeClass = getChangeClass(coin.price_change_percentage_24h);
+                const tile = document.createElement('div');
+                tile.className = `crypto-tile ${changeClass}`;
+                tile.innerHTML = `
                     <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
                     <div class="crypto-price">${formatPrice(coin.current_price)}</div>
-                    <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}% / 24h</div>
+                    <div class="crypto-change">${coin.price_change_percentage_24h.toFixed(2)}%</div>
                 `;
-                cryptoTile.addEventListener('click', () => {
-                    window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
-                });
-                cryptoGrid.appendChild(cryptoTile);
+                tile.onclick = () => {
+                    const url = `https://www.coingecko.com/en/coins/${coin.id}`;
+                    window.open(url, '_blank');
+                };
+                cryptoGrid.appendChild(tile);
             });
         }
 
-        function checkCSSLoaded() {
-            const container = document.querySelector('.container');
-            const computedStyle = window.getComputedStyle(container);
-            if (computedStyle.backgroundColor !== 'rgb(45, 45, 45)') {
-                console.warn('CSS nie załadował się poprawnie, ładuję fallback styles');
-                const style = document.createElement('style');
-                style.textContent = `
-                    body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
-                    .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
-                    .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-                    .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
-                    .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
-                    .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
-                    .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
-                    .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
-                    .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
-                    .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                `;
-                document.head.appendChild(style);
-            }
-        }
-
-        // Funkcja obsługująca status sieci
-        let isReloading = false;
         async function handleNetworkStatus() {
             const networkStatus = document.getElementById('networkStatus');
-            if (navigator.onLine) {
-                console.log('Połączenie z internetem przywrócone');
-                networkStatus.style.display = 'none';
-                networkStatus.textContent = '';
-                if (!isReloading) {
-                    isReloading = true;
-                    try {
-                        const ipPromise = getIp();
-                        const nasaPromise = getNasaApodImage();
-                        const dailyFactPromise = getDailyFact();
-                        const cryptoPromise = getCryptoData();
-                        const fearGreedPromise = updateFearGreedIndicator();
-
-                        const ip = await ipPromise;
-                        const weatherPromise = getWeather(ip);
-
-                        const results = await Promise.allSettled([
-                            nasaPromise,
-                            ipPromise,
-                            weatherPromise,
-                            dailyFactPromise,
-                            cryptoPromise,
-                            fearGreedPromise
-                        ]);
-
-                        results.forEach((result, index) => {
-                            const apiNames = ['NASA', 'IP', 'Pogoda', 'Ciekawostka', 'Kryptowaluty', 'Fear and Greed'];
-                            console.log(`Wynik dla ${apiNames[index]}:`, result.status, result.reason || result.value);
-                        });
-
-                        setTimeout(async () => {
-                            try {
-                                await logVisit();
-                            } catch (err) {
-                                console.error('Błąd podczas ładowania logów:', err);
-                                const logTableBody = document.getElementById('logTableBody');
-                                if (logTableBody) {
-                                    logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
-                                }
-                            }
-                        }, 500);
-
-                        console.log('Wszystkie dane załadowane po przywróceniu połączenia');
-                    } catch (err) {
-                        console.error('Błąd podczas ponownego ładowania danych:', err);
-                        networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie później.';
-                        networkStatus.style.display = 'block';
-                    } finally {
-                        isReloading = false;
-                    }
-                }
-            } else {
-                console.log('Utracono połączenie z internetem');
-                networkStatus.textContent = 'Brak połączenia z internetem';
+            if (!navigator.onLine) {
                 networkStatus.style.display = 'block';
+                networkStatus.textContent = 'Brak połączenia z internetem. Niektóre funkcje mogą być niedostępne.';
+                return;
+            } else {
+                networkStatus.style.display = 'none';
             }
+
+            const ip = await getIp();
+            console.log('IP użytkownika:', ip);
+
+            const weatherPromise = getWeather(ip);
+            const fearGreedPromise = updateFearGreedIndicator();
+            const cryptoPromise = getCryptoData();
+            const nasaPromise = getNasaApodImage();
+            const factPromise = getDailyFact();
+            const logPromise = logVisit();
+
+            await Promise.allSettled([
+                weatherPromise,
+                fearGreedPromise,
+                cryptoPromise,
+                nasaPromise,
+                factPromise,
+                logPromise
+            ]);
         }
 
-        // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
-        function startCryptoUpdateInterval() {
-            getCryptoData();
-            setInterval(() => {
-                console.log('Aktualizuję dane kryptowalut...');
+        window.addEventListener('online', handleNetworkStatus);
+        window.addEventListener('offline', handleNetworkStatus);
+        window.addEventListener('load', handleNetworkStatus);
+
+        window.addEventListener('resize', () => {
+            const cryptoGrid = document.getElementById('cryptoGrid');
+            if (cryptoGrid) {
                 getCryptoData();
-            }, 900000); // 15 minut
-        }
-
-        // Automatyczna aktualizacja Fear and Greed Index co 1 godzinę
-        function startFearGreedUpdateInterval() {
-            updateFearGreedIndicator();
-            setInterval(() => {
-                console.log('Aktualizuję Fear and Greed Index...');
-                updateFearGreedIndicator();
-            }, 3600000); // 1 godzina
-        }
-
-        // Inicjalizacja strony
-        window.onload = async function() {
-            console.log('Strona załadowana, uruchamiam funkcje...');
-            handleNetworkStatus();
-            startCryptoUpdateInterval();
-            startFearGreedUpdateInterval();
-            window.addEventListener('online', handleNetworkStatus);
-            window.addEventListener('offline', handleNetworkStatus);
-        };
-
-        window.addEventListener('load', checkCSSLoaded);
+            }
+        });
     </script>
 </body>
 </html>
