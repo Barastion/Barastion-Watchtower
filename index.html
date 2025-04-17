@@ -132,9 +132,28 @@
             }
         }
 
-        function calculateAverage(values) {
-            const sum = values.reduce((acc, val) => acc + parseInt(val.value), 0);
-            return Math.round(sum / values.length);
+        function calculateWeightedIndex(values) {
+            // Podział na 10 grup po 3 dni
+            const groups = [];
+            for (let i = 0; i < values.length; i += 3) {
+                const group = values.slice(i, i + 3).map(item => parseInt(item.value));
+                const groupAverage = group.reduce((sum, val) => sum + val, 0) / group.length;
+                groups.push(groupAverage);
+            }
+
+            // Wagi dla grup: 1.1 dla dni 0-3, -0.1 dla każdej kolejnej
+            const weights = [1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
+            const sumWeights = weights.reduce((sum, w) => sum + w, 0); // Suma wag: 6.5
+
+            // Obliczanie ważonego wskaźnika
+            let weightedSum = 0;
+            for (let i = 0; i < groups.length; i++) {
+                weightedSum += groups[i] * weights[i];
+            }
+            const weightedIndex = weightedSum / sumWeights;
+
+            // Zaokrąglenie do pełnej liczby
+            return Math.round(weightedIndex);
         }
 
         function getSignalAndColor(value) {
@@ -169,7 +188,7 @@
                 return;
             }
 
-            const average = calculateAverage(data);
+            const average = calculateWeightedIndex(data);
             const { signal, color } = getSignalAndColor(average);
             indicator.innerHTML = `Miesięczny sygnał: <span class="fear-greed-value">${average} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
