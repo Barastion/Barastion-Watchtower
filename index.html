@@ -900,15 +900,16 @@
         }
 
         // Funkcja do wykrywania pochodnych kryptowalut
-        function isDerivative(coin, usedBaseAssets) {
+        function isDerivative(coin, usedBaseAssets, allCoins) {
             const derivativeKeywords = [
                 'wrapped', 'staked', 'liquid', 'bridged', 'pegged', 
                 'synthetic', 'leveraged', 'inverse', 'eth2', 'staking', 
-                'yield', 'ether-fi', 'rocket', 'lido'
+                'yield', 'ether-fi', 'rocket', 'lido', 'weth'
             ];
             const id = (coin.id || '').toLowerCase();
             const name = (coin.name || '').toLowerCase();
             const symbol = (coin.symbol || '').toLowerCase();
+            const price = parseFloat(coin.current_price);
 
             // Sprawdź, czy moneta zawiera słowa kluczowe wskazujące na pochodność
             const hasDerivativeKeyword = derivativeKeywords.some(keyword => 
@@ -925,16 +926,48 @@
                 const baseLower = baseSymbol.toLowerCase();
                 // Sprawdzamy, czy symbol kryptowaluty zawiera symbol bazowy jako podciąg
                 if (symbol.includes(baseLower) || name.includes(baseLower)) {
+                    // Porównaj cenę z bazową kryptowalutą
+                    const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
+                    if (baseCoin) {
+                        const basePrice = parseFloat(baseCoin.current_price);
+                        const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
+                        if (priceDifference <= 5) {
+                            console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol} (podobna cena: ${priceDifference.toFixed(2)}%)`);
+                            return { isDerivative: true, baseSymbol };
+                        }
+                    }
                     console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol}`);
+                    return { isDerivative: true, baseSymbol };
+                }
+                // Sprawdzamy, czy symbol zaczyna się od 'w' i zawiera bazowy symbol
+                if (symbol.startsWith('w') && symbol.slice(1).includes(baseLower)) {
+                    const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
+                    if (baseCoin) {
+                        const basePrice = parseFloat(baseCoin.current_price);
+                        const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
+                        if (priceDifference <= 5) {
+                            console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w', podobna cena: ${priceDifference.toFixed(2)}%)`);
+                            return { isDerivative: true, baseSymbol };
+                        }
+                    }
+                    console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w')`);
                     return { isDerivative: true, baseSymbol };
                 }
             }
 
             // Jeśli moneta ma słowa kluczowe, ale nie pasuje do żadnego bazowego symbolu,
             // uznajemy ją za pochodną i próbujemy wyodrębnić potencjalny symbol bazowy
-            // na podstawie symbolu kryptowaluty (np. WEETH -> ETH)
             const potentialBaseSymbol = symbol.replace(/^(w|s|re|ls|cb|rs|ms|st|rst|lst|)/, '').toUpperCase();
             if (usedBaseAssets.has(potentialBaseSymbol)) {
+                const baseCoin = allCoins.find(c => c.symbol.toUpperCase() === potentialBaseSymbol);
+                if (baseCoin) {
+                    const basePrice = parseFloat(baseCoin.current_price);
+                    const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
+                    if (priceDifference <= 5) {
+                        console.log(`Pochodna wykryta: ${coin.symbol} należy do ${potentialBaseSymbol} (wyodrębniono, podobna cena: ${priceDifference.toFixed(2)}%)`);
+                        return { isDerivative: true, baseSymbol: potentialBaseSymbol };
+                    }
+                }
                 console.log(`Pochodna wykryta: ${coin.symbol} należy do ${potentialBaseSymbol} (wyodrębniono)`);
                 return { isDerivative: true, baseSymbol: potentialBaseSymbol };
             }
@@ -996,7 +1029,7 @@
                     }
 
                     // Sprawdź, czy moneta jest pochodną
-                    const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets);
+                    const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
                     if (isDeriv) {
                         console.log(`Pominięto pochodną: ${coin.symbol} (bazowa: ${baseSymbol})`);
                         return false;
