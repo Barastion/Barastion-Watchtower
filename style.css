@@ -267,7 +267,7 @@ body {
 
 #tickerContent {
     display: inline-block;
-    padding-left: 100%;
+    padding-leave: 100%;
     animation: ticker 180s linear infinite;
     -webkit-animation: ticker 180s linear infinite;
     font-size: 0.8em;
@@ -310,19 +310,28 @@ body {
     white-space: normal;
     box-sizing: border-box;
     text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    /* Dodany wyraźny czarny kontur dla całego tekstu */
+    -webkit-text-stroke: 1.5px black;
+    text-stroke: 1.5px black;
 }
 
 .fear-greed-indicator .fear-greed-value {
     font-weight: 600 !important;
     text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    /* Kontur dziedziczony z .fear-greed-indicator */
 }
 
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 3px;
+    margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" */
     vertical-align: baseline;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 1), /* Czarny kontur */
-                 0 0 3.5px rgba(0, 0, 0, 1); /* Dodatkowy cień dla lepszej widoczności */
+    /* Wyraźny czarny kontur dla symbolu trendu */
+    -webkit-text-stroke: 1.5px black;
+    text-stroke: 1.5px black;
+    /* Zachowany cień dla lepszej widoczności */
+    text-shadow: 0 0 2px rgba(0, 0, 0, 1),
+                 0 0 3.5px rgba(0, 0, 0, 1);
     line-height: 1;
 }
 
@@ -726,8 +735,13 @@ tr:hover td:last-child {
     .fear-greed-indicator .trend-indicator {
         font-size: 0.9em;
         margin-right: 2px;
+        margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
         vertical-align: baseline;
-        text-shadow: 0 0 2px rgba(0, 0, 0, 1), /* Czarny kontur */
+        /* Wyraźny czarny kontur dla symbolu trendu */
+        -webkit-text-stroke: 1.5px black;
+        text-stroke: 1.5px black;
+        /* Zachowany cień dla lepszej widoczności */
+        text-shadow: 0 0 2px rgba(0, 0, 0, 1),
                      0 0 3.5px rgba(0, 0, 0, 1);
     }
 
