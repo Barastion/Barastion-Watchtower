@@ -903,7 +903,8 @@
         function isDerivative(coin, usedBaseAssets) {
             const derivativeKeywords = [
                 'wrapped', 'staked', 'liquid', 'bridged', 'pegged', 
-                'synthetic', 'leveraged', 'inverse', 'eth2', 'staking', 'yield'
+                'synthetic', 'leveraged', 'inverse', 'eth2', 'staking', 
+                'yield', 'ether-fi', 'rocket', 'lido'
             ];
             const id = (coin.id || '').toLowerCase();
             const name = (coin.name || '').toLowerCase();
@@ -922,14 +923,23 @@
             // Szukaj symbolu bazowego w nazwie lub symbolu
             for (const baseSymbol of usedBaseAssets) {
                 const baseLower = baseSymbol.toLowerCase();
-                if (name.includes(baseLower) || symbol.includes(baseLower)) {
+                // Sprawdzamy, czy symbol kryptowaluty zawiera symbol bazowy jako podciąg
+                if (symbol.includes(baseLower) || name.includes(baseLower)) {
                     console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol}`);
                     return { isDerivative: true, baseSymbol };
                 }
             }
 
             // Jeśli moneta ma słowa kluczowe, ale nie pasuje do żadnego bazowego symbolu,
-            // uznajemy ją za niezależną (np. zawiera 'wrapped', ale nie jest pochodną znanego aktywa)
+            // uznajemy ją za pochodną i próbujemy wyodrębnić potencjalny symbol bazowy
+            // na podstawie symbolu kryptowaluty (np. WEETH -> ETH)
+            const potentialBaseSymbol = symbol.replace(/^(w|s|re|ls|cb|rs|ms|st|rst|lst|)/, '').toUpperCase();
+            if (usedBaseAssets.has(potentialBaseSymbol)) {
+                console.log(`Pochodna wykryta: ${coin.symbol} należy do ${potentialBaseSymbol} (wyodrębniono)`);
+                return { isDerivative: true, baseSymbol: potentialBaseSymbol };
+            }
+
+            // Jeśli nie pasuje do żadnego bazowego symbolu, uznajemy za niezależną
             return { isDerivative: false, baseSymbol: symbol.toUpperCase() };
         }
 
@@ -962,11 +972,25 @@
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 28 : 35;
                 const usedBaseAssets = new Set();
+                const fiatCurrencies = ['usd', 'eur', 'gbp', 'jpy', 'cny', 'aud', 'cad', 'chf', 'sgd', 'krw', 'susds'];
 
                 const filteredCoins = data.filter(coin => {
                     const price = parseFloat(coin.current_price);
+                    const id = (coin.id || '').toLowerCase();
+                    const name = (coin.name || '').toLowerCase();
+                    const symbol = (coin.symbol || '').toLowerCase();
+
+                    // Filtr walut fiducjarnych (stablecoiny)
+                    const isFiatRelated = fiatCurrencies.some(currency => 
+                        id.includes(currency) || name.includes(currency) || symbol.includes(currency)
+                    );
+                    if (isFiatRelated && price >= 0.95 && price <= 1.05) {
+                        console.log(`Pominięto stablecoin: ${coin.symbol} (cena: ${price} USD, zawiera walutę fiducjarną)`);
+                        return false;
+                    }
+
                     // Filtr cenowy (wyklucz tanie monety i stablecoiny)
-                    if (price <= 0.01 || (price >= 0.99 && price <= 1.01)) {
+                    if (price <= 0.01 || (!isFiatRelated && price >= 0.99 && price <= 1.01)) {
                         console.log(`Pominięto ${coin.symbol}: cena ${price} USD`);
                         return false;
                     }
