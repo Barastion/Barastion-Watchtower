@@ -125,6 +125,9 @@
         async function getFearAndGreedData() {
             try {
                 const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
+                if (!data.data || data.data.length < 21) {
+                    throw new Error('Za mało danych do obliczenia trendu');
+                }
                 return data.data;
             } catch (error) {
                 console.error('Błąd pobierania danych Fear and Greed Index:', error);
@@ -133,7 +136,6 @@
         }
 
         function calculateWeightedIndex(values) {
-            // Podział na 10 grup po 3 dni
             const groups = [];
             for (let i = 0; i < values.length; i += 3) {
                 const group = values.slice(i, i + 3).map(item => parseInt(item.value));
@@ -141,34 +143,31 @@
                 groups.push(groupAverage);
             }
 
-            // Wagi dla grup: 1.1 dla dni 0-3, -0.1 dla każdej kolejnej
             const weights = [1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
-            const sumWeights = weights.reduce((sum, w) => sum + w, 0); // Suma wag: 6.5
+            const sumWeights = weights.reduce((sum, w) => sum + w, 0);
 
-            // Obliczanie ważonego wskaźnika
             let weightedSum = 0;
             for (let i = 0; i < groups.length; i++) {
                 weightedSum += groups[i] * weights[i];
             }
             const weightedIndex = weightedSum / sumWeights;
 
-            // Zaokrąglenie do pełnej liczby
             return Math.round(weightedIndex);
         }
 
         function calculateTrend(values) {
-            // Średnia z ostatnich 5 dni (indeksy 0-4)
-            const last5Days = values.slice(0, 5).map(item => parseInt(item.value));
-            const avgLast5 = last5Days.reduce((sum, val) => sum + val, 0) / last5Days.length;
+            // Średnia z ostatnich 7 dni (indeksy 0-6)
+            const last7Days = values.slice(0, 7).map(item => parseInt(item.value));
+            const avgLast7 = last7Days.reduce((sum, val) => sum + val, 0) / last7Days.length;
 
-            // Średnia z dni 6-30 (indeksy 5-28)
-            const previous24Days = values.slice(5, 29).map(item => parseInt(item.value));
-            const avgPrevious24 = previous24Days.reduce((sum, val) => sum + val, 0) / previous24Days.length;
+            // Średnia z dni 8-21 (indeksy 7-20, 14 dni)
+            const previous14Days = values.slice(7, 21).map(item => parseInt(item.value));
+            const avgPrevious14 = previous14Days.reduce((sum, val) => sum + val, 0) / previous14Days.length;
 
             // Określenie trendu
-            if (avgLast5 > avgPrevious24) {
+            if (avgLast7 > avgPrevious14) {
                 return { symbol: '↑', class: 'trend-up' };
-            } else if (avgLast5 < avgPrevious24) {
+            } else if (avgLast7 < avgPrevious14) {
                 return { symbol: '↓', class: 'trend-down' };
             } else {
                 return { symbol: '●', class: 'trend-neutral' };
@@ -185,35 +184,61 @@
 
         async function updateFearGreedIndicator() {
             const cacheKey = 'fear_greed_data';
+            const rawDataKey = 'fear_greed_raw_data';
+            const trendKey = 'fear_greed_trend';
             const cacheTimeKey = 'fear_greed_time';
             const cacheDuration = 3600000; // 1 godzina
             const now = Date.now();
             const cachedData = localStorage.getItem(cacheKey);
+            const cachedRawData = localStorage.getItem(rawDataKey);
+            const cachedTrend = localStorage.getItem(trendKey);
             const cachedTime = localStorage.getItem(cacheTimeKey);
             const indicator = document.getElementById('fearGreedIndicator');
 
-            if (cachedData && cachedTime && (now - parseInt(cachedTime) < cacheDuration)) {
+            // Użycie danych z cache, jeśli są aktualne
+            if (
+                cachedData &&
+                cachedRawData &&
+                cachedTrend &&
+                cachedTime &&
+                (now - parseInt(cachedTime) < cacheDuration)
+            ) {
                 const average = parseInt(cachedData);
+                const trend = JSON.parse(cachedTrend);
                 const { signal, color } = getSignalAndColor(average);
-                indicator.innerHTML = `Miesięczny sygnał: <span class="fear-greed-value">${average} – ${signal}</span>`;
+                indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
                 indicator.style.backgroundColor = color;
                 return;
             }
 
+            // Pobieranie nowych danych
             const data = await getFearAndGreedData();
             if (!data) {
-                indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
-                indicator.style.backgroundColor = '#808080';
+                // Użycie danych z cache w przypadku błędu, jeśli dostępne
+                if (cachedData && cachedTrend) {
+                    const average = parseInt(cachedData);
+                    const trend = JSON.parse(cachedTrend);
+                    const { signal, color } = getSignalAndColor(average);
+                    indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
+                    indicator.style.backgroundColor = color;
+                } else {
+                    indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
+                    indicator.style.backgroundColor = '#808080';
+                }
                 return;
             }
 
+            // Obliczanie średniej i trendu
             const average = calculateWeightedIndex(data);
             const trend = calculateTrend(data);
             const { signal, color } = getSignalAndColor(average);
             indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
 
+            // Zapis do localStorage
             localStorage.setItem(cacheKey, average.toString());
+            localStorage.setItem(rawDataKey, JSON.stringify(data));
+            localStorage.setItem(trendKey, JSON.stringify(trend));
             localStorage.setItem(cacheTimeKey, now.toString());
         }
 
