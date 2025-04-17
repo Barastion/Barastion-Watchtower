@@ -318,26 +318,26 @@ body {
 }
 
 .fear-greed-indicator .trend-indicator {
-    font-size: 1em; /* Zmniejszono, aby lepiej pasować do tekstu */
-    margin-right: 3px; /* Minimalny odstęp od liczby */
-    vertical-align: baseline; /* Wyrównanie do baseline tekstu */
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Biały kontur dla widoczności */
-    line-height: 1; /* Zapobiega przesunięciom */
+    font-size: 1em;
+    margin-right: 3px;
+    vertical-align: baseline;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 1), /* Czarny kontur */
+                 0 0 3.5px rgba(0, 0, 0, 1); /* Dodatkowy cień dla lepszej widoczności */
+    line-height: 1;
 }
 
 .fear-greed-indicator .trend-up {
-    color: #00ff00; /* Jaśniejszy zielony dla lepszej widoczności */
-    animation: glow-positive 1.5s ease-in-out infinite; /* Nowa animacja migotania */
+    color: #00ff00;
+    animation: glow-positive 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-down {
     color: var(--fear-greed-sell);
-    animation: glow-negative 1.5s ease-in-out infinite; /* Nowa animacja migotania */
+    animation: glow-negative 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-neutral {
     color: var(--fear-greed-hold);
-    /* Bez animacji dla neutralnego trendu */
 }
 
 .crypto-grid {
@@ -389,6 +389,10 @@ body {
 .crypto-tile.negative-high {
     background-color: rgba(225, 0, 0, 0.9);
     animation: pulse-negative 2s infinite;
+}
+
+.crypto-tile.neutral {
+    background-color: rgba(128, 128, 128, 0.5);
 }
 
 .crypto-symbol {
@@ -720,9 +724,11 @@ tr:hover td:last-child {
     }
 
     .fear-greed-indicator .trend-indicator {
-        font-size: 0.9em; /* Mniejszy rozmiar na mobilnych */
-        margin-right: 2px; /* Mniejszy odstęp na mobilnych */
+        font-size: 0.9em;
+        margin-right: 2px;
         vertical-align: baseline;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 1), /* Czarny kontur */
+                     0 0 3.5px rgba(0, 0, 0, 1);
     }
 
     .crypto-grid {
