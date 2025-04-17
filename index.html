@@ -156,6 +156,25 @@
             return Math.round(weightedIndex);
         }
 
+        function calculateTrend(values) {
+            // Średnia z ostatnich 5 dni (indeksy 0-4)
+            const last5Days = values.slice(0, 5).map(item => parseInt(item.value));
+            const avgLast5 = last5Days.reduce((sum, val) => sum + val, 0) / last5Days.length;
+
+            // Średnia z dni 6-30 (indeksy 5-28)
+            const previous24Days = values.slice(5, 29).map(item => parseInt(item.value));
+            const avgPrevious24 = previous24Days.reduce((sum, val) => sum + val, 0) / previous24Days.length;
+
+            // Określenie trendu
+            if (avgLast5 > avgPrevious24) {
+                return { symbol: '↑', class: 'trend-up' };
+            } else if (avgLast5 < avgPrevious24) {
+                return { symbol: '↓', class: 'trend-down' };
+            } else {
+                return { symbol: '●', class: 'trend-neutral' };
+            }
+        }
+
         function getSignalAndColor(value) {
             if (value <= 24) return { signal: 'OKAZJA!', color: 'var(--fear-greed-opportunity)' };
             if (value <= 49) return { signal: 'Rozważ zakup', color: 'var(--fear-greed-consider-buy)' };
@@ -189,8 +208,9 @@
             }
 
             const average = calculateWeightedIndex(data);
+            const trend = calculateTrend(data);
             const { signal, color } = getSignalAndColor(average);
-            indicator.innerHTML = `Miesięczny sygnał: <span class="fear-greed-value">${average} – ${signal}</span>`;
+            indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
 
             localStorage.setItem(cacheKey, average.toString());
