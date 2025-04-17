@@ -309,17 +309,24 @@ body {
     overflow: hidden;
     white-space: normal;
     box-sizing: border-box;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
-    /* Cienki, wyraźny czarny kontur dla całego tekstu */
-    -webkit-text-stroke: 0.5px black;
-    text-stroke: 0.5px black;
+    /* Zewnętrzny czarny kontur za pomocą text-shadow */
+    text-shadow: 
+        -0.5px -0.5px 0 black, /* Góra-lewo */
+         0.5px -0.5px 0 black, /* Góra-prawo */
+        -0.5px  0.5px 0 black, /* Dół-lewo */
+         0.5px  0.5px 0 black, /* Dół-prawo */
+        -0.5px  0    0 black, /* Lewo */
+         0.5px  0    0 black, /* Prawo */
+         0    -0.5px 0 black, /* Góra */
+         0     0.5px 0 black, /* Dół */
+         /* Dodatkowy cień dla efektu */
+         0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .fear-greed-indicator .fear-greed-value {
     font-weight: 600 !important;
     color: #ffffff; /* Zapewnienie białego koloru tekstu */
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
-    /* Kontur dziedziczony z .fear-greed-indicator */
+    /* Kontur i cień dziedziczone z .fear-greed-indicator */
 }
 
 .fear-greed-indicator .trend-indicator {
@@ -327,12 +334,19 @@ body {
     margin-right: 3px;
     margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" */
     vertical-align: baseline;
-    /* Cienki, wyraźny czarny kontur dla symbolu trendu */
-    -webkit-text-stroke: 0.5px black;
-    text-stroke: 0.5px black;
-    /* Zachowany cień dla lepszej widoczności */
-    text-shadow: 0 0 2px rgba(0, 0, 0, 1),
-                 0 0 3.5px rgba(0, 0, 0, 1);
+    /* Zewnętrzny czarny kontur za pomocą text-shadow */
+    text-shadow: 
+        -0.5px -0.5px 0 black, /* Góra-lewo */
+         0.5px -0.5px 0 black, /* Góra-prawo */
+        -0.5px  0.5px 0 black, /* Dół-lewo */
+         0.5px  0.5px 0 black, /* Dół-prawo */
+        -0.5px  0    0 black, /* Lewo */
+         0.5px  0    0 black, /* Prawo */
+         0    -0.5px 0 black, /* Góra */
+         0     0.5px 0 black, /* Dół */
+         /* Dodatkowy cień dla efektu */
+         0 0 2px rgba(0, 0, 0, 1),
+         0 0 3.5px rgba(0, 0, 0, 1);
     line-height: 1;
 }
 
@@ -738,12 +752,19 @@ tr:hover td:last-child {
         margin-right: 2px;
         margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
         vertical-align: baseline;
-        /* Cienki, wyraźny czarny kontur dla symbolu trendu */
-        -webkit-text-stroke: 0.5px black;
-        text-stroke: 0.5px black;
-        /* Zachowany cień dla lepszej widoczności */
-        text-shadow: 0 0 2px rgba(0, 0, 0, 1),
-                     0 0 3.5px rgba(0, 0, 0, 1);
+        /* Zewnętrzny czarny kontur za pomocą text-shadow */
+        text-shadow: 
+            -0.5px -0.5px 0 black, /* Góra-lewo */
+             0.5px -0.5px 0 black, /* Góra-prawo */
+            -0.5px  0.5px 0 black, /* Dół-lewo */
+             0.5px  0.5px 0 black, /* Dół-prawo */
+            -0.5px  0    0 black, /* Lewo */
+             0.5px  0    0 black, /* Prawo */
+             0    -0.5px 0 black, /* Góra */
+             0     0.5px 0 black, /* Dół */
+             /* Dodatkowy cień dla efektu */
+             0 0 2px rgba(0, 0, 0, 1),
+             0 0 3.5px rgba(0, 0, 0, 1);
     }
 
     .crypto-grid {
