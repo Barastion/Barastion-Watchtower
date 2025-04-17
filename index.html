@@ -121,6 +121,13 @@
             }
         }
 
+        // Funkcja zapisująca dane do localStorage
+        function setCachedData(cacheKey, cacheTimeKey, data) {
+            const minifiedData = minifyData(cacheKey, data);
+            localStorage.setItem(cacheKey, JSON.stringify(minifiedData));
+            localStorage.setItem(cacheTimeKey, Date.now().toString());
+        }
+
         // Funkcja sprawdzająca cache w localStorage z limitem czasowym
         function getCachedData(cacheKey, cacheTimeKey, cacheDuration) {
             const cachedData = localStorage.getItem(cacheKey);
@@ -135,6 +142,16 @@
 
         // Funkcja pobierająca dowolne dane z localStorage (nawet starsze)
         function getAnyCachedData(cacheKey) {
+            // Najpierw sprawdź dane fallback (24 godziny)
+            const fallbackKey = `${cacheKey}_fallback`;
+            const fallbackTimeKey = `${fallbackKey}_time`;
+            const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const cachedFallback = getCachedData(fallbackKey, fallbackTimeKey, fallbackDuration);
+            if (cachedFallback) {
+                console.log(`Używam danych fallback dla ${cacheKey}`);
+                return cachedFallback;
+            }
+            // Następnie sprawdź zwykłe dane
             const cachedData = localStorage.getItem(cacheKey);
             if (cachedData) {
                 return JSON.parse(cachedData);
@@ -142,10 +159,85 @@
             return null;
         }
 
-        // Funkcja zapisująca dane do localStorage
-        function setCachedData(cacheKey, cacheTimeKey, data) {
-            localStorage.setItem(cacheKey, JSON.stringify(data));
-            localStorage.setItem(cacheTimeKey, Date.now().toString());
+        // Funkcja inicjalizująca dane fallback przy pierwszym ładowaniu
+        async function initializeFallbackData(ip) {
+            const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const sections = [
+                { key: 'fear_greed_raw_data', fetchFn: getFearAndGreedData },
+                { key: 'crypto_data', fetchFn: getCryptoData },
+                { key: 'weather_' + ip, fetchFn: () => getWeather(ip) },
+                { key: 'nasa_apod_data', fetchFn: getNasaApodImage },
+                { key: 'daily_fact', fetchFn: getDailyFact }
+            ];
+
+            for (const section of sections) {
+                const fallbackKey = `${section.key}_fallback`;
+                const fallbackTimeKey = `${fallbackKey}_time`;
+                const cachedTime = localStorage.getItem(fallbackTimeKey);
+                const now = Date.now();
+
+                // Sprawdź, czy dane fallback istnieją i są aktualne
+                if (!cachedTime || (now - parseInt(cachedTime) > fallbackDuration)) {
+                    console.log(`Inicjalizuję dane fallback dla ${section.key}`);
+                    try {
+                        const data = await section.fetchFn();
+                        if (data) {
+                            setCachedData(fallbackKey, fallbackTimeKey, data);
+                            console.log(`Zapisano dane fallback dla ${section.key}`);
+                        }
+                    } catch (err) {
+                        console.error(`Błąd inicjalizacji danych fallback dla ${section.key}:`, err);
+                    }
+                }
+            }
+        }
+
+        // Funkcja minimalizująca dane przed zapisem do localStorage
+        function minifyData(cacheKey, data) {
+            if (!data) return data;
+
+            if (cacheKey.includes('fear_greed_raw_data')) {
+                return data.map(item => ({
+                    value: item.value,
+                    timestamp: item.timestamp
+                }));
+            }
+            if (cacheKey.includes('crypto_data')) {
+                return data.map(coin => ({
+                    id: coin.id,
+                    symbol: coin.symbol,
+                    current_price: coin.current_price,
+                    price_change_percentage_24h: coin.price_change_percentage_24h
+                }));
+            }
+            if (cacheKey.includes('weather_')) {
+                return {
+                    city: data.city,
+                    forecast: {
+                        time: data.forecast.time,
+                        temperature_2m_max: data.forecast.temperature_2m_max,
+                        temperature_2m_min: data.forecast.temperature_2m_min,
+                        weathercode: data.forecast.weathercode,
+                        sunrise: data.forecast.sunrise,
+                        sunset: data.forecast.sunset,
+                        apparent_temperature_max: data.forecast.apparent_temperature_max,
+                        precipitation_sum: data.forecast.precipitation_sum,
+                        windspeed_10m_max: data.forecast.windspeed_10m_max,
+                        winddirection_10m_dominant: data.forecast.winddirection_10m_dominant
+                    }
+                };
+            }
+            if (cacheKey.includes('nasa_apod_data')) {
+                return {
+                    url: data.url,
+                    title: data.title,
+                    explanation: data.explanation
+                };
+            }
+            if (cacheKey.includes('daily_fact')) {
+                return data; // Dane już minimalne
+            }
+            return data; // Zwróć bez zmian dla innych kluczy
         }
 
         // Fear and Greed Index
@@ -173,6 +265,7 @@
                 const trend = calculateTrend(cachedData);
                 setCachedData(cacheKey, cacheTimeKey, average);
                 setCachedData(trendKey, cacheTimeKey, trend);
+                setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayFearGreed(average, trend);
                 return cachedData;
             }
@@ -184,6 +277,7 @@
                     throw new Error('Za mało danych do obliczenia trendu');
                 }
                 setCachedData(rawDataKey, cacheTimeKey, data.data);
+                setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, data.data);
                 const average = calculateWeightedIndex(data.data);
                 const trend = calculateTrend(data.data);
                 setCachedData(cacheKey, cacheTimeKey, average);
@@ -583,6 +677,7 @@
             const cachedWeather = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedWeather) {
                 console.log('Używam danych pogodowych z cache:', ip);
+                setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedWeather);
                 displayWeather(cachedWeather, ip);
                 return;
             }
@@ -604,6 +699,7 @@
                 if (forecastData.daily) {
                     const weatherData = { city, forecast: forecastData.daily };
                     setCachedData(cacheKey, cacheTimeKey, weatherData);
+                    setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, weatherData);
                     displayWeather(weatherData, ip);
                 } else {
                     throw new Error('Brak danych pogodowych');
@@ -690,6 +786,7 @@
             const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
                 console.log('Używam danych NASA APOD z cache');
+                setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayNasaApod(cachedData);
                 return;
             }
@@ -709,6 +806,7 @@
                             explanation: data.explanation || 'Brak opisu dla tego zdjęcia.'
                         };
                         setCachedData(cacheKey, cacheTimeKey, apodData);
+                        setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, apodData);
                         displayNasaApod(apodData);
                         imgElement.onerror = () => {
                             console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
@@ -778,6 +876,7 @@
             const cachedFact = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedFact && cachedFact.dateKey === dateKey) {
                 console.log('Używam ciekawostki z cache');
+                setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedFact);
                 displayDailyFact(cachedFact.fact);
                 return;
             }
@@ -788,6 +887,7 @@
                 const fact = data[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
                 const factData = { dateKey, fact };
                 setCachedData(cacheKey, cacheTimeKey, factData);
+                setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, factData);
                 displayDailyFact(fact);
             } catch (err) {
                 console.error('Błąd pobierania ciekawostki:', err);
@@ -815,6 +915,7 @@
             const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
                 console.log('Używam danych kryptowalut z cache');
+                setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayCryptoData(cachedData);
                 return;
             }
@@ -837,6 +938,7 @@
                 }));
 
                 setCachedData(cacheKey, cacheTimeKey, filteredCoins);
+                setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, filteredCoins);
                 displayCryptoData(filteredCoins);
             } catch (err) {
                 console.error('Błąd pobierania danych kryptowalut:', err);
@@ -939,12 +1041,12 @@
                     isReloading = true;
                     try {
                         const ipPromise = getIp();
+                        const ip = await ipPromise;
+                        await initializeFallbackData(ip); // Inicjalizacja danych fallback
                         const nasaPromise = getNasaApodImage();
                         const dailyFactPromise = getDailyFact();
                         const cryptoPromise = getCryptoData();
                         const fearGreedPromise = updateFearGreedIndicator();
-
-                        const ip = await ipPromise;
                         const weatherPromise = getWeather(ip);
 
                         const results = await Promise.allSettled([
@@ -990,31 +1092,59 @@
         }
 
         // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
+        let cryptoIntervalId = null;
         function startCryptoUpdateInterval() {
             getCryptoData();
-            setInterval(() => {
+            cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję dane kryptowalut...');
                 getCryptoData();
             }, 900000); // 15 minut
         }
 
         // Automatyczna aktualizacja Fear and Greed Index co 1 godzinę
+        let fearGreedIntervalId = null;
         function startFearGreedUpdateInterval() {
             updateFearGreedIndicator();
-            setInterval(() => {
+            fearGreedIntervalId = setInterval(() => {
                 console.log('Aktualizuję Fear and Greed Index...');
                 updateFearGreedIndicator();
             }, 3600000); // 1 godzina
+        }
+
+        // Funkcja zarządzająca interwałami w zależności od widoczności karty
+        function manageUpdateIntervals() {
+            if (document.visibilityState === 'visible') {
+                console.log('Karta aktywna, włączam aktualizacje');
+                if (!cryptoIntervalId) {
+                    startCryptoUpdateInterval();
+                }
+                if (!fearGreedIntervalId) {
+                    startFearGreedUpdateInterval();
+                }
+                // Natychmiastowa aktualizacja po powrocie
+                getCryptoData();
+                updateFearGreedIndicator();
+            } else {
+                console.log('Karta nieaktywna, wstrzymuję aktualizacje');
+                if (cryptoIntervalId) {
+                    clearInterval(cryptoIntervalId);
+                    cryptoIntervalId = null;
+                }
+                if (fearGreedIntervalId) {
+                    clearInterval(fearGreedIntervalId);
+                    fearGreedIntervalId = null;
+                }
+            }
         }
 
         // Inicjalizacja strony
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
-            startCryptoUpdateInterval();
-            startFearGreedUpdateInterval();
+            manageUpdateIntervals();
             window.addEventListener('online', handleNetworkStatus);
             window.addEventListener('offline', handleNetworkStatus);
+            document.addEventListener('visibilitychange', manageUpdateIntervals);
         };
 
         window.addEventListener('load', checkCSSLoaded);
