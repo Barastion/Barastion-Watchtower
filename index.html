@@ -678,7 +678,7 @@
                     const price = parseFloat(coin.current_price);
                     return (
                         (price < 0.99 || price > 1.01) &&
-                        price > 0.0001
+                        price > 0.01
                     );
                 }).slice(0, limit).map(coin => ({
                     id: coin.id,
