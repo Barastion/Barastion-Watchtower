@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipgeolocation.io https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -591,17 +591,17 @@
             }
 
             try {
-                const data = await retryFetch(`https://ipapi.co/${ip}/json/`);
+                const data = await retryFetch(`https://api.ipgeolocation.io/ipgeo?ip=${ip}`);
                 console.log('Dane lokalizacji dla IP:', ip, data);
                 if (data.error) {
-                    throw new Error('Błąd API: ' + (data.reason || 'Nieznany powód'));
+                    throw new Error('Błąd API: ' + (data.message || 'Nieznany powód'));
                 }
                 const location = {
                     city: data.city || 'Nieznane miasto',
                     country: data.country_name || 'Nieznany kraj',
                     lat: data.latitude || null,
                     lon: data.longitude || null,
-                    isp: data.org || 'Nieznany dostawca'
+                    isp: data.isp || 'Nieznany dostawca'
                 };
                 setCachedData(cacheKey, cacheTimeKey, location);
                 localStorage.setItem(cacheSignatureKey, currentSignature);
@@ -609,7 +609,7 @@
             } catch (err) {
                 console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
                 if (err.message.includes('429')) {
-                    console.warn('Przekroczono limit API ipapi.co');
+                    console.warn('Przekroczono limit API ipgeolocation.io');
                 }
                 return {
                     city: 'Nieznane miasto',
