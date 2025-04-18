@@ -346,7 +346,7 @@
 
             try {
                 const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
-                if (!data.data || data.data.length < 21) {
+                if (!data.data || data.data.length < 15) {
                     throw new Error('Za mało danych do obliczenia trendu');
                 }
                 const sortedData = data.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -403,18 +403,18 @@
         }
 
         function calculateTrend(values) {
-            if (!values || values.length < 21) {
+            if (!values || values.length < 15) {
                 console.error('Niewystarczająca liczba danych do trendu');
                 return { symbol: '•', class: 'trend-neutral' };
             }
-            const last7Days = values.slice(0, 7).map(item => parseFloat(item.value) || 0);
-            const avgLast7 = last7Days.reduce((sum, val) => sum + val, 0) / last7Days.length;
-            const previous14Days = values.slice(7, 21).map(item => parseFloat(item.value) || 0);
-            const avgPrevious14 = previous14Days.reduce((sum, val) => sum + val, 0) / previous14Days.length;
-            const difference = Math.abs(avgLast7 - avgPrevious14);
+            const last5Days = values.slice(0, 5).map(item => parseFloat(item.value) || 0);
+            const avgLast5 = last5Days.reduce((sum, val) => sum + val, 0) / last5Days.length;
+            const previous10Days = values.slice(5, 15).map(item => parseFloat(item.value) || 0);
+            const avgPrevious10 = previous10Days.reduce((sum, val) => sum + val, 0) / previous10Days.length;
+            const difference = Math.abs(avgLast5 - avgPrevious10);
             if (difference < 3) {
                 return { symbol: '•', class: 'trend-neutral' };
-            } else if (avgLast7 > avgPrevious14) {
+            } else if (avgLast5 > avgPrevious10) {
                 return { symbol: '▲', class: 'trend-up' };
             } else {
                 return { symbol: '▼', class: 'trend-down' };
