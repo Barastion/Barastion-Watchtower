@@ -101,9 +101,9 @@
 
         // Funkcja do ponawiania żądań z timeoutem i obsługą błędu 429
         async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
-            let rateLimitRetries = 3; // Maksymalna liczba prób dla błędu 429
-            let rateLimitDelay = 10000; // Początkowe opóźnienie dla 429 (10 sekund)
-            const maxRateLimitDelay = 40000; // Maksymalne opóźnienie (40 sekund)
+            let rateLimitRetries = 3;
+            let rateLimitDelay = 10000;
+            const maxRateLimitDelay = 40000;
 
             for (let attempt = 1; attempt <= retries + rateLimitRetries; attempt++) {
                 try {
@@ -129,7 +129,7 @@
                         }
 
                         await new Promise(resolve => setTimeout(resolve, delayMs));
-                        rateLimitDelay = Math.min(rateLimitDelay * 2, maxRateLimitDelay); // Wykładniczy wzrost opóźnienia
+                        rateLimitDelay = Math.min(rateLimitDelay * 2, maxRateLimitDelay);
                         continue;
                     }
 
@@ -147,15 +147,14 @@
             }
         }
 
-        // Funkcja czyszcząca stare dane z localStorage (starsze niż 48 godzin)
+        // Funkcja czyszcząca stare dane z localStorage
         function cleanOldCache() {
             const now = Date.now();
-            const cleanupInterval = 3600000; // 1 godzina
+            const cleanupInterval = 3600000;
             const lastCleanupTime = localStorage.getItem('lastCleanupTime');
-            const cleanupThreshold = 48 * 60 * 60 * 1000; // 48 godzin
+            const cleanupThreshold = 48 * 60 * 60 * 1000;
             const isCleanupTriggered = localStorage.getItem('isCleanupTriggered');
 
-            // Sprawdź, czy czyszczenie jest już zaplanowane lub minęła godzina
             if (isCleanupTriggered === 'true' || (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval))) {
                 console.debug('Czyszczenie pominięte: minęło za mało czasu lub czyszczenie już zaplanowane');
                 return;
@@ -194,7 +193,7 @@
             localStorage.setItem(cacheTimeKey, Date.now().toString());
         }
 
-        // Funkcja sprawdzająca cache z obsługą wydłużonego czasu po błędzie 429
+        // Funkcja sprawdzająca cache
         function getCachedData(cacheKey, cacheTimeKey, cacheDuration) {
             const cachedData = localStorage.getItem(cacheKey);
             const cachedTime = localStorage.getItem(cacheTimeKey);
@@ -222,7 +221,7 @@
         function getAnyCachedData(cacheKey) {
             const fallbackKey = `${cacheKey}_fallback`;
             const fallbackTimeKey = `${fallbackKey}_time`;
-            const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const fallbackDuration = 24 * 60 * 60 * 1000;
             const cachedFallback = getCachedData(fallbackKey, fallbackTimeKey, fallbackDuration);
             if (cachedFallback) {
                 console.log(`Używam danych fallback dla ${cacheKey}`);
@@ -237,7 +236,7 @@
 
         // Inicjalizacja danych fallback
         async function initializeFallbackData(ip) {
-            const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const fallbackDuration = 24 * 60 * 60 * 1000;
             const sections = [
                 { key: 'fear_greed_raw_data', fetchFn: getFearAndGreedData },
                 { key: 'crypto_data', fetchFn: getCryptoData },
@@ -320,8 +319,8 @@
             const rawDataKey = 'fear_greed_raw_data';
             const trendKey = 'fear_greed_trend';
             const cacheTimeKey = 'fear_greed_time';
-            const cacheDuration = 3600000; // 1 godzina
-            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
+            const cacheDuration = 3600000;
+            const extendedCacheDuration = cacheDuration * 2;
 
             const anyCachedRawData = getAnyCachedData(rawDataKey);
             const anyCachedAverage = getAnyCachedData(cacheKey);
@@ -340,7 +339,7 @@
                 setCachedData(trendKey, cacheTimeKey, trend);
                 setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayFearGreed(average, trend);
-                cleanOldCache(); // Czyszczenie po Fear and Greed
+                cleanOldCache();
                 return cachedData;
             }
 
@@ -362,7 +361,7 @@
                 setCachedData(trendKey, cacheTimeKey, trend);
                 localStorage.removeItem(`rateLimit_${rawDataKey}`);
                 displayFearGreed(average, trend);
-                cleanOldCache(); // Czyszczenie po Fear and Greed
+                cleanOldCache();
                 return validatedData;
             } catch (error) {
                 console.error('Błąd pobierania Fear and Greed:', error);
@@ -433,7 +432,7 @@
             const indicator = document.getElementById('fearGreedIndicator');
             const roundedAverage = Math.round(average);
             const { signal, color } = getSignalAndColor(roundedAverage);
-            indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${roundedAverage} – ${signal}</span>`;
+            indicator.innerHTML = `<span class="fear-greed-text">Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> ${roundedAverage} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
         }
 
@@ -452,7 +451,7 @@
                 displayFearGreed(anyCachedAverage, anyCachedTrend);
             } else if (!data) {
                 const indicator = document.getElementById('fearGreedIndicator');
-                indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
+                indicator.innerHTML = '<span class="fear-greed-text">Miesięczny sygnał: Brak danych</span>';
                 indicator.style.backgroundColor = '#808080';
             }
         }
@@ -640,8 +639,8 @@
         async function getIp() {
             const cacheKey = 'ip_data';
             const cacheTimeKey = 'ip_time';
-            const cacheDuration = 15 * 60 * 1000; // 15 minut
-            const extendedCacheDuration = cacheDuration * 2; // 30 minut
+            const cacheDuration = 15 * 60 * 1000;
+            const extendedCacheDuration = cacheDuration * 2;
 
             const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
@@ -671,8 +670,8 @@
         async function getLocation(ip) {
             const cacheKey = `location_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
-            const cacheDuration = 3600000; // 1 godzina
-            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
+            const cacheDuration = 3600000;
+            const extendedCacheDuration = cacheDuration * 2;
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
             const cacheSignatureKey = `${cacheKey}_signature`;
@@ -766,8 +765,8 @@
         async function getWeather(ip) {
             const cacheKey = `weather_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
-            const cacheDuration = 3600000; // 1 godzina
-            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
+            const cacheDuration = 3600000;
+            const extendedCacheDuration = cacheDuration * 2;
 
             const anyCachedWeather = getAnyCachedData(cacheKey);
             if (anyCachedWeather) {
@@ -780,7 +779,7 @@
                 console.log('Używam pogody z cache:', ip);
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedWeather);
                 displayWeather(cachedWeather, ip);
-                cleanOldCache(); // Czyszczenie po pogodzie
+                cleanOldCache();
                 return cachedWeather;
             }
 
@@ -800,7 +799,7 @@
                     setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, weatherData);
                     localStorage.removeItem(`rateLimit_${cacheKey}`);
                     displayWeather(weatherData, ip);
-                    cleanOldCache(); // Czyszczenie po pogodzie
+                    cleanOldCache();
                     return weatherData;
                 } else {
                     throw new Error('Brak danych pogodowych');
@@ -883,8 +882,8 @@
         async function getNasaApodImage(retries = 5, delay = 2000) {
             const cacheKey = 'nasa_apod_data';
             const cacheTimeKey = 'nasa_apod_time';
-            const cacheDuration = 3600000; // 1 godzina
-            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
+            const cacheDuration = 3600000;
+            const extendedCacheDuration = cacheDuration * 2;
 
             const anyCachedData = getAnyCachedData(cacheKey);
             if (anyCachedData) {
@@ -972,8 +971,8 @@
         async function getDailyFact() {
             const cacheKey = 'daily_fact';
             const cacheTimeKey = 'daily_fact_time';
-            const cacheDuration = 3600000; // 1 godzina
-            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
+            const cacheDuration = 3600000;
+            const extendedCacheDuration = cacheDuration * 2;
 
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
@@ -1095,8 +1094,8 @@
         async function getCryptoData() {
             const cacheKey = 'crypto_data';
             const cacheTimeKey = 'crypto_time';
-            const cacheDuration = 15 * 60 * 1000; // 15 minut
-            const extendedCacheDuration = cacheDuration * 2; // 30 minut
+            const cacheDuration = 15 * 60 * 1000;
+            const extendedCacheDuration = cacheDuration * 2;
 
             const anyCachedData = getAnyCachedData(cacheKey);
             if (anyCachedData) {
@@ -1178,29 +1177,33 @@
             }
         }
 
-        function formatPrice(price) {
-            if (price === 0) return '$0.00';
+        function formatPrice(price, currency = 'USD') {
+            if (price === 0) return `${currency} 0.00`;
+            
+            let exchangeRate = 1;
+            if (currency === 'PLN') {
+                exchangeRate = 4.0; // Stały kurs USD/PLN = 4.0 dla uproszczenia
+            }
+            
+            const adjustedPrice = price * exchangeRate;
+            const integerPart = Math.floor(adjustedPrice).toString();
+            const integerLength = integerPart.length;
+            
             let formatted;
-            if (price < 0.01 && price > 0) {
-                formatted = `$${price.toFixed(6)}`;
+            if (integerLength >= 7) {
+                formatted = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
             } else {
-                formatted = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                formatted = adjustedPrice.toLocaleString('pl-PL', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).replace(',', '.').replace(/\u00A0/g, ' ');
             }
+            
             if (formatted.length > 10) {
-                if (price < 0.01) {
-                    const decimals = Math.max(2, 10 - 3 - Math.floor(Math.log10(price)));
-                    formatted = `$${price.toFixed(decimals)}`;
-                    if (formatted.length > 10) {
-                        formatted = formatted.substring(0, 10);
-                    }
-                } else {
-                    formatted = `$${Math.round(price * 100) / 100}`;
-                    if (formatted.length > 10) {
-                        formatted = formatted.substring(0, 10);
-                    }
-                }
+                formatted = formatted.substring(0, 10);
             }
-            return formatted;
+            
+            return `${currency} ${formatted}`;
         }
 
         function getChangeClass(change) {
@@ -1223,7 +1226,8 @@
                 cryptoTile.className = `crypto-tile ${getChangeClass(coin.price_change_percentage_24h)}`;
                 cryptoTile.innerHTML = `
                     <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
-                    <div class="crypto-price">${formatPrice(coin.current_price)}</div>
+                    <div class="crypto-price-usd">${formatPrice(coin.current_price, 'USD')}</div>
+                    <div class="crypto-price-pln">${formatPrice(coin.current_price, 'PLN')}</div>
                     <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}% / 24h</div>
                 `;
                 cryptoTile.addEventListener('click', () => {
@@ -1243,7 +1247,11 @@
                     body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
                     .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
                     .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-                    .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
+                    .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 60px; cursor: pointer; }
+                    .crypto-symbol { font-size: 0.85em; font-weight: bold; margin-bottom: 2px; text-shadow: 0 0 4px rgba(0, 0, 0, 1); }
+                    .crypto-price-usd { font-size: 0.75em; margin-bottom: 1px; text-shadow: 0 0 4px rgba(0, 0, 0, 1); }
+                    .crypto-price-pln { font-size: 0.75em; margin-bottom: 2px; text-shadow: 0 0 4px rgba(0, 0, 0, 1); }
+                    .crypto-change { font-size: 0.6em; text-shadow: 0 0 4px rgba(0, 0, 0, 1); }
                     .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
                     .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
                     .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
@@ -1316,7 +1324,7 @@
             cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
-            }, 900000); // 15 minut
+            }, 900000);
         }
 
         let fearGreedIntervalId = null;
@@ -1325,7 +1333,7 @@
             fearGreedIntervalId = setInterval(() => {
                 console.log('Aktualizuję Fear and Greed...');
                 updateFearGreedIndicator();
-            }, 3600000); // 1 godzina
+            }, 3600000);
         }
 
         function manageUpdateIntervals() {
