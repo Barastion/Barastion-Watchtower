@@ -99,21 +99,47 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Funkcja do ponawiania żądań z timeoutem i zabezpieczeniem
+        // Funkcja do ponawiania żądań z timeoutem i obsługą błędu 429
         async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
-            for (let attempt = 1; attempt <= retries; attempt++) {
+            let rateLimitRetries = 3; // Maksymalna liczba prób dla błędu 429
+            let rateLimitDelay = 10000; // Początkowe opóźnienie dla 429 (10 sekund)
+            const maxRateLimitDelay = 40000; // Maksymalne opóźnienie (40 sekund)
+
+            for (let attempt = 1; attempt <= retries + rateLimitRetries; attempt++) {
                 try {
                     const controller = new AbortController();
                     const id = setTimeout(() => controller.abort(), timeout);
                     const response = await fetch(url, { ...options, signal: controller.signal });
                     clearTimeout(id);
+
+                    if (response.status === 429) {
+                        console.warn(`Błąd 429 dla ${url}, próba ${attempt}`);
+                        const retryAfter = response.headers.get('Retry-After');
+                        let delayMs = rateLimitDelay;
+
+                        if (retryAfter) {
+                            const retryAfterSeconds = parseInt(retryAfter, 10);
+                            if (!isNaN(retryAfterSeconds)) {
+                                delayMs = retryAfterSeconds * 1000;
+                            }
+                        }
+
+                        if (attempt >= retries + rateLimitRetries) {
+                            throw new Error('RateLimitExceeded');
+                        }
+
+                        await new Promise(resolve => setTimeout(resolve, delayMs));
+                        rateLimitDelay = Math.min(rateLimitDelay * 2, maxRateLimitDelay); // Wykładniczy wzrost opóźnienia
+                        continue;
+                    }
+
                     if (!response.ok) {
                         throw new Error(`Błąd HTTP: ${response.status}`);
                     }
                     return await response.json();
                 } catch (err) {
                     console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
-                    if (attempt === retries) {
+                    if (err.message === 'RateLimitExceeded' || attempt === retries + rateLimitRetries) {
                         throw err;
                     }
                     await new Promise(resolve => setTimeout(resolve, delay));
@@ -121,28 +147,77 @@
             }
         }
 
+        // Funkcja czyszcząca stare dane z localStorage (starsze niż 48 godzin)
+        function cleanOldCache() {
+            const now = Date.now();
+            const cleanupInterval = 3600000; // 1 godzina
+            const lastCleanupTime = localStorage.getItem('lastCleanupTime');
+            const cleanupThreshold = 48 * 60 * 60 * 1000; // 48 godzin
+
+            // Sprawdź, czy minęła godzina od ostatniego czyszczenia
+            if (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval)) {
+                console.log('Czyszczenie pominięte: minęło za mało czasu');
+                return;
+            }
+
+            console.log('Rozpoczynam czyszczenie localStorage...');
+            const keysToRemove = [];
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.endsWith('_time') && key !== 'lastCleanupTime') {
+                    const cachedTime = parseInt(localStorage.getItem(key));
+                    if (now - cachedTime > cleanupThreshold) {
+                        const dataKey = key.replace('_time', '');
+                        keysToRemove.push(key, dataKey);
+                    }
+                }
+            }
+
+            keysToRemove.forEach(key => {
+                console.log(`Usuwam klucz: ${key}`);
+                localStorage.removeItem(key);
+            });
+
+            localStorage.setItem('lastCleanupTime', now.toString());
+            console.log('Czyszczenie localStorage zakończone');
+        }
+
         // Funkcja zapisująca dane do localStorage
         function setCachedData(cacheKey, cacheTimeKey, data) {
             const minifiedData = minifyData(cacheKey, data);
             localStorage.setItem(cacheKey, JSON.stringify(minifiedData));
             localStorage.setItem(cacheTimeKey, Date.now().toString());
+            // Zaplanuj czyszczenie z opóźnieniem (niski priorytet)
+            setTimeout(() => cleanOldCache(), 1000);
         }
 
-        // Funkcja sprawdzająca cache w localStorage z limitem czasowym
+        // Funkcja sprawdzająca cache z obsługą wydłużonego czasu po błędzie 429
         function getCachedData(cacheKey, cacheTimeKey, cacheDuration) {
             const cachedData = localStorage.getItem(cacheKey);
             const cachedTime = localStorage.getItem(cacheTimeKey);
+            const rateLimitKey = `rateLimit_${cacheKey}`;
             const now = Date.now();
 
-            if (cachedData && cachedTime && (now - parseInt(cachedTime) < cacheDuration)) {
+            let effectiveDuration = cacheDuration;
+            const rateLimitData = localStorage.getItem(rateLimitKey);
+            if (rateLimitData) {
+                const { extendedDuration, timestamp } = JSON.parse(rateLimitData);
+                if (now - timestamp < extendedDuration) {
+                    effectiveDuration = extendedDuration;
+                } else {
+                    localStorage.removeItem(rateLimitKey);
+                }
+            }
+
+            if (cachedData && cachedTime && (now - parseInt(cachedTime) < effectiveDuration)) {
                 return JSON.parse(cachedData);
             }
             return null;
         }
 
-        // Funkcja pobierająca dowolne dane z localStorage (nawet starsze)
+        // Funkcja pobierająca dowolne dane z localStorage (fallback)
         function getAnyCachedData(cacheKey) {
-            // Najpierw sprawdź dane fallback (24 godziny)
             const fallbackKey = `${cacheKey}_fallback`;
             const fallbackTimeKey = `${fallbackKey}_time`;
             const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
@@ -151,7 +226,6 @@
                 console.log(`Używam danych fallback dla ${cacheKey}`);
                 return cachedFallback;
             }
-            // Następnie sprawdź zwykłe dane
             const cachedData = localStorage.getItem(cacheKey);
             if (cachedData) {
                 return JSON.parse(cachedData);
@@ -159,7 +233,7 @@
             return null;
         }
 
-        // Funkcja inicjalizująca dane fallback przy pierwszym ładowaniu
+        // Inicjalizacja danych fallback
         async function initializeFallbackData(ip) {
             const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
             const sections = [
@@ -176,7 +250,6 @@
                 const cachedTime = localStorage.getItem(fallbackTimeKey);
                 const now = Date.now();
 
-                // Sprawdź, czy dane fallback istnieją i są aktualne
                 if (!cachedTime || (now - parseInt(cachedTime) > fallbackDuration)) {
                     console.log(`Inicjalizuję dane fallback dla ${section.key}`);
                     try {
@@ -192,10 +265,9 @@
             }
         }
 
-        // Funkcja minimalizująca dane przed zapisem do localStorage
+        // Minimalizacja danych przed zapisem
         function minifyData(cacheKey, data) {
             if (!data) return data;
-
             if (cacheKey.includes('fear_greed_raw_data')) {
                 return data.map(item => ({
                     value: item.value,
@@ -235,9 +307,9 @@
                 };
             }
             if (cacheKey.includes('daily_fact')) {
-                return data; // Dane już minimalne
+                return data;
             }
-            return data; // Zwróć bez zmian dla innych kluczy
+            return data;
         }
 
         // Fear and Greed Index
@@ -247,17 +319,16 @@
             const trendKey = 'fear_greed_trend';
             const cacheTimeKey = 'fear_greed_time';
             const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
-            // Wyświetl starsze dane, jeśli istnieją
             const anyCachedRawData = getAnyCachedData(rawDataKey);
             const anyCachedAverage = getAnyCachedData(cacheKey);
             const anyCachedTrend = getAnyCachedData(trendKey);
             if (anyCachedRawData && anyCachedAverage && anyCachedTrend) {
-                console.log('Wyświetlam starsze dane Fear and Greed z localStorage');
+                console.log('Wyświetlam starsze dane Fear and Greed');
                 displayFearGreed(anyCachedAverage, anyCachedTrend);
             }
 
-            // Sprawdź aktualne dane w cache
             const cachedData = getCachedData(rawDataKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
                 console.log('Używam danych Fear and Greed z cache');
@@ -270,19 +341,12 @@
                 return cachedData;
             }
 
-            // Pobierz nowe dane z API
             try {
                 const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
                 if (!data.data || data.data.length < 21) {
                     throw new Error('Za mało danych do obliczenia trendu');
                 }
-                // Sortowanie danych według timestamp (najnowsze najpierw)
-                const sortedData = data.data.sort((a, b) => {
-                    const dateA = new Date(a.timestamp);
-                    const dateB = new Date(b.timestamp);
-                    return dateB - dateA; // Malejąco
-                });
-                // Walidacja wartości value
+                const sortedData = data.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 const validatedData = sortedData.map(item => ({
                     ...item,
                     value: isNaN(parseFloat(item.value)) ? "0" : item.value
@@ -293,10 +357,24 @@
                 const trend = calculateTrend(validatedData);
                 setCachedData(cacheKey, cacheTimeKey, average);
                 setCachedData(trendKey, cacheTimeKey, trend);
+                localStorage.removeItem(`rateLimit_${rawDataKey}`);
                 displayFearGreed(average, trend);
                 return validatedData;
             } catch (error) {
-                console.error('Błąd pobierania danych Fear and Greed Index:', error);
+                console.error('Błąd pobierania Fear and Greed:', error);
+                if (error.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${rawDataKey}`, JSON.stringify({
+                        extendedDuration: extendedCacheDuration,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${rawDataKey} do ${extendedCacheDuration / 3600000} godzin`);
+                }
+                if (anyCachedRawData) {
+                    const average = calculateWeightedIndex(anyCachedRawData);
+                    const trend = calculateTrend(anyCachedRawData);
+                    displayFearGreed(average, trend);
+                    return anyCachedRawData;
+                }
                 return null;
             }
         }
@@ -311,41 +389,24 @@
                 const groupAverage = group.reduce((sum, val) => sum + val, 0) / group.length;
                 groups.push(parseFloat(groupAverage.toFixed(1)));
             }
-
             const weights = [1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
             const sumWeights = weights.reduce((sum, w) => sum + w, 0);
-
             let weightedSum = 0;
             for (let i = 0; i < groups.length; i++) {
                 weightedSum += groups[i] * weights[i];
             }
-            const weightedIndex = weightedSum / sumWeights;
-
-            return parseFloat(weightedIndex.toFixed(1)); // Zwracamy z 1 miejscem po przecinku
+            return parseFloat((weightedSum / sumWeights).toFixed(1));
         }
 
         function calculateTrend(values) {
-            // Walidacja: upewnij się, że jest wystarczająco danych
             if (!values || values.length < 21) {
-                console.error('Niewystarczająca liczba danych do obliczenia trendu');
+                console.error('Niewystarczająca liczba danych do trendu');
                 return { symbol: '•', class: 'trend-neutral' };
             }
-
-            // Pobierz dane z ostatnich 7 dni
-            const last7Days = values.slice(0, 7).map(item => {
-                const value = parseFloat(item.value);
-                return isNaN(value) ? 0 : parseFloat(value.toFixed(1));
-            });
+            const last7Days = values.slice(0, 7).map(item => parseFloat(item.value) || 0);
             const avgLast7 = last7Days.reduce((sum, val) => sum + val, 0) / last7Days.length;
-
-            // Pobierz dane z poprzednich 14 dni
-            const previous14Days = values.slice(7, 21).map(item => {
-                const value = parseFloat(item.value);
-                return isNaN(value) ? 0 : parseFloat(value.toFixed(1));
-            });
+            const previous14Days = values.slice(7, 21).map(item => parseFloat(item.value) || 0);
             const avgPrevious14 = previous14Days.reduce((sum, val) => sum + val, 0) / previous14Days.length;
-
-            // Porównanie z progiem 3 jednostek
             const difference = Math.abs(avgLast7 - avgPrevious14);
             if (difference < 3) {
                 return { symbol: '•', class: 'trend-neutral' };
@@ -366,7 +427,7 @@
 
         function displayFearGreed(average, trend) {
             const indicator = document.getElementById('fearGreedIndicator');
-            const roundedAverage = Math.round(average); // Zaokrąglenie do liczby całkowitej
+            const roundedAverage = Math.round(average);
             const { signal, color } = getSignalAndColor(roundedAverage);
             indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${roundedAverage} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
@@ -376,31 +437,23 @@
             const cacheKey = 'fear_greed_data';
             const rawDataKey = 'fear_greed_raw_data';
             const trendKey = 'fear_greed_trend';
-            const cacheTimeKey = 'fear_greed_time';
-            const cacheDuration = 3600000; // 1 godzina
-
-            // Wyświetl starsze dane, jeśli istnieją
             const anyCachedAverage = getAnyCachedData(cacheKey);
             const anyCachedTrend = getAnyCachedData(trendKey);
             if (anyCachedAverage && anyCachedTrend) {
-                console.log('Wyświetlam starsze dane Fear and Greed z localStorage');
+                console.log('Wyświetlam starsze dane Fear and Greed');
                 displayFearGreed(anyCachedAverage, anyCachedTrend);
             }
-
-            // Pobierz nowe lub aktualne dane
             const data = await getFearAndGreedData();
-            if (!data) {
-                if (anyCachedAverage && anyCachedTrend) {
-                    displayFearGreed(anyCachedAverage, anyCachedTrend);
-                } else {
-                    const indicator = document.getElementById('fearGreedIndicator');
-                    indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
-                    indicator.style.backgroundColor = '#808080';
-                }
+            if (!data && anyCachedAverage && anyCachedTrend) {
+                displayFearGreed(anyCachedAverage, anyCachedTrend);
+            } else if (!data) {
+                const indicator = document.getElementById('fearGreedIndicator');
+                indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
+                indicator.style.backgroundColor = '#808080';
             }
         }
 
-        // Pozostałe funkcje (logi, pogoda, NASA, ciekawostki)
+        // Funkcje pomocnicze
         function getDeviceType(userAgent) {
             if (userAgent.includes('Android')) return 'Android';
             if (userAgent.includes('iPhone')) return 'iPhone';
@@ -425,9 +478,9 @@
                     }
                     const logs = Object.values(logsData);
                     const fiveMinutesAgo = timestamp - (5 * 60 * 1000);
-                    const isDuplicate = logs.some(log => 
-                        log.ip === ip && 
-                        log.device === device && 
+                    const isDuplicate = logs.some(log =>
+                        log.ip === ip &&
+                        log.device === device &&
                         log.timestamp > fiveMinutesAgo
                     );
                     resolve(isDuplicate);
@@ -503,7 +556,7 @@
             const logTableBody = document.getElementById('logTableBody');
             const toggleButton = document.getElementById('toggleLogs');
             if (!logTableBody || !toggleButton) {
-                console.error('Brak elementu #logTableBody lub #toggleLogs w HTML');
+                console.error('Brak elementu #logTableBody lub #toggleLogs');
                 return;
             }
 
@@ -584,6 +637,7 @@
             const cacheKey = 'ip_data';
             const cacheTimeKey = 'ip_time';
             const cacheDuration = 15 * 60 * 1000; // 15 minut
+            const extendedCacheDuration = cacheDuration * 2; // 30 minut
 
             const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
@@ -595,9 +649,17 @@
                 const data = await retryFetch('https://api.ipify.org?format=json');
                 console.log('IP pobrane:', data.ip);
                 setCachedData(cacheKey, cacheTimeKey, data);
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
                 return data.ip || 'Nieznany IP';
             } catch (err) {
                 console.error('Błąd pobierania IP:', err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: extendedCacheDuration,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 60000} minut`);
+                }
                 return 'Nieznany IP';
             }
         }
@@ -606,24 +668,24 @@
             const cacheKey = `location_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
             const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
             const cacheSignatureKey = `${cacheKey}_signature`;
             const currentSignature = `${ip}_${device}`;
             const cachedSignature = localStorage.getItem(cacheSignatureKey);
 
-            // Sprawdzenie, czy IP i urządzenie się nie zmieniły
             if (cachedSignature === currentSignature) {
                 const cachedLocation = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
                 if (cachedLocation) {
-                    console.log('Używam danych lokalizacji z cache:', ip);
+                    console.log('Używam lokalizacji z cache:', ip);
                     return cachedLocation;
                 }
             }
 
             try {
                 const data = await retryFetch(`https://ipapi.co/${ip}/json/`);
-                console.log('Dane lokalizacji dla IP:', ip, data);
+                console.log('Lokalizacja dla IP:', ip, data);
                 if (data.error) {
                     throw new Error('Błąd API: ' + (data.reason || 'Nieznany powód'));
                 }
@@ -636,11 +698,16 @@
                 };
                 setCachedData(cacheKey, cacheTimeKey, location);
                 localStorage.setItem(cacheSignatureKey, currentSignature);
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
                 return location;
             } catch (err) {
-                console.error('Błąd pobierania lokalizacji dla IP:', ip, err);
-                if (err.message.includes('429')) {
-                    console.warn('Przekroczono limit API ipapi.co');
+                console.error('Błąd pobierania lokalizacji:', ip, err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: extendedCacheDuration,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
                 }
                 return {
                     city: 'Nieznane miasto',
@@ -696,27 +763,24 @@
             const cacheKey = `weather_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
             const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
-            // Wyświetl starsze dane, jeśli istnieją
             const anyCachedWeather = getAnyCachedData(cacheKey);
             if (anyCachedWeather) {
-                console.log('Wyświetlam starsze dane pogodowe z localStorage:', ip);
+                console.log('Wyświetlam starsze dane pogodowe:', ip);
                 displayWeather(anyCachedWeather, ip);
             }
 
-            // Sprawdź aktualne dane w cache
             const cachedWeather = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedWeather) {
-                console.log('Używam danych pogodowych z cache:', ip);
+                console.log('Używam pogody z cache:', ip);
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedWeather);
                 displayWeather(cachedWeather, ip);
-                return;
+                return cachedWeather;
             }
 
-            // Pobierz nowe dane z API
             try {
                 const locationData = await getLocation(ip);
-                console.log('Dane lokalizacji:', locationData);
                 if (!locationData.lat || !locationData.lon) {
                     throw new Error('Brak współrzędnych dla lokalizacji');
                 }
@@ -725,22 +789,33 @@
                 const city = locationData.city || 'Nieznane miasto';
 
                 const forecastData = await retryFetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
-                console.log('Dane pogody:', forecastData);
-
                 if (forecastData.daily) {
                     const weatherData = { city, forecast: forecastData.daily };
                     setCachedData(cacheKey, cacheTimeKey, weatherData);
                     setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, weatherData);
+                    localStorage.removeItem(`rateLimit_${cacheKey}`);
                     displayWeather(weatherData, ip);
+                    return weatherData;
                 } else {
                     throw new Error('Brak danych pogodowych');
                 }
             } catch (err) {
                 console.error('Błąd pobierania pogody:', err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: extendedCacheDuration,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
+                }
+                if (anyCachedWeather) {
+                    displayWeather(anyCachedWeather, ip);
+                    return anyCachedWeather;
+                }
                 document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
                 document.getElementById('weatherCity').textContent = 'Nieznane miasto';
-                const errorTickerText = `<span class="ticker-segment">Błąd pobierania szczegółów pogody, spróbuj ponownie później lub wyjrzyj za okno i sam się przekonaj, jaka jest pogoda.</span>`;
-                document.getElementById('tickerContent').innerHTML = errorTickerText.repeat(5);
+                document.getElementById('tickerContent').innerHTML = `<span class="ticker-segment">Błąd pobierania pogody, spróbuj ponownie później.</span>`.repeat(5);
+                return null;
             }
         }
 
@@ -756,7 +831,6 @@
                 const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
                 const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
                 const weatherCode = forecastData.weathercode[index];
-                console.log(`Weather code for ${formattedDate}: ${weatherCode}`);
                 const maxTemp = forecastData.temperature_2m_max[index];
                 const minTemp = forecastData.temperature_2m_min[index];
                 const isToday = index === 0;
@@ -786,17 +860,16 @@
 
                     const tickerText = `
                         <span class="ticker-segment">
-                            🌍 Warunki pogodowe na dzień: <span class="ticker-value">${todayDate}</span> • 
-                            🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
-                            🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
-                            🌡️ Temperatura odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
-                            🌧️ Suma opadów: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
-                            💨 Maksymalna prędkość wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
-                            🪁 Wiatr wieje z kierunku: <span class="ticker-value">${windDirection}</span>
+                            🌍 Warunki na: <span class="ticker-value">${todayDate}</span> •
+                            🌅 Wschód: <span class="ticker-value">${sunrise}</span> •
+                            🌇 Zachód: <span class="ticker-value">${sunset}</span> •
+                            🌡️ Odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> •
+                            🌧️ Opady: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> •
+                            💨 Wiatr: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> •
+                            🪁 Kierunek: <span class="ticker-value">${windDirection}</span>
                         </span>
                     `;
-                    const repeatedTickerText = tickerText.repeat(5);
-                    document.getElementById('tickerContent').innerHTML = repeatedTickerText;
+                    document.getElementById('tickerContent').innerHTML = tickerText.repeat(5);
                 }
             });
         }
@@ -805,72 +878,77 @@
             const cacheKey = 'nasa_apod_data';
             const cacheTimeKey = 'nasa_apod_time';
             const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
-            // Wyświetl starsze dane, jeśli istnieją
             const anyCachedData = getAnyCachedData(cacheKey);
             if (anyCachedData) {
-                console.log('Wyświetlam starsze dane NASA APOD z localStorage');
+                console.log('Wyświetlam starsze dane NASA APOD');
                 displayNasaApod(anyCachedData);
             }
 
-            // Sprawdź aktualne dane w cache
             const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
-                console.log('Używam danych NASA APOD z cache');
+                console.log('Używam NASA APOD z cache');
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayNasaApod(cachedData);
-                return;
+                return cachedData;
             }
 
-            // Pobierz nowe dane z API
             const imgElement = document.getElementById('spaceImage');
             const tickerElement = document.getElementById('nasaTickerContent');
             for (let attempt = 1; attempt <= retries; attempt++) {
                 try {
                     const data = await retryFetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
-                    console.log('Dane z NASA APOD:', data);
-
                     if (data.media_type === 'image' && data.url) {
                         const apodData = {
                             url: data.url,
                             title: data.title,
-                            explanation: data.explanation || 'Brak opisu dla tego zdjęcia.'
+                            explanation: data.explanation || 'Brak opisu.'
                         };
                         setCachedData(cacheKey, cacheTimeKey, apodData);
                         setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, apodData);
+                        localStorage.removeItem(`rateLimit_${cacheKey}`);
                         displayNasaApod(apodData);
                         imgElement.onerror = () => {
-                            console.error('Błąd ładowania obrazu z NASA, używam fallbacku');
+                            console.error('Błąd ładowania obrazu NASA, używam fallbacku');
                             imgElement.src = 'planeta.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                            const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                            tickerElement.innerHTML = errorTickerText.repeat(5);
+                            tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
                         };
                         setTimeout(() => {
                             if (!imgElement.complete || imgElement.naturalWidth === 0) {
-                                console.error('Obrazek nie załadł się poprawnie, używam fallbacku');
+                                console.error('Obraz NASA nie załadował się, używam fallbacku');
                                 imgElement.src = 'planeta.png';
                                 imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                                const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                                tickerElement.innerHTML = errorTickerText.repeat(5);
+                                tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
                             }
                         }, 5000);
+                        return apodData;
                     } else {
-                        console.warn('NASA APOD zwróciło wideo lub inny typ mediów, używam fallbacku');
+                        console.warn('NASA APOD to wideo, używam fallbacku');
                         imgElement.src = 'planeta.png';
-                        imgElement.alt = 'NASA APOD zawiera wideo lub inny typ mediów';
-                        const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                        tickerElement.innerHTML = errorTickerText.repeat(5);
+                        imgElement.alt = 'NASA APOD zawiera wideo';
+                        tickerElement.innerHTML = `<span class="ticker-segment">NASA APOD to wideo, wyświetlono domyślny obraz.</span>`.repeat(5);
+                        return null;
                     }
-                    return;
                 } catch (err) {
-                    console.error(`Próba ${attempt} pobierania zdjęcia z NASA APOD nie powiodła się:`, err);
+                    console.error(`Próba ${attempt} NASA APOD nie powiodła się:`, err);
+                    if (err.message === 'RateLimitExceeded') {
+                        localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                            extendedDuration: extendedCacheDuration,
+                            timestamp: Date.now()
+                        }));
+                        console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
+                    }
                     if (attempt === retries) {
                         imgElement.src = 'planeta.png';
                         imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                        const errorTickerText = `<span class="ticker-segment">Ups, coś poszło nie tak! Nie udało się pobrać obrazu dnia z NASA, prawdopodobnie z powodu problemów z połączeniem lub niedostępności serwera NASA. Nie martw się – w zamian wyświetlamy domyślny obraz, abyś mógł cieszyć się kosmicznym widokiem. Spróbuj ponownie później, aby zobaczyć najnowszy obraz z NASA!</span>`;
-                        tickerElement.innerHTML = errorTickerText.repeat(5);
-                        return;
+                        tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
+                        if (anyCachedData) {
+                            displayNasaApod(anyCachedData);
+                            return anyCachedData;
+                        }
+                        return null;
                     }
                     await new Promise(resolve => setTimeout(resolve, delay));
                 }
@@ -882,47 +960,58 @@
             const tickerElement = document.getElementById('nasaTickerContent');
             imgElement.src = data.url;
             imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-            const tickerText = `<span class="ticker-segment">${data.explanation}</span>`;
-            tickerElement.innerHTML = tickerText.repeat(5);
+            tickerElement.innerHTML = `<span class="ticker-segment">${data.explanation}</span>`.repeat(5);
         }
 
         async function getDailyFact() {
             const cacheKey = 'daily_fact';
             const cacheTimeKey = 'daily_fact_time';
             const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const dateKey = `${day}/${month}`;
 
-            // Wyświetl starsze dane, jeśli istnieją i pasują do daty
             const anyCachedFact = getAnyCachedData(cacheKey);
             if (anyCachedFact && anyCachedFact.dateKey === dateKey) {
-                console.log('Wyświetlam starszą ciekawostkę z localStorage');
+                console.log('Wyświetlam starszą ciekawostkę');
                 displayDailyFact(anyCachedFact.fact);
             }
 
-            // Sprawdź aktualne dane w cache
             const cachedFact = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedFact && cachedFact.dateKey === dateKey) {
                 console.log('Używam ciekawostki z cache');
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedFact);
                 displayDailyFact(cachedFact.fact);
-                return;
+                return cachedFact;
             }
 
-            // Pobierz nowe dane z API
             try {
                 const data = await retryFetch('calendar.json');
                 const fact = data[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
                 const factData = { dateKey, fact };
                 setCachedData(cacheKey, cacheTimeKey, factData);
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, factData);
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
                 displayDailyFact(fact);
+                return factData;
             } catch (err) {
                 console.error('Błąd pobierania ciekawostki:', err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: extendedCacheDuration,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
+                }
+                if (anyCachedFact && anyCachedFact.dateKey === dateKey) {
+                    displayDailyFact(anyCachedFact.fact);
+                    return anyCachedFact;
+                }
                 displayDailyFact('Błąd ładowania ciekawostki');
+                return null;
             }
         }
 
@@ -930,11 +1019,10 @@
             document.getElementById('dailyFact').textContent = fact;
         }
 
-        // Funkcja do wykrywania pochodnych kryptowalut
         function isDerivative(coin, usedBaseAssets, allCoins) {
             const derivativeKeywords = [
-                'wrapped', 'staked', 'liquid', 'bridged', 'pegged', 
-                'synthetic', 'leveraged', 'inverse', 'eth2', 'staking', 
+                'wrapped', 'staked', 'liquid', 'bridged', 'pegged',
+                'synthetic', 'leveraged', 'inverse', 'eth2', 'staking',
                 'yield', 'ether-fi', 'rocket', 'lido', 'weth'
             ];
             const id = (coin.id || '').toLowerCase();
@@ -942,52 +1030,44 @@
             const symbol = (coin.symbol || '').toLowerCase();
             const price = parseFloat(coin.current_price);
 
-            // Sprawdź, czy moneta zawiera słowa kluczowe wskazujące na pochodność
-            const hasDerivativeKeyword = derivativeKeywords.some(keyword => 
+            const hasDerivativeKeyword = derivativeKeywords.some(keyword =>
                 id.includes(keyword) || name.includes(keyword)
             );
 
-            // Jeśli nie ma słów kluczowych, uznajemy za główną kryptowalutę
             if (!hasDerivativeKeyword) {
                 return { isDerivative: false, baseSymbol: symbol.toUpperCase() };
             }
 
-            // Szukaj symbolu bazowego w nazwie lub symbolu
             for (const baseSymbol of usedBaseAssets) {
                 const baseLower = baseSymbol.toLowerCase();
-                // Sprawdzamy, czy symbol kryptowaluty zawiera symbol bazowy jako podciąg
                 if (symbol.includes(baseLower) || name.includes(baseLower)) {
-                    // Porównaj cenę z bazową kryptowalutą
                     const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
                     if (baseCoin) {
                         const basePrice = parseFloat(baseCoin.current_price);
                         const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                         if (priceDifference <= 5) {
-                            console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol} (podobna cena: ${priceDifference.toFixed(2)}%)`);
+                            console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
                             return { isDerivative: true, baseSymbol };
                         }
                     }
-                    console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol}`);
+                    console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol}`);
                     return { isDerivative: true, baseSymbol };
                 }
-                // Sprawdzamy, czy symbol zaczyna się od 'w' i zawiera bazowy symbol
                 if (symbol.startsWith('w') && symbol.slice(1).includes(baseLower)) {
                     const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
                     if (baseCoin) {
                         const basePrice = parseFloat(baseCoin.current_price);
                         const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                         if (priceDifference <= 5) {
-                            console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w', podobna cena: ${priceDifference.toFixed(2)}%)`);
+                            console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w', cena: ${priceDifference.toFixed(2)}%)`);
                             return { isDerivative: true, baseSymbol };
                         }
                     }
-                    console.log(`Pochodna wykryta: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w')`);
+                    console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w')`);
                     return { isDerivative: true, baseSymbol };
                 }
             }
 
-            // Jeśli moneta ma słowa kluczowe, ale nie pasuje do żadnego bazowego symbolu,
-            // uznajemy ją za pochodną i próbujemy wyodrębnić potencjalny symbol bazowy
             const potentialBaseSymbol = symbol.replace(/^(w|s|re|ls|cb|rs|ms|st|rst|lst|)/, '').toUpperCase();
             if (usedBaseAssets.has(potentialBaseSymbol)) {
                 const baseCoin = allCoins.find(c => c.symbol.toUpperCase() === potentialBaseSymbol);
@@ -995,15 +1075,14 @@
                     const basePrice = parseFloat(baseCoin.current_price);
                     const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                     if (priceDifference <= 5) {
-                        console.log(`Pochodna wykryta: ${coin.symbol} należy do ${potentialBaseSymbol} (wyodrębniono, podobna cena: ${priceDifference.toFixed(2)}%)`);
+                        console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
                         return { isDerivative: true, baseSymbol: potentialBaseSymbol };
                     }
                 }
-                console.log(`Pochodna wykryta: ${coin.symbol} należy do ${potentialBaseSymbol} (wyodrębniono)`);
+                console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol}`);
                 return { isDerivative: true, baseSymbol: potentialBaseSymbol };
             }
 
-            // Jeśli nie pasuje do żadnego bazowego symbolu, uznajemy za niezależną
             return { isDerivative: false, baseSymbol: symbol.toUpperCase() };
         }
 
@@ -1011,28 +1090,24 @@
             const cacheKey = 'crypto_data';
             const cacheTimeKey = 'crypto_time';
             const cacheDuration = 15 * 60 * 1000; // 15 minut
+            const extendedCacheDuration = cacheDuration * 2; // 30 minut
 
-            // Wyświetl starsze dane, jeśli istnieją
             const anyCachedData = getAnyCachedData(cacheKey);
             if (anyCachedData) {
-                console.log('Wyświetlam starsze dane kryptowalut z localStorage');
+                console.log('Wyświetlam starsze dane kryptowalut');
                 displayCryptoData(anyCachedData);
             }
 
-            // Sprawdź aktualne dane w cache
             const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
-                console.log('Używam danych kryptowalut z cache');
+                console.log('Używam kryptowalut z cache');
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayCryptoData(cachedData);
-                return;
+                return cachedData;
             }
 
-            // Pobierz nowe dane z API
             try {
                 const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1');
-                console.log('Dane kryptowalut:', data);
-
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 28 : 35;
                 const usedBaseAssets = new Set();
@@ -1044,29 +1119,25 @@
                     const name = (coin.name || '').toLowerCase();
                     const symbol = (coin.symbol || '').toLowerCase();
 
-                    // Filtr walut fiducjarnych (stablecoiny)
-                    const isFiatRelated = fiatCurrencies.some(currency => 
+                    const isFiatRelated = fiatCurrencies.some(currency =>
                         id.includes(currency) || name.includes(currency) || symbol.includes(currency)
                     );
                     if (isFiatRelated && price >= 0.95 && price <= 1.05) {
-                        console.log(`Pominięto stablecoin: ${coin.symbol} (cena: ${price} USD, zawiera walutę fiducjarną)`);
+                        console.log(`Pominięto stablecoin: ${coin.symbol} (cena: ${price} USD)`);
                         return false;
                     }
 
-                    // Filtr cenowy (wyklucz tanie monety i stablecoiny)
                     if (price <= 0.01 || (!isFiatRelated && price >= 0.99 && price <= 1.01)) {
                         console.log(`Pominięto ${coin.symbol}: cena ${price} USD`);
                         return false;
                     }
 
-                    // Sprawdź, czy moneta jest pochodną
                     const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
                     if (isDeriv) {
                         console.log(`Pominięto pochodną: ${coin.symbol} (bazowa: ${baseSymbol})`);
                         return false;
                     }
 
-                    // Dodaj symbol do użytych, jeśli to główna moneta
                     usedBaseAssets.add(baseSymbol);
                     return true;
                 }).slice(0, limit).map(coin => ({
@@ -1079,16 +1150,25 @@
                 console.log('Przefiltrowane kryptowaluty:', filteredCoins);
                 setCachedData(cacheKey, cacheTimeKey, filteredCoins);
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, filteredCoins);
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
                 displayCryptoData(filteredCoins);
+                return filteredCoins;
             } catch (err) {
-                console.error('Błąd pobierania danych kryptowalut:', err);
-                if (anyCachedData) {
-                    console.log('Używam starszych danych kryptowalut z cache po błędzie');
-                    displayCryptoData(anyCachedData);
-                } else {
-                    const cryptoGrid = document.getElementById('cryptoGrid');
-                    cryptoGrid.innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut. Spróbuj ponownie później.</div>';
+                console.error('Błąd pobierania kryptowalut:', err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: extendedCacheDuration,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 60000} minut`);
                 }
+                if (anyCachedData) {
+                    console.log('Używam starszych danych kryptowalut');
+                    displayCryptoData(anyCachedData);
+                    return anyCachedData;
+                }
+                document.getElementById('cryptoGrid').innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut.</div>';
+                return null;
             }
         }
 
@@ -1151,7 +1231,7 @@
             const container = document.querySelector('.container');
             const computedStyle = window.getComputedStyle(container);
             if (computedStyle.backgroundColor !== 'rgb(45, 45, 45)') {
-                console.warn('CSS nie załadował się poprawnie, ładuję fallback styles');
+                console.warn('CSS nie załadował się, ładuję fallback');
                 const style = document.createElement('style');
                 style.textContent = `
                     body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
@@ -1169,89 +1249,74 @@
             }
         }
 
-        // Funkcja obsługująca status sieci
         let isReloading = false;
         async function handleNetworkStatus() {
             const networkStatus = document.getElementById('networkStatus');
             if (navigator.onLine) {
-                console.log('Połączenie z internetem przywrócone');
+                console.log('Połączenie przywrócone');
                 networkStatus.style.display = 'none';
                 networkStatus.textContent = '';
                 if (!isReloading) {
                     isReloading = true;
                     try {
-                        const ipPromise = getIp();
-                        const ip = await ipPromise;
-                        await initializeFallbackData(ip); // Inicjalizacja danych fallback
-                        const nasaPromise = getNasaApodImage();
-                        const dailyFactPromise = getDailyFact();
-                        const cryptoPromise = getCryptoData();
-                        const fearGreedPromise = updateFearGreedIndicator();
-                        const weatherPromise = getWeather(ip);
-
-                        const results = await Promise.allSettled([
-                            nasaPromise,
-                            ipPromise,
-                            weatherPromise,
-                            dailyFactPromise,
-                            cryptoPromise,
-                            fearGreedPromise
+                        const ip = await getIp();
+                        await initializeFallbackData(ip);
+                        const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
+                            getNasaApodImage(),
+                            getWeather(ip),
+                            getDailyFact(),
+                            getCryptoData(),
+                            updateFearGreedIndicator()
                         ]);
 
-                        results.forEach((result, index) => {
-                            const apiNames = ['NASA', 'IP', 'Pogoda', 'Ciekawostka', 'Kryptowaluty', 'Fear and Greed'];
-                            console.log(`Wynik dla ${apiNames[index]}:`, result.status, result.reason || result.value);
-                        });
+                        console.log('Wyniki API:', { nasa: nasaResult.status, weather: weatherResult.status, fact: dailyFactResult.status, crypto: cryptoResult.status, fearGreed: fearGreedResult.status });
 
                         setTimeout(async () => {
                             try {
                                 await logVisit();
                             } catch (err) {
-                                console.error('Błąd podczas ładowania logów:', err);
+                                console.error('Błąd ładowania logów:', err);
                                 const logTableBody = document.getElementById('logTableBody');
                                 if (logTableBody) {
-                                    logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                                    logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
                                 }
                             }
                         }, 500);
 
-                        console.log('Wszystkie dane załadowane po przywróceniu połączenia');
+                        console.log('Dane załadowane po przywróceniu połączenia');
                     } catch (err) {
-                        console.error('Błąd podczas ponownego ładowania danych:', err);
-                        networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie później.';
+                        console.error('Błąd podczas ładowania danych:', err);
+                        networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
                         networkStatus.style.display = 'block';
                     } finally {
                         isReloading = false;
                     }
                 }
             } else {
-                console.log('Utracono połączenie z internetem');
+                console.log('Brak połączenia z internetem');
                 networkStatus.textContent = 'Brak połączenia z internetem';
                 networkStatus.style.display = 'block';
             }
         }
 
-        // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
         let cryptoIntervalId = null;
         function startCryptoUpdateInterval() {
             getCryptoData();
             cryptoIntervalId = setInterval(() => {
-                console.log('Aktualizuję dane kryptowalut...');
+                console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
             }, 900000); // 15 minut
         }
 
-        // Automatyczna aktualizacja Fear and Greed Index co 1 godzinę
         let fearGreedIntervalId = null;
         function startFearGreedUpdateInterval() {
             updateFearGreedIndicator();
             fearGreedIntervalId = setInterval(() => {
-                console.log('Aktualizuję Fear and Greed Index...');
+                console.log('Aktualizuję Fear and Greed...');
                 updateFearGreedIndicator();
             }, 3600000); // 1 godzina
         }
 
-        // Funkcja zarządzająca interwałami w zależności od widoczności karty
         function manageUpdateIntervals() {
             if (document.visibilityState === 'visible') {
                 console.log('Karta aktywna, włączam aktualizacje');
@@ -1261,7 +1326,6 @@
                 if (!fearGreedIntervalId) {
                     startFearGreedUpdateInterval();
                 }
-                // Natychmiastowa aktualizacja po powrocie
                 getCryptoData();
                 updateFearGreedIndicator();
             } else {
@@ -1277,9 +1341,9 @@
             }
         }
 
-        // Inicjalizacja strony
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
+            setTimeout(() => cleanOldCache(), 1000); // Czyszczenie cache przy starcie
             handleNetworkStatus();
             manageUpdateIntervals();
             window.addEventListener('online', handleNetworkStatus);
