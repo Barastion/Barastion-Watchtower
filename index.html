@@ -101,9 +101,9 @@
 
         // Funkcja do ponawiania żądań z timeoutem i obsługą błędu 429
         async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
-            let rateLimitRetries = 3;
-            let rateLimitDelay = 10000;
-            const maxRateLimitDelay = 40000;
+            let rateLimitRetries = 3; // Maksymalna liczba prób dla błędu 429
+            let rateLimitDelay = 10000; // Początkowe opóźnienie dla 429 (10 sekund)
+            const maxRateLimitDelay = 40000; // Maksymalne opóźnienie (40 sekund)
 
             for (let attempt = 1; attempt <= retries + rateLimitRetries; attempt++) {
                 try {
@@ -129,7 +129,7 @@
                         }
 
                         await new Promise(resolve => setTimeout(resolve, delayMs));
-                        rateLimitDelay = Math.min(rateLimitDelay * 2, maxRateLimitDelay);
+                        rateLimitDelay = Math.min(rateLimitDelay * 2, maxRateLimitDelay); // Wykładniczy wzrost opóźnienia
                         continue;
                     }
 
@@ -147,14 +147,15 @@
             }
         }
 
-        // Funkcja czyszcząca stare dane z localStorage
+        // Funkcja czyszcząca stare dane z localStorage (starsze niż 48 godzin)
         function cleanOldCache() {
             const now = Date.now();
-            const cleanupInterval = 3600000;
+            const cleanupInterval = 3600000; // 1 godzina
             const lastCleanupTime = localStorage.getItem('lastCleanupTime');
-            const cleanupThreshold = 48 * 60 * 60 * 1000;
+            const cleanupThreshold = 48 * 60 * 60 * 1000; // 48 godzin
             const isCleanupTriggered = localStorage.getItem('isCleanupTriggered');
 
+            // Sprawdź, czy czyszczenie jest już zaplanowane lub minęła godzina
             if (isCleanupTriggered === 'true' || (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval))) {
                 console.debug('Czyszczenie pominięte: minęło za mało czasu lub czyszczenie już zaplanowane');
                 return;
@@ -193,7 +194,7 @@
             localStorage.setItem(cacheTimeKey, Date.now().toString());
         }
 
-        // Funkcja sprawdzająca cache
+        // Funkcja sprawdzająca cache z obsługą wydłużonego czasu po błędzie 429
         function getCachedData(cacheKey, cacheTimeKey, cacheDuration) {
             const cachedData = localStorage.getItem(cacheKey);
             const cachedTime = localStorage.getItem(cacheTimeKey);
@@ -221,7 +222,7 @@
         function getAnyCachedData(cacheKey) {
             const fallbackKey = `${cacheKey}_fallback`;
             const fallbackTimeKey = `${fallbackKey}_time`;
-            const fallbackDuration = 24 * 60 * 60 * 1000;
+            const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
             const cachedFallback = getCachedData(fallbackKey, fallbackTimeKey, fallbackDuration);
             if (cachedFallback) {
                 console.log(`Używam danych fallback dla ${cacheKey}`);
@@ -236,7 +237,7 @@
 
         // Inicjalizacja danych fallback
         async function initializeFallbackData(ip) {
-            const fallbackDuration = 24 * 60 * 60 * 1000;
+            const fallbackDuration = 24 * 60 * 60 * 1000; // 24 godziny
             const sections = [
                 { key: 'fear_greed_raw_data', fetchFn: getFearAndGreedData },
                 { key: 'crypto_data', fetchFn: getCryptoData },
@@ -279,8 +280,7 @@
                 return data.map(coin => ({
                     id: coin.id,
                     symbol: coin.symbol,
-                    current_price_usd: coin.current_price_usd,
-                    current_price_pln: coin.current_price_pln,
+                    current_price: coin.current_price,
                     price_change_percentage_24h: coin.price_change_percentage_24h
                 }));
             }
@@ -320,8 +320,8 @@
             const rawDataKey = 'fear_greed_raw_data';
             const trendKey = 'fear_greed_trend';
             const cacheTimeKey = 'fear_greed_time';
-            const cacheDuration = 3600000;
-            const extendedCacheDuration = cacheDuration * 2;
+            const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
             const anyCachedRawData = getAnyCachedData(rawDataKey);
             const anyCachedAverage = getAnyCachedData(cacheKey);
@@ -340,7 +340,7 @@
                 setCachedData(trendKey, cacheTimeKey, trend);
                 setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayFearGreed(average, trend);
-                cleanOldCache();
+                cleanOldCache(); // Czyszczenie po Fear and Greed
                 return cachedData;
             }
 
@@ -362,7 +362,7 @@
                 setCachedData(trendKey, cacheTimeKey, trend);
                 localStorage.removeItem(`rateLimit_${rawDataKey}`);
                 displayFearGreed(average, trend);
-                cleanOldCache();
+                cleanOldCache(); // Czyszczenie po Fear and Greed
                 return validatedData;
             } catch (error) {
                 console.error('Błąd pobierania Fear and Greed:', error);
@@ -587,7 +587,7 @@
                         <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td>
-                        <div class="device">${log.device || 'Brak'}</td>
+                        <div class="device">${log.device || 'Brak'}</div>
                         <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
@@ -640,8 +640,8 @@
         async function getIp() {
             const cacheKey = 'ip_data';
             const cacheTimeKey = 'ip_time';
-            const cacheDuration = 15 * 60 * 1000;
-            const extendedCacheDuration = cacheDuration * 2;
+            const cacheDuration = 15 * 60 * 1000; // 15 minut
+            const extendedCacheDuration = cacheDuration * 2; // 30 minut
 
             const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedData) {
@@ -671,8 +671,8 @@
         async function getLocation(ip) {
             const cacheKey = `location_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
-            const cacheDuration = 3600000;
-            const extendedCacheDuration = cacheDuration * 2;
+            const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
             const userAgent = navigator.userAgent;
             const device = getDeviceType(userAgent);
             const cacheSignatureKey = `${cacheKey}_signature`;
@@ -766,8 +766,8 @@
         async function getWeather(ip) {
             const cacheKey = `weather_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
-            const cacheDuration = 3600000;
-            const extendedCacheDuration = cacheDuration * 2;
+            const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
             const anyCachedWeather = getAnyCachedData(cacheKey);
             if (anyCachedWeather) {
@@ -780,7 +780,7 @@
                 console.log('Używam pogody z cache:', ip);
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedWeather);
                 displayWeather(cachedWeather, ip);
-                cleanOldCache();
+                cleanOldCache(); // Czyszczenie po pogodzie
                 return cachedWeather;
             }
 
@@ -800,7 +800,7 @@
                     setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, weatherData);
                     localStorage.removeItem(`rateLimit_${cacheKey}`);
                     displayWeather(weatherData, ip);
-                    cleanOldCache();
+                    cleanOldCache(); // Czyszczenie po pogodzie
                     return weatherData;
                 } else {
                     throw new Error('Brak danych pogodowych');
@@ -883,8 +883,8 @@
         async function getNasaApodImage(retries = 5, delay = 2000) {
             const cacheKey = 'nasa_apod_data';
             const cacheTimeKey = 'nasa_apod_time';
-            const cacheDuration = 3600000;
-            const extendedCacheDuration = cacheDuration * 2;
+            const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
             const anyCachedData = getAnyCachedData(cacheKey);
             if (anyCachedData) {
@@ -972,8 +972,8 @@
         async function getDailyFact() {
             const cacheKey = 'daily_fact';
             const cacheTimeKey = 'daily_fact_time';
-            const cacheDuration = 3600000;
-            const extendedCacheDuration = cacheDuration * 2;
+            const cacheDuration = 3600000; // 1 godzina
+            const extendedCacheDuration = cacheDuration * 2; // 2 godziny
 
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
@@ -1034,7 +1034,7 @@
             const id = (coin.id || '').toLowerCase();
             const name = (coin.name || '').toLowerCase();
             const symbol = (coin.symbol || '').toLowerCase();
-            const price = parseFloat(coin.current_price_usd);
+            const price = parseFloat(coin.current_price);
 
             const hasDerivativeKeyword = derivativeKeywords.some(keyword =>
                 id.includes(keyword) || name.includes(keyword)
@@ -1049,7 +1049,7 @@
                 if (symbol.includes(baseLower) || name.includes(baseLower)) {
                     const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
                     if (baseCoin) {
-                        const basePrice = parseFloat(baseCoin.current_price_usd);
+                        const basePrice = parseFloat(baseCoin.current_price);
                         const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                         if (priceDifference <= 5) {
                             console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
@@ -1062,7 +1062,7 @@
                 if (symbol.startsWith('w') && symbol.slice(1).includes(baseLower)) {
                     const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
                     if (baseCoin) {
-                        const basePrice = parseFloat(baseCoin.current_price_usd);
+                        const basePrice = parseFloat(baseCoin.current_price);
                         const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                         if (priceDifference <= 5) {
                             console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w', cena: ${priceDifference.toFixed(2)}%)`);
@@ -1078,7 +1078,7 @@
             if (usedBaseAssets.has(potentialBaseSymbol)) {
                 const baseCoin = allCoins.find(c => c.symbol.toUpperCase() === potentialBaseSymbol);
                 if (baseCoin) {
-                    const basePrice = parseFloat(baseCoin.current_price_usd);
+                    const basePrice = parseFloat(baseCoin.current_price);
                     const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                     if (priceDifference <= 5) {
                         console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
@@ -1095,8 +1095,8 @@
         async function getCryptoData() {
             const cacheKey = 'crypto_data';
             const cacheTimeKey = 'crypto_time';
-            const cacheDuration = 15 * 60 * 1000;
-            const extendedCacheDuration = cacheDuration * 2;
+            const cacheDuration = 15 * 60 * 1000; // 15 minut
+            const extendedCacheDuration = cacheDuration * 2; // 30 minut
 
             const anyCachedData = getAnyCachedData(cacheKey);
             if (anyCachedData) {
@@ -1113,22 +1113,14 @@
             }
 
             try {
-                const [usdData, plnData] = await Promise.all([
-                    retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1'),
-                    retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=pln&order=market_cap_desc&per_page=75&page=1')
-                ]);
-
+                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1');
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 28 : 35;
                 const usedBaseAssets = new Set();
                 const fiatCurrencies = ['usd', 'eur', 'gbp', 'jpy', 'cny', 'aud', 'cad', 'chf', 'sgd', 'krw', 'susds'];
 
-                const usdMap = new Map(usdData.map(coin => [coin.id, coin]));
-                const filteredCoins = plnData.filter(coin => {
-                    const usdCoin = usdMap.get(coin.id);
-                    if (!usdCoin) return false;
-
-                    const priceUsd = parseFloat(usdCoin.current_price);
+                const filteredCoins = data.filter(coin => {
+                    const price = parseFloat(coin.current_price);
                     const id = (coin.id || '').toLowerCase();
                     const name = (coin.name || '').toLowerCase();
                     const symbol = (coin.symbol || '').toLowerCase();
@@ -1136,17 +1128,17 @@
                     const isFiatRelated = fiatCurrencies.some(currency =>
                         id.includes(currency) || name.includes(currency) || symbol.includes(currency)
                     );
-                    if (isFiatRelated && priceUsd >= 0.95 && priceUsd <= 1.05) {
-                        console.log(`Pominięto stablecoin: ${coin.symbol} (cena USD: ${priceUsd})`);
+                    if (isFiatRelated && price >= 0.95 && price <= 1.05) {
+                        console.log(`Pominięto stablecoin: ${coin.symbol} (cena: ${price} USD)`);
                         return false;
                     }
 
-                    if (priceUsd <= 0.01 || (!isFiatRelated && priceUsd >= 0.99 && priceUsd <= 1.01)) {
-                        console.log(`Pominięto ${coin.symbol}: cena USD ${priceUsd}`);
+                    if (price <= 0.01 || (!isFiatRelated && price >= 0.99 && price <= 1.01)) {
+                        console.log(`Pominięto ${coin.symbol}: cena ${price} USD`);
                         return false;
                     }
 
-                    const { isDerivative: isDeriv, baseSymbol } = isDerivative({ ...coin, current_price_usd: priceUsd }, usedBaseAssets, usdData);
+                    const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
                     if (isDeriv) {
                         console.log(`Pominięto pochodną: ${coin.symbol} (bazowa: ${baseSymbol})`);
                         return false;
@@ -1154,16 +1146,12 @@
 
                     usedBaseAssets.add(baseSymbol);
                     return true;
-                }).slice(0, limit).map(coin => {
-                    const usdCoin = usdMap.get(coin.id);
-                    return {
-                        id: coin.id,
-                        symbol: coin.symbol,
-                        current_price_usd: parseFloat(usdCoin.current_price),
-                        current_price_pln: parseFloat(coin.current_price),
-                        price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
-                    };
-                });
+                }).slice(0, limit).map(coin => ({
+                    id: coin.id,
+                    symbol: coin.symbol,
+                    current_price: parseFloat(coin.current_price),
+                    price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
+                }));
 
                 console.log('Przefiltrowane kryptowaluty:', filteredCoins);
                 setCachedData(cacheKey, cacheTimeKey, filteredCoins);
@@ -1190,27 +1178,23 @@
             }
         }
 
-        function formatPrice(price, currency) {
-            if (price === 0) return currency === 'USD' ? '$0.00' : '0.00 zł';
+        function formatPrice(price) {
+            if (price === 0) return '$0.00';
             let formatted;
             if (price < 0.01 && price > 0) {
-                formatted = currency === 'USD' ? `$${price.toFixed(6)}` : `${price.toFixed(6)} zł`;
+                formatted = `$${price.toFixed(6)}`;
             } else {
-                formatted = currency === 'USD'
-                    ? `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                    : `${price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} zł`;
+                formatted = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
             if (formatted.length > 10) {
                 if (price < 0.01) {
-                    const decimals = Math.max(2, 10 - (currency === 'USD' ? 3 : 4) - Math.floor(Math.log10(price)));
-                    formatted = currency === 'USD' ? `$${price.toFixed(decimals)}` : `${price.toFixed(decimals)} zł`;
+                    const decimals = Math.max(2, 10 - 3 - Math.floor(Math.log10(price)));
+                    formatted = `$${price.toFixed(decimals)}`;
                     if (formatted.length > 10) {
                         formatted = formatted.substring(0, 10);
                     }
                 } else {
-                    formatted = currency === 'USD'
-                        ? `$${Math.round(price * 100) / 100}`
-                        : `${Math.round(price * 100) / 100} zł`;
+                    formatted = `$${Math.round(price * 100) / 100}`;
                     if (formatted.length > 10) {
                         formatted = formatted.substring(0, 10);
                     }
@@ -1239,10 +1223,7 @@
                 cryptoTile.className = `crypto-tile ${getChangeClass(coin.price_change_percentage_24h)}`;
                 cryptoTile.innerHTML = `
                     <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
-                    <div class="crypto-prices">
-                        <div class="crypto-price-usd">USD ${formatPrice(coin.current_price_usd, 'USD')}</div>
-                        <div class="crypto-price-pln">PLN ${formatPrice(coin.current_price_pln, 'PLN')}</div>
-                    </div>
+                    <div class="crypto-price">${formatPrice(coin.current_price)}</div>
                     <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}% / 24h</div>
                 `;
                 cryptoTile.addEventListener('click', () => {
@@ -1335,7 +1316,7 @@
             cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
-            }, 900000);
+            }, 900000); // 15 minut
         }
 
         let fearGreedIntervalId = null;
@@ -1344,7 +1325,7 @@
             fearGreedIntervalId = setInterval(() => {
                 console.log('Aktualizuję Fear and Greed...');
                 updateFearGreedIndicator();
-            }, 3600000);
+            }, 3600000); // 1 godzina
         }
 
         function manageUpdateIntervals() {
