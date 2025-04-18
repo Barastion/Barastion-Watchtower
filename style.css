@@ -304,7 +304,7 @@ body {
     min-height: 30px;
     text-align: center;
     font-size: 0.85em;
-    font-weight: normal;
+    font-weight: 600; /* Pogrubienie całego nagłówka */
     transition: background-color 0.3s ease;
     overflow: hidden;
     white-space: normal;
@@ -379,7 +379,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 34px;
+    min-height: 60px; /* Zwiększona wysokość dla USD i PLN */
     box-sizing: border-box;
     transition: transform 0.2s, background-color 0.5s ease;
     cursor: pointer;
@@ -423,18 +423,25 @@ body {
     font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 1px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
 }
 
-.crypto-price {
-    font-size: 0.75em;
+.crypto-prices {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
     margin-bottom: 1px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+}
+
+.crypto-price-usd,
+.crypto-price-pln {
+    font-size: 0.75em;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
 }
 
 .crypto-change {
     font-size: 0.6em;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
 }
 
 .crypto-error {
@@ -740,7 +747,7 @@ tr:hover td:last-child {
         text-align: center;
         font-size: 0.75em;
         padding: 8px 10px;
-        font-weight: normal;
+        font-weight: 600; /* Pogrubienie całego nagłówka */
     }
 
     .fear-greed-indicator .fear-greed-value {
@@ -774,7 +781,7 @@ tr:hover td:last-child {
     }
 
     .crypto-tile {
-        min-height: 22px;
+        min-height: 50px; /* Zwiększona wysokość dla USD i PLN */
         padding: 2px;
         box-sizing: border-box;
         transition: transform 0.2s, background-color 0.5s ease;
@@ -787,15 +794,18 @@ tr:hover td:last-child {
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 100%;
+        text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
     }
 
-    .crypto-price {
+    .crypto-price-usd,
+    .crypto-price-pln {
         font-size: 0.65em;
-        margin-bottom: 0.5px;
+        text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
     }
 
     .crypto-change {
         font-size: 0.5em;
+        text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
     }
 
     .crypto-error {
