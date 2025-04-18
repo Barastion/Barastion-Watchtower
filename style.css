@@ -329,7 +329,7 @@ body {
 }
 
 .fear-greed-indicator .trend-indicator {
-    font-size: 1.2em; /* Zwiększono rozmiar kropki wskazującej trend */
+    font-size: 1em;
     margin-right: 3px;
     margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" */
     vertical-align: baseline;
@@ -777,7 +777,7 @@ tr:hover td:last-child {
     }
 
     .fear-greed-indicator .trend-indicator {
-        font-size: 1em; /* Zwiększono rozmiar kropki dla widoku mobilnego */
+        font-size: 0.9em;
         margin-right: 2px;
         margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
         vertical-align: baseline;
@@ -837,7 +837,7 @@ tr:hover td:last-child {
              0.5px -0.5px 0 black, /* Góra-prawo */
             -0.5px  0.5px 0 black, /* Dół-lewo */
              0.5px  0.5px 0 black, /* Dół-prawo */
-            -0.5px  0    0. black, /* Lewo */
+            -0.5px  0    0 black, /* Lewo */
              0.5px  0    0 black, /* Prawo */
              0    -0.5px 0 black, /* Góra */
              0     0.5px 0 black, /* Dół */
