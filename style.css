@@ -423,45 +423,18 @@ body {
     font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 1px;
-    text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 1px;
-    text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-change {
     font-size: 0.6em;
-    text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-error {
@@ -765,282 +738,251 @@ tr:hover td:last-child {
         width: 100%;
         min-height: 30px;
         text-align: center;
+        font-size: 0.75em;
+        padding: 8px 10px;
+        font-weight: normal;
     }
-    font-size: 0.75em;
-    padding: 8px 10px;
-    font-weight: normal;
-}
 
-.fear-greed-indicator .fear-greed-value {
-    font-weight: 600 !important;
-}
+    .fear-greed-indicator .fear-greed-value {
+        font-weight: 600 !important;
+    }
 
-.fear-greed-indicator .trend-indicator {
-    font-size: 0.9em;
-    margin-right: 2px;
-    margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
-    vertical-align: baseline;
-    /* Zewnętrzny czarny kontur za pomocą text-shadow */
-    text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         /* Dodatkowy cień dla efektu */
-         0 0 2px rgba(0, 0, 0, 1),
-         0 0 3.5px rgba(0, 0, 0, 1);
-}
+    .fear-greed-indicator .trend-indicator {
+        font-size: 0.9em;
+        margin-right: 2px;
+        margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
+        vertical-align: baseline;
+        /* Zewnętrzny czarny kontur za pomocą text-shadow */
+        text-shadow: 
+            -0.5px -0.5px 0 black, /* Góra-lewo */
+             0.5px -0.5px 0 black, /* Góra-prawo */
+            -0.5px  0.5px 0 black, /* Dół-lewo */
+             0.5px  0.5px 0 black, /* Dół-prawo */
+            -0.5px  0    0 black, /* Lewo */
+             0.5px  0    0 black, /* Prawo */
+             0    -0.5px 0 black, /* Góra */
+             0     0.5px 0 black, /* Dół */
+             /* Dodatkowy cień dla efektu */
+             0 0 2px rgba(0, 0, 0, 1),
+             0 0 3.5px rgba(0, 0, 0, 1);
+    }
 
-.crypto-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    padding: 10px;
-}
+    .crypto-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 10px;
+    }
 
-.crypto-tile {
-    min-height: 22px;
-    padding: 2px;
-    box-sizing: border-box;
-    transition: transform 0.2s, background-color 0.5s ease;
-}
+    .crypto-tile {
+        min-height: 22px;
+        padding: 2px;
+        box-sizing: border-box;
+        transition: transform 0.2s, background-color 0.5s ease;
+    }
 
-.crypto-symbol {
-    font-size: 0.7em;
-    margin-bottom: 0.5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-    text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 3.5px rgba(0, 0, 0, 1);
-}
+    .crypto-symbol {
+        font-size: 0.7em;
+        margin-bottom: 0.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+    }
 
-.crypto-price {
-    font-size: 0.65em;
-    margin-bottom: 0.5px;
-    text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 3.5px rgba(0, 0, 0, 1);
-}
+    .crypto-price {
+        font-size: 0.65em;
+        margin-bottom: 0.5px;
+    }
 
-.crypto-change {
-    font-size: 0.5em;
-    text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 3.5px rgba(0, 0, 0, 1);
-}
+    .crypto-change {
+        font-size: 0.5em;
+    }
 
-.crypto-error {
-    font-size: 0.8em;
-}
+    .crypto-error {
+        font-size: 0.8em;
+    }
 
-.log-table {
-    max-width: 100%;
-    padding: 15px;
-}
+    .log-table {
+        max-width: 100%;
+        padding: 15px;
+    }
 
-.table-wrapper {
-    overflow-x: auto;
-}
+    .table-wrapper {
+        overflow-x: auto;
+    }
 
-.table-container {
-    overflow: hidden;
-}
+    .table-container {
+        overflow: hidden;
+    }
 
-table {
-    width: 100%;
-    font-size: 0.75em;
-    table-layout: fixed;
-}
+    table {
+        width: 100%;
+        font-size: 0.75em;
+        table-layout: fixed;
+    }
 
-thead tr {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-}
+    thead tr {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+    }
 
-th, td {
-    padding: 2px;
-    height: 28px;
-    font-size: 0.7em;
-    vertical-align: middle;
-    box-sizing: border-box;
-}
+    th, td {
+        padding: 2px;
+        height: 28px;
+        font-size: 0.7em;
+        vertical-align: middle;
+        box-sizing: border-box;
+    }
 
-th {
-    background: transparent;
-    color: white;
-    font-weight: 700;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    transition: filter 0.3s ease;
-}
+    th {
+        background: transparent;
+        color: white;
+        font-weight: 700;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        transition: filter 0.3s ease;
+    }
 
-th:hover {
-    filter: brightness(1.1);
-}
+    th:hover {
+        filter: brightness(1.1);
+    }
 
-th:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
+    th:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
 
-th:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
+    th:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
 
-tr:nth-child(odd) {
-    background-color: #3a3a3a;
-}
+    tr:nth-child(odd) {
+        background-color: #3a3a3a;
+    }
 
-tr:nth-child(even) {
-    background-color: #2d2d2d;
-}
+    tr:nth-child(even) {
+        background-color: #2d2d2d;
+    }
 
-tr:hover {
-    background-color: #4a4a4a;
-}
+    tr:hover {
+        background-color: #4a4a4a;
+    }
 
-tr:not(:first-child) td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
+    tr:not(:first-child) td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
 
-tr:not(:first-child) td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
+    tr:not(:first-child) td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
 
-tr:hover td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
+    tr:hover td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
 
-tr:hover td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
+    tr:hover td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
 
-th:nth-child(1), td:nth-child(1) { /* Data */
-    width: 50px;
-    min-width: 50px;
-}
+    th:nth-child(1), td:nth-child(1) { /* Data */
+        width: 50px;
+        min-width: 50px;
+    }
 
-th:nth-child(2), td:nth-child(2) { /* Dzień */
-    width: 50px;
-    min-width: 50px;
-}
+    th:nth-child(2), td:nth-child(2) { /* Dzień */
+        width: 50px;
+        min-width: 50px;
+    }
 
-th:nth-child(3), td:nth-child(3) { /* Godzina */
-    width: 40px;
-    min-width: 40px;
-}
+    th:nth-child(3), td:nth-child(3) { /* Godzina */
+        width: 40px;
+        min-width: 40px;
+    }
 
-th:nth-child(4), td:nth-child(4) { /* IP */
-    width: 60px;
-    min-width: 60px;
-}
+    th:nth-child(4), td:nth-child(4) { /* IP */
+        width: 60px;
+        min-width: 60px;
+    }
 
-th.location-header, td.location-cell { /* Lokalizacja */
-    min-width: 90px;
-}
+    th.location-header, td.location-cell { /* Lokalizacja */
+        min-width: 90px;
+    }
 
-th:nth-child(6), td:nth-child(6) { /* Urządzenie */
-    min-width: 90px;
-}
+    th:nth-child(6), td:nth-child(6) { /* Urządzenie */
+        min-width: 90px;
+    }
 
-.location-cell {
-    min-width: 90px;
-}
+    .location-cell {
+        min-width: 90px;
+    }
 
-.city {
-    font-size: 0.7em;
-    display: block;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .city {
+        font-size: 0.7em;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.device {
-    font-size: 0.7em;
-    display: block;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .device {
+        font-size: 0.7em;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.country {
-    font-size: 0.7em;
-    color: #cccccc;
-    margin-top: 0;
-    display: block;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .country {
+        font-size: 0.7em;
+        color: #cccccc;
+        margin-top: 0;
+        display: block;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.isp {
-    font-size: 0.7em;
-    color: #cccccc;
-    margin-top: 0;
-    display: block;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .isp {
+        font-size: 0.7em;
+        color: #cccccc;
+        margin-top: 0;
+        display: block;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.toggle-button {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-    color: white;
-    border: none;
-    padding: 2px 4px;
-    border-radius: 8px;
-    font-size: 0.55em;
-    font-weight: 600;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    min-width: 70px;
-}
+    .toggle-button {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+        color: white;
+        border: none;
+        padding: 2px 4px;
+        border-radius: 8px;
+        font-size: 0.55em;
+        font-weight: 600;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+        min-width: 70px;
+    }
 
-.toggle-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    filter: brightness(1.1);
-}
+    .toggle-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        filter: brightness(1.1);
+    }
 
-.nasa-ticker {
-    font-size: 0.6em;
-}
+    .nasa-ticker {
+        font-size: 0.6em;
+    }
 
-.nasa-container {
-    max-width: 100%;
-}
+    .nasa-container {
+        max-width: 100%;
+    }
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
