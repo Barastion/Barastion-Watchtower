@@ -296,7 +296,7 @@ body {
 
 .fear-greed-indicator {
     background-color: #808080;
-    color: #ffffff;
+    color: #ffffff; /* Zapewnienie białego koloru tekstu */
     padding: 8px 10px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -309,58 +309,59 @@ body {
     overflow: hidden;
     white-space: normal;
     box-sizing: border-box;
+    /* Zewnętrzny czarny kontur za pomocą text-shadow */
     text-shadow: 
-        -0.5px -0.5px 0 black,
-        0.5px -0.5px 0 black,
-        -0.5px 0.5px 0 black,
-        0.5px 0.5px 0 black,
-        -0.5px 0 0 black,
-        0.5px 0 0 black,
-        0 0.5px 0 black,
-        0 -0.5px 0 black,
-        0 0 3.5px rgba(0, 0, 0, 1);
-}
-
-.fear-greed-text {
-    font-weight: bold;
+        -0.5px -0.5px 0 black, /* Góra-lewo */
+         0.5px -0.5px 0 black, /* Góra-prawo */
+        -0.5px  0.5px 0 black, /* Dół-lewo */
+         0.5px  0.5px 0 black, /* Dół-prawo */
+        -0.5px  0    0 black, /* Lewo */
+         0.5px  0    0 black, /* Prawo */
+         0    -0.5px 0 black, /* Góra */
+         0     0.5px 0 black, /* Dół */
+         /* Dodatkowy cień dla efektu */
+         0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .fear-greed-indicator .fear-greed-value {
     font-weight: 600 !important;
-    color: #ffffff;
+    color: #ffffff; /* Zapewnienie białego koloru tekstu */
+    /* Kontur i cień dziedziczone z .fear-greed-indicator */
 }
 
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 3px;
-    margin-left: 8px;
+    margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" */
     vertical-align: baseline;
+    /* Zewnętrzny czarny kontur za pomocą text-shadow */
     text-shadow: 
-        -0.5px -0.5px 0 black,
-        0.5px -0.5px 0 black,
-        -0.5px 0.5px 0 black,
-        0.5px 0.5px 0 black,
-        -0.5px 0 0 black,
-        0.5px 0 0 black,
-        0 0.5px 0 black,
-        0 -0.5px 0 black,
-        0 0 2px rgba(0, 0, 0, 1),
-        0 0 3.5px rgba(0, 0, 0, 1);
+        -0.5px -0.5px 0 black, /* Góra-lewo */
+         0.5px -0.5px 0 black, /* Góra-prawo */
+        -0.5px  0.5px 0 black, /* Dół-lewo */
+         0.5px  0.5px 0 black, /* Dół-prawo */
+        -0.5px  0    0 black, /* Lewo */
+         0.5px  0    0 black, /* Prawo */
+         0    -0.5px 0 black, /* Góra */
+         0     0.5px 0 black, /* Dół */
+         /* Dodatkowy cień dla efektu */
+         0 0 2px rgba(0, 0, 0, 1),
+         0 0 3.5px rgba(0, 0, 0, 1);
     line-height: 1;
 }
 
 .fear-greed-indicator .trend-up {
-    color: #00ff00;
+    color: #00ff00; /* Zielony dla trendu wzrostowego */
     animation: glow-positive 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-down {
-    color: var(--fear-greed-sell);
+    color: var(--fear-greed-sell); /* Czerwony dla trendu spadkowego */
     animation: glow-negative 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-neutral {
-    color: var(--fear-greed-hold);
+    color: var(--fear-greed-hold); /* Żółty dla trendu neutralnego */
 }
 
 .crypto-grid {
@@ -421,31 +422,19 @@ body {
 .crypto-symbol {
     font-size: 0.85em;
     font-weight: bold;
-    margin-top: 4px;
-    margin-bottom: 6px;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-    line-height: 1;
+    margin-bottom: 1px;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
-.crypto-price-usd {
+.crypto-price {
     font-size: 0.75em;
-    margin-bottom: 4px;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-    line-height: 1;
-}
-
-.crypto-price-pln {
-    font-size: 0.75em;
-    margin-bottom: 6px;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-    line-height: 1;
+    margin-bottom: 1px;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-change {
     font-size: 0.6em;
-    margin-bottom: 4px;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-    line-height: 1;
+    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .crypto-error {
@@ -485,8 +474,7 @@ thead tr {
     background: linear-gradient(135deg, #5a6268, #4a5258);
 }
 
-th,
-td {
+th, td {
     padding: 5px;
     height: 35px;
     vertical-align: middle;
@@ -646,51 +634,27 @@ tr:hover td:last-child {
 }
 
 @keyframes pulse-positive {
-    0% {
-        box-shadow: 0 0 6px rgba(0, 255, 0, 0.7);
-    }
-    50% {
-        box-shadow: 0 0 12px rgba(0, 255, 0, 1);
-    }
-    100% {
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
-    }
+    0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
+    50% { box-shadow: 0 0 12px rgba(0, 255, 0, 1); }
+    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
 }
 
 @keyframes pulse-negative {
-    0% {
-        box-shadow: 0 0 6px rgba(255, 0, 0, 0.7);
-    }
-    50% {
-        box-shadow: 0 0 12px rgba(255, 0, 0, 1);
-    }
-    100% {
-        box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
-    }
+    0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
+    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
 
 @keyframes glow-positive {
-    0% {
-        color: #00ff00;
-    }
-    50% {
-        color: #66ff66;
-    }
-    100% {
-        color: #00ff00;
-    }
+    0% { color: #00ff00; }
+    50% { color: #66ff66; }
+    100% { color: #00ff00; }
 }
 
 @keyframes glow-negative {
-    0% {
-        color: var(--fear-greed-sell);
-    }
-    50% {
-        color: rgba(255, 100, 100, 0.9);
-    }
-    100% {
-        color: var(--fear-greed-sell);
-    }
+    0% { color: var(--fear-greed-sell); }
+    50% { color: rgba(255, 100, 100, 0.9); }
+    100% { color: var(--fear-greed-sell); }
 }
 
 @media (max-width: 768px) {
@@ -742,11 +706,7 @@ tr:hover td:last-child {
         padding: 5px;
     }
 
-    .forecast-date,
-    .weather-day,
-    .weather-description,
-    .temp-max,
-    .temp-min {
+    .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
         font-size: 0.65em;
     }
 
@@ -783,10 +743,6 @@ tr:hover td:last-child {
         font-weight: normal;
     }
 
-    .fear-greed-text {
-        font-weight: bold;
-    }
-
     .fear-greed-indicator .fear-greed-value {
         font-weight: 600 !important;
     }
@@ -794,19 +750,21 @@ tr:hover td:last-child {
     .fear-greed-indicator .trend-indicator {
         font-size: 0.9em;
         margin-right: 2px;
-        margin-left: 8px;
+        margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
         vertical-align: baseline;
+        /* Zewnętrzny czarny kontur za pomocą text-shadow */
         text-shadow: 
-            -0.5px -0.5px 0 black,
-            0.5px -0.5px 0 black,
-            -0.5px 0.5px 0 black,
-            0.5px 0.5px 0 black,
-            -0.5px 0 0 black,
-            0.5px 0 0 black,
-            0 0.5px 0 black,
-            0 -0.5px 0 black,
-            0 0 2px rgba(0, 0, 0, 1),
-            0 0 3.5px rgba(0, 0, 0, 1);
+            -0.5px -0.5px 0 black, /* Góra-lewo */
+             0.5px -0.5px 0 black, /* Góra-prawo */
+            -0.5px  0.5px 0 black, /* Dół-lewo */
+             0.5px  0.5px 0 black, /* Dół-prawo */
+            -0.5px  0    0 black, /* Lewo */
+             0.5px  0    0 black, /* Prawo */
+             0    -0.5px 0 black, /* Góra */
+             0     0.5px 0 black, /* Dół */
+             /* Dodatkowy cień dla efektu */
+             0 0 2px rgba(0, 0, 0, 1),
+             0 0 3.5px rgba(0, 0, 0, 1);
     }
 
     .crypto-grid {
@@ -823,36 +781,21 @@ tr:hover td:last-child {
     }
 
     .crypto-symbol {
-        font-size: 0.5em;
-        margin-top: 3px;
-        margin-bottom: 3px;
+        font-size: 0.7em;
+        margin-bottom: 0.5px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 100%;
-        text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-        line-height: 1;
     }
 
-    .crypto-price-usd {
-        font-size: 0.45em;
-        margin-bottom: 1px;
-        text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-        line-height: 1;
-    }
-
-    .crypto-price-pln {
-        font-size: 0.45em;
-        margin-bottom: 3px;
-        text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-        line-height: 1;
+    .crypto-price {
+        font-size: 0.65em;
+        margin-bottom: 0.5px;
     }
 
     .crypto-change {
-        font-size: 0.35em;
-        margin-bottom: 3px;
-        text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-        line-height: 1;
+        font-size: 0.5em;
     }
 
     .crypto-error {
@@ -882,8 +825,7 @@ tr:hover td:last-child {
         background: linear-gradient(135deg, #5a6268, #4a5258);
     }
 
-    th,
-    td {
+    th, td {
         padding: 2px;
         height: 28px;
         font-size: 0.7em;
@@ -946,37 +888,31 @@ tr:hover td:last-child {
         border-bottom-right-radius: 8px;
     }
 
-    th:nth-child(1),
-    td:nth-child(1) {
+    th:nth-child(1), td:nth-child(1) { /* Data */
         width: 50px;
         min-width: 50px;
     }
 
-    th:nth-child(2),
-    td:nth-child(2) {
+    th:nth-child(2), td:nth-child(2) { /* Dzień */
         width: 50px;
         min-width: 50px;
     }
 
-    th:nth-child(3),
-    td:nth-child(3) {
+    th:nth-child(3), td:nth-child(3) { /* Godzina */
         width: 40px;
         min-width: 40px;
     }
 
-    th:nth-child(4),
-    td:nth-child(4) {
+    th:nth-child(4), td:nth-child(4) { /* IP */
         width: 60px;
         min-width: 60px;
     }
 
-    th.location-header,
-    td.location-cell {
+    th.location-header, td.location-cell { /* Lokalizacja */
         min-width: 90px;
     }
 
-    th:nth-child(6),
-    td:nth-child(6) {
+    th:nth-child(6), td:nth-child(6) { /* Urządzenie */
         min-width: 90px;
     }
 
