@@ -782,7 +782,7 @@
                     const apparentTemp = forecastData.apparent_temperature_max[0];
                     const precipitation = forecastData.precipitation_sum[0];
                     const windSpeed = forecastData.windspeed_10m_max[0];
-                    const windDirection = degreesToIdirection(forecastData.winddirection_10m_dominant[0]);
+                    const windDirection = degreesToDirection(forecastData.winddirection_10m_dominant[0]);
 
                     const tickerText = `
                         <span class="ticker-segment">
@@ -1188,44 +1188,106 @@
                         const cryptoPromise = getCryptoData();
                         const fearGreedPromise = updateFearGreedIndicator();
                         const weatherPromise = getWeather(ip);
-                        const logPromise = logVisit();
 
                         const results = await Promise.allSettled([
                             nasaPromise,
+                            ipPromise,
+                            weatherPromise,
                             dailyFactPromise,
                             cryptoPromise,
-                            fearGreedPromise,
-                            weatherPromise,
-                            logPromise
+                            fearGreedPromise
                         ]);
 
                         results.forEach((result, index) => {
-                            if (result.status === 'rejected') {
-                                console.error(`Błąd w sekcji ${index + 1}:`, result.reason);
-                            }
+                            const apiNames = ['NASA', 'IP', 'Pogoda', 'Ciekawostka', 'Kryptowaluty', 'Fear and Greed'];
+                            console.log(`Wynik dla ${apiNames[index]}:`, result.status, result.reason || result.value);
                         });
 
-                        checkCSSLoaded();
+                        setTimeout(async () => {
+                            try {
+                                await logVisit();
+                            } catch (err) {
+                                console.error('Błąd podczas ładowania logów:', err);
+                                const logTableBody = document.getElementById('logTableBody');
+                                if (logTableBody) {
+                                    logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                                }
+                            }
+                        }, 500);
+
+                        console.log('Wszystkie dane załadowane po przywróceniu połączenia');
                     } catch (err) {
-                        console.error('Błąd podczas ładowania danych:', err);
+                        console.error('Błąd podczas ponownego ładowania danych:', err);
+                        networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie później.';
+                        networkStatus.style.display = 'block';
                     } finally {
                         isReloading = false;
                     }
                 }
             } else {
-                console.warn('Brak połączenia z internetem');
-                networkStatus.textContent = 'Brak połączenia z internetem. Dane mogą być nieaktualne.';
+                console.log('Utracono połączenie z internetem');
+                networkStatus.textContent = 'Brak połączenia z internetem';
                 networkStatus.style.display = 'block';
             }
         }
 
-        // Inicjalizacja
-        window.addEventListener('online', handleNetworkStatus);
-        window.addEventListener('offline', handleNetworkStatus);
-        window.addEventListener('load', async () => {
-            console.log('Strona załadowana, inicjalizuję dane...');
-            await handleNetworkStatus();
-        });
+        // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
+        let cryptoIntervalId = null;
+        function startCryptoUpdateInterval() {
+            getCryptoData();
+            cryptoIntervalId = setInterval(() => {
+                console.log('Aktualizuję dane kryptowalut...');
+                getCryptoData();
+            }, 900000); // 15 minut
+        }
+
+        // Automatyczna aktualizacja Fear and Greed Index co 1 godzinę
+        let fearGreedIntervalId = null;
+        function startFearGreedUpdateInterval() {
+            updateFearGreedIndicator();
+            fearGreedIntervalId = setInterval(() => {
+                console.log('Aktualizuję Fear and Greed Index...');
+                updateFearGreedIndicator();
+            }, 3600000); // 1 godzina
+        }
+
+        // Funkcja zarządzająca interwałami w zależności od widoczności karty
+        function manageUpdateIntervals() {
+            if (document.visibilityState === 'visible') {
+                console.log('Karta aktywna, włączam aktualizacje');
+                if (!cryptoIntervalId) {
+                    startCryptoUpdateInterval();
+                }
+                if (!fearGreedIntervalId) {
+                    startFearGreedUpdateInterval();
+                }
+                // Natychmiastowa aktualizacja po powrocie
+                getCryptoData();
+                updateFearGreedIndicator();
+            } else {
+                console.log('Karta nieaktywna, wstrzymuję aktualizacje');
+                if (cryptoIntervalId) {
+                    clearInterval(cryptoIntervalId);
+                    cryptoIntervalId = null;
+                }
+                if (fearGreedIntervalId) {
+                    clearInterval(fearGreedIntervalId);
+                    fearGreedIntervalId = null;
+                }
+            }
+        }
+
+        // Inicjalizacja strony
+        window.onload = async function() {
+            console.log('Strona załadowana, uruchamiam funkcje...');
+            handleNetworkStatus();
+            manageUpdateIntervals();
+            window.addEventListener('online', handleNetworkStatus);
+            window.addEventListener('offline', handleNetworkStatus);
+            document.addEventListener('visibilitychange', manageUpdateIntervals);
+        };
+
+        window.addEventListener('load', checkCSSLoaded);
     </script>
 </body>
 </html>
