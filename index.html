@@ -153,14 +153,17 @@
             const cleanupInterval = 3600000; // 1 godzina
             const lastCleanupTime = localStorage.getItem('lastCleanupTime');
             const cleanupThreshold = 48 * 60 * 60 * 1000; // 48 godzin
+            const isCleanupTriggered = localStorage.getItem('isCleanupTriggered');
 
-            // Sprawdź, czy minęła godzina od ostatniego czyszczenia
-            if (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval)) {
-                console.log('Czyszczenie pominięte: minęło za mało czasu');
+            // Sprawdź, czy czyszczenie jest już zaplanowane lub minęła godzina
+            if (isCleanupTriggered === 'true' || (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval))) {
+                console.debug('Czyszczenie pominięte: minęło za mało czasu lub czyszczenie już zaplanowane');
                 return;
             }
 
             console.log('Rozpoczynam czyszczenie localStorage...');
+            localStorage.setItem('isCleanupTriggered', 'true');
+
             const keysToRemove = [];
 
             for (let i = 0; i < localStorage.length; i++) {
@@ -180,6 +183,7 @@
             });
 
             localStorage.setItem('lastCleanupTime', now.toString());
+            localStorage.removeItem('isCleanupTriggered');
             console.log('Czyszczenie localStorage zakończone');
         }
 
@@ -188,8 +192,6 @@
             const minifiedData = minifyData(cacheKey, data);
             localStorage.setItem(cacheKey, JSON.stringify(minifiedData));
             localStorage.setItem(cacheTimeKey, Date.now().toString());
-            // Zaplanuj czyszczenie z opóźnieniem (niski priorytet)
-            setTimeout(() => cleanOldCache(), 1000);
         }
 
         // Funkcja sprawdzająca cache z obsługą wydłużonego czasu po błędzie 429
@@ -338,6 +340,7 @@
                 setCachedData(trendKey, cacheTimeKey, trend);
                 setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
                 displayFearGreed(average, trend);
+                cleanOldCache(); // Czyszczenie po Fear and Greed
                 return cachedData;
             }
 
@@ -359,6 +362,7 @@
                 setCachedData(trendKey, cacheTimeKey, trend);
                 localStorage.removeItem(`rateLimit_${rawDataKey}`);
                 displayFearGreed(average, trend);
+                cleanOldCache(); // Czyszczenie po Fear and Greed
                 return validatedData;
             } catch (error) {
                 console.error('Błąd pobierania Fear and Greed:', error);
@@ -776,6 +780,7 @@
                 console.log('Używam pogody z cache:', ip);
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedWeather);
                 displayWeather(cachedWeather, ip);
+                cleanOldCache(); // Czyszczenie po pogodzie
                 return cachedWeather;
             }
 
@@ -795,6 +800,7 @@
                     setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, weatherData);
                     localStorage.removeItem(`rateLimit_${cacheKey}`);
                     displayWeather(weatherData, ip);
+                    cleanOldCache(); // Czyszczenie po pogodzie
                     return weatherData;
                 } else {
                     throw new Error('Brak danych pogodowych');
@@ -1269,7 +1275,13 @@
                             updateFearGreedIndicator()
                         ]);
 
-                        console.log('Wyniki API:', { nasa: nasaResult.status, weather: weatherResult.status, fact: dailyFactResult.status, crypto: cryptoResult.status, fearGreed: fearGreedResult.status });
+                        console.log('Wyniki API:', {
+                            nasa: nasaResult.status === 'fulfilled' ? 'Success' : `Failed: ${nasaResult.reason}`,
+                            weather: weatherResult.status === 'fulfilled' ? 'Success' : `Failed: ${weatherResult.reason}`,
+                            fact: dailyFactResult.status === 'fulfilled' ? 'Success' : `Failed: ${dailyFactResult.reason}`,
+                            crypto: cryptoResult.status === 'fulfilled' ? 'Success' : `Failed: ${cryptoResult.reason}`,
+                            fearGreed: fearGreedResult.status === 'fulfilled' ? 'Success' : `Failed: ${fearGreedResult.reason}`
+                        });
 
                         setTimeout(async () => {
                             try {
@@ -1301,7 +1313,6 @@
 
         let cryptoIntervalId = null;
         function startCryptoUpdateInterval() {
-            getCryptoData();
             cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
@@ -1326,8 +1337,6 @@
                 if (!fearGreedIntervalId) {
                     startFearGreedUpdateInterval();
                 }
-                getCryptoData();
-                updateFearGreedIndicator();
             } else {
                 console.log('Karta nieaktywna, wstrzymuję aktualizacje');
                 if (cryptoIntervalId) {
@@ -1343,7 +1352,6 @@
 
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
-            setTimeout(() => cleanOldCache(), 1000); // Czyszczenie cache przy starcie
             handleNetworkStatus();
             manageUpdateIntervals();
             window.addEventListener('online', handleNetworkStatus);
