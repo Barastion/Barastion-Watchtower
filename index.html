@@ -1125,6 +1125,7 @@
                     const name = (coin.name || '').toLowerCase();
                     const symbol = (coin.symbol || '').toLowerCase();
 
+                    // Filtr stablecoinów powiązanych z fiat (0.95-1.05 USD)
                     const isFiatRelated = fiatCurrencies.some(currency =>
                         id.includes(currency) || name.includes(currency) || symbol.includes(currency)
                     );
@@ -1133,11 +1134,13 @@
                         return false;
                     }
 
-                    if (price <= 0.01 || (!isFiatRelated && price >= 0.99 && price <= 1.01)) {
+                    // Filtr kryptowalut o cenie poniżej 0.00001 USD
+                    if (price < 0.00001) {
                         console.log(`Pominięto ${coin.symbol}: cena ${price} USD`);
                         return false;
                     }
 
+                    // Filtr instrumentów pochodnych
                     const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
                     if (isDeriv) {
                         console.log(`Pominięto pochodną: ${coin.symbol} (bazowa: ${baseSymbol})`);
