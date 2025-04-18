@@ -423,18 +423,48 @@ body {
     font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 1px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 
+        -0.5px -0.5px 0 black, /* Góra-lewo */
+         0.5px -0.5px 0 black, /* Góra-prawo */
+        -0.5px  0.5px 0 black, /* Dół-lewo */
+         0.5px  0.5px 0 black, /* Dół-prawo */
+        -0.5px  0    0 black, /* Lewo */
+         0.5px  0    0 black, /* Prawo */
+         0    -0.5px 0 black, /* Góra */
+         0     0.5px 0 black, /* Dół */
+         /* Dodatkowy cień dla lepszej czytelności */
+         0 0 4px rgba(0, 0, 0, 1);
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 1px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 
+        -0.5px -0.5px 0 black, /* Góra-lewo */
+         0.5px -0.5px 0 black, /* Góra-prawo */
+        -0.5px  0.5px 0 black, /* Dół-lewo */
+         0.5px  0.5px 0 black, /* Dół-prawo */
+        -0.5px  0    0 black, /* Lewo */
+         0.5px  0    0 black, /* Prawo */
+         0    -0.5px 0 black, /* Góra */
+         0     0.5px 0 black, /* Dół */
+         /* Dodatkowy cień dla lepszej czytelności */
+         0 0 4px rgba(0, 0, 0, 1);
 }
 
 .crypto-change {
     font-size: 0.6em;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1);
+    text-shadow: 
+        -0.5px -0.5px 0 black, /* Góra-lewo */
+         0.5px -0.5px 0 black, /* Góra-prawo */
+        -0.5px  0.5px 0 black, /* Dół-lewo */
+         0.5px  0.5px 0 black, /* Dół-prawo */
+        -0.5px  0    0 black, /* Lewo */
+         0.5px  0    0 black, /* Prawo */
+         0    -0.5px 0 black, /* Góra */
+         0     0.5px 0 black, /* Dół */
+         /* Dodatkowy cień dla lepszej czytelności */
+         0 0 4px rgba(0, 0, 0, 1);
 }
 
 .crypto-error {
@@ -787,15 +817,48 @@ tr:hover td:last-child {
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 100%;
+        text-shadow: 
+            -0.5px -0.5px 0 black, /* Góra-lewo */
+             0.5px -0.5px 0 black, /* Góra-prawo */
+            -0.5px  0.5px 0 black, /* Dół-lewo */
+             0.5px  0.5px 0 black, /* Dół-prawo */
+            -0.5px  0    0 black, /* Lewo */
+             0.5px  0    0 black, /* Prawo */
+             0    -0.5px 0 black, /* Góra */
+             0     0.5px 0 black, /* Dół */
+             /* Dodatkowy cień dla lepszej czytelności */
+             0 0 4px rgba(0, 0, 0, 1);
     }
 
     .crypto-price {
         font-size: 0.65em;
         margin-bottom: 0.5px;
+        text-shadow: 
+            -0.5px -0.5px 0 black, /* Góra-lewo */
+             0.5px -0.5px 0 black, /* Góra-prawo */
+            -0.5px  0.5px 0 black, /* Dół-lewo */
+             0.5px  0.5px 0 black, /* Dół-prawo */
+            -0.5px  0    0 black, /* Lewo */
+             0.5px  0    0 black, /* Prawo */
+             0    -0.5px 0 black, /* Góra */
+             0     0.5px 0 black, /* Dół */
+             /* Dodatkowy cień dla lepszej czytelności */
+             0 0 4px rgba(0, 0, 0, 1);
     }
 
     .crypto-change {
         font-size: 0.5em;
+        text-shadow: 
+            -0.5px -0.5px 0 black, /* Góra-lewo */
+             0.5px -0.5px 0 black, /* Góra-prawo */
+            -0.5px  0.5px 0 black, /* Dół-lewo */
+             0.5px  0.5px 0 black, /* Dół-prawo */
+            -0.5px  0    0 black, /* Lewo */
+             0.5px  0    0 black, /* Prawo */
+             0    -0.5px 0 black, /* Góra */
+             0     0.5px 0 black, /* Dół */
+             /* Dodatkowy cień dla lepszej czytelności */
+             0 0 4px rgba(0, 0, 0, 1);
     }
 
     .crypto-error {
