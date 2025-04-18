@@ -276,14 +276,25 @@
                 if (!data.data || data.data.length < 21) {
                     throw new Error('Za mało danych do obliczenia trendu');
                 }
-                setCachedData(rawDataKey, cacheTimeKey, data.data);
-                setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, data.data);
-                const average = calculateWeightedIndex(data.data);
-                const trend = calculateTrend(data.data);
+                // Sortowanie danych według timestamp (najnowsze najpierw)
+                const sortedData = data.data.sort((a, b) => {
+                    const dateA = new Date(a.timestamp);
+                    const dateB = new Date(b.timestamp);
+                    return dateB - dateA; // Malejąco
+                });
+                // Walidacja wartości value
+                const validatedData = sortedData.map(item => ({
+                    ...item,
+                    value: isNaN(parseFloat(item.value)) ? "0" : item.value
+                }));
+                setCachedData(rawDataKey, cacheTimeKey, validatedData);
+                setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, validatedData);
+                const average = calculateWeightedIndex(validatedData);
+                const trend = calculateTrend(validatedData);
                 setCachedData(cacheKey, cacheTimeKey, average);
                 setCachedData(trendKey, cacheTimeKey, trend);
                 displayFearGreed(average, trend);
-                return data.data;
+                return validatedData;
             } catch (error) {
                 console.error('Błąd pobierania danych Fear and Greed Index:', error);
                 return null;
@@ -293,9 +304,12 @@
         function calculateWeightedIndex(values) {
             const groups = [];
             for (let i = 0; i < values.length; i += 3) {
-                const group = values.slice(i, i + 3).map(item => parseInt(item.value));
+                const group = values.slice(i, i + 3).map(item => {
+                    const value = parseFloat(item.value);
+                    return isNaN(value) ? 0 : parseFloat(value.toFixed(1));
+                });
                 const groupAverage = group.reduce((sum, val) => sum + val, 0) / group.length;
-                groups.push(groupAverage);
+                groups.push(parseFloat(groupAverage.toFixed(1)));
             }
 
             const weights = [1.1, 1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
@@ -307,22 +321,38 @@
             }
             const weightedIndex = weightedSum / sumWeights;
 
-            return Math.round(weightedIndex);
+            return parseFloat(weightedIndex.toFixed(1)); // Zwracamy z 1 miejscem po przecinku
         }
 
         function calculateTrend(values) {
-            const last7Days = values.slice(0, 7).map(item => parseInt(item.value));
+            // Walidacja: upewnij się, że jest wystarczająco danych
+            if (!values || values.length < 21) {
+                console.error('Niewystarczająca liczba danych do obliczenia trendu');
+                return { symbol: '•', class: 'trend-neutral' };
+            }
+
+            // Pobierz dane z ostatnich 7 dni
+            const last7Days = values.slice(0, 7).map(item => {
+                const value = parseFloat(item.value);
+                return isNaN(value) ? 0 : parseFloat(value.toFixed(1));
+            });
             const avgLast7 = last7Days.reduce((sum, val) => sum + val, 0) / last7Days.length;
 
-            const previous14Days = values.slice(7, 21).map(item => parseInt(item.value));
+            // Pobierz dane z poprzednich 14 dni
+            const previous14Days = values.slice(7, 21).map(item => {
+                const value = parseFloat(item.value);
+                return isNaN(value) ? 0 : parseFloat(value.toFixed(1));
+            });
             const avgPrevious14 = previous14Days.reduce((sum, val) => sum + val, 0) / previous14Days.length;
 
-            if (avgLast7 > avgPrevious14) {
-                return { symbol: '▲', class: 'trend-up' };
-            } else if (avgLast7 < avgPrevious14) {
-                return { symbol: '▼', class: 'trend-down' };
-            } else {
+            // Porównanie z progiem 3 jednostek
+            const difference = Math.abs(avgLast7 - avgPrevious14);
+            if (difference < 3) {
                 return { symbol: '•', class: 'trend-neutral' };
+            } else if (avgLast7 > avgPrevious14) {
+                return { symbol: '▲', class: 'trend-up' };
+            } else {
+                return { symbol: '▼', class: 'trend-down' };
             }
         }
 
@@ -336,8 +366,9 @@
 
         function displayFearGreed(average, trend) {
             const indicator = document.getElementById('fearGreedIndicator');
-            const { signal, color } = getSignalAndColor(average);
-            indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${average} – ${signal}</span>`;
+            const roundedAverage = Math.round(average); // Zaokrąglenie do liczby całkowitej
+            const { signal, color } = getSignalAndColor(roundedAverage);
+            indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${roundedAverage} – ${signal}</span>`;
             indicator.style.backgroundColor = color;
         }
 
@@ -751,7 +782,7 @@
                     const apparentTemp = forecastData.apparent_temperature_max[0];
                     const precipitation = forecastData.precipitation_sum[0];
                     const windSpeed = forecastData.windspeed_10m_max[0];
-                    const windDirection = degreesToDirection(forecastData.winddirection_10m_dominant[0]);
+                    const windDirection = degreesToIdirection(forecastData.winddirection_10m_dominant[0]);
 
                     const tickerText = `
                         <span class="ticker-segment">
@@ -1157,106 +1188,44 @@
                         const cryptoPromise = getCryptoData();
                         const fearGreedPromise = updateFearGreedIndicator();
                         const weatherPromise = getWeather(ip);
+                        const logPromise = logVisit();
 
                         const results = await Promise.allSettled([
                             nasaPromise,
-                            ipPromise,
-                            weatherPromise,
                             dailyFactPromise,
                             cryptoPromise,
-                            fearGreedPromise
+                            fearGreedPromise,
+                            weatherPromise,
+                            logPromise
                         ]);
 
                         results.forEach((result, index) => {
-                            const apiNames = ['NASA', 'IP', 'Pogoda', 'Ciekawostka', 'Kryptowaluty', 'Fear and Greed'];
-                            console.log(`Wynik dla ${apiNames[index]}:`, result.status, result.reason || result.value);
+                            if (result.status === 'rejected') {
+                                console.error(`Błąd w sekcji ${index + 1}:`, result.reason);
+                            }
                         });
 
-                        setTimeout(async () => {
-                            try {
-                                await logVisit();
-                            } catch (err) {
-                                console.error('Błąd podczas ładowania logów:', err);
-                                const logTableBody = document.getElementById('logTableBody');
-                                if (logTableBody) {
-                                    logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
-                                }
-                            }
-                        }, 500);
-
-                        console.log('Wszystkie dane załadowane po przywróceniu połączenia');
+                        checkCSSLoaded();
                     } catch (err) {
-                        console.error('Błąd podczas ponownego ładowania danych:', err);
-                        networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie później.';
-                        networkStatus.style.display = 'block';
+                        console.error('Błąd podczas ładowania danych:', err);
                     } finally {
                         isReloading = false;
                     }
                 }
             } else {
-                console.log('Utracono połączenie z internetem');
-                networkStatus.textContent = 'Brak połączenia z internetem';
+                console.warn('Brak połączenia z internetem');
+                networkStatus.textContent = 'Brak połączenia z internetem. Dane mogą być nieaktualne.';
                 networkStatus.style.display = 'block';
             }
         }
 
-        // Automatyczna aktualizacja kafelków kryptowalut co 15 minut
-        let cryptoIntervalId = null;
-        function startCryptoUpdateInterval() {
-            getCryptoData();
-            cryptoIntervalId = setInterval(() => {
-                console.log('Aktualizuję dane kryptowalut...');
-                getCryptoData();
-            }, 900000); // 15 minut
-        }
-
-        // Automatyczna aktualizacja Fear and Greed Index co 1 godzinę
-        let fearGreedIntervalId = null;
-        function startFearGreedUpdateInterval() {
-            updateFearGreedIndicator();
-            fearGreedIntervalId = setInterval(() => {
-                console.log('Aktualizuję Fear and Greed Index...');
-                updateFearGreedIndicator();
-            }, 3600000); // 1 godzina
-        }
-
-        // Funkcja zarządzająca interwałami w zależności od widoczności karty
-        function manageUpdateIntervals() {
-            if (document.visibilityState === 'visible') {
-                console.log('Karta aktywna, włączam aktualizacje');
-                if (!cryptoIntervalId) {
-                    startCryptoUpdateInterval();
-                }
-                if (!fearGreedIntervalId) {
-                    startFearGreedUpdateInterval();
-                }
-                // Natychmiastowa aktualizacja po powrocie
-                getCryptoData();
-                updateFearGreedIndicator();
-            } else {
-                console.log('Karta nieaktywna, wstrzymuję aktualizacje');
-                if (cryptoIntervalId) {
-                    clearInterval(cryptoIntervalId);
-                    cryptoIntervalId = null;
-                }
-                if (fearGreedIntervalId) {
-                    clearInterval(fearGreedIntervalId);
-                    fearGreedIntervalId = null;
-                }
-            }
-        }
-
-        // Inicjalizacja strony
-        window.onload = async function() {
-            console.log('Strona załadowana, uruchamiam funkcje...');
-            handleNetworkStatus();
-            manageUpdateIntervals();
-            window.addEventListener('online', handleNetworkStatus);
-            window.addEventListener('offline', handleNetworkStatus);
-            document.addEventListener('visibilitychange', manageUpdateIntervals);
-        };
-
-        window.addEventListener('load', checkCSSLoaded);
+        // Inicjalizacja
+        window.addEventListener('online', handleNetworkStatus);
+        window.addEventListener('offline', handleNetworkStatus);
+        window.addEventListener('load', async () => {
+            console.log('Strona załadowana, inicjalizuję dane...');
+            await handleNetworkStatus();
+        });
     </script>
 </body>
 </html>
