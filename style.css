@@ -379,7 +379,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 60px; /* Zwiększona wysokość dla USD i PLN */
+    min-height: 48px; /* Zmniejszona wysokość dla kompaktowego wyglądu */
     box-sizing: border-box;
     transition: transform 0.2s, background-color 0.5s ease;
     cursor: pointer;
@@ -422,26 +422,27 @@ body {
 .crypto-symbol {
     font-size: 0.85em;
     font-weight: bold;
-    margin-bottom: 1px;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
+    margin-bottom: 0.5px; /* Mniejsza przerwa przed USD */
+    text-shadow: 0 0 4.5px rgba(0, 0, 0, 1), 0 0 2px rgba(0, 0, 0, 1); /* Intensywniejszy cień tekstu */
 }
 
 .crypto-prices {
     display: flex;
     flex-direction: column;
-    gap: 1px;
-    margin-bottom: 1px;
+    gap: 0.25px; /* Znikoma przerwa między USD a PLN */
+    margin-bottom: 0px;
 }
 
 .crypto-price-usd,
 .crypto-price-pln {
     font-size: 0.75em;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
+    text-shadow: 0 0 4.5px rgba(0, 0, 0, 1), 0 0 2px rgba(0, 0, 0, 1); /* Intensywniejszy cień tekstu */
 }
 
 .crypto-change {
     font-size: 0.6em;
-    text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
+    margin-top: 0.5px; /* Taka sama przerwa jak między nazwą a USD */
+    text-shadow: 0 0 4.5px rgba(0, 0, 0, 1), 0 0 2px rgba(0, 0, 0, 1); /* Intensywniejszy cień tekstu */
 }
 
 .crypto-error {
@@ -649,7 +650,7 @@ tr:hover td:last-child {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
 }
 
 @keyframes glow-positive {
@@ -781,7 +782,7 @@ tr:hover td:last-child {
     }
 
     .crypto-tile {
-        min-height: 50px; /* Zwiększona wysokość dla USD i PLN */
+        min-height: 40px; /* Zmniejszona wysokość dla kompaktowego wyglądu */
         padding: 2px;
         box-sizing: border-box;
         transition: transform 0.2s, background-color 0.5s ease;
@@ -789,23 +790,24 @@ tr:hover td:last-child {
 
     .crypto-symbol {
         font-size: 0.7em;
-        margin-bottom: 0.5px;
+        margin-bottom: 0.5px; /* Mniejsza przerwa przed USD */
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 100%;
-        text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
+        text-shadow: 0 0 4.5px rgba(0, 0, 0, 1), 0 0 2px rgba(0, 0, 0, 1); /* Intensywniejszy cień tekstu */
     }
 
     .crypto-price-usd,
     .crypto-price-pln {
         font-size: 0.65em;
-        text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
+        text-shadow: 0 0 4.5px rgba(0, 0, 0, 1), 0 0 2px rgba(0, 0, 0, 1); /* Intensywniejszy cień tekstu */
     }
 
     .crypto-change {
         font-size: 0.5em;
-        text-shadow: 0 0 3.5px rgba(0, 0, 0, 1); /* Jednolity cień tekstu */
+        margin-top: 0.5px; /* Taka sama przerwa jak między nazwą a USD */
+        text-shadow: 0 0 4.5px rgba(0, 0, 0, 1), 0 0 2px rgba(0, 0, 0, 1); /* Intensywniejszy cień tekstu */
     }
 
     .crypto-error {
