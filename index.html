@@ -405,7 +405,7 @@
         function calculateTrend(values) {
             if (!values || values.length < 15) {
                 console.error('Niewystarczająca liczba danych do trendu');
-                return { symbol: '•', class: 'trend-neutral' };
+                return { symbol: '■', class: 'trend-neutral' };
             }
             const last5Days = values.slice(0, 5).map(item => parseFloat(item.value) || 0);
             const avgLast5 = last5Days.reduce((sum, val) => sum + val, 0) / last5Days.length;
@@ -413,7 +413,7 @@
             const avgPrevious10 = previous10Days.reduce((sum, val) => sum + val, 0) / previous10Days.length;
             const difference = Math.abs(avgLast5 - avgPrevious10);
             if (difference < 3) {
-                return { symbol: '•', class: 'trend-neutral' };
+                return { symbol: '■', class: 'trend-neutral' };
             } else if (avgLast5 > avgPrevious10) {
                 return { symbol: '▲', class: 'trend-up' };
             } else {
@@ -866,12 +866,12 @@
 
                     const tickerText = `
                         <span class="ticker-segment">
-                            🌍 Warunki na: <span class="ticker-value">${todayDate}</span> •
-                            🌅 Wschód: <span class="ticker-value">${sunrise}</span> •
-                            🌇 Zachód: <span class="ticker-value">${sunset}</span> •
-                            🌡️ Odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> •
-                            🌧️ Opady: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> •
-                            💨 Wiatr: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> •
+                            🌍 Warunki na: <span class="ticker-value">${todayDate}</span> ■
+                            🌅 Wschód: <span class="ticker-value">${sunrise}</span> ■
+                            🌇 Zachód: <span class="ticker-value">${sunset}</span> ■
+                            🌡️ Odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> ■
+                            🌧️ Opady: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> ■
+                            💨 Wiatr: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> ■
                             🪁 Kierunek: <span class="ticker-value">${windDirection}</span>
                         </span>
                     `;
