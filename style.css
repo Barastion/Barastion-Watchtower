@@ -421,25 +421,29 @@ body {
 .crypto-symbol {
     font-size: 0.85em;
     font-weight: bold;
-    margin-bottom: 0.25px;
+    margin-bottom: 0.1px;
     text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+    line-height: 1;
 }
 
 .crypto-price-usd {
     font-size: 0.75em;
-    margin-bottom: 0.05px;
+    margin-bottom: 0.1px;
     text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+    line-height: 1;
 }
 
 .crypto-price-pln {
     font-size: 0.75em;
-    margin-bottom: 0.25px;
+    margin-bottom: 0.1px;
     text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+    line-height: 1;
 }
 
 .crypto-change {
     font-size: 0.6em;
     text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+    line-height: 1;
 }
 
 .crypto-error {
@@ -818,29 +822,33 @@ tr:hover td:last-child {
 
     .crypto-symbol {
         font-size: 0.7em;
-        margin-bottom: 0.25px;
+        margin-bottom: 0.1px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 100%;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+        line-height: 1;
     }
 
     .crypto-price-usd {
         font-size: 0.65em;
-        margin-bottom: 0.05px;
+        margin-bottom: 0.1px;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+        line-height: 1;
     }
 
     .crypto-price-pln {
         font-size: 0.65em;
-        margin-bottom: 0.25px;
+        margin-bottom: 0.1px;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+        line-height: 1;
     }
 
     .crypto-change {
         font-size: 0.5em;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+        line-height: 1;
     }
 
     .crypto-error {
