@@ -1179,28 +1179,45 @@
         }
 
         function formatPrice(price) {
-            if (price === 0) return '$0.00';
-            let formatted;
+            if (price === 0) return '$ 0.00';
+
+            // Konwersja ceny na liczbę
+            price = parseFloat(price);
+
+            // Obsługa bardzo małych wartości
             if (price < 0.01 && price > 0) {
-                formatted = `$${price.toFixed(6)}`;
-            } else {
-                formatted = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                let formatted = price.toFixed(6);
+                // Usuwanie zbędnych zer na końcu części ułamkowej
+                formatted = parseFloat(formatted).toString();
+                // Dodanie spacji po symbolu $
+                return `$ ${formatted}`;
             }
-            if (formatted.length > 10) {
-                if (price < 0.01) {
-                    const decimals = Math.max(2, 10 - 3 - Math.floor(Math.log10(price)));
-                    formatted = `$${price.toFixed(decimals)}`;
-                    if (formatted.length > 10) {
-                        formatted = formatted.substring(0, 10);
-                    }
-                } else {
-                    formatted = `$${Math.round(price * 100) / 100}`;
-                    if (formatted.length > 10) {
-                        formatted = formatted.substring(0, 10);
-                    }
+
+            // Część całkowita ceny
+            const integerPart = Math.floor(price).toString();
+            const integerLength = integerPart.length;
+
+            let formatted;
+            if (integerLength >= 7) {
+                // Jeśli 7 lub więcej cyfr przed przecinkiem, pokazujemy tylko część całkowitą
+                // Formatowanie z przerwami co trzy cyfry od prawej
+                formatted = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                // Ograniczenie do 7 cyfr
+                if (integerLength > 7) {
+                    formatted = formatted.replace(/\s/g, '').slice(0, 7);
+                    formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                 }
+            } else {
+                // Jeśli 6 lub mniej cyfr przed przecinkiem, pokazujemy ułamki
+                formatted = price.toFixed(2);
+                const [intPart, decPart] = formatted.split('.');
+                // Formatowanie części całkowitej z przerwami
+                const formattedIntPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+                formatted = `${formattedIntPart}.${decPart}`;
             }
-            return formatted;
+
+            // Dodanie spacji po symbolu $
+            return `$ ${formatted}`;
         }
 
         function getChangeClass(change) {
