@@ -304,7 +304,7 @@ body {
     min-height: 30px;
     text-align: center;
     font-size: 0.85em;
-    font-weight: normal;
+    font-weight: 600; /* Pogrubienie całego tekstu */
     transition: background-color 0.3s ease;
     overflow: hidden;
     white-space: normal;
@@ -324,7 +324,6 @@ body {
 }
 
 .fear-greed-indicator .fear-greed-value {
-    font-weight: 600 !important;
     color: #ffffff; /* Zapewnienie białego koloru tekstu */
     /* Kontur i cień dziedziczone z .fear-greed-indicator */
 }
@@ -424,47 +423,23 @@ body {
     font-weight: bold;
     margin-bottom: 1px;
     text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         /* Dodatkowy cień dla lepszej czytelności */
-         0 0 4px rgba(0, 0, 0, 1);
+        0 0 0.5px black, /* Równomierny cienki kontur */
+        0 0 2px rgba(0, 0, 0, 0.8); /* Dodatkowy cień dla czytelności */
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 1px;
     text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         /* Dodatkowy cień dla lepszej czytelności */
-         0 0 4px rgba(0, 0, 0, 1);
+        0 0 0.5px black, /* Równomierny cienki kontur */
+        0 0 2px rgba(0, 0, 0, 0.8); /* Dodatkowy cień dla czytelności */
 }
 
 .crypto-change {
     font-size: 0.6em;
     text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         /* Dodatkowy cień dla lepszej czytelności */
-         0 0 4px rgba(0, 0, 0, 1);
+        0 0 0.5px black, /* Równomierny cienki kontur */
+        0 0 2px rgba(0, 0, 0, 0.8); /* Dodatkowy cień dla czytelności */
 }
 
 .crypto-error {
@@ -770,11 +745,11 @@ tr:hover td:last-child {
         text-align: center;
         font-size: 0.75em;
         padding: 8px 10px;
-        font-weight: normal;
+        font-weight: 600; /* Pogrubienie całego tekstu */
     }
 
     .fear-greed-indicator .fear-greed-value {
-        font-weight: 600 !important;
+        color: #ffffff; /* Zapewnienie białego koloru tekstu */
     }
 
     .fear-greed-indicator .trend-indicator {
@@ -818,47 +793,23 @@ tr:hover td:last-child {
         white-space: nowrap;
         width: 100%;
         text-shadow: 
-            -0.5px -0.5px 0 black, /* Góra-lewo */
-             0.5px -0.5px 0 black, /* Góra-prawo */
-            -0.5px  0.5px 0 black, /* Dół-lewo */
-             0.5px  0.5px 0 black, /* Dół-prawo */
-            -0.5px  0    0 black, /* Lewo */
-             0.5px  0    0 black, /* Prawo */
-             0    -0.5px 0 black, /* Góra */
-             0     0.5px 0 black, /* Dół */
-             /* Dodatkowy cień dla lepszej czytelności */
-             0 0 4px rgba(0, 0, 0, 1);
+            0 0 0.5px black, /* Równomierny cienki kontur */
+            0 0 2px rgba(0, 0, 0, 0.8); /* Dodatkowy cień dla czytelności */
     }
 
     .crypto-price {
         font-size: 0.65em;
         margin-bottom: 0.5px;
         text-shadow: 
-            -0.5px -0.5px 0 black, /* Góra-lewo */
-             0.5px -0.5px 0 black, /* Góra-prawo */
-            -0.5px  0.5px 0 black, /* Dół-lewo */
-             0.5px  0.5px 0 black, /* Dół-prawo */
-            -0.5px  0    0 black, /* Lewo */
-             0.5px  0    0 black, /* Prawo */
-             0    -0.5px 0 black, /* Góra */
-             0     0.5px 0 black, /* Dół */
-             /* Dodatkowy cień dla lepszej czytelności */
-             0 0 4px rgba(0, 0, 0, 1);
+            0 0 0.5px black, /* Równomierny cienki kontur */
+            0 0 2px rgba(0, 0, 0, 0.8); /* Dodatkowy cień dla czytelności */
     }
 
     .crypto-change {
         font-size: 0.5em;
         text-shadow: 
-            -0.5px -0.5px 0 black, /* Góra-lewo */
-             0.5px -0.5px 0 black, /* Góra-prawo */
-            -0.5px  0.5px 0 black, /* Dół-lewo */
-             0.5px  0.5px 0 black, /* Dół-prawo */
-            -0.5px  0    0 black, /* Lewo */
-             0.5px  0    0 black, /* Prawo */
-             0    -0.5px 0 black, /* Góra */
-             0     0.5px 0 black, /* Dół */
-             /* Dodatkowy cień dla lepszej czytelności */
-             0 0 4px rgba(0, 0, 0, 1);
+            0 0 0.5px black, /* Równomierny cienki kontur */
+            0 0 2px rgba(0, 0, 0, 0.8); /* Dodatkowy cień dla czytelności */
     }
 
     .crypto-error {
