@@ -305,20 +305,20 @@ body {
     text-align: center;
     font-size: 0.85em;
     font-weight: normal;
-    transition: background-color: 0.3s ease;
+    transition: background-color 0.3s ease;
     overflow: hidden;
     white-space: normal;
     box-sizing: border-box;
     text-shadow: 
         -0.5px -0.5px 0 black,
-         0.5px -0.5px 0 black,
-        -0.5px  0.5px 0 black,
-         0.5px  0.5px 0 black,
-        -0.5px  0    0 black,
-         0.5px  0    0 black,
-         0    -0.5px 0 black,
-         0     0.5px 0 black,
-         0 0 3.5px rgba(0, 0, 0, 1);
+        0.5px -0.5px 0 black,
+        -0.5px 0.5px 0 black,
+        0.5px 0.5px 0 black,
+        -0.5px 0 0 black,
+        0.5px 0 0 black,
+        0 0.5px 0 black,
+        0 -0.5px 0 black,
+        0 0 3.5px rgba(0, 0, 0, 1);
 }
 
 .fear-greed-text {
@@ -337,15 +337,15 @@ body {
     vertical-align: baseline;
     text-shadow: 
         -0.5px -0.5px 0 black,
-         0.5px -0.5px 0 black,
-        -0.5px  0.5px 0 black,
-         0.5px  0.5px 0 black,
-        -0.5px  0    0 black,
-         0.5px  0    0 black,
-         0    -0.5px 0 black,
-         0     0.5px 0 black,
-         0 0 2px rgba(0, 0, 0, 1),
-         0 0 3.5px rgba(0, 0, 0, 1);
+        0.5px -0.5px 0 black,
+        -0.5px 0.5px 0 black,
+        0.5px 0.5px 0 black,
+        -0.5px 0 0 black,
+        0.5px 0 0 black,
+        0 0.5px 0 black,
+        0 -0.5px 0 black,
+        0 0 2px rgba(0, 0, 0, 1),
+        0 0 3.5px rgba(0, 0, 0, 1);
     line-height: 1;
 }
 
@@ -427,7 +427,7 @@ body {
 
 .crypto-price-usd {
     font-size: 0.75em;
-    margin-bottom: 0.10px;
+    margin-bottom: 0.05px;
     text-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 
@@ -792,15 +792,15 @@ tr:hover td:last-child {
         vertical-align: baseline;
         text-shadow: 
             -0.5px -0.5px 0 black,
-             0.5px -0.5px 0 black,
-            -0.5px  0.5px 0 black,
-             0.5px  0.5px 0 black,
-            -0.5px  0    0 black,
-             0.5px  0    0 black,
-             0    -0.5px 0 black,
-             0     0.5px 0 black,
-             0 0 2px rgba(0, 0, 0, 1),
-             0 0 3.5px rgba(0, 0, 0, 1);
+            0.5px -0.5px 0 black,
+            -0.5px 0.5px 0 black,
+            0.5px 0.5px 0 black,
+            -0.5px 0 0 black,
+            0.5px 0 0 black,
+            0 0.5px 0 black,
+            0 -0.5px 0 black,
+            0 0 2px rgba(0, 0, 0, 1),
+            0 0 3.5px rgba(0, 0, 0, 1);
     }
 
     .crypto-grid {
@@ -828,7 +828,7 @@ tr:hover td:last-child {
 
     .crypto-price-usd {
         font-size: 0.65em;
-        margin-bottom: 0.10px;
+        margin-bottom: 0.05px;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
     }
 
