@@ -824,8 +824,8 @@ tr:hover td:last-child {
 
     .crypto-symbol {
         font-size: 0.5em;
-        margin-top: 1px;
-        margin-bottom: 1px;
+        margin-top: 3px;
+        margin-bottom: 3px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -836,21 +836,21 @@ tr:hover td:last-child {
 
     .crypto-price-usd {
         font-size: 0.45em;
-        margin-bottom: 0.5px;
+        margin-bottom: 1px;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
         line-height: 1;
     }
 
     .crypto-price-pln {
         font-size: 0.45em;
-        margin-bottom: 1px;
+        margin-bottom: 3px;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
         line-height: 1;
     }
 
     .crypto-change {
         font-size: 0.35em;
-        margin-bottom: 1px;
+        margin-bottom: 3px;
         text-shadow: 0 0 5px rgba(0, 0, 0, 1);
         line-height: 1;
     }
