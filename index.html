@@ -31,7 +31,7 @@
         </div>
         <div class="daily-fact">
             <span class="fact-header">💡 Ciekawostka na dziś:</span>
-            <div class="fact-content" id="dailyFact">Ładowanie...</div>
+            <div class="fact-content" id="dailyFact"><span class="fact-segment">Ładowanie...</span></div>
         </div>
         <div class="content-frame">
             <div class="weather-info">
@@ -999,6 +999,15 @@
             tickerElement.innerHTML = `<span class="ticker-segment">${data.explanation}</span>`.repeat(5);
         }
 
+        // Funkcja do dzielenia tekstu po przecinku lub kropce
+        function splitFactText(text) {
+            if (!text || typeof text !== 'string') return ['Brak treści'];
+            // Dzielimy tekst po przecinkach lub kropkach, zachowując znaki
+            const segments = text.split(/(?<=[\.,]\s*)/).filter(segment => segment.trim().length > 0);
+            // Usuwamy nadmiarowe spacje z każdego segmentu
+            return segments.map(segment => segment.trim());
+        }
+
         async function getDailyFact() {
             const cacheKey = 'daily_fact';
             const cacheTimeKey = 'daily_fact_time';
@@ -1052,7 +1061,13 @@
         }
 
         function displayDailyFact(fact) {
-            document.getElementById('dailyFact').textContent = fact;
+            const factElement = document.getElementById('dailyFact');
+            if (!factElement) return;
+
+            // Dzielimy tekst na segmenty
+            const segments = splitFactText(fact);
+            // Wstawiamy segmenty jako elementy inline
+            factElement.innerHTML = segments.map(segment => `<span class="fact-segment">${segment}</span>`).join(' ');
         }
 
         function isDerivative(coin, usedBaseAssets, allCoins) {
@@ -1282,23 +1297,7 @@
             const container = document.querySelector('.container');
             const computedStyle = window.getComputedStyle(container);
             if (computedStyle.backgroundColor !== 'rgb(45, 45, 45)') {
-                console.warn('CSS nie załadował się, ładuję fallback');
-                const style = document.createElement('style');
-                style.textContent = `
-                    body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
-                    .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
-                    .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-                    .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
-                    .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
-                    .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
-                    .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
-                    .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
-                    .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
-                    .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                `;
-                document.head.appendChild(style);
-            }
-        }
+                console.warn('CSS nie załadował },
 
         let isReloading = false;
         async function handleNetworkStatus() {
