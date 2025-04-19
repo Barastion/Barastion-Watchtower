@@ -9,58 +9,6 @@
     <meta name="description" content="Monitoruj wizyty, pogodę, kryptowaluty i ciekawostki w czasie rzeczywistym!">
     <meta name="title" content="Ja tylko na chwilę zobaczyć jak leci">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
-    <style>
-        /* Dodatkowe style dla stabilności tabeli */
-        .log-table {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: auto;
-        }
-        .table-container {
-            width: 100%;
-            overflow: hidden;
-        }
-        #logTable {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-        #logTable th, #logTable td {
-            padding: 8px;
-            text-align: left;
-            word-wrap: break-word;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        #logTable th {
-            background-color: #333;
-            color: #fff;
-        }
-        #logTable td {
-            background-color: #2d2d2d;
-            color: #fff;
-        }
-        .location-cell, .location-cell div {
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .hidden-log {
-            display: none;
-        }
-        .toggle-button {
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #444;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .toggle-button:hover {
-            background-color: #555;
-        }
-    </style>
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -101,7 +49,9 @@
                 <div class="crypto-header">
                     <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sygnał: Ładowanie...</div>
                 </div>
-                <div class="crypto-grid" id="cryptoGrid"></div>
+                <div class="crypto-grid" id="cryptoGrid">
+                    <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
+                </div>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
@@ -433,6 +383,7 @@
                 return 0;
             }
 
+            // Podział na 15 grup po 2 dni
             const groups = [];
             for (let i = 0; i < values.length && groups.length < 15; i += 2) {
                 const group = values.slice(i, i + 2).map(item => {
@@ -443,6 +394,7 @@
                 groups.push(parseFloat(groupAverage.toFixed(1)));
             }
 
+            // Wagi eksponencjalne dla 15 grup
             const weights = Array.from({ length: 15 }, (_, i) => Math.pow(0.5, i));
             const sumWeights = weights.reduce((sum, w) => sum + w, 0);
             let weightedSum = 0;
@@ -454,6 +406,7 @@
             const weightedAverage = weightedSum / sumWeights;
             const lastDayValue = parseFloat(values[0].value) || 0;
 
+            // Korekta hybrydowa: 80% średniej ważonej + 20% ostatniego dnia
             const finalAverage = 0.8 * weightedAverage + 0.2 * lastDayValue;
             return parseFloat(finalAverage.toFixed(1));
         }
@@ -473,15 +426,20 @@
                 return { symbol: '■', class: 'trend-neutral' };
             }
 
+            // Przygotowanie wartości dla EMA
             const parsedValues = values.slice(0, 15).map(item => parseFloat(item.value) || 0).reverse();
+
+            // Obliczenie EMA5 i EMA15
             const ema5 = calculateEMA(parsedValues.slice(0, 5), 5);
             const ema15 = calculateEMA(parsedValues, 15);
             const difference = ema5 - ema15;
 
+            // Wczesne ostrzeżenie: spadek >= 10 punktów
             const lastDayValue = parsedValues[0];
             const avgDays2to4 = parsedValues.slice(1, 4).reduce((sum, val) => sum + val, 0) / 3;
             const earlyWarning = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue < avgDays2to4;
 
+            // Określenie trendu
             if (Math.abs(difference) < 2) {
                 return { symbol: '■', class: 'trend-neutral' };
             } else if (difference >= 2) {
@@ -603,25 +561,13 @@
         async function updateLogs() {
             console.log('Rozpoczynam aktualizację logów...');
             const logsRef = ref(database, 'logs');
+            console.log('Pobieram logi z Firebase...');
             try {
                 onValue(logsRef, (snapshot) => {
                     const logsData = snapshot.val();
                     let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
-
-                    // Usuwanie logów starszych niż 30 dni
-                    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-                    logs = logs.filter(log => {
-                        if (log.timestamp < thirtyDaysAgo) {
-                            remove(ref(database, `logs/${log.key}`));
-                            return false;
-                        }
-                        return true;
-                    });
-
-                    // Sortowanie od najnowszych do najstarszych
                     logs.sort((a, b) => b.timestamp - a.timestamp);
 
-                    // Ograniczenie do 50 logów
                     if (logs.length > 50) {
                         const logsToDelete = logs.slice(50);
                         logs = logs.slice(0, 50);
@@ -661,55 +607,60 @@
             const visibleLogs = logs.slice(0, 5);
             const hiddenLogs = logs.slice(5);
 
-            // Funkcja do tworzenia wiersza
-            const createLogRow = (log, isHidden = false) => {
+            visibleLogs.forEach(log => {
                 const row = document.createElement('tr');
-                if (isHidden) {
-                    row.classList.add('hidden-log');
-                    row.style.display = 'none';
-                }
-                // Zabezpieczenie przed zbyt długimi ciągami
-                const safeCity = (log.location?.city || 'Nieznane miasto').substring(0, 50);
-                const safeCountry = (log.location?.country || 'Nieznany kraj').substring(0, 50);
-                const safeIsp = (log.isp || 'Nieznany dostawca').substring(0, 50);
                 row.innerHTML = `
                     <td>${log.date || 'Brak'}</td>
                     <td>${log.day || 'Brak'}</td>
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city">${safeCity}</div>
-                        <div class="country">${safeCountry}</div>
+                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td>
                         <div class="device">${log.device || 'Brak'}</div>
-                        <div class="isp">${safeIsp}</div>
+                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
-                return row;
-            };
-
-            // Dodaj widoczne logi
-            visibleLogs.forEach(log => {
-                logTableBody.appendChild(createLogRow(log));
+                logTableBody.appendChild(row);
             });
 
-            // Dodaj ukryte logi
-            hiddenLogs.forEach(log => {
-                logTableBody.appendChild(createLogRow(log, true));
-            });
-
-            // Konfiguracja przycisku przełączania
             if (hiddenLogs.length > 0) {
+                hiddenLogs.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.classList.add('hidden-log');
+                    row.innerHTML = `
+                        <td>${log.date || 'Brak'}</td>
+                        <td>${log.day || 'Brak'}</td>
+                        <td>${log.time || 'Brak'}</td>
+                        <td>${log.ip || 'Brak'}</td>
+                        <td class="location-cell">
+                            <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                            <div class="country">${log.location.country || 'Nieznany kraj'}</div>
+                        </td>
+                        <td>
+                            <div class="device">${log.device || 'Brak'}</div>
+                            <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
+                        </td>
+                    `;
+                    logTableBody.appendChild(row);
+                });
+
                 toggleButton.style.display = 'block';
                 toggleButton.textContent = 'Rozwiń listę';
+
                 const hiddenRows = document.querySelectorAll('.hidden-log');
+                hiddenRows.forEach(row => row.style.display = 'none');
+
                 toggleButton.onclick = () => {
-                    const isExpanded = toggleButton.textContent === 'Zwiń listę';
-                    hiddenRows.forEach(row => {
-                        row.style.display = isExpanded ? 'none' : 'table-row';
-                    });
-                    toggleButton.textContent = isExpanded ? 'Rozwiń listę' : 'Zwiń listę';
+                    if (toggleButton.textContent === 'Rozwiń listę') {
+                        hiddenRows.forEach(row => row.style.display = 'table-row');
+                        toggleButton.textContent = 'Zwiń listę';
+                    } else {
+                        hiddenRows.forEach(row => row.style.display = 'none');
+                        toggleButton.textContent = 'Rozwiń listę';
+                    }
                 };
             } else {
                 toggleButton.style.display = 'none';
@@ -1412,33 +1363,33 @@
         let logIntervalId = null;
         let fearGreedIntervalId = null;
         let lastUpdateTime = null;
-        const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
+        const MIN_REFRESH_INTERVAL = 2 * 60 * 1000; // 2 minuty
 
         function startCryptoUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji kryptowalut');
-            getCryptoData();
+            getCryptoData(); // Natychmiastowe wywołanie po powrocie
             cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
-            }, 900000);
+            }, 900000); // 15 minut
         }
 
         function startLogUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji logów');
-            updateLogs();
+            updateLogs(); // Natychmiastowe wywołanie po powrocie
             logIntervalId = setInterval(() => {
                 console.log('Aktualizuję logi...');
                 updateLogs();
-            }, 900000);
+            }, 900000); // 15 minut
         }
 
         function startFearGreedUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji Fear and Greed');
-            updateFearGreedIndicator();
+            updateFearGreedIndicator(); // Natychmiastowe wywołanie po powrocie
             fearGreedIntervalId = setInterval(() => {
                 console.log('Aktualizuję Fear and Greed...');
                 updateFearGreedIndicator();
-            }, 3600000);
+            }, 3600000); // 1 godzina
         }
 
         let isManagingIntervals = false;
@@ -1454,6 +1405,7 @@
 
             if (document.visibilityState === 'visible') {
                 console.log('Karta aktywna, włączam aktualizacje');
+                // Czyść istniejące interwały, jeśli istnieją
                 if (cryptoIntervalId) {
                     clearInterval(cryptoIntervalId);
                     cryptoIntervalId = null;
@@ -1467,6 +1419,7 @@
                     fearGreedIntervalId = null;
                 }
 
+                // Sprawdź, czy minął minimalny czas od ostatniego odświeżenia
                 if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
                     console.log('Minął minimalny czas, odświeżam dane');
                     startCryptoUpdateInterval();
@@ -1475,6 +1428,7 @@
                     lastUpdateTime = now;
                 } else {
                     console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
+                    // Ustaw interwały bez natychmiastowego odświeżania
                     cryptoIntervalId = setInterval(() => {
                         console.log('Aktualizuję kryptowaluty...');
                         getCryptoData();
@@ -1490,6 +1444,7 @@
                 }
             } else {
                 console.log('Karta nieaktywna, wstrzymuję aktualizacje');
+                // Czyść interwały i resetuj zmienne
                 if (cryptoIntervalId) {
                     clearInterval(cryptoIntervalId);
                     cryptoIntervalId = null;
@@ -1511,7 +1466,7 @@
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
             if (document.visibilityState === 'visible') {
-                lastUpdateTime = Date.now();
+                lastUpdateTime = Date.now(); // Ustaw czas pierwszego ładowania
                 manageUpdateIntervals();
             }
             window.addEventListener('online', handleNetworkStatus);
