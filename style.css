@@ -422,47 +422,47 @@ body {
     font-weight: bold;
     margin-bottom: 1px;
     text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 0.5px black, /* Równomierny cienki kontur */
-         0 0 4px rgba(0, 0, 0, 1); /* Dodatkowy cień dla czytelności */
+        -0.4px -0.4px 0 black, /* Góra-lewo */
+         0.4px -0.4px 0 black, /* Góra-prawo */
+        -0.4px  0.4px 0 black, /* Dół-lewo */
+         0.4px  0.4px 0 black, /* Dół-prawo */
+        -0.4px  0    0 black, /* Lewo */
+         0.4px  0    0 black, /* Prawo */
+         0    -0.4px 0 black, /* Góra */
+         0     0.4px 0 black, /* Dół */
+         0 0 0.3px black, /* Węższy kontur */
+         0 0 2.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 1px;
     text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 0.5px black, /* Równomierny cienki kontur */
-         0 0 4px rgba(0, 0, 0, 1); /* Dodatkowy cień dla czytelności */
+        -0.4px -0.4px 0 black, /* Góra-lewo */
+         0.4px -0.4px 0 black, /* Góra-prawo */
+        -0.4px  0.4px 0 black, /* Dół-lewo */
+         0.4px  0.4px 0 black, /* Dół-prawo */
+        -0.4px  0    0 black, /* Lewo */
+         0.4px  0    0 black, /* Prawo */
+         0    -0.4px 0 black, /* Góra */
+         0     0.4px 0 black, /* Dół */
+         0 0 0.3px black, /* Węższy kontur */
+         0 0 2.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
 .crypto-change {
     font-size: 0.6em;
     text-shadow: 
-        -0.5px -0.5px 0 black, /* Góra-lewo */
-         0.5px -0.5px 0 black, /* Góra-prawo */
-        -0.5px  0.5px 0 black, /* Dół-lewo */
-         0.5px  0.5px 0 black, /* Dół-prawo */
-        -0.5px  0    0 black, /* Lewo */
-         0.5px  0    0 black, /* Prawo */
-         0    -0.5px 0 black, /* Góra */
-         0     0.5px 0 black, /* Dół */
-         0 0 0.5px black, /* Równomierny cienki kontur */
-         0 0 4px rgba(0, 0, 0, 1); /* Dodatkowy cień dla czytelności */
+        -0.4px -0.4px 0 black, /* Góra-lewo */
+         0.4px -0.4px 0 black, /* Góra-prawo */
+        -0.4px  0.4px 0 black, /* Dół-lewo */
+         0.4px  0.4px 0 black, /* Dół-prawo */
+        -0.4px  0    0 black, /* Lewo */
+         0.4px  0    0 black, /* Prawo */
+         0    -0.4px 0 black, /* Góra */
+         0     0.4px 0 black, /* Dół */
+         0 0 0.3px black, /* Węższy kontur */
+         0 0 2.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
 .crypto-error {
@@ -652,7 +652,7 @@ tr:hover td:last-child {
     }
 }
 
-@-webkit@keyframes ticker {
+@-webkit-keyframes ticker {
     0% {
         -webkit-transform: translateX(0);
     }
@@ -817,47 +817,47 @@ tr:hover td:last-child {
         white-space: nowrap;
         width: 100%;
         text-shadow: 
-            -0.5px -0.5px 0 black, /* Góra-lewo */
-             0.5px -0.5px 0 black, /* Góra-prawo */
-            -0.5px  0.5px 0 black, /* Dół-lewo */
-             0.5px  0.5px 0 black, /* Dół-prawo */
-            -0.5px  0    0 black, /* Lewo */
-             0.5px  0    0 black, /* Prawo */
-             0    -0.5px 0 black, /* Góra */
-             0     0.5px 0 black, /* Dół */
-             0 0 0.5px black, /* Równomierny cienki kontur */
-             0 0 4px rgba(0, 0, 0, 1); /* Dodatkowy cień dla czytelności */
+            -0.4px -0.4px 0 black, /* Góra-lewo */
+             0.4px -0.4px 0 black, /* Góra-prawo */
+            -0.4px  0.4px 0 black, /* Dół-lewo */
+             0.4px  0.4px 0 black, /* Dół-prawo */
+            -0.4px  0    0 black, /* Lewo */
+             0.4px  0    0 black, /* Prawo */
+             0    -0.4px 0 black, /* Góra */
+             0     0.4px 0 black, /* Dół */
+             0 0 0.3px black, /* Węższy kontur */
+             0 0 2.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     }
 
     .crypto-price {
         font-size: 0.65em;
         margin-bottom: 0.5px;
         text-shadow: 
-            -0.5px -0.5px 0 black, /* Góra-lewo */
-             0.5px -0.5px 0 black, /* Góra-prawo */
-            -0.5px  0.5px 0 black, /* Dół-lewo */
-             0.5px  0.5px 0 black, /* Dół-prawo */
-            -0.5px  0    0 black, /* Lewo */
-             0.5px  0    0 black, /* Prawo */
-             0    -0.5px 0 black, /* Góra */
-             0     0.5px 0 black, /* Dół */
-             0 0 0.5px black, /* Równomierny cienki kontur */
-             0 0 4px rgba(0, 0, 0, 1); /* Dodatkowy cień dla czytelności */
+            -0.4px -0.4px 0 black, /* Góra-lewo */
+             0.4px -0.4px 0 black, /* Góra-prawo */
+            -0.4px  0.4px 0 black, /* Dół-lewo */
+             0.4px  0.4px 0 black, /* Dół-prawo */
+            -0.4px  0    0 black, /* Lewo */
+             0.4px  0    0 black, /* Prawo */
+             0    -0.4px 0 black, /* Góra */
+             0     0.4px 0 black, /* Dół */
+             0 0 0.3px black, /* Węższy kontur */
+             0 0 2.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     }
 
     .crypto-change {
         font-size: 0.5em;
         text-shadow: 
-            -0.5px -0.5px 0 black, /* Góra-lewo */
-             0.5px -0.5px 0 black, /* Góra-prawo */
-            -0.5px  0.5px 0 black, /* Dół-lewo */
-             0.5px  0.5px 0 black, /* Dół-prawo */
-            -0.5px  0    0 black, /* Lewo */
-             0.5px  0    0 black, /* Prawo */
-             0    -0.5px 0 black, /* Góra */
-             0     0.5px 0 black, /* Dół */
-             0 0 0.5px black, /* Równomierny cienki kontur */
-             0 0 4px rgba(0, 0, 0, 1); /* Dodatkowy cień dla czytelności */
+            -0.4px -0.4px 0 black, /* Góra-lewo */
+             0.4px -0.4px 0 black, /* Góra-prawo */
+            -0.4px  0.4px 0 black, /* Dół-lewo */
+             0.4px  0.4px 0 black, /* Dół-prawo */
+            -0.4px  0    0 black, /* Lewo */
+             0.4px  0    0 black, /* Prawo */
+             0    -0.4px 0 black, /* Góra */
+             0     0.4px 0 black, /* Dół */
+             0 0 0.3px black, /* Węższy kontur */
+             0 0 2.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     }
 
     .crypto-error {
