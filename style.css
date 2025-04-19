@@ -181,6 +181,7 @@ body {
     gap: 10px;
     overflow-x: auto;
     padding: 10px 0;
+    justify-content: center;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -355,7 +356,7 @@ body {
 
 .fear-greed-indicator .trend-down {
     color: var(--fear-greed-sell); /* Czerwony dla trendu spadkowego */
-   (animation: glow-negative 1.5s ease-in-out infinite;
+    animation: glow-negative 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-neutral {
