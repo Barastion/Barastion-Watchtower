@@ -652,7 +652,7 @@ tr:hover td:last-child {
     }
 }
 
-@-webkit-keyframes ticker {
+@-webkit@keyframes ticker {
     0% {
         -webkit-transform: translateX(0);
     }
