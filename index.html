@@ -999,12 +999,6 @@
             tickerElement.innerHTML = `<span class="ticker-segment">${data.explanation}</span>`.repeat(5);
         }
 
-        // Nowa funkcja splitFactText
-        function splitFactText(text) {
-            if (!text || typeof text !== 'string') return ['Brak tekstu'];
-            return text.split(/[,.]/).map(segment => segment.trim()).filter(segment => segment.length > 0);
-        }
-
         async function getDailyFact() {
             const cacheKey = 'daily_fact';
             const cacheTimeKey = 'daily_fact_time';
@@ -1058,9 +1052,7 @@
         }
 
         function displayDailyFact(fact) {
-            const factElement = document.getElementById('dailyFact');
-            const segments = splitFactText(fact);
-            factElement.textContent = segments.join(' • ');
+            document.getElementById('dailyFact').textContent = fact;
         }
 
         function isDerivative(coin, usedBaseAssets, allCoins) {
