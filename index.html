@@ -1362,30 +1362,34 @@
         let cryptoIntervalId = null;
         let logIntervalId = null;
         let fearGreedIntervalId = null;
+        let lastUpdateTime = null;
+        const MIN_REFRESH_INTERVAL = 10 * 60 * 1000; // 10 minut
 
         function startCryptoUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji kryptowalut');
+            getCryptoData(); // Natychmiastowe wywołanie po powrocie
             cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
-            }, 900000);
+            }, 900000); // 15 minut
         }
 
         function startLogUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji logów');
+            updateLogs(); // Natychmiastowe wywołanie po powrocie
             logIntervalId = setInterval(() => {
                 console.log('Aktualizuję logi...');
                 updateLogs();
-            }, 900000);
+            }, 900000); // 15 minut
         }
 
         function startFearGreedUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji Fear and Greed');
-            updateFearGreedIndicator();
+            updateFearGreedIndicator(); // Natychmiastowe wywołanie po powrocie
             fearGreedIntervalId = setInterval(() => {
                 console.log('Aktualizuję Fear and Greed...');
                 updateFearGreedIndicator();
-            }, 3600000);
+            }, 3600000); // 1 godzina
         }
 
         let isManagingIntervals = false;
@@ -1396,6 +1400,8 @@
                 return;
             }
             isManagingIntervals = true;
+
+            const now = Date.now();
 
             if (document.visibilityState === 'visible') {
                 console.log('Karta aktywna, włączam aktualizacje');
@@ -1412,10 +1418,30 @@
                     clearInterval(fearGreedIntervalId);
                     fearGreedIntervalId = null;
                 }
-                // Uruchamiaj nowe interwały
-                startCryptoUpdateInterval();
-                startLogUpdateInterval();
-                startFearGreedUpdateInterval();
+
+                // Sprawdź, czy minął minimalny czas od ostatniego odświeżenia
+                if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
+                    console.log('Minął minimalny czas, odświeżam dane');
+                    startCryptoUpdateInterval();
+                    startLogUpdateInterval();
+                    startFearGreedUpdateInterval();
+                    lastUpdateTime = now;
+                } else {
+                    console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
+                    // Ustaw interwały bez natychmiastowego odświeżania
+                    cryptoIntervalId = setInterval(() => {
+                        console.log('Aktualizuję kryptowaluty...');
+                        getCryptoData();
+                    }, 900000);
+                    logIntervalId = setInterval(() => {
+                        console.log('Aktualizuję logi...');
+                        updateLogs();
+                    }, 900000);
+                    fearGreedIntervalId = setInterval(() => {
+                        console.log('Aktualizuję Fear and Greed...');
+                        updateFearGreedIndicator();
+                    }, 3600000);
+                }
             } else {
                 console.log('Karta nieaktywna, wstrzymuję aktualizacje');
                 // Czyść interwały i resetuj zmienne
@@ -1440,6 +1466,7 @@
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
             if (document.visibilityState === 'visible') {
+                lastUpdateTime = Date.now(); // Ustaw czas pierwszego ładowania
                 manageUpdateIntervals();
             }
             window.addEventListener('online', handleNetworkStatus);
