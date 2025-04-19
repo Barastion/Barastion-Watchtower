@@ -181,7 +181,6 @@ body {
     gap: 10px;
     overflow-x: auto;
     padding: 10px 0;
-    justify-content: center;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -356,7 +355,7 @@ body {
 
 .fear-greed-indicator .trend-down {
     color: var(--fear-greed-sell); /* Czerwony dla trendu spadkowego */
-    animation: glow-negative 1.5s ease-in-out infinite;
+   (animation: glow-negative 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-neutral {
@@ -726,8 +725,9 @@ tr:hover td:last-child {
 
     .forecast-container {
         flex-wrap: nowrap;
-        justify-content: flex-start; /* Zmiana z flex-start na flex-start */
         gap: 5px;
+        padding-left: 0;
+        padding-right: 0;
     }
 
     .forecast-bar {
@@ -796,7 +796,8 @@ tr:hover td:last-child {
              0 0 3.5px rgba(0, 0, 0, 1);
     }
 
-    .crypto ipad: repeat(4, 1fr);
+    .crypto-grid {
+        grid-template-columns: repeat(4, 1fr);
         gap: 6px;
         padding: 10px;
     }
@@ -1047,10 +1048,6 @@ tr:hover td:last-child {
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
-    .forecast-container {
-        justify-content: flex-start; /* Dodane, aby wyrównać kafelki do lewej krawędzi */
-    }
-
     .crypto-grid {
         grid-template-columns: repeat(7, 1fr);
     }
