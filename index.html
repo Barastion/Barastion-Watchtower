@@ -468,6 +468,7 @@
         }
 
         async function updateFearGreedIndicator() {
+            console.log('Rozpoczynam aktualizację Fear and Greed...');
             const cacheKey = 'fear_greed_data';
             const rawDataKey = 'fear_greed_raw_data';
             const trendKey = 'fear_greed_trend';
@@ -558,6 +559,7 @@
         }
 
         async function updateLogs() {
+            console.log('Rozpoczynam aktualizację logów...');
             const logsRef = ref(database, 'logs');
             console.log('Pobieram logi z Firebase...');
             try {
@@ -1123,6 +1125,7 @@
         }
 
         async function getCryptoData() {
+            console.log('Rozpoczynam pobieranie danych kryptowalut...');
             const cacheKey = 'crypto_data';
             const cacheTimeKey = 'crypto_time';
             const cacheDuration = 15 * 60 * 1000;
@@ -1358,8 +1361,10 @@
 
         let cryptoIntervalId = null;
         let logIntervalId = null;
+        let fearGreedIntervalId = null;
 
         function startCryptoUpdateInterval() {
+            console.log('Uruchamiam interwał aktualizacji kryptowalut');
             cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
@@ -1367,14 +1372,15 @@
         }
 
         function startLogUpdateInterval() {
+            console.log('Uruchamiam interwał aktualizacji logów');
             logIntervalId = setInterval(() => {
                 console.log('Aktualizuję logi...');
                 updateLogs();
             }, 900000);
         }
 
-        let fearGreedIntervalId = null;
         function startFearGreedUpdateInterval() {
+            console.log('Uruchamiam interwał aktualizacji Fear and Greed');
             updateFearGreedIndicator();
             fearGreedIntervalId = setInterval(() => {
                 console.log('Aktualizuję Fear and Greed...');
@@ -1382,20 +1388,37 @@
             }, 3600000);
         }
 
+        let isManagingIntervals = false;
+
         function manageUpdateIntervals() {
+            if (isManagingIntervals) {
+                console.log('manageUpdateIntervals już uruchomione, pomijam');
+                return;
+            }
+            isManagingIntervals = true;
+
             if (document.visibilityState === 'visible') {
                 console.log('Karta aktywna, włączam aktualizacje');
-                if (!cryptoIntervalId) {
-                    startCryptoUpdateInterval();
+                // Czyść istniejące interwały, jeśli istnieją
+                if (cryptoIntervalId) {
+                    clearInterval(cryptoIntervalId);
+                    cryptoIntervalId = null;
                 }
-                if (!logIntervalId) {
-                    startLogUpdateInterval();
+                if (logIntervalId) {
+                    clearInterval(logIntervalId);
+                    logIntervalId = null;
                 }
-                if (!fearGreedIntervalId) {
-                    startFearGreedUpdateInterval();
+                if (fearGreedIntervalId) {
+                    clearInterval(fearGreedIntervalId);
+                    fearGreedIntervalId = null;
                 }
+                // Uruchamiaj nowe interwały
+                startCryptoUpdateInterval();
+                startLogUpdateInterval();
+                startFearGreedUpdateInterval();
             } else {
                 console.log('Karta nieaktywna, wstrzymuję aktualizacje');
+                // Czyść interwały i resetuj zmienne
                 if (cryptoIntervalId) {
                     clearInterval(cryptoIntervalId);
                     cryptoIntervalId = null;
@@ -1409,12 +1432,16 @@
                     fearGreedIntervalId = null;
                 }
             }
+
+            isManagingIntervals = false;
         }
 
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
-            manageUpdateIntervals();
+            if (document.visibilityState === 'visible') {
+                manageUpdateIntervals();
+            }
             window.addEventListener('online', handleNetworkStatus);
             window.addEventListener('offline', handleNetworkStatus);
             document.addEventListener('visibilitychange', manageUpdateIntervals);
