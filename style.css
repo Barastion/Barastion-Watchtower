@@ -328,8 +328,8 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.3px black, /* Węższy kontur */
-         0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+         0 0 0.4px black, /* Węższy kontur */
+         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
 .fear-greed-indicator .fear-greed-value {
@@ -352,8 +352,8 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.3px black, /* Węższy kontur */
-         0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+         0 0 0.4px black, /* Węższy kontur */
+         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     line-height: 1;
 }
 
@@ -439,8 +439,8 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.3px black, /* Węższy kontur */
-         0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+         0 0 0.4px black, /* Węższy kontur */
+         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
 .crypto-price {
@@ -455,8 +455,8 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.3px black, /* Węższy kontur */
-         0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+         0 0 0.4px black, /* Węższy kontur */
+         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
 .crypto-change {
@@ -470,8 +470,8 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.3px black, /* Węższy kontur */
-         0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+         0 0 0.4px black, /* Węższy kontur */
+         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
 .crypto-error {
@@ -800,8 +800,8 @@ tr:hover td:last-child {
              0.4px  0    0 black, /* Prawo */
              0    -0.4px 0 black, /* Góra */
              0     0.4px 0 black, /* Dół */
-             0 0 0.3px black, /* Węższy kontur */
-             0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+             0 0 0.4px black, /* Węższy kontur */
+             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     }
 
     .crypto-grid {
@@ -833,8 +833,8 @@ tr:hover td:last-child {
              0.4px  0    0 black, /* Prawo */
              0    -0.4px 0 black, /* Góra */
              0     0.4px 0 black, /* Dół */
-             0 0 0.3px black, /* Węższy kontur */
-             0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+             0 0 0.4px black, /* Węższy kontur */
+             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     }
 
     .crypto-price {
@@ -849,8 +849,8 @@ tr:hover td:last-child {
              0.4px  0    0 black, /* Prawo */
              0    -0.4px 0 black, /* Góra */
              0     0.4px 0 black, /* Dół */
-             0 0 0.3px black, /* Węższy kontur */
-             0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+             0 0 0.4px black, /* Węższy kontur */
+             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     }
 
     .crypto-change {
@@ -864,8 +864,8 @@ tr:hover td:last-child {
              0.4px  0    0 black, /* Prawo */
              0    -0.4px 0 black, /* Góra */
              0     0.4px 0 black, /* Dół */
-             0 0 0.3px black, /* Węższy kontur */
-             0 0 1.5px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+             0 0 0.4px black, /* Węższy kontur */
+             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     }
 
     .crypto-error {
