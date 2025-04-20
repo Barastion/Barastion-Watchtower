@@ -308,7 +308,7 @@ body {
     padding-right: 180px;
 }
 
-.t игру.icker-value {
+.ticker-value {
     font-weight: bold;
 }
 
@@ -513,27 +513,28 @@ body {
 .table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    max-height: 400px; /* Dodano maksymalną wysokość, aby umożliwić przewijanie pionowe */
+    overflow-y: auto; /* Włączono przewijanie pionowe */
 }
 
 .table-wrapper::-webkit-scrollbar {
-    height: 8px;
+    height: 6px; /* Zmniejszono wysokość suwaka poziomego */
 }
 
 .table-wrapper::-webkit-scrollbar-track {
     background: linear-gradient(90deg, #2d2d2d, #3a3a3a);
     border-radius: 8px;
-    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.4); /* Zmniejszono cień */
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-    background: linear-gradient(90deg, #5a6268, #4a5258);
+    background: linear-gradient(90deg, #4a5258, #5a6268); /* Odwrócono gradient dla lepszej widoczności */
     border-radius: 8px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); /* Zmniejszono cień */
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(90deg, #808080, #666666);
-    filter: brightness(1.1);
+    background: linear-gradient(90deg, #666666, #808080); /* Odwrócono gradient */
 }
 
 .table-container {
@@ -542,24 +543,23 @@ body {
 }
 
 .table-container::-webkit-scrollbar {
-    width: 8px;
+    width: 6px; /* Zmniejszono szerokość suwaka z 8px na 6px */
 }
 
 .table-container::-webkit-scrollbar-track {
     background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
     border-radius: 8px;
-    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.4); /* Zmniejszono cień */
 }
 
 .table-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #5a6268, #4a5258);
+    background: linear-gradient(180deg, #4a5258, #5a6268); /* Odwrócono gradient dla lepszej widoczności */
     border-radius: 8px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4); /* Zmniejszono cień */
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #808080, #666666);
-    filter: brightness(1.1);
+    background: linear-gradient(180deg, #666666, #808080); /* Odwrócono gradient */
 }
 
 table {
@@ -963,27 +963,28 @@ tr:hover td:last-child {
 
     .table-wrapper {
         overflow-x: auto;
+        max-height: 400px; /* Dodano maksymalną wysokość */
+        overflow-y: auto; /* Włączono przewijanie pionowe */
     }
 
     .table-wrapper::-webkit-scrollbar {
-        height: 6px;
+        height: 4px; /* Zmniejszono jeszcze bardziej dla wersji mobilnej */
     }
 
     .table-wrapper::-webkit-scrollbar-track {
         background: linear-gradient(90deg, #2d2d2d, #3a3a3a);
         border-radius: 8px;
-        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+        box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.4);
     }
 
     .table-wrapper::-webkit-scrollbar-thumb {
-        background: linear-gradient(90deg, #5a6268, #4a5258);
+        background: linear-gradient(90deg, #4a5258, #5a6268);
         border-radius: 8px;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
     }
 
     .table-wrapper::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(90deg, #808080, #666666);
-        filter: brightness(1.1);
+        background: linear-gradient(90deg, #666666, #808080);
     }
 
     .table-container {
@@ -991,24 +992,23 @@ tr:hover td:last-child {
     }
 
     .table-container::-webkit-scrollbar {
-        width: 6px;
+        width: 4px; /* Zmniejszono szerokość suwaka z 6px na 4px dla wersji mobilnej */
     }
 
     .table-container::-webkit-scrollbar-track {
         background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
         border-radius: 8px;
-        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+        box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.4);
     }
 
     .table-container::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #5a6268, #4a5258);
+        background: linear-gradient(180deg, #4a5258, #5a6268);
         border-radius: 8px;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
     }
 
     .table-container::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #808080, #666666);
-        filter: brightness(1.1);
+        background: linear-gradient(180deg, #666666, #808080);
     }
 
     table {
