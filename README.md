@@ -1,2 +1,2 @@
-# monitor-odwiedzin
-Strona monitorująca odwiedzin komputera z logami na Google Drive
+# Barastion Watchtower
+Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.
