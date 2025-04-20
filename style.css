@@ -194,6 +194,27 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
+.forecast-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.forecast-container::-webkit-scrollbar-track {
+    background: linear-gradient(90deg, #2d2d2d, #3a3a3a);
+    border-radius: 8px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.forecast-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #5a6268, #4a5258);
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.forecast-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #808080, #666666);
+    filter: brightness(1.1);
+}
+
 .forecast-bar {
     background-color: #3a3a3a;
     border-radius: 8px;
@@ -287,7 +308,7 @@ body {
     padding-right: 180px;
 }
 
-.ticker-value {
+.t игру.icker-value {
     font-weight: bold;
 }
 
@@ -494,9 +515,51 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
+.table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: linear-gradient(90deg, #2d2d2d, #3a3a3a);
+    border-radius: 8px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #5a6268, #4a5258);
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #808080, #666666);
+    filter: brightness(1.1);
+}
+
 .table-container {
     width: 100%;
     overflow: hidden;
+}
+
+.table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
+    border-radius: 8px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #5a6268, #4a5258);
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #808080, #666666);
+    filter: brightness(1.1);
 }
 
 table {
@@ -739,6 +802,27 @@ tr:hover td:last-child {
         -webkit-overflow-scrolling: touch;
     }
 
+    .forecast-container::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .forecast-container::-webkit-scrollbar-track {
+        background: linear-gradient(90deg, #2d2d2d, #3a3a3a);
+        border-radius: 8px;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .forecast-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, #5a6268, #4a5258);
+        border-radius: 8px;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .forecast-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(90deg, #808080, #666666);
+        filter: brightness(1.1);
+    }
+
     .forecast-bar {
         min-width: 70px;
         padding: 5px;
@@ -881,8 +965,50 @@ tr:hover td:last-child {
         overflow-x: auto;
     }
 
+    .table-wrapper::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: linear-gradient(90deg, #2d2d2d, #3a3a3a);
+        border-radius: 8px;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, #5a6268, #4a5258);
+        border-radius: 8px;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(90deg, #808080, #666666);
+        filter: brightness(1.1);
+    }
+
     .table-container {
         overflow: hidden;
+    }
+
+    .table-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .table-container::-webkit-scrollbar-track {
+        background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
+        border-radius: 8px;
+        box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #5a6268, #4a5258);
+        border-radius: 8px;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .table-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #808080, #666666);
+        filter: brightness(1.1);
     }
 
     table {
