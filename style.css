@@ -43,7 +43,7 @@ body {
     max-width: 640px;
     margin: 0 auto 20px;
     text-align: center;
-}
+ Pfl}
 
 .nasa-frame {
     position: relative;
@@ -511,9 +511,8 @@ body {
 
 .table-container {
     width: 100%;
-    overflow: hidden;
-    overflow-y: auto;
     max-height: 400px;
+    overflow-y: auto;
 }
 
 .table-container::-webkit-scrollbar {
@@ -562,6 +561,10 @@ th {
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transition: filter 0.3s ease;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: linear-gradient(135deg, #5a6268, #4a5258);
 }
 
 th:hover {
@@ -679,7 +682,6 @@ tr:hover td:last-child {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
-    outline: none;
 }
 
 .toggle-button:hover {
@@ -715,7 +717,7 @@ tr:hover td:last-child {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
 }
 
 @keyframes glow-positive {
@@ -935,9 +937,8 @@ tr:hover td:last-child {
     }
 
     .table-container {
-        overflow: hidden;
-        overflow-y: auto;
         max-height: 400px;
+        overflow-y: auto;
     }
 
     .table-container::-webkit-scrollbar {
@@ -983,6 +984,10 @@ tr:hover td:last-child {
         text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         transition: filter 0.3s ease;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: linear-gradient(135deg, #5a6268, #4a5258);
     }
 
     th:hover {
@@ -1031,31 +1036,31 @@ tr:hover td:last-child {
         border-bottom-right-radius: 8px;
     }
 
-    th:nth-child(1), td:nth-child(1) { /* Data */
+    th:nth-child(1), td:nth-child(1) {
         width: 50px;
         min-width: 50px;
     }
 
-    th:nth-child(2), td:nth-child(2) { /* Dzień */
+    th:nth-child(2), td:nth-child(2) {
         width: 50px;
         min-width: 50px;
     }
 
-    th:nth-child(3), td:nth-child(3) { /* Godzina */
+    th:nth-child(3), td:nth-child(3) {
         width: 40px;
         min-width: 40px;
     }
 
-    th:nth-child(4), td:nth-child(4) { /* IP */
+    th:nth-child(4), td:nth-child(4) {
         width: 60px;
         min-width: 60px;
     }
 
-    th.location-header, td.location-cell { /* Lokalizacja */
+    th.location-header, td.location-cell {
         min-width: 90px;
     }
 
-    th:nth-child(6), td:nth-child(6) { /* Urządzenie */
+    th:nth-child(6), td:nth-child(6) {
         min-width: 90px;
     }
 
@@ -1103,12 +1108,11 @@ tr:hover td:last-child {
         display: flex;
         justify-content: center;
         margin-top: 10px;
-        position: sticky;
+        position: fixed;
         bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
         z-index: 10;
-        background-color: #333333;
-        padding: 5px;
-        border-radius: 8px;
     }
 
     .toggle-button {
@@ -1120,10 +1124,7 @@ tr:hover td:last-child {
         font-size: 0.55em;
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         min-width: 70px;
-        outline: none;
-        -webkit-tap-highlight-color: transparent;
     }
 
     .nasa-ticker {
