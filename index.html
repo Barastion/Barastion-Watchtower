@@ -558,22 +558,50 @@
             }
         }
 
+        async function cleanOldLogs(logs) {
+            const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+            const now = Date.now();
+            const logsToDelete = logs.filter(log => (now - log.timestamp) > thirtyDaysInMs);
+
+            for (const log of logsToDelete) {
+                try {
+                    await remove(ref(database, `logs/${log.key}`));
+                    console.log(`Usunięto log: ${log.key} (starszy niż 30 dni)`);
+                } catch (error) {
+                    console.error(`Błąd usuwania logu ${log.key}:`, error);
+                }
+            }
+        }
+
         async function updateLogs() {
             console.log('Rozpoczynam aktualizację logów...');
             const logsRef = ref(database, 'logs');
             console.log('Pobieram logi z Firebase...');
             try {
-                onValue(logsRef, (snapshot) => {
+                onValue(logsRef, async (snapshot) => {
                     const logsData = snapshot.val();
                     let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
                     logs.sort((a, b) => b.timestamp - a.timestamp);
 
+                    // Usuwanie logów starszych niż 30 dni
+                    await cleanOldLogs(logs);
+
+                    // Ponowne pobranie logów po czyszczeniu
+                    logs = logs.filter(log => (Date.now() - log.timestamp) <= (30 * 24 * 60 * 60 * 1000));
+                    logs.sort((a, b) => b.timestamp - a.timestamp);
+
+                    // Ograniczenie do 50 najnowszych logów
                     if (logs.length > 50) {
                         const logsToDelete = logs.slice(50);
                         logs = logs.slice(0, 50);
-                        logsToDelete.forEach(log => {
-                            remove(ref(database, `logs/${log.key}`));
-                        });
+                        for (const log of logsToDelete) {
+                            try {
+                                await remove(ref(database, `logs/${log.key}`));
+                                console.log(`Usunięto log: ${log.key} (przekroczono limit 50)`);
+                            } catch (error) {
+                                console.error(`Błąd usuwania logu ${log.key}:`, error);
+                            }
+                        }
                     }
 
                     displayLogs(logs);
