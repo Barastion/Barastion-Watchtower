@@ -305,7 +305,7 @@ body {
 
 .fear-greed-indicator {
     background-color: #808080;
-    color: #ffffff; /* Zapewnienie białego koloru tekstu */
+    color: #ffffff;
     padding: 8px 10px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -313,62 +313,59 @@ body {
     min-height: 30px;
     text-align: center;
     font-size: 0.85em;
-    font-weight: 600; /* Pogrubienie całego tekstu */
+    font-weight: 600;
     transition: background-color 0.3s ease;
     overflow: hidden;
     white-space: normal;
     box-sizing: border-box;
-    /* Zewnętrzny czarny kontur za pomocą text-shadow */
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .fear-greed-indicator .fear-greed-value {
-    color: #ffffff; /* Zapewnienie białego koloru tekstu */
-    /* Kontur i cień dziedziczone z .fear-greed-indicator */
+    color: #ffffff;
 }
 
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 3px;
-    margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" */
+    margin-left: 8px;
     vertical-align: baseline;
-    /* Zewnętrzny czarny kontur za pomocą text-shadow */
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
     line-height: 1;
 }
 
 .fear-greed-indicator .trend-up {
-    color: #00ff00; /* Zielony dla trendu wzrostowego */
+    color: #00ff00;
     animation: glow-positive 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-down {
-    color: var(--fear-greed-sell); /* Czerwony dla trendu spadkowego */
+    color: var(--fear-greed-sell);
     animation: glow-negative 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-neutral {
-    color: var(--fear-greed-hold); /* Żółty dla trendu neutralnego */
+    color: var(--fear-greed-hold);
 }
 
 .crypto-grid {
@@ -431,47 +428,47 @@ body {
     font-weight: bold;
     margin-bottom: 1px;
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 1px;
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .crypto-change {
     font-size: 0.6em;
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .crypto-error {
@@ -501,18 +498,15 @@ body {
 .table-wrapper::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 8px;
-    box-shadow: none;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
     background: linear-gradient(90deg, #5a6268, #4a5258);
     border-radius: 8px;
-    box-shadow: none;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(90deg, #808080, #666666);
-    filter: brightness(1.1);
 }
 
 .table-container {
@@ -529,18 +523,15 @@ body {
 .table-container::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 8px;
-    box-shadow: none;
 }
 
 .table-container::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #5a6268, #4a5258);
     border-radius: 8px;
-    box-shadow: none;
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #808080, #666666);
-    filter: brightness(1.1);
 }
 
 table {
@@ -688,6 +679,7 @@ tr:hover td:last-child {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
+    outline: none;
 }
 
 .toggle-button:hover {
@@ -822,30 +814,29 @@ tr:hover td:last-child {
         text-align: center;
         font-size: 0.75em;
         padding: 8px 10px;
-        font-weight: 600; /* Pogrubienie całego tekstu */
+        font-weight: 600;
     }
 
     .fear-greed-indicator .fear-greed-value {
-        color: #ffffff; /* Zapewnienie białego koloru tekstu */
+        color: #ffffff;
     }
 
     .fear-greed-indicator .trend-indicator {
         font-size: 0.9em;
         margin-right: 2px;
-        margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
+        margin-left: 8px;
         vertical-align: baseline;
-        /* Zewnętrzny czarny kontur za pomocą text-shadow */
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-grid {
@@ -869,47 +860,47 @@ tr:hover td:last-child {
         white-space: nowrap;
         width: 100%;
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-price {
         font-size: 0.65em;
         margin-bottom: 0.5px;
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-change {
         font-size: 0.5em;
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-error {
@@ -919,7 +910,6 @@ tr:hover td:last-child {
     .log-table {
         max-width: 100%;
         padding: 15px;
-        position: relative;
     }
 
     .table-wrapper {
@@ -933,18 +923,15 @@ tr:hover td:last-child {
     .table-wrapper::-webkit-scrollbar-track {
         background: transparent;
         border-radius: 8px;
-        box-shadow: none;
     }
 
     .table-wrapper::-webkit-scrollbar-thumb {
         background: linear-gradient(90deg, #5a6268, #4a5258);
         border-radius: 8px;
-        box-shadow: none;
     }
 
     .table-wrapper::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(90deg, #808080, #666666);
-        filter: brightness(1.1);
     }
 
     .table-container {
@@ -960,18 +947,15 @@ tr:hover td:last-child {
     .table-container::-webkit-scrollbar-track {
         background: transparent;
         border-radius: 8px;
-        box-shadow: none;
     }
 
     .table-container::-webkit-scrollbar-thumb {
         background: linear-gradient(180deg, #5a6268, #4a5258);
         border-radius: 8px;
-        box-shadow: none;
     }
 
     .table-container::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(180deg, #808080, #666666);
-        filter: brightness(1.1);
     }
 
     table {
@@ -1137,14 +1121,9 @@ tr:hover td:last-child {
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         min-width: 70px;
-    }
-
-    .toggle-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-        filter: brightness(1.1);
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .nasa-ticker {
