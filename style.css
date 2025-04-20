@@ -1,8 +1,8 @@
 :root {
     --fear-greed-hold: #e6b800; /* Żółty dla Trzymaj, ciepły i czytelny */
-    --fear-greed-consider-buy: rgba(0, 125, 0, 0.6); /* Zielony dla Rozważ zakup */
+    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6); /* Zielony dla Rozważ zakup */
     --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla OKAZJA! */
-    --fear-greed-consider-sell: rgba(125, 0, 0, 0.6); /* Czerwony dla Rozważ sprzedaż */
+    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6); /* Czerwony dla Rozważ sprzedaż */
     --fear-greed-sell: rgba(200, 0, 0, 0.9); /* Intensywnie czerwony dla SPRZEDAJ! */
 }
 
