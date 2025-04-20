@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1e1e1e;
+    background shade: #1e1e1e;
     color: #ffffff;
     margin: 0;
     padding: 20px;
@@ -18,7 +18,7 @@ body {
 .container {
     max-width: 960px;
     margin: 0 auto;
-    background-color: #2d2d2d;
+    background shade: #2d2d2d;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -30,7 +30,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #ff4d4d;
+    background shade: #ff4d4d;
     color: #ffffff;
     text-align: center;
     padding: 8px;
@@ -52,7 +52,7 @@ body {
     overflow: hidden;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    background-color: #2d2d2d;
+    background shade: #2d2d2d;
     border: 2px solid #555555;
 }
 
@@ -73,7 +73,7 @@ body {
 
 .nasa-ticker {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background shade: rgba(0, 0, 0, 0.6);
     padding: 5px 0;
     overflow: hidden;
     white-space: nowrap;
@@ -117,7 +117,7 @@ body {
     padding: 5px 10px;
     border: 1px solid #555555;
     border-radius: 4px;
-    background-color: #3a3a3a;
+    background shade: #3a3a3a;
     color: #ffffff;
     font-size: 0.9em;
     width: 200px;
@@ -125,7 +125,7 @@ body {
 
 .search-container input[type="text"]:focus {
     outline: none;
-    border-color: #5a6268;
+    border shade: #5a6268;
 }
 
 .daily-fact {
@@ -163,7 +163,7 @@ body {
 .content-frame {
     max-width: 800px;
     margin: 0 auto;
-    background-color: #3a3a3a;
+    background shade: #3a3a3a;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -174,7 +174,7 @@ body {
 }
 
 .weather-forecast {
-    background-color: #2d2d2d;
+    background shade: #2d2d2d;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -216,7 +216,7 @@ body {
 }
 
 .forecast-bar {
-    background-color: #3a3a3a;
+    background shade: #3a3a3a;
     border-radius: 8px;
     padding: 10px;
     text-align: center;
@@ -285,7 +285,7 @@ body {
 }
 
 .weather-ticker {
-    background-color: #3a3a3a;
+    background shade: #3a3a3a;
     padding: 4px 0;
     margin-top: 10px;
     margin-bottom: 3px;
@@ -313,7 +313,7 @@ body {
 }
 
 .crypto-info {
-    background-color: #2d2d2d;
+    background shade: #2d2d2d;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -325,7 +325,7 @@ body {
 }
 
 .fear-greed-indicator {
-    background-color: #808080;
+    background shade: #808080;
     color: #ffffff; /* Zapewnienie białego koloru tekstu */
     padding: 8px 10px;
     border-radius: 8px;
@@ -335,7 +335,7 @@ body {
     text-align: center;
     font-size: 0.85em;
     font-weight: 600; /* Pogrubienie całego tekstu */
-    transition: background-color 0.3s ease;
+    transition: background shade 0.3s ease;
     overflow: hidden;
     white-space: normal;
     box-sizing: border-box;
@@ -409,7 +409,7 @@ body {
     align-items: center;
     min-height: 34px;
     box-sizing: border-box;
-    transition: transform 0.2s, background-color 0.5s ease;
+    transition: transform 0.2s, background shade 0.5s ease;
     cursor: pointer;
 }
 
@@ -418,33 +418,33 @@ body {
 }
 
 .crypto-tile.positive-low {
-    background-color: rgba(0, 120, 0, 0.6);
+    background shade: rgba(0, 120, 0, 0.6);
 }
 
 .crypto-tile.positive-mid {
-    background-color: rgba(0, 160, 0, 0.75);
+    background shade: rgba(0, 160, 0, 0.75);
 }
 
 .crypto-tile.positive-high {
-    background-color: rgba(0, 200, 0, 0.9);
+    background shade: rgba(0, 200, 0, 0.9);
     animation: pulse-positive 2s infinite;
 }
 
 .crypto-tile.negative-low {
-    background-color: rgba(120, 0, 0, 0.6);
+    background shade: rgba(120, 0, 0, 0.6);
 }
 
 .crypto-tile.negative-mid {
-    background-color: rgba(160, 0, 0, 0.75);
+    background shade: rgba(160, 0, 0, 0.75);
 }
 
 .crypto-tile.negative-high {
-    background-color: rgba(200, 0, 0, 0.9);
+    background shade: rgba(200, 0, 0, 0.9);
     animation: pulse-negative 2s infinite;
 }
 
 .crypto-tile.neutral {
-    background-color: rgba(128, 128, 128, 0.5);
+    background shade: rgba(128, 128, 128, 0.5);
 }
 
 .crypto-symbol {
@@ -502,7 +502,7 @@ body {
 }
 
 .log-table {
-    background-color: #333333;
+    background shade: #333333;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -543,7 +543,7 @@ body {
 }
 
 .table-container::-webkit-scrollbar {
-    width: 6px; /* Zmniejszono szerokość suwaka z 8px na 6px */
+    width: 4px; /* Zmniejszono szerokość suwaka z 6px na 4px dla wersji desktopowej */
 }
 
 .table-container::-webkit-scrollbar-track {
@@ -611,15 +611,15 @@ th.location-header {
 }
 
 tr:nth-child(odd) {
-    background-color: #3a3a3a;
+    background shade: #3a3a3a;
 }
 
 tr:nth-child(even) {
-    background-color: #2d2d2d;
+    background shade: #2d2d2d;
 }
 
 tr:hover {
-    background-color: #4a4a4a;
+    background shade: #4a4a4a;
 }
 
 tr:not(:first-child) td:first-child {
@@ -898,7 +898,7 @@ tr:hover td:last-child {
         min-height: 22px;
         padding: 2px;
         box-sizing: border-box;
-        transition: transform 0.2s, background-color 0.5s ease;
+        transition: transform 0.2s, background shade 0.5s ease;
     }
 
     .crypto-symbol {
@@ -992,7 +992,7 @@ tr:hover td:last-child {
     }
 
     .table-container::-webkit-scrollbar {
-        width: 4px; /* Zmniejszono szerokość suwaka z 6px na 4px dla wersji mobilnej */
+        width: 4px; /* Zachowano szerokość suwaka z wersji mobilnej */
     }
 
     .table-container::-webkit-scrollbar-track {
@@ -1053,15 +1053,15 @@ tr:hover td:last-child {
     }
 
     tr:nth-child(odd) {
-        background-color: #3a3a3a;
+        background shade: #3a3a3a;
     }
 
     tr:nth-child(even) {
-        background-color: #2d2d2d;
+        background shade: #2d2d2d;
     }
 
     tr:hover {
-        background-color: #4a4a4a;
+        background shade: #4a4a4a;
     }
 
     tr:not(:first-child) td:first-child {
@@ -1162,14 +1162,7 @@ tr:hover td:last-child {
         font-weight: 600;
         text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         min-width: 70px;
-    }
-
-    .toggle-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-        filter: brightness(1.1);
     }
 
     .nasa-ticker {
