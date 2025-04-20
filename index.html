@@ -523,6 +523,40 @@
             });
         }
 
+        async function cleanOldLogs() {
+            console.log('Uruchamiam funkcję cleanOldLogs...');
+            const logsRef = ref(database, 'logs');
+            const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+            const now = Date.now();
+
+            try {
+                const snapshot = await new Promise((resolve) => {
+                    onValue(logsRef, resolve, { onlyOnce: true });
+                });
+                const logsData = snapshot.val();
+                const logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
+                const logsToDelete = logs.filter(log => (now - log.timestamp) > thirtyDaysInMs);
+
+                if (logsToDelete.length === 0) {
+                    console.log('Brak logów starszych niż 30 dni do usunięcia.');
+                    return;
+                }
+
+                console.log(`Znaleziono ${logsToDelete.length} logów starszych niż 30 dni do usunięcia.`);
+                for (const log of logsToDelete) {
+                    try {
+                        await remove(ref(database, `logs/${log.key}`));
+                        console.log(`Usunięto log: ${log.key} (data: ${log.date}, timestamp: ${log.timestamp})`);
+                    } catch (error) {
+                        console.error(`Błąd usuwania logu ${log.key}:`, error);
+                    }
+                }
+                console.log('Zakończono czyszczenie logów starszych niż 30 dni.');
+            } catch (error) {
+                console.error('Błąd pobierania logów w cleanOldLogs:', error);
+            }
+        }
+
         async function logVisit() {
             console.log('Rozpoczynam zapis logu...');
             const now = new Date();
@@ -543,6 +577,9 @@
                 return;
             }
 
+            // Czyszczenie starych logów przed zapisem nowego
+            await cleanOldLogs();
+
             const logEntry = { date, day, time, ip, location, device, isp, timestamp };
             console.log('Log do zapisania:', logEntry);
 
@@ -558,21 +595,6 @@
             }
         }
 
-        async function cleanOldLogs(logs) {
-            const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-            const now = Date.now();
-            const logsToDelete = logs.filter(log => (now - log.timestamp) > thirtyDaysInMs);
-
-            for (const log of logsToDelete) {
-                try {
-                    await remove(ref(database, `logs/${log.key}`));
-                    console.log(`Usunięto log: ${log.key} (starszy niż 30 dni)`);
-                } catch (error) {
-                    console.error(`Błąd usuwania logu ${log.key}:`, error);
-                }
-            }
-        }
-
         async function updateLogs() {
             console.log('Rozpoczynam aktualizację logów...');
             const logsRef = ref(database, 'logs');
@@ -581,13 +603,6 @@
                 onValue(logsRef, async (snapshot) => {
                     const logsData = snapshot.val();
                     let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
-                    logs.sort((a, b) => b.timestamp - a.timestamp);
-
-                    // Usuwanie logów starszych niż 30 dni
-                    await cleanOldLogs(logs);
-
-                    // Ponowne pobranie logów po czyszczeniu
-                    logs = logs.filter(log => (Date.now() - log.timestamp) <= (30 * 24 * 60 * 60 * 1000));
                     logs.sort((a, b) => b.timestamp - a.timestamp);
 
                     // Ograniczenie do 50 najnowszych logów
