@@ -1477,9 +1477,14 @@
             const modalOverlay = document.getElementById('modalOverlay');
             const modalContent = document.getElementById('modalContent');
             try {
-              const response = await fetch('terms.html');
+                const response = await fetch('terms.html?v=' + new Date().getTime());
                 if (!response.ok) throw new Error('Nie udało się załadować terms.html');
-                modalContent.innerHTML = await response.text();
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const termsContent = doc.querySelector('#termsContent');
+                if (!termsContent) throw new Error('Nie znaleziono elementu #termsContent w terms.html');
+                modalContent.innerHTML = termsContent.outerHTML;
                 const langPolish = modalContent.querySelector('#langPolish');
                 const langEnglish = modalContent.querySelector('#langEnglish');
                 const termsPL = modalContent.querySelector('#termsPL');
