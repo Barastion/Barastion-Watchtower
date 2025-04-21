@@ -215,7 +215,7 @@ body {
 .forecast-date {
     font-size: 0.7em;
     color: #cccccc;
-    margin-bbttom: 5px;
+    margin-bottom: 5px;
 }
 
 .weather-icon {
@@ -351,7 +351,7 @@ body {
         -0.4px  0    0 black, /* Lewo */
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
+         0     0.4px 0 black, — Dół */
          0 0 0.5px black, /* Węższy kontur */
          0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     line-height: 1;
@@ -455,7 +455,7 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
+         0 0 0.5px black њег — Węższy kontur */
          0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
@@ -837,229 +837,232 @@ tr:hover td:last-child {
             -0.4px  0    0 black, /* Lewo */
              0.4px  0    0 black, /* Prawo */
              0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black -webkit-hyphens: auto;
-}
+             0     0.4px 0 black, /* Dół */
+             0 0 0.5px black, /* Węższy kontur */
+             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+    }
 
-.crypto-price {
-    font-size: 0.65em;
-    margin-bottom: 0.5px;
-    text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
-}
+    .crypto-price {
+        font-size: 0.65em;
+        margin-bottom: 0.5px;
+        text-shadow: 
+            -0.4px -0.4px 0 black, /* Góra-lewo */
+             0.4px -0.4px 0 black, /* Góra-prawo */
+            -0.4px  0.4px 0 black, /* Dół-lewo */
+             0.4px  0.4px 0 black, /* Dół-prawo */
+            -0.4px  0    0 black, /* Lewo */
+             0.4px  0    0 black, /* Prawo */
+             0    -0.4px 0 black, /* Góra */
+             0     0.4px 0 black, /* Dół */
+             0 0 0.5px black, /* Węższy kontur */
+             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+    }
 
-.crypto-change {
-    font-size: 0.5em;
-    text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
-}
+    .crypto-change {
+        font-size: 0.5em;
+        text-shadow: 
+            -0.4px -0.4px 0 black, /* Góra-lewo */
+             0.4px -0.4px 0 black, /* Góra-prawo */
+            -0.4px  0.4px 0 black, /* Dół-lewo */
+             0.4px  0.4px 0 black, /* Dół-prawo */
+            -0.4px  0    0 black, /* Lewo */
+             0.4px  0    0 black, /* Prawo */
+             0    -0.4px 0 black, /* Góra */
+             0     0.4px 0 black, /* Dół */
+             0 0 0.5px black, /* Węższy kontur */
+             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+    }
 
-.crypto-error {
-    font-size: 0.8em;
-}
+    .crypto-error {
+        font-size: 0.8em;
+    }
 
-.log-table {
-    max-width: 100%;
-    padding: 15px;
-}
+    .log-table {
+        max-width: 100%;
+        padding: 15px;
+    }
 
-.table-wrapper {
-    overflow-y: hidden; /* Wyłącza przewijanie pionowe */
-    overflow-x: auto; /* Zachowuje przewijanie poziome */
-}
+    .table-wrapper {
+        overflow-y: hidden; /* Wyłącza przewijanie pionowe */
+        overflow-x: auto; /* Zachowuje przewijanie poziome */
+    }
 
-.table-container {
-    overflow: hidden;
-}
+    .table-container {
+        overflow: hidden;
+    }
 
-table {
-    width: 100%;
-    font-size: 0.75em;
-    table-layout: fixed;
-    min-width: 100%; /* Zapewnia, że tabela nie przekracza kontenera */
-    max-width: 100%; /* Zapobiega rozszerzaniu się tabeli poza kontener */
-    box-sizing: border-box; /* Upewnia się, że padding i border są wliczone w szerokość */
-}
+    table {
+        width: 100%;
+        font-size: 0.75em;
+        table-layout: fixed;
+        min-width: 100%; /* Zapewnia, że tabela nie przekracza kontenera */
+        max-width: 100%; /* Zapobiega rozszerzaniu się tabeli poza kontener */
+        box-sizing: border-box; /* Upewnia się, że padding i border są wliczone w szerokość */
+    }
 
-thead tr {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-}
+    thead tr {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+    }
 
-th, td {
-    padding: 2px;
-    height: 28px;
-    font-size: 0.7em;
-    vertical-align: middle;
-    box-sizing: border-box;
-}
+    th, td {
+        padding: 2px;
+        height: 28px;
+        font-size: 0.7em;
+        vertical-align: middle;
+        box-sizing: border-box;
+    }
 
-th {
-    background: transparent;
-    color: white;
-    font-weight: 700;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    transition: filter 0.3s ease;
-}
+    th {
+        background: transparent;
+        color: white;
+        font-weight: 700;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        transition: filter 0.3s ease;
+    }
 
-th:hover {
-    filter: brightness(1.1);
-}
+    th:hover {
+        filter: brightness(1.1);
+    }
 
-th:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
+    th:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
 
-th:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
+    th:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
 
-tr:nth-child(odd) {
-    background-color: #3a3a3a;
-}
+    tr:nth-child(odd) {
+        background-color: #3a3a3a;
+    }
 
-tr:nth-child(even) {
-    background-color: #2d2d2d;
-}
+    tr:nth-child(even) {
+        background-color: #2d2d2d;
+    }
 
-tr:hover {
-    background-color: #4a4a4a;
-}
+    tr:hover {
+        background-color: #4a4a4a;
+    }
 
-tr:not(:first-child) td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
+    tr:not(:first-child) td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
 
-tr:not(:first-child) td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
+    tr:not(:first-child) td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
 
-tr:hover td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
+    tr:hover td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
 
-tr:hover td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
+    tr:hover td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
 
-th:nth-child(1), td:nth-child(1) { /* Data */
-    width: 50px;
-    min-width: 50px;
-}
+    th:nth-child(1), td:nth-child(1) { /* Data */
+        width: 50px;
+        min-width: 50px;
+    }
 
-th:nth-child(2), td:nth-child(2) { /* Dzień */
-    width: 50px;
-    min-width: 50px;
-}
+    th:nth-child(2), td:nth-child(2) { /* Dzień */
+        width: 50px;
+        min-width: 50px;
+    }
 
-th:nth-child(3), td:nth-child(3) { /* Godzina */
-    width: 40px;
-    min-width: 40px;
-}
+    th:nth-child(3), td:nth-child(3) { /* Godzina */
+        width: 40px;
+        min-width: 40px;
+    }
 
-th:nth-child(4), td:nth-child(4) { /* IP */
-    width: 60px;
-    min-width: 60px;
-}
+    th:nth-child(4), td:nth-child(4) { /* IP */
+        width: 60px;
+        min-width: 60px;
+    }
 
-th.location-header, td.location-cell { /* Lokalizacja */
-    min-width: 90px;
-}
+    th.location-header, td.location-cell { /* Lokalizacja */
+        min-width: 90px;
+    }
 
-th:nth-child(6), td:nth-child(6) { /* Urządzenie */
-    min-width: 90px;
-}
+    th:nth-child(6), td:nth-child(6) { /* Urządzenie */
+        min-width: 90px;
+    }
 
-.location-cell {
-    min-width: 90px;
-}
+    .location-cell {
+        min-width: 90px;
+    }
 
-.city {
-    font-size: 0.7em;
-    display: block;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .city {
+        font-size: 0.7em;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.device {
-    font-size: 0.7em;
-    display: block;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .device {
+        font-size: 0.7em;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.country {
-    font-size: 0.7em;
-    color: #cccccc;
-    margin-top: 0;
-    display: block;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .country {
+        font-size: 0.7em;
+        color: #cccccc;
+        margin-top: 0;
+        display: block;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.isp {
-    font-size: 0.7em;
-    color: #cccccc;
-    margin-top: 0;
-    display: block;
-    line-height: 1.15;
-    hyphens: auto;
-}
+    .isp {
+        font-size: 0.7em;
+        color: #cccccc;
+        margin-top: 0;
+        display: block;
+        line-height: 1.15;
+        hyphens: auto;
+    }
 
-.toggle-button {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-    color: white;
-    border: none;
-    padding: 2px 4px;
-    border-radius: 8px;
-    font-size: 0.55em;
-    font-weight: 600;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    min-width: 70px;
-    position: relative; /* Stabilizuje transformacje */
-}
+    .toggle-button {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+        color: white;
+        border: none;
+        padding: 2px 4px;
+        border-radius: 8px;
+        font-size: 0.55em;
+        font-weight: 600;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+        min-width: 70px;
+        position: relative; /* Stabilizuje transformacje */
+    }
 
-.toggle-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    filter: brightness(1.1);
-}
+    .toggle-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        filter: brightness(1.1);
+    }
 
-.nasa-ticker {
-    font-size: 0.6em;
-}
+    .nasa-ticker {
+        font-size: 0.6em;
+    }
 
-.nasa-container {
-    max-width: 100%;
+    .nasa-container {
+        max-width: 100%;
+    }
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
@@ -1072,7 +1075,7 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 .footer {
     text-align: center;
     margin-top: 20px;
-    font-size: 0.6em; /* Mniejsza czcionka w wersji desktopowej */
+    font-size: 0.7em; /* Mniejsza czcionka w wersji desktopowej */
     color: #cccccc;
 }
 
@@ -1091,7 +1094,7 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 
 @media (max-width: 768px) {
     .footer {
-        font-size: 0.4em; /* Dużo mniejsza czcionka w wersji mobilnej */
+        font-size: 0.5em; /* Dużo mniejsza czcionka w wersji mobilnej */
         color: #cccccc; /* Taki sam szary kolor jak w wersji desktopowej */
     }
 
