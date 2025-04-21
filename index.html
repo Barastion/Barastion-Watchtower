@@ -81,28 +81,16 @@
             </div>
         </div>
     </div>
-
-    <!-- Stopka z modalem regulaminu -->
-    <footer class="footer">
-        <div class="footer-content">
-            <a href="#" id="termsLink">Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <span class="terms-link">Regulaminu</span>.</a>
-            <p>© 2025 Barastion WATCHTOWER.</p>
-        </div>
-    </footer>
-
-    <!-- Modal regulaminu -->
-    <div id="termsModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Regulamin strony Barastion Watchtower</h2>
-            <p>1. <strong>Akceptacja Regulaminu:</strong> Korzystając z tej strony, użytkownik automatycznie akceptuje warunki niniejszego regulaminu. Jeśli użytkownik nie zgadza się z regulaminem, powinien natychmiast zaprzestać korzystania ze strony.</p>
-            <p>2. <strong>Odpowiedzialność za dane:</strong> Strona Barastion Watchtower dostarcza dane w celach informacyjnych. Nie ponosimy odpowiedzialności za decyzje podjęte na podstawie prezentowanych informacji, w tym danych o kryptowalutach, pogodzie czy innych treści.</p>
-            <p>3. <strong>Polityka prywatności:</strong> Strona gromadzi dane użytkowników, takie jak adres IP, lokalizacja i informacje o urządzeniu, w celu monitorowania odwiedzin. Dane te są przechowywane w bezpieczny sposób i nie są udostępniane osobom trzecim, z wyjątkiem sytuacji wymaganych przez prawo.</p>
-            <p>4. <strong>Prawa autorskie:</strong> Wszystkie treści na stronie, w tym tekst, grafika i kod, są własnością Barastion Watchtower i podlegają ochronie praw autorskich. Kopiowanie, dystrybucja lub wykorzystywanie treści bez zgody jest zabronione.</p>
-            <p>5. <strong>Zmiany w regulaminie:</strong> Zastrzegamy sobie prawo do zmiany niniejszego regulaminu w dowolnym czasie. Zmiany wchodzą w życie z chwilą opublikowania na stronie. Użytkownik jest odpowiedzialny za regularne sprawdzanie regulaminu.</p>
-            <p>6. <strong>Kontakt:</strong> W razie pytań dotyczących regulaminu prosimy o kontakt pod adresem: <a href="mailto:support@barastionwatchtower.com">support@barastionwatchtower.com</a>.</p>
+    <div id="modalOverlay" class="modal-overlay" style="display: none;">
+        <div class="modal-container" id="modalContent">
+            <!-- Treść modalu będzie ładowana dynamicznie -->
         </div>
     </div>
+    <footer class="footer">
+        <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" id="termsLinkPL">Regulaminu</a>.</p>
+        <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" id="termsLinkEN">Terms and Conditions</a>.</p>
+        <p>© 2025 Barastion Watchtower.</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
@@ -1153,7 +1141,7 @@
             const cacheDuration = 15 * 60 * 1000;
             const extendedCacheDuration = cacheDuration * 2;
 
-                        const anyCachedData = getAnyCachedData(cacheKey);
+            const anyCachedData = getAnyCachedData(cacheKey);
             if (anyCachedData) {
                 console.log('Wyświetlam starsze dane kryptowalut');
                 displayCryptoData(anyCachedData);
@@ -1320,16 +1308,6 @@
                     .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                     .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #ccc; }
-                    .footer-content a { color: #ccc; text-decoration: none; }
-                    .footer-content a:hover { text-decoration: underline; }
-                    .terms-link { color: #00f; cursor: pointer; }
-                    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; }
-                    .modal-content { background: #333; margin: 5% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 600px; color: #fff; position: relative; }
-                    .modal-content h2 { margin-top: 0; }
-                    .modal-content p { margin: 10px 0; }
-                    .modal-content a { color: #00f; }
-                    .close { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #fff; }
                 `;
                 document.head.appendChild(style);
             }
@@ -1494,25 +1472,51 @@
             isManagingIntervals = false;
         }
 
-        // Obsługa modala regulaminu
-        const modal = document.getElementById('termsModal');
-        const termsLink = document.getElementById('termsLink');
-        const closeModal = document.querySelector('.close');
-
-        termsLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            modal.style.display = 'block';
-        });
-
-        closeModal.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
+        // Funkcja do ładowania modalu z terms.html
+        async function loadTermsModal(language) {
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            try {
+                const response = await fetch('terms.html');
+                if (!response.ok) throw new Error('Nie udało się załadować terms.html');
+                modalContent.innerHTML = await response.text();
+                const langPolish = modalContent.querySelector('#langPolish');
+                const langEnglish = modalContent.querySelector('#langEnglish');
+                const termsPL = modalContent.querySelector('#termsPL');
+                const termsEN = modalContent.querySelector('#termsEN');
+                const termsTitle = modalContent.querySelector('#termsTitle');
+                const closeButton = modalContent.querySelector('#closeButton');
+                function setLanguage(lang) {
+                    if (lang === 'pl') {
+                        termsPL.style.display = 'block';
+                        termsEN.style.display = 'none';
+                        termsTitle.textContent = 'Regulamin Strony';
+                        closeButton.textContent = 'Zamknij';
+                        langPolish.classList.add('active');
+                        langEnglish.classList.remove('active');
+                    } else {
+                        termsPL.style.display = 'none';
+                        termsEN.style.display = 'block';
+                        termsTitle.textContent = 'Terms and Conditions';
+                        closeButton.textContent = 'Close';
+                        langPolish.classList.remove('active');
+                        langEnglish.classList.add('active');
+                    }
+                }
+                langPolish.addEventListener('click', () => setLanguage('pl'));
+                langEnglish.addEventListener('click', () => setLanguage('en'));
+                closeButton.addEventListener('click', () => {
+                    modalOverlay.style.display = 'none';
+                    modalContent.innerHTML = '';
+                });
+                setLanguage(language);
+                modalOverlay.style.display = 'flex';
+            } catch (error) {
+                console.error('Błąd ładowania regulaminu:', error);
+                modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
+                modalOverlay.style.display = 'flex';
             }
-        });
+        }
 
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
@@ -1524,6 +1528,15 @@
             window.addEventListener('online', handleNetworkStatus);
             window.addEventListener('offline', handleNetworkStatus);
             document.addEventListener('visibilitychange', manageUpdateIntervals);
+            // Obsługa linków w stopce
+            document.getElementById('termsLinkPL').addEventListener('click', (e) => {
+                e.preventDefault();
+                loadTermsModal('pl');
+            });
+            document.getElementById('termsLinkEN').addEventListener('click', (e) => {
+                e.preventDefault();
+                loadTermsModal('en');
+            });
         };
 
         window.addEventListener('load', checkCSSLoaded);
