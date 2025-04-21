@@ -1075,7 +1075,7 @@ tr:hover td:last-child {
 .footer {
     text-align: center;
     margin-top: 20px;
-    font-size: 0.6em; /* Mniejsza czcionka w wersji desktopowej */
+    font-size: 0.65em; /* Mniejsza czcionka w wersji desktopowej */
     color: #cccccc;
 }
 
@@ -1094,7 +1094,7 @@ tr:hover td:last-child {
 
 @media (max-width: 768px) {
     .footer {
-        font-size: 0.4em; /* Dużo mniejsza czcionka w wersji mobilnej */
+        font-size: 0.45em; /* Dużo mniejsza czcionka w wersji mobilnej */
         color: #cccccc; /* Taki sam szary kolor jak w wersji desktopowej */
     }
 
