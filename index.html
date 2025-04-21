@@ -136,6 +136,7 @@
                     const newScript = document.createElement('script');
                     if (script.src) {
                         newScript.src = script.src;
+                        newScript.async = true;
                     } else {
                         newScript.textContent = script.textContent;
                     }
@@ -148,12 +149,12 @@
                 termsLinkPL.addEventListener('click', (e) => {
                     e.preventDefault();
                     modalOverlay.style.display = 'flex';
-                    setLanguage('pl'); // Ustaw język polski
+                    if (typeof setLanguage === 'function') setLanguage('pl'); // Ustaw język polski
                 });
                 termsLinkEN.addEventListener('click', (e) => {
                     e.preventDefault();
                     modalOverlay.style.display = 'flex';
-                    setLanguage('en'); // Ustaw język angielski
+                    if (typeof setLanguage === 'function') setLanguage('en'); // Ustaw język angielski
                 });
             } catch (error) {
                 console.error('Błąd wczytywania modala regulaminu:', error);
@@ -682,7 +683,7 @@
                         <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td>
-                        <div class="device">${log.device || 'Brak'}</div>
+                        <div class="device">${log.device || 'Brak'}</td>
                         <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
@@ -703,7 +704,7 @@
                             <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                         </td>
                         <td>
-                            <div class="device">${log.device || 'Brak'}</div>
+                            <div class="device">${log.device || 'Brak'}</td>
                             <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                         </td>
                     `;
@@ -1363,7 +1364,7 @@
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
                     .footer { text-align: center; padding: 10px; margin-top: 20px; }
                     .footer-content p { margin: 5px 0; font-size: 0.9em; color: #ccc; }
-                    .footer-content a { color: #4d94ff; text-decoration: none; cursor: pointer; }
+                    .footer-content a { color: #4d94ff; text-decoration: none; }
                     .footer-content a:hover { text-decoration: underline; }
                 `;
                 document.head.appendChild(style);
