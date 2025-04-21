@@ -494,6 +494,19 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
+.table-wrapper::-webkit-scrollbar {
+    height: 0; /* Ukrywa pasek przewijania w poziomie */
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: transparent; /* Ukrywa thumb paska przewijania */
+}
+
+.toggle-button:hover ~ .table-wrapper,
+.toggle-button:hover + .table-wrapper {
+    overflow-x: hidden; /* Wyłącza przewijanie w poziomie podczas hover na przycisku */
+}
+
 .table-container {
     width: 100%;
     overflow: hidden;
@@ -505,6 +518,9 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
     table-layout: auto;
+    min-width: 100%; /* Zapewnia, że tabela nie przekracza kontenera */
+    max-width: 100%; /* Zapobiega rozszerzaniu się tabeli poza kontener */
+    box-sizing: border-box; /* Upewnia się, że padding i border są wliczone w szerokość */
 }
 
 thead tr {
@@ -644,6 +660,7 @@ tr:hover td:last-child {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
+    position: relative; /* Stabilizuje transformacje */
 }
 
 .toggle-button:hover {
@@ -889,6 +906,9 @@ tr:hover td:last-child {
         width: 100%;
         font-size: 0.75em;
         table-layout: fixed;
+        min-width: 100%; /* Zapewnia, że tabela nie przekracza kontenera */
+        max-width: 100%; /* Zapobiega rozszerzaniu się tabeli poza kontener */
+        box-sizing: border-box; /* Upewnia się, że padding i border są wliczone w szerokość */
     }
 
     thead tr {
@@ -1038,6 +1058,7 @@ tr:hover td:last-child {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         min-width: 70px;
+        position: relative; /* Stabilizuje transformacje */
     }
 
     .toggle-button:hover {
