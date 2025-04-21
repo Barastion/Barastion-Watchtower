@@ -69,11 +69,11 @@ body {
 
 .controls {
     display: flex;
-    justify-content: space-between; /* Wybór języka po lewej, Zamknij po prawej */
+    justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
     align-items: center;
-    gap: 15px;
+    gap: 20px; /* Zwiększony gap dla lepszego rozdziału */
     flex-wrap: wrap;
-    padding: 0 15px; /* Zwiększony padding dla odstępu od krawędzi */
+    padding: 0 20px; /* Zwiększony padding dla odstępu od krawędzi */
 }
 
 .language-switcher {
@@ -205,9 +205,9 @@ body {
     }
 
     .container {
-        width: 95%;
+        width: 80%; /* Zmniejszona szerokość dla mniejszego okienka */
         padding: 15px;
-        max-height: 90vh;
+        max-height: 85vh; /* Nieco większa wysokość, aby zmieścić treść */
         margin: 0 10px; /* Margines od krawędzi */
     }
 
@@ -223,7 +223,7 @@ body {
     .controls {
         flex-direction: row;
         flex-wrap: wrap;
-        justify-content: space-between; /* Wybór języka po lewej, Zamknij po prawej */
+        justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
         align-items: center;
         gap: 8px;
         padding: 0 10px; /* Padding dla odstępu od krawędzi */
@@ -253,7 +253,7 @@ body {
 
     .terms-content {
         padding: 10px;
-        max-height: 70vh;
+        max-height: 65vh; /* Dostosowana wysokość dla mniejszego okienka */
     }
 
     .terms-content::-webkit-scrollbar {
