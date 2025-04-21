@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
     <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:; frame-src 'self' https://barastion.github.io;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -80,11 +80,18 @@
                 </div>
             </div>
         </div>
-        <!-- Nowa stopka -->
         <footer class="site-footer">
-            <p>© 2025 Barastion Watchtower. Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="terms.html" target="_blank">regulaminu</a>.</p>
-            <p>© 2025 Barastion Watchtower. All rights reserved. Using the website constitutes acceptance of the <a href="terms.html" target="_blank">Terms and Conditions</a>.</p>
+            <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" class="terms-link">Regulaminu</a>.</p>
+            <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" class="terms-link">Terms and Conditions</a>.</p>
+            <p>© 2025 Barastion Watchtower.</p>
         </footer>
+    </div>
+    <!-- Modal do wyświetlania terms.html -->
+    <div id="termsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <iframe id="termsFrame" src="" style="width: 100%; height: 500px; border: none;"></iframe>
+        </div>
     </div>
 
     <script type="module">
@@ -1477,6 +1484,32 @@
             window.addEventListener('online', handleNetworkStatus);
             window.addEventListener('offline', handleNetworkStatus);
             document.addEventListener('visibilitychange', manageUpdateIntervals);
+
+            // Obsługa modalu dla terms.html
+            const termsLinks = document.querySelectorAll('.terms-link');
+            const termsModal = document.getElementById('termsModal');
+            const termsFrame = document.getElementById('termsFrame');
+            const closeButton = document.querySelector('.close-button');
+
+            termsLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    termsFrame.src = 'terms.html';
+                    termsModal.style.display = 'flex';
+                });
+            });
+
+            closeButton.addEventListener('click', () => {
+                termsModal.style.display = 'none';
+                termsFrame.src = '';
+            });
+
+            termsModal.addEventListener('click', (e) => {
+                if (e.target === termsModal) {
+                    termsModal.style.display = 'none';
+                    termsFrame.src = '';
+                }
+            });
         };
 
         window.addEventListener('load', checkCSSLoaded);
