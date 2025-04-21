@@ -661,25 +661,23 @@ tr:hover td:last-child {
     text-align: center;
     margin-top: 20px;
     padding: 10px 0;
-    background-color: #2d2d2d;
-    border-radius: 6px;
-    font-size: 0.85em;
+    font-size: 0.75em; /* Mała czcionka */
     color: #cccccc;
 }
 
 .site-footer p {
-    margin: 5px 0;
+    margin: 2px 0; /* Mniejszy margines między akapitami */
+    display: block;
 }
 
 .site-footer a {
-    color: var(--fear-greed-hold);
-    text-decoration: none;
+    color: #999999; /* Szary kolor odnośników */
+    text-decoration: underline; /* Dolne podkreślenie */
     transition: color 0.2s;
 }
 
 .site-footer a:hover {
-    color: #cc9f00;
-    text-decoration: underline;
+    color: #bbbbbb; /* Jaśniejszy szary przy najechaniu */
 }
 
 @keyframes ticker {
@@ -1090,7 +1088,7 @@ tr:hover td:last-child {
     }
 
     .site-footer {
-        font-size: 0.8em;
+        font-size: 0.7em; /* Mniejsza czcionka dla widoku mobilnego */
         padding: 8px 0;
     }
 }
