@@ -1,234 +1,240 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regulamin - Barastion Watchtower</title>
-    <link rel="stylesheet" href="terms.css">
-    <link rel="icon" type="image/png" href="diabelek.png">
-    <meta name="description" content="Regulamin strony Barastion Watchtower określający zasady korzystania z serwisu, ochronę danych osobowych oraz odpowiedzialność Administratora.">
-    <meta name="title" content="Regulamin Barastion Watchtower">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
-</head>
-<body>
-    <div id="networkStatus" class="network-status"></div>
-    <div class="modal-overlay">
-        <div class="container">
-            <div class="header">
-                <h1 id="termsTitle">Regulamin Strony - Barastion Watchtower</h1>
-                <div class="controls">
-                    <div class="language-switcher">
-                        <span class="language-label">Language:</span>
-                        <button id="langPolish" class="lang-button active">Polish</button>
-                        <button id="langEnglish" class="lang-button">English</button>
-                    </div>
-                    <button id="closeButton" class="toggle-button">Zamknij</button>
-                </div>
-            </div>
-            <div class="terms-content">
-                <div id="termsPL" class="terms-language">
-                    <p><strong>Data wejścia w życie: 20 kwietnia 2025 r.</strong></p>
+:root {
+    --fear-greed-hold: #e6b800;
+    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6);
+    --fear-greed-opportunity: rgba(0, 200, 0, 0.9);
+    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6);
+    --fear-greed-sell: rgba(200, 0, 0, 0.9);
+}
 
-                    <h2>1. Postanowienia ogólne</h2>
-                    <p>1.1. Niniejszy regulamin („Regulamin”) określa zasady korzystania ze strony internetowej dostępnej pod adresem <a href="https://barastion.github.io/Barastion-Watchtower/" target="_blank">https://barastion.github.io/Barastion-Watchtower/</a> („Strona”), prowadzonej przez osobę fizyczną działającą w ramach hobbystycznego projektu („Administrator”). Kontakt z Administratorem: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
-                    <p>1.2. Strona Barastion Watchtower jest osobistym dashboardem stworzonym w celach hobbystycznych, służącym do monitorowania pogody, kryptowalut oraz wyświetlania ciekawostek. Strona jest w 100% darmowa, nie jest reklamowana, nie generuje przychodów i została stworzona dla osób, którym podoba się pomysł Administratora na osobisty dashboard.</p>
-                    <p>1.3. Korzystanie ze Strony oznacza akceptację niniejszego Regulaminu. Regulamin jest dostępny pod linkiem w stopce Strony.</p>
-                    <p>1.4. Strona jest publicznie dostępna, co oznacza, że każdy, kto znajdzie Stronę w Internecie, może z niej korzystać.</p>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
 
-                    <h2>2. Zasady korzystania ze Strony</h2>
-                    <p>2.1. Użytkownik zobowiązuje się do korzystania ze Strony zgodnie z prawem, zasadami współżycia społecznego oraz niniejszym Regulaminem.</p>
-                    <p>2.2. Zabronione jest podejmowanie działań mogących zakłócić funkcjonowanie Strony, takich jak ataki hakerskie, nadmierne obciążanie serwera czy naruszanie praw Administratora.</p>
-                    <p>2.3. Treści dostępne na Stronie, takie jak prognozy pogody, dane o kryptowalutach czy ciekawostki, pochodzą z zewnętrznych źródeł (np. Open-Meteo, CoinGecko, NASA API) lub są modyfikowane przez Administratora. Administrator nie gwarantuje ich dokładności, aktualności ani przydatności do jakichkolwiek celów.</p>
+.container {
+    max-width: 600px;
+    width: 90%;
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    max-height: 80vh;
+    overflow-y: auto;
+}
 
-                    <h2>3. Ochrona danych osobowych</h2>
-                    <p>3.1. Administrator przetwarza dane osobowe użytkowników zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 (RODO).</p>
-                    <p>3.2. <strong>Administrator danych</strong>: Osoba fizyczna działająca pod pseudonimem Barastion, kontakt: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
-                    <p>3.3. <strong>Dane zbierane</strong>: Strona zbiera następujące dane o użytkownikach w formie logów odwiedzin: adres IP, lokalizacja (miasto, kraj), dostawca internetu (ISP), data, godzina, informacje o urządzeniu (np. przeglądarka). Dane są przechowywane wyłącznie w usłudze Firebase oraz tymczasowo w pamięci cache.</p>
-                    <p>3.4. <strong>Cel i podstawa prawna</strong>: Dane są przetwarzane w celu monitorowania odwiedzin Strony, zapewnienia jej bezpieczeństwa i analizy statystycznej, na podstawie uzasadnionego interesu Administratora (art. 6 ust. 1 lit. f RODO).</p>
-                    <p>3.5. <strong>Okres przechowywania</strong>: Przechowywanych jest tylko 50 ostatnich logów odwiedzin. Starsze logi są automatycznie usuwane.</p>
-                    <p>3.6. <strong>Prawa użytkownika</strong>: Użytkownik ma prawo do:<br>
-                        - Dostępu do swoich danych.<br>
-                        - Sprostowania, usunięcia lub ograniczenia przetwarzania danych.<br>
-                        - Wniesienia sprzeciwu wobec przetwarzania.<br>
-                        - Wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (UODO).<br>
-                        Wnioski można zgłaszać na adres: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>. Usunięcie logu jest możliwe po ręcznym wykonaniu operacji przez Administratora w bazie danych.</p>
-                    <p>3.7. <strong>Odbiorcy danych</strong>: Dane są przekazywane do usługi Firebase (Google Cloud), która może przetwarzać dane poza Europejskim Obszarem Gospodarczym (EOG). Transfer danych jest zabezpieczony standardowymi klauzulami umownymi. Inne usługi, takie jak ipapi.co, mogą być używane do określania lokalizacji na podstawie IP.</p>
-                    <p>3.8. <strong>Brak zgody</strong>: Strona nie wymaga wyrażenia zgody na zbieranie danych, ponieważ przetwarzanie opiera się na uzasadnionym interesie. Użytkownik może wnieść sprzeciw wobec przetwarzania, kontaktując się z Administratorem.</p>
+.network-status {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ff4d4d;
+    color: #ffffff;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9em;
+    z-index: 1001;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
 
-                    <h2>4. Dane o kryptowalutach i brak porady inwestycyjnej</h2>
-                    <p>4.1. Dane o kryptowalutach, w tym wskaźniki takie jak Fear and Greed Index, są oparte na informacjach z zewnętrznych API (np. CoinGecko) i modyfikowane za pomocą algorytmu stworzonego przez Administratora.</p>
-                    <p>4.2. Dane te mają charakter wyłącznie informacyjny i edukacyjny. <strong>Nie stanowią porady inwestycyjnej, rekomendacji ani zachęty do podejmowania decyzji finansowych</strong>.</p>
-                    <p>4.3. Użytkownik podejmuje decyzje inwestycyjne na własne ryzyko. Administrator nie ponosi odpowiedzialności za jakiekolwiek straty finansowe wynikające z korzystania z danych na Stronie.</p>
-                    <p>4.4. Rynek kryptowalut jest wysoce zmienny, a inwestycje wiążą się z ryzykiem utraty kapitału.</p>
+.header {
+    text-align: center;
+    margin-bottom: 15px;
+    position: relative;
+}
 
-                    <h2>5. Prawa własności intelektualnej</h2>
-                    <p>5.1. Treści stworzone przez Administratora, w tym zmodyfikowane wskaźniki (np. Fear and Greed Index), algorytmy, ciekawostki oraz kod Strony, są chronione prawem autorskim.</p>
-                    <p>5.2. Użytkownicy mogą korzystać z tych treści wyłącznie w zakresie dozwolonego użytku osobistego. Zabronione jest kopiowanie, modyfikowanie lub rozpowszechnianie treści bez zgody Administratora.</p>
-                    <p>5.3. Treści pochodzące z zewnętrznych źródeł (np. NASA API, Open-Meteo) podlegają zasadom określonym przez ich dostawców.</p>
+.header h1 {
+    font-size: 1.5em;
+    margin: 0 0 10px;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
 
-                    <h2>6. Odpowiedzialność</h2>
-                    <p>6.1. Administrator nie ponosi odpowiedzialności za:<br>
-                        - Błędy lub nieaktualność danych prezentowanych na Stronie.<br>
-                        - Przerwy w działaniu Strony wynikające z przyczyn technicznych lub niezależnych od Administratora.<br>
-                        - Szkody wynikające z korzystania ze Strony lub podejmowania decyzji na podstawie jej treści.</p>
-                    <p>6.2. Strona jest hostowana na platformie GitHub, a Administrator nie ma wpływu na jej infrastrukturę techniczną.</p>
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
 
-                    <h2>7. Zmiany Regulaminu</h2>
-                    <p>7.1. Administrator zastrzega sobie prawo do zmiany Regulaminu w dowolnym czasie.</p>
-                    <p>7.2. Informacja o zmianach zostanie opublikowana na Stronie w widocznym miejscu (np. w formie komunikatu).</p>
-                    <p>7.3. Dalsze korzystanie ze Strony po wprowadzeniu zmian oznacza akceptację nowego Regulaminu.</p>
+.language-switcher {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
-                    <h2>8. Postanowienia końcowe</h2>
-                    <p>8.1. Strona Barastion Watchtower jest projektem hobbystycznym, stworzonym bez celów komercyjnych, reklamy czy generowania przychodów.</p>
-                    <p>8.2. Regulamin podlega prawu polskiemu. Wszelkie spory będą rozpatrywane przez sądy powszechne w Polsce.</p>
-                    <p>8.3. W razie pytań lub wątpliwości prosimy o kontakt: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
-                </div>
-                <div id="termsEN" class="terms-language" style="display: none;">
-                    <p><strong>Effective Date: April 20, 2025</strong></p>
+.language-label {
+    font-size: 0.8em;
+    color: #cccccc;
+    font-weight: 500;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
 
-                    <h2>1. General Provisions</h2>
-                    <p>1.1. These terms and conditions ("Terms") govern the use of the website available at <a href="https://barastion.github.io/Barastion-Watchtower/" target="_blank">https://barastion.github.io/Barastion-Watchtower/</a> ("Website"), operated by an individual as part of a hobby project ("Administrator"). Contact with the Administrator: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
-                    <p>1.2. The Barastion Watchtower Website is a personal dashboard created for hobby purposes, used for monitoring weather, cryptocurrencies, and displaying trivia. The Website is 100% free, not advertised, generates no revenue, and was created for individuals who appreciate the Administrator's concept of a personal dashboard.</p>
-                    <p>1.3. Using the Website constitutes acceptance of these Terms. The Terms are available via a link in the Website's footer.</p>
-                    <p>1.4. The Website is publicly accessible, meaning anyone who finds the Website on the Internet can use it.</p>
+.lang-button {
+    background: linear-gradient(135deg, #3a3a3a, #2d2d2d);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, background 0.3s ease;
+}
 
-                    <h2>2. Rules for Using the Website</h2>
-                    <p>2.1. The User undertakes to use the Website in accordance with the law, principles of social coexistence, and these Terms.</p>
-                    <p>2.2. It is prohibited to undertake actions that may disrupt the Website's operation, such as hacking attacks, excessive server load, or infringing the Administrator's rights.</p>
-                    <p>2.3. Content available on the Website, such as weather forecasts, cryptocurrency data, or trivia, comes from external sources (e.g., Open-Meteo, CoinGecko, NASA API) or is modified by the Administrator. The Administrator does not guarantee their accuracy, timeliness, or suitability for any purpose.</p>
+.lang-button.active {
+    background: linear-gradient(135deg, #5a6268, #4a5258);
+    filter: brightness(1.2);
+}
 
-                    <h2>3. Personal Data Protection</h2>
-                    <p>3.1. The Administrator processes users' personal data in accordance with Regulation (EU) 2016/679 of the European Parliament and of the Council (GDPR).</p>
-                    <p>3.2. <strong>Data Administrator</strong>: An individual operating under the pseudonym Barastion, contact: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
-                    <p>3.3. <strong>Data Collected</strong>: The Website collects the following user data in the form of visit logs: IP address, location (city, country), internet service provider (ISP), date, time, and device information (e.g., browser). Data is stored solely in the Firebase service and temporarily in cache memory.</p>
-                    <p>3.4. <strong>Purpose and Legal Basis</strong>: Data is processed to monitor Website visits, ensure its security, and perform statistical analysis, based on the Administrator's legitimate interest (Art. 6(1)(f) GDPR).</p>
-                    <p>3.5. <strong>Storage Period</strong>: Only the last 50 visit logs are stored. Older logs are automatically deleted.</p>
-                    <p>3.6. <strong>User Rights</strong>: The User has the right to:<br>
-                        - Access their data.<br>
-                        - Rectify, delete, or restrict data processing.<br>
-                        - Object to data processing.<br>
-                        - Lodge a complaint with the President of the Personal Data Protection Office (UODO).<br>
-                        Requests can be submitted to: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>. Log deletion is possible after manual operation by the Administrator in the database.</p>
-                    <p>3.7. <strong>Data Recipients</strong>: Data is transferred to the Firebase service (Google Cloud), which may process data outside the European Economic Area (EEA). Data transfer is secured by standard contractual clauses. Other services, such as ipapi.co, may be used to determine location based on IP.</p>
-                    <p>3.8. <strong>No Consent Required</strong>: The Website does not require consent for data collection, as processing is based on legitimate interest. The User may object to processing by contacting the Administrator.</p>
+.lang-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
 
-                    <h2>4. Cryptocurrency Data and No Investment Advice</h2>
-                    <p>4.1. Cryptocurrency data, including indicators such as the Fear and Greed Index, are based on information from external APIs (e.g., CoinGecko) and modified using an algorithm created by the Administrator.</p>
-                    <p>4.2. This data is purely informational and educational. <strong>It does not constitute investment advice, recommendations, or encouragement to make financial decisions</strong>.</p>
-                    <p>4.3. The User makes investment decisions at their own risk. The Administrator is not liable for any financial losses resulting from the use of data on the Website.</p>
-                    <p>4.4. The cryptocurrency market is highly volatile, and investments carry the risk of capital loss.</p>
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5em;
+    color: #ffffff;
+    cursor: pointer;
+    transition: color 0.2s;
+}
 
-                    <h2>5. Intellectual Property Rights</h2>
-                    <p>5.1. Content created by the Administrator, including modified indicators (e.g., Fear and Greed Index), algorithms, trivia, and Website code, is protected by copyright.</p>
-                    <p>5.2. Users may use this content only within the scope of permitted personal use. Copying, modifying, or distributing content without the Administrator's consent is prohibited.</p>
-                    <p>5.3. Content from external sources (e.g., NASA API, Open-Meteo) is subject to the rules set by their providers.</p>
+.close-button:hover {
+    color: #bbbbbb;
+}
 
-                    <h2>6. Liability</h2>
-                    <p>6.1. The Administrator is not liable for:<br>
-                        - Errors or outdated data presented on the Website.<br>
-                        - Interruptions in Website operation due to technical reasons or factors beyond the Administrator's control.<br>
-                        - Damages resulting from using the Website or making decisions based on its content.</p>
-                    <p>6.2. The Website is hosted on the GitHub platform, and the Administrator has no control over its technical infrastructure.</p>
+.terms-content {
+    background-color: #3a3a3a;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-height: 60vh;
+    overflow-y: auto;
+}
 
-                    <h2>7. Changes to the Terms</h2>
-                    <p>7.1. The Administrator reserves the right to amend the Terms at any time.</p>
-                    <p>7.2. Information about changes will be published on the Website in a visible place (e.g., as a notification).</p>
-                    <p>7.3. Continued use of the Website after changes are introduced constitutes acceptance of the new Terms.</p>
+.terms-content::-webkit-scrollbar {
+    width: 8px;
+}
 
-                    <h2>8. Final Provisions</h2>
-                    <p>8.1. The Barastion Watchtower Website is a hobby project created without commercial purposes, advertising, or revenue generation.</p>
-                    <p>8.2. The Terms are governed by Polish law. Any disputes will be resolved by Polish common courts.</p>
-                    <p>8.3. For any questions or concerns, please contact: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+.terms-content::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
+    border-radius: 8px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+}
 
-    <script>
-        // Language toggle functionality
-        const langPolish = document.getElementById('langPolish');
-        const langEnglish = document.getElementById('langEnglish');
-        const termsPL = document.getElementById('termsPL');
-        const termsEN = document.getElementById('termsEN');
-        const termsTitle = document.getElementById('termsTitle');
-        const closeButton = document.getElementById('closeButton');
-        let currentLanguage = 'pl';
+.terms-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #5a6268, #4a5258);
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
 
-        function setLanguage(language) {
-            if (language === 'pl') {
-                termsPL.style.display = 'block';
-                termsEN.style.display = 'none';
-                termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
-                closeButton.textContent = 'Zamknij';
-                langPolish.classList.add('active');
-                langEnglish.classList.remove('active');
-                currentLanguage = 'pl';
-            } else {
-                termsPL.style.display = 'none';
-                termsEN.style.display = 'block';
-                termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                closeButton.textContent = 'Close';
-                langPolish.classList.remove('active');
-                langEnglish.classList.add('active');
-                currentLanguage = 'en';
-            }
-        }
+.terms-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #808080, #666666);
+    filter: brightness(1.1);
+}
 
-        langPolish.addEventListener('click', () => setLanguage('pl'));
-        langEnglish.addEventListener('click', () => setLanguage('en'));
+.terms-content h2 {
+    font-size: 1.2em;
+    margin: 15px 0 8px;
+    color: #ffffff;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
 
-        // Close button functionality
-        closeButton.addEventListener('click', () => {
-            const modalOverlay = document.querySelector('.modal-overlay');
-            modalOverlay.style.display = 'none'; // Hide the modal
-        });
+.terms-content p {
+    font-size: 0.85em;
+    margin: 8px 0;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+}
 
-        // Network status handling
-        function handleNetworkStatus() {
-            const networkStatus = document.getElementById('networkStatus');
-            if (navigator.onLine) {
-                networkStatus.style.display = 'none';
-                networkStatus.textContent = '';
-            } else {
-                networkStatus.textContent = currentLanguage === 'pl' ? 'Brak połączenia z internetem' : 'No internet connection';
-                networkStatus.style.display = 'block';
-            }
-        }
+.terms-content a {
+    color: #999999;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
 
-        // Check CSS loading
-        function checkCSSLoaded() {
-            const container = document.querySelector('.container');
-            const computedStyle = window.getComputedStyle(container);
-            if (computedStyle.backgroundColor !== 'rgb(45, 45, 45)') {
-                console.warn('CSS not loaded, applying fallback');
-                const style = document.createElement('style');
-                style.textContent = `
-                    body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; }
-                    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-                    .container { max-width: 600px; width: 90%; background: #2d2d2d; padding: 15px; border-radius: 8px; }
-                    .header { text-align: center; margin-bottom: 15px; }
-                    .controls { display: flex; justify-content: center; gap: 10px; align-items: center; }
-                    .language-switcher { display: flex; align-items: center; gap: 5px; }
-                    .language-label { font-size: 0.8em; color: #ccc; }
-                    .lang-button, .toggle-button { background: #5a6268; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
-                    .lang-button.active { background: #4d94ff; }
-                    .toggle-button { background: rgba(200, 0, 0, 0.4); }
-                    .terms-content { background: #3a3a3a; padding: 15px; border-radius: 8px; max-height: 60vh; overflow-y: auto; }
-                    h1, h2 { color: #fff; }
-                    p { font-size: 0.9em; margin: 8px 0; }
-                `;
-                document.head.appendChild(style);
-            }
-        }
+.terms-content a:hover {
+    color: #bbbbbb;
+}
 
-        // Initialize
-        window.addEventListener('load', () => {
-            handleNetworkStatus();
-            checkCSSLoaded();
-            setLanguage('pl'); // Default to Polish
-        });
-        window.addEventListener('online', handleNetworkStatus);
-        window.addEventListener('offline', handleNetworkStatus);
-    </script>
-</body>
-</html>
+.terms-language {
+    max-width: 100%;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .container {
+        width: 95%;
+        padding: 10px;
+        max-height: 90vh;
+    }
+
+    .network-status {
+        font-size: 0.8em;
+        padding: 6px;
+    }
+
+    .header h1 {
+        font-size: 1.2em;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .language-switcher {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .language-label {
+        font-size: 0.7em;
+    }
+
+    .lang-button {
+        padding: 5px 10px;
+        font-size: 0.7em;
+        min-width: 70px;
+    }
+
+    .close-button {
+        font-size: 1.2em;
+        top: 8px;
+        right: 8px;
+    }
+
+    .terms-content {
+        padding: 10px;
+        max-height: 70vh;
+    }
+
+    .terms-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .terms-content h2 {
+        font-size: 1em;
+        margin: 12px 0 6px;
+    }
+
+    .terms-content p {
+        font-size: 0.75em;
+        margin: 6px 0;
+        line-height: 1.5;
+    }
+}
