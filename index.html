@@ -80,18 +80,11 @@
                 </div>
             </div>
         </div>
+        <!-- Nowa stopka -->
         <footer class="site-footer">
-            <p>&copy; 2025 Barastion Watchtower. Wszystkie prawa zastrzeżone.</p>
-            <p><a href="terms.html" id="termsLink">Regulamin</a> | Kontakt: <a href="mailto:contact@barastion.com">contact@barastion.com</a></p>
+            <p>© 2025 Barastion Watchtower. Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="terms.html" target="_blank">regulaminu</a>.</p>
+            <p>© 2025 Barastion Watchtower. All rights reserved. Using the website constitutes acceptance of the <a href="terms.html" target="_blank">Terms and Conditions</a>.</p>
         </footer>
-    </div>
-
-    <!-- Modal regulaminu -->
-    <div id="termsModal" class="modal">
-        <div class="modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <iframe id="termsFrame" src="" frameborder="0"></iframe>
-        </div>
     </div>
 
     <script type="module">
@@ -1123,9 +1116,7 @@
                 const baseCoin = allCoins.find(c => c.symbol.toUpperCase() === potentialBaseSymbol);
                 if (baseCoin) {
                     const basePrice = parseFloat(baseCoin.current_price);
-                    const priceDifference = Math.abs((price - basePrice) /ếm
-
-                    basePrice) * 100;
+                    const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                     if (priceDifference <= 5) {
                         console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
                         return { isDerivative: true, baseSymbol: potentialBaseSymbol };
@@ -1312,10 +1303,6 @@
                     .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                     .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1000; }
-                    .modal-content { position: relative; margin: 5% auto; padding: 20px; background: #2d2d2d; border-radius: 8px; width: 80%; max-width: 800px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); }
-                    .modal-content iframe { width: 100%; height: 500px; border: none; }
-                    .close { position: absolute; top: 10px; right: 20px; font-size: 24px; cursor: pointer; color: #fff; }
                 `;
                 document.head.appendChild(style);
             }
@@ -1480,41 +1467,9 @@
             isManagingIntervals = false;
         }
 
-        // Funkcja obsługująca modal regulaminu
-        function setupTermsModal() {
-            const termsLink = document.getElementById('termsLink');
-            const termsModal = document.getElementById('termsModal');
-            const termsFrame = document.getElementById('termsFrame');
-            const closeModal = document.getElementById('closeModal');
-
-            if (!termsLink || !termsModal || !termsFrame || !closeModal) {
-                console.error('Brak elementów modalu regulaminu');
-                return;
-            }
-
-            termsLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                termsFrame.src = 'terms.html';
-                termsModal.style.display = 'block';
-            });
-
-            closeModal.addEventListener('click', () => {
-                termsModal.style.display = 'none';
-                termsFrame.src = ''; // Reset iframe
-            });
-
-            window.addEventListener('click', (e) => {
-                if (e.target === termsModal) {
-                    termsModal.style.display = 'none';
-                    termsFrame.src = ''; // Reset iframe
-                }
-            });
-        }
-
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
-            setupTermsModal();
             if (document.visibilityState === 'visible') {
                 lastUpdateTime = Date.now(); // Ustaw czas pierwszego ładowania
                 manageUpdateIntervals();
