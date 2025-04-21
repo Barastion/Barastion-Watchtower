@@ -134,7 +134,11 @@
                 const scripts = modalContainer.querySelectorAll('script');
                 scripts.forEach(script => {
                     const newScript = document.createElement('script');
-                    newScript.textContent = script.textContent;
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
                     document.body.appendChild(newScript);
                 });
 
@@ -880,7 +884,7 @@
                 if (!locationData.lat || !locationData.lon) {
                     throw new Error('Brak współrzędnych dla lokalizacji');
                 }
-                const lat = locationData.lat SED -i 's/\r$//' index.html
+                const lat = locationData.lat;
                 const lon = locationData.lon;
                 const city = locationData.city || 'Nieznane miasto';
 
@@ -1480,7 +1484,6 @@
                 if (fearGreedIntervalId) {
                     clearInterval(fearGreedIntervalId);
                     fearGreedIntervalId = null;
- Rejection reason: Error: Cannot parse input as valid JSON
                 }
 
                 // Sprawdź, czy minął minimalny czas od ostatniego odświeżenia
