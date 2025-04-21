@@ -1075,7 +1075,7 @@ tr:hover td:last-child {
 .footer {
     text-align: center;
     margin-top: 20px;
-    font-size: 0.65em; /* Mniejsza czcionka w wersji desktopowej */
+    font-size: 0.75em; /* Mniejsza czcionka w wersji desktopowej */
     color: #cccccc;
 }
 
