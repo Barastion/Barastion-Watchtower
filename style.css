@@ -1070,23 +1070,24 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 
 /* Stopka */
 .footer {
-    text-align: center;
+    text-align: center !important; /* Wymuszenie centrowania */
     margin-top: 20px;
     font-size: 0.7em; /* Czcionka w wersji desktopowej */
-    color: #cccccc;
-    width: 100%; /* Zapewnia pełną szerokość */
-    display: block; /* Stabilizuje układ */
+    color: #cccccc !important; /* Szary kolor tekstu */
+    width: 100%; /* Pełna szerokość */
+    display: block; /* Stabilny układ */
+    box-sizing: border-box; /* Zapobiega problemom z paddingiem/marginem */
 }
 
 .footer p {
     margin: 2px 0; /* Odstępy między wierszami */
-    text-align: center; /* Dodatkowe centrowanie dla pewności */
+    text-align: center !important; /* Dodatkowe centrowanie */
 }
 
 .footer a,
 .footer a:link,
 .footer a:visited {
-    color: var(--fear-greed-hold); /* Bladożółty kolor z Fear and Greed (#e6b800) */
+    color: var(--fear-greed-hold) !important; /* Bladożółty kolor (#e6b800) */
     text-decoration: none;
 }
 
@@ -1097,24 +1098,25 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 @media (max-width: 768px) {
     .footer {
         font-size: 0.4em; /* Mniejsza czcionka w wersji mobilnej */
-        color: #cccccc;
-        width: 100%; /* Zapewnia pełną szerokość */
-        display: block; /* Stabilizuje układ */
-        text-align: center; /* Centrowanie w wersji mobilnej */
+        color: #cccccc !important;
+        width: 100%;
+        display: block;
+        text-align: center !important; /* Centrowanie w wersji mobilnej */
+        box-sizing: border-box;
     }
 
     .footer p {
-        margin: 1px 0; /* Mniejsze odstępy między wierszami */
+        margin: 1px 0; /* Mniejsze odstępy */
         white-space: nowrap; /* Zapobiega zawijaniu tekstu */
         overflow: hidden; /* Ukrywa nadmiar tekstu */
-        text-overflow: ellipsis; /* Dodaje wielokropek dla długiego tekstu */
-        text-align: center; /* Centrowanie dla pewności */
+        text-overflow: ellipsis; /* Dodaje wielokropek */
+        text-align: center !important;
     }
 
     .footer a,
     .footer a:link,
     .footer a:visited {
-        color: var(--fear-greed-hold); /* Bladożółty kolor w wersji mobilnej */
+        color: var(--fear-greed-hold) !important; /* Bladożółty kolor */
         text-decoration: none;
     }
 
@@ -1126,10 +1128,11 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 @media (max-width: 768px) and (orientation: landscape) {
     .footer {
         font-size: 0.4em; /* Taka sama czcionka w orientacji poziomej */
-        color: #cccccc;
+        color: #cccccc !important;
         width: 100%;
         display: block;
-        text-align: center; /* Centrowanie w orientacji poziomej */
+        text-align: center !important; /* Centrowanie */
+        box-sizing: border-box;
     }
 
     .footer p {
@@ -1137,13 +1140,13 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        text-align: center;
+        text-align: center !important;
     }
 
     .footer a,
     .footer a:link,
     .footer a:visited {
-        color: var(--fear-greed-hold); /* Bladożółty kolor w orientacji poziomej */
+        color: var(--fear-greed-hold) !important; /* Bladożółty kolor */
         text-decoration: none;
     }
 
