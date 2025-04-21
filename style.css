@@ -351,7 +351,7 @@ body {
         -0.4px  0    0 black, /* Lewo */
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
+         0     0.4px 0 black, — Dół */
          0 0 0.5px black, /* Węższy kontur */
          0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     line-height: 1;
@@ -455,7 +455,7 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
+         0 0 0.5px black њег — Węższy kontur */
          0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
@@ -1075,12 +1075,12 @@ tr:hover td:last-child {
 .footer {
     text-align: center;
     margin-top: 20px;
-    font-size: 0.8em;
+    font-size: 0.7em; /* Mniejsza czcionka w wersji desktopowej */
     color: #cccccc;
 }
 
 .footer p {
-    margin: 5px 0;
+    margin: 2px 0; /* Mniejsze odstępy między wierszami */
 }
 
 .footer a {
@@ -1090,4 +1090,18 @@ tr:hover td:last-child {
 
 .footer a:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        font-size: 0.5em; /* Dużo mniejsza czcionka w wersji mobilnej */
+        color: #cccccc; /* Taki sam szary kolor jak w wersji desktopowej */
+    }
+
+    .footer p {
+        margin: 1px 0; /* Jeszcze mniejsze odstępy między wierszami */
+        white-space: nowrap; /* Zapobiega zawijaniu tekstu */
+        overflow: hidden; /* Ukrywa nadmiar tekstu */
+        text-overflow: ellipsis; /* Dodaje wielokropek, jeśli tekst jest za długi */
+    }
 }
