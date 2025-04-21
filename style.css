@@ -1080,8 +1080,10 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
     margin: 2px 0; /* Mniejsze odstępy między wierszami */
 }
 
-.footer a {
-    color: #b0b0b0; /* Odcień szarości dla odnośników, czytelny */
+.footer a,
+.footer a:link,
+.footer a:visited {
+    color: var(--fear-greed-hold); /* Bladożółty kolor z Fear and Greed (neutralny) */
     text-decoration: none;
 }
 
@@ -1102,8 +1104,10 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
         text-overflow: ellipsis; /* Dodaje wielokropek, jeśli tekst jest za długi */
     }
 
-    .footer a {
-        color: #b0b0b0; /* Taki sam odcień szarości dla odnośników w wersji mobilnej */
+    .footer a,
+    .footer a:link,
+    .footer a:visited {
+        color: var(--fear-greed-hold); /* Bladożółty kolor z Fear and Greed (neutralny) */
         text-decoration: none;
     }
 
