@@ -490,16 +490,9 @@ body {
 }
 
 .table-wrapper {
-    overflow-x: hidden; /* Domyślnie ukrywa przewijanie w poziomie */
+    overflow-y: hidden; /* Wyłącza przewijanie pionowe */
+    overflow-x: auto; /* Zachowuje przewijanie poziome, jeśli potrzebne */
     -webkit-overflow-scrolling: touch;
-}
-
-.table-wrapper::-webkit-scrollbar {
-    height: 0; /* Ukrywa pasek przewijania w poziomie */
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-    background: transparent; /* Ukrywa thumb paska przewijania */
 }
 
 .table-container {
@@ -890,7 +883,8 @@ tr:hover td:last-child {
     }
 
     .table-wrapper {
-        overflow-x: hidden; /* Domyślnie ukrywa przewijanie w poziomie */
+        overflow-y: hidden; /* Wyłącza przewijanie pionowe */
+        overflow-x: auto; /* Zachowuje przewijanie poziome */
     }
 
     .table-container {
