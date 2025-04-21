@@ -1072,21 +1072,16 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 .footer {
     text-align: center;
     margin-top: 20px;
-    font-size: 0.7em; /* Czcionka w wersji desktopowej */
+    font-size: 0.7em; /* Mniejsza czcionka w wersji desktopowej */
     color: #cccccc;
-    width: 100%; /* Pełna szerokość */
-    display: block; /* Stabilny układ */
 }
 
 .footer p {
-    margin: 2px 0; /* Odstępy między wierszami */
-    text-align: center;
+    margin: 2px 0; /* Mniejsze odstępy między wierszami */
 }
 
-.footer a,
-.footer a:link,
-.footer a:visited {
-    color: var(--fear-greed-hold); /* Bladożółty kolor (#e6b800) */
+.footer a {
+    color: #b0b0b0; /* Odcień szarości dla odnośników, czytelny */
     text-decoration: none;
 }
 
@@ -1096,54 +1091,19 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 
 @media (max-width: 768px) {
     .footer {
-        font-size: 0.4em; /* Mniejsza czcionka w wersji mobilnej */
-        color: #cccccc;
-        width: 100%;
-        display: block;
-        text-align: center;
+        font-size: 0.4em; /* Jeszcze mniejsza czcionka w wersji mobilnej */
+        color: #cccccc; /* Taki sam szary kolor jak w wersji desktopowej */
     }
 
     .footer p {
-        margin: 1px 0;
+        margin: 1px 0; /* Jeszcze mniejsze odstępy między wierszami */
         white-space: nowrap; /* Zapobiega zawijaniu tekstu */
         overflow: hidden; /* Ukrywa nadmiar tekstu */
-        text-overflow: ellipsis; /* Dodaje wielokropek */
-        text-align: center;
+        text-overflow: ellipsis; /* Dodaje wielokropek, jeśli tekst jest za długi */
     }
 
-    .footer a,
-    .footer a:link,
-    .footer a:visited {
-        color: var(--fear-greed-hold); /* Bladożółty kolor */
-        text-decoration: none;
-    }
-
-    .footer a:hover {
-        text-decoration: underline;
-    }
-}
-
-@media (max-width: 768px) and (orientation: landscape) {
-    .footer {
-        font-size: 0.4em; /* Taka sama czcionka w orientacji poziomej */
-        color: #cccccc;
-        width: 100%;
-        display: block;
-        text-align: center;
-    }
-
-    .footer p {
-        margin: 1px 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: center;
-    }
-
-    .footer a,
-    .footer a:link,
-    .footer a:visited {
-        color: var(--fear-greed-hold); /* Bladożółty kolor */
+    .footer a {
+        color: #b0b0b0; /* Taki sam odcień szarości dla odnośników w wersji mobilnej */
         text-decoration: none;
     }
 
