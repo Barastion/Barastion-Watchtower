@@ -80,12 +80,17 @@
                 </div>
             </div>
         </div>
-        <footer class="footer">
-            <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="terms.html" target="_blank">Regulaminu</a>.</p>
-            <p>All rights reserved. Using the website constitutes acceptance of the <a href="terms.html" target="_blank">Terms and Conditions</a>.</p>
-            <p>© 2025 Barastion Watchtower.</p>
-        </footer>
     </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" id="termsLinkPL">Regulaminu</a>.</p>
+            <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" id="termsLinkEN">Terms and Conditions</a>.</p>
+            <p>© 2025 Barastion Watchtower.</p>
+        </div>
+    </footer>
+
+    <div id="termsModalContainer" class="modal-container"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
@@ -103,6 +108,55 @@
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+
+        // Funkcja do wczytywania modala z terms.html
+        async function loadTermsModal() {
+            try {
+                const response = await fetch('terms.html');
+                if (!response.ok) {
+                    throw new Error('Nie udało się wczytać terms.html');
+                }
+                const termsHtml = await response.text();
+                const modalContainer = document.getElementById('termsModalContainer');
+                modalContainer.innerHTML = termsHtml;
+
+                // Aktualizacja stylów, aby modal działał w kontekście index.html
+                const modalOverlay = modalContainer.querySelector('.modal-overlay');
+                modalOverlay.style.display = 'none'; // Ukryj modal na starcie
+                modalOverlay.style.position = 'fixed';
+                modalOverlay.style.top = '0';
+                modalOverlay.style.left = '0';
+                modalOverlay.style.width = '100%';
+                modalOverlay.style.height = '100%';
+                modalOverlay.style.zIndex = '1000';
+
+                // Inicjalizacja skryptów z terms.html
+                const scripts = modalContainer.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                });
+
+                // Dodanie obsługi przycisków regulaminu
+                const termsLinkPL = document.getElementById('termsLinkPL');
+                const termsLinkEN = document.getElementById('termsLinkEN');
+                termsLinkPL.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modalOverlay.style.display = 'flex';
+                    setLanguage('pl'); // Ustaw język polski
+                });
+                termsLinkEN.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modalOverlay.style.display = 'flex';
+                    setLanguage('en'); // Ustaw język angielski
+                });
+            } catch (error) {
+                console.error('Błąd wczytywania modala regulaminu:', error);
+                const modalContainer = document.getElementById('termsModalContainer');
+                modalContainer.innerHTML = '<p>Błąd ładowania regulaminu. Spróbuj ponownie później.</p>';
+            }
+        }
 
         // Funkcja do ponawiania żądań z timeoutem i obsługą błędu 429
         async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
@@ -826,7 +880,7 @@
                 if (!locationData.lat || !locationData.lon) {
                     throw new Error('Brak współrzędnych dla lokalizacji');
                 }
-                const lat = locationData.lat;
+                const lat = locationData.lat SED -i 's/\r$//' index.html
                 const lon = locationData.lon;
                 const city = locationData.city || 'Nieznane miasto';
 
@@ -1303,6 +1357,10 @@
                     .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                     .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
+                    .footer { text-align: center; padding: 10px; margin-top: 20px; }
+                    .footer-content p { margin: 5px 0; font-size: 0.9em; color: #ccc; }
+                    .footer-content a { color: #4d94ff; text-decoration: none; cursor: pointer; }
+                    .footer-content a:hover { text-decoration: underline; }
                 `;
                 document.head.appendChild(style);
             }
@@ -1409,7 +1467,7 @@
             const now = Date.now();
 
             if (document.visibilityState === 'visible') {
-                console.log('Karta aktywna, włączam aktualpoziacje');
+                console.log('Karta aktywna, włączam aktualizacje');
                 // Czyść istniejące interwały, jeśli istnieją
                 if (cryptoIntervalId) {
                     clearInterval(cryptoIntervalId);
@@ -1422,6 +1480,7 @@
                 if (fearGreedIntervalId) {
                     clearInterval(fearGreedIntervalId);
                     fearGreedIntervalId = null;
+ Rejection reason: Error: Cannot parse input as valid JSON
                 }
 
                 // Sprawdź, czy minął minimalny czas od ostatniego odświeżenia
@@ -1470,6 +1529,7 @@
         window.onload = async function() {
             console.log('Strona załadowana, uruchamiam funkcje...');
             handleNetworkStatus();
+            loadTermsModal(); // Wczytaj modal regulaminu
             if (document.visibilityState === 'visible') {
                 lastUpdateTime = Date.now(); // Ustaw czas pierwszego ładowania
                 manageUpdateIntervals();
