@@ -38,7 +38,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     max-height: 80vh;
     overflow-y: auto;
-    margin: 0 15px; /* Dodany margines od krawędzi */
+    margin: 0 15px; /* Margines od krawędzi */
 }
 
 .network-status {
@@ -69,11 +69,11 @@ body {
 
 .controls {
     display: flex;
-    justify-content: center;
+    justify-content: space-between; /* Wybór języka po lewej, Zamknij po prawej */
     align-items: center;
     gap: 15px;
     flex-wrap: wrap;
-    padding: 0 10px; /* Dodany padding dla odstępu od krawędzi */
+    padding: 0 15px; /* Zwiększony padding dla odstępu od krawędzi */
 }
 
 .language-switcher {
@@ -172,9 +172,9 @@ body {
 }
 
 .terms-content p {
-    font-size: 0.8em; /* Zmniejszona czcionka z 0.85em na 0.8em */
+    font-size: 0.8em;
     margin: 8px 0;
-    line-height: 1.5; /* Dostosowany line-height dla lepszej czytelności */
+    line-height: 1.5;
     overflow-wrap: break-word;
 }
 
@@ -208,7 +208,7 @@ body {
         width: 95%;
         padding: 15px;
         max-height: 90vh;
-        margin: 0 10px; /* Dodany margines od krawędzi w wersji mobilnej */
+        margin: 0 10px; /* Margines od krawędzi */
     }
 
     .network-status {
@@ -223,10 +223,10 @@ body {
     .controls {
         flex-direction: row;
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: space-between; /* Wybór języka po lewej, Zamknij po prawej */
         align-items: center;
         gap: 8px;
-        padding: 0 8px; /* Dodany padding dla odstępu od krawędzi */
+        padding: 0 10px; /* Padding dla odstępu od krawędzi */
     }
 
     .language-switcher {
@@ -266,8 +266,8 @@ body {
     }
 
     .terms-content p {
-        font-size: 0.7em; /* Zmniejszona czcionka z 0.75em na 0.7em */
+        font-size: 0.7em;
         margin: 6px 0;
-        line-height: 1.4; /* Dostosowany line-height dla lepszej czytelności */
+        line-height: 1.4;
     }
 }
