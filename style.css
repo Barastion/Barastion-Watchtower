@@ -423,7 +423,7 @@ body {
 }
 
 .crypto-tile.neutral {
-    background-color: rgba(128, 128, 128,gba(128, 128, 128, 0.5);
+    background-color: rgba(128, 128, 128, 0.5);
 }
 
 .crypto-symbol {
@@ -655,69 +655,6 @@ tr:hover td:last-child {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
-}
-
-.site-footer {
-    text-align: center;
-    margin-top: 20px;
-    padding: 10px 0;
-    font-size: 0.75em; /* Mała czcionka */
-    color: #cccccc;
-    background-color: transparent; /* Bez tła */
-}
-
-.site-footer p {
-    margin: 2px 0; /* Mniejszy margines między akapitami */
-    display: block;
-}
-
-.site-footer a {
-    color: #999999; /* Szary kolor odnośników */
-    text-decoration: underline; /* Dolne podkreślenie */
-    transition: color 0.2s;
-}
-
-.site-footer a:hover {
-    color: #bbbbbb; /* Jaśniejszy szary przy najechaniu */
-}
-
-/* Styl dla modala */
-.modal {
-    display: none; /* Domyślnie ukryty */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Półprzezroczyste tło */
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background-color: #2d2d2d;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
-    position: relative;
-}
-
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5em;
-    color: #ffffff;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.close-button:hover {
-    color: #bbbbbb; /* Jaśniejszy szary przy najechaniu */
 }
 
 @keyframes ticker {
@@ -1126,20 +1063,31 @@ tr:hover td:last-child {
     .nasa-container {
         max-width: 100%;
     }
-
-    .site-footer {
-        font-size: 0.7em; /* Mniejsza czcionka dla widoku mobilnego */
-        padding: 8px 0;
-        background-color: transparent; /* Bez tła */
-    }
-
-    .modal-content {
-        max-width: 95%; /* Lepsze dopasowanie dla urządzeń mobilnych */
-    }
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
     .crypto-grid {
         grid-template-columns: repeat(7, 1fr);
     }
+}
+
+/* Stopka */
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #cccccc;
+}
+
+.footer p {
+    margin: 5px 0;
+}
+
+.footer a {
+    color: #4d94ff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 }
