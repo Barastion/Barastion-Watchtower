@@ -1070,24 +1070,23 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 
 /* Stopka */
 .footer {
-    text-align: center !important; /* Wymuszenie centrowania */
+    text-align: center;
     margin-top: 20px;
     font-size: 0.7em; /* Czcionka w wersji desktopowej */
-    color: #cccccc !important; /* Szary kolor tekstu */
+    color: #cccccc;
     width: 100%; /* Pełna szerokość */
     display: block; /* Stabilny układ */
-    box-sizing: border-box; /* Zapobiega problemom z paddingiem/marginem */
 }
 
 .footer p {
     margin: 2px 0; /* Odstępy między wierszami */
-    text-align: center !important; /* Dodatkowe centrowanie */
+    text-align: center;
 }
 
 .footer a,
 .footer a:link,
 .footer a:visited {
-    color: var(--fear-greed-hold) !important; /* Bladożółty kolor (#e6b800) */
+    color: var(--fear-greed-hold); /* Bladożółty kolor (#e6b800) */
     text-decoration: none;
 }
 
@@ -1098,25 +1097,24 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 @media (max-width: 768px) {
     .footer {
         font-size: 0.4em; /* Mniejsza czcionka w wersji mobilnej */
-        color: #cccccc !important;
+        color: #cccccc;
         width: 100%;
         display: block;
-        text-align: center !important; /* Centrowanie w wersji mobilnej */
-        box-sizing: border-box;
+        text-align: center;
     }
 
     .footer p {
-        margin: 1px 0; /* Mniejsze odstępy */
+        margin: 1px 0;
         white-space: nowrap; /* Zapobiega zawijaniu tekstu */
         overflow: hidden; /* Ukrywa nadmiar tekstu */
         text-overflow: ellipsis; /* Dodaje wielokropek */
-        text-align: center !important;
+        text-align: center;
     }
 
     .footer a,
     .footer a:link,
     .footer a:visited {
-        color: var(--fear-greed-hold) !important; /* Bladożółty kolor */
+        color: var(--fear-greed-hold); /* Bladożółty kolor */
         text-decoration: none;
     }
 
@@ -1128,11 +1126,10 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
 @media (max-width: 768px) and (orientation: landscape) {
     .footer {
         font-size: 0.4em; /* Taka sama czcionka w orientacji poziomej */
-        color: #cccccc !important;
+        color: #cccccc;
         width: 100%;
         display: block;
-        text-align: center !important; /* Centrowanie */
-        box-sizing: border-box;
+        text-align: center;
     }
 
     .footer p {
@@ -1140,13 +1137,13 @@ th:nth-child(6), td:nth-child(6) { /* Urządzenie */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        text-align: center !important;
+        text-align: center;
     }
 
     .footer a,
     .footer a:link,
     .footer a:visited {
-        color: var(--fear-greed-hold) !important; /* Bladożółty kolor */
+        color: var(--fear-greed-hold); /* Bladożółty kolor */
         text-decoration: none;
     }
 
