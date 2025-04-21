@@ -1,0 +1,265 @@
+:root {
+    --fear-greed-hold: #e6b800;
+    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6);
+    --fear-greed-opportunity: rgba(0, 200, 0, 0.9);
+    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6);
+    --fear-greed-sell: rgba(200, 0, 0, 0.9);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.container {
+    max-width: 600px;
+    width: 90%;
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.network-status {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ff4d4d;
+    color: #ffffff;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9em;
+    z-index: 1001;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.header h1 {
+    font-size: 1.5em;
+    margin: 0 0 10px;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.language-switcher {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.language-label {
+    font-size: 0.8em;
+    color: #cccccc;
+    font-weight: 500;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.lang-button {
+    background: linear-gradient(135deg, #3a3a3a, #2d2d2d);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, background 0.3s ease;
+}
+
+.lang-button.active {
+    background: linear-gradient(135deg, #5a6268, #4a5258);
+    filter: brightness(1.2);
+}
+
+.lang-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.toggle-button {
+    background: linear-gradient(135deg, rgba(255, 80, 80, 0.5), rgba(200, 0, 0, 0.5));
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.toggle-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.terms-content {
+    background-color: #3a3a3a;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.terms-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terms-content::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
+    border-radius: 8px;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.terms-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #5a6268, #4a5258);
+    border-radius: 8px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.terms-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #808080, #666666);
+    filter: brightness(1.1);
+}
+
+.terms-content h2 {
+    font-size: 1.2em;
+    margin: 15px 0 8px;
+    color: #ffffff;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+.terms-content p {
+    font-size: 0.85em;
+    margin: 8px 0;
+    line-height: 1.6;
+    overflow-wrap: break-word;
+}
+
+.terms-content a {
+    color: #cccccc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.terms-content a:hover {
+    color: #999999;
+    text-decoration: underline;
+}
+
+.terms-language {
+    max-width: 100%;
+    margin: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .container {
+        width: 95%;
+        padding: 10px;
+        max-height: 90vh;
+    }
+
+    .network-status {
+        font-size: 0.8em;
+        padding: 6px;
+    }
+
+    .header h1 {
+        font-size: 1.2em;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .language-switcher {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .language-label {
+        font-size: 0.7em;
+    }
+
+    .lang-button {
+        padding: 5px 10px;
+        font-size: 0.7em;
+        min-width: 70px;
+    }
+
+    .toggle-button {
+        padding: 6px 12px;
+        font-size: 0.7em;
+        min-width: 80px;
+    }
+
+    .terms-content {
+        padding: 10px;
+        max-height: 70vh;
+    }
+
+    .terms-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .terms-content h2 {
+        font-size: 1em;
+        margin: 12px 0 6px;
+    }
+
+    .terms-content p {
+        font-size: 0.75em;
+        margin: 6px 0;
+        line-height: 1.5;
+    }
+}
