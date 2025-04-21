@@ -657,6 +657,31 @@ tr:hover td:last-child {
     filter: brightness(1.1);
 }
 
+.site-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    background-color: #2d2d2d;
+    border-radius: 6px;
+    font-size: 0.85em;
+    color: #cccccc;
+}
+
+.site-footer p {
+    margin: 5px 0;
+}
+
+.site-footer a {
+    color: var(--fear-greed-hold);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.site-footer a:hover {
+    color: #cc9f00;
+    text-decoration: underline;
+}
+
 @keyframes ticker {
     0% {
         transform: translateX(0);
@@ -1062,6 +1087,11 @@ tr:hover td:last-child {
 
     .nasa-container {
         max-width: 100%;
+    }
+
+    .site-footer {
+        font-size: 0.8em;
+        padding: 8px 0;
     }
 }
 
