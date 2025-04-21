@@ -490,7 +490,7 @@ body {
 }
 
 .table-wrapper {
-    overflow-x: auto;
+    overflow-x: hidden; /* Domyślnie ukrywa przewijanie w poziomie */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -500,11 +500,6 @@ body {
 
 .table-wrapper::-webkit-scrollbar-thumb {
     background: transparent; /* Ukrywa thumb paska przewijania */
-}
-
-.toggle-button:hover ~ .table-wrapper,
-.toggle-button:hover + .table-wrapper {
-    overflow-x: hidden; /* Wyłącza przewijanie w poziomie podczas hover na przycisku */
 }
 
 .table-container {
@@ -895,7 +890,7 @@ tr:hover td:last-child {
     }
 
     .table-wrapper {
-        overflow-x: auto;
+        overflow-x: hidden; /* Domyślnie ukrywa przewijanie w poziomie */
     }
 
     .table-container {
