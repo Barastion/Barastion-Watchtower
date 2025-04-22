@@ -930,13 +930,13 @@
 
                 const tickerText = `
                     <span class="ticker-segment">
-                        🌍 Warunki na: <span class="ticker-value">${todayDate}</span> •
-                        🌅 Wschód: <span class="ticker-value">${sunrise}</span> •
-                        🌇 Zachód: <span class="ticker-value">${sunset}</span> •
-                        🌡️ Odczuwalna: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> •
-                        🌧️ Opady: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> •
-                        💨 Wiatr: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> •
-                        🪁 Kierunek: <span class="ticker-value">${windDirection}</span>
+                        🌍 Warunki na: <span class="ticker-value">${todayDate}</span> • 
+                        🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
+                        🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
+                        🌡️ Odczuwalna temperatura: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
+                        🌧️ Opady deszczu: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
+                        💨 Siła wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
+                        🪁 Wiatr wieje z: <span class="ticker-value">${windDirection}</span>
                     </span>
                 `;
                 document.getElementById('tickerContent').innerHTML = tickerText.repeat(5);
