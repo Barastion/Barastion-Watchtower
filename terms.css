@@ -6,20 +6,13 @@
     --fear-greed-sell: rgba(200, 0, 0, 0.9);
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden; /* Zapobiega poziomemu przewijaniu */
-}
-
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #1e1e1e;
     color: #ffffff;
+    margin: 0;
+    padding: 0;
     line-height: 1.6;
-    box-sizing: border-box; /* Upewnia się, że padding nie wpływa na szerokość */
 }
 
 .modal-overlay {
@@ -34,7 +27,6 @@ body {
     align-items: center;
     z-index: 1000;
     animation: fadeIn 0.3s ease-in-out;
-    overflow: hidden; /* Zapobiega przewijaniu w modalu */
 }
 
 .container {
@@ -47,7 +39,6 @@ body {
     max-height: 80vh;
     overflow-y: auto;
     margin: 0 15px; /* Margines od krawędzi */
-    box-sizing: border-box; /* Upewnia się, że padding nie wpływa na szerokość */
 }
 
 .network-status {
