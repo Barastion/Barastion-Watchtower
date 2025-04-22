@@ -147,7 +147,7 @@
                     throw new Error(`Błąd HTTP: ${response.status}`);
                 }
                 return await response.json();
-            } catch ( ไม่) {
+            } catch (err) {
                 console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
                 if (err.message === 'RateLimitExceeded' || attempt === retries + rateLimitRetries) {
                     throw err;
@@ -261,7 +261,6 @@
                 console.log(`Inicjalizuję dane fallback dla ${section.key}`);
                 try {
                     const data = await section.fetchFn();
-                    lot
                     if (data) {
                         setCachedData(fallbackKey, fallbackTimeKey, data);
                         console.log(`Zapisano dane fallback dla ${section.key}`);
@@ -354,7 +353,7 @@
             if (!data.data || data.data.length < 15) {
                 throw new Error('Za mało danych do obliczenia trendu');
             }
-            const sortedData = data.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const sortedData = data.data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
             const validatedData = sortedData.map(item => ({
                 ...item,
                 value: isNaN(parseFloat(item.value)) ? "0" : item.value
@@ -394,7 +393,6 @@
             return 0;
         }
 
-        // Podział na 15 grup po 2 dni
         const groups = [];
         for (let i = 0; i < values.length && groups.length < 15; i += 2) {
             const group = values.slice(i, i + 2).map(item => {
@@ -405,7 +403,6 @@
             groups.push(parseFloat(groupAverage.toFixed(1)));
         }
 
-        // Wagi eksponencjalne dla 15 grup
         const weights = Array.from({ length: 15 }, (_, i) => Math.pow(0.5, i));
         const sumWeights = weights.reduce((sum, w) => sum + w, 0);
         let weightedSum = 0;
@@ -417,7 +414,6 @@
         const weightedAverage = weightedSum / sumWeights;
         const lastDayValue = parseFloat(values[0].value) || 0;
 
-        // Korekta hybrydowa: 80% średniej ważonej + 20% ostatniego dnia
         const finalAverage = 0.8 * weightedAverage + 0.2 * lastDayValue;
         return parseFloat(finalAverage.toFixed(1));
     }
@@ -437,23 +433,18 @@
             return { symbol: '■', class: 'trend-neutral' };
         }
 
-        // Przygotowanie wartości dla EMA
-        const parsedValues = values.slice(0, 15).map(item => parseFloat(item.value) || 0).reverse();
-
-        // Obliczenie EMA5 i EMA15
+        const parsedValues = values.slice(0, 15).map(item => parseFloat(item.value) || 0);
         const ema5 = calculateEMA(parsedValues.slice(0, 5), 5);
         const ema15 = calculateEMA(parsedValues, 15);
         const difference = ema5 - ema15;
 
-        // Wczesne ostrzeżenie: spadek lub wzrost >= 10 punktów
         const lastDayValue = parsedValues[0];
         const avgDays2to4 = parsedValues.slice(1, 4).reduce((sum, val) => sum + val, 0) / 3;
         const earlyWarningDown = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue < avgDays2to4;
         const earlyWarningUp = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue > avgDays2to4;
 
-        // Logi debugujące
         console.log('Trend Debug:', {
-            parsedValues: parsedValues.slice(0, 5), // Tylko ostatnie 5 wartości dla czytelności
+            parsedValues: parsedValues.slice(0, 5),
             ema5: ema5.toFixed(2),
             ema15: ema15.toFixed(2),
             difference: difference.toFixed(2),
@@ -463,7 +454,6 @@
             earlyWarningDown
         });
 
-        // Określenie trendu
         if (Math.abs(difference) < 1.5) {
             if (earlyWarningUp) {
                 console.log('Trend: Wzrostowy (EarlyWarningUp)');
@@ -1398,33 +1388,33 @@
     let logIntervalId = null;
     let fearGreedIntervalId = null;
     let lastUpdateTime = null;
-    const MIN_REFRESH_INTERVAL = 2 * 60 * 1000; // 2 minuty
+    const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
 
     function startCryptoUpdateInterval() {
         console.log('Uruchamiam interwał aktualizacji kryptowalut');
-        getCryptoData(); // Natychmiastowe wywołanie po powrocie
+        getCryptoData();
         cryptoIntervalId = setInterval(() => {
             console.log('Aktualizuję kryptowaluty...');
             getCryptoData();
-        }, 900000); // 15 minut
+        }, 900000);
     }
 
     function startLogUpdateInterval() {
         console.log('Uruchamiam interwał aktualizacji logów');
-        updateLogs(); // Natychmiastowe wywołanie po powrocie
+        updateLogs();
         logIntervalId = setInterval(() => {
             console.log('Aktualizuję logi...');
             updateLogs();
-        }, 900000); // 15 minut
+        }, 900000);
     }
 
     function startFearGreedUpdateInterval() {
         console.log('Uruchamiam interwał aktualizacji Fear and Greed');
-        updateFearGreedIndicator(); // Natychmiastowe wywołanie po powrocie
+        updateFearGreedIndicator();
         fearGreedIntervalId = setInterval(() => {
             console.log('Aktualizuję Fear and Greed...');
             updateFearGreedIndicator();
-        }, 3600000); // 1 godzina
+        }, 3600000);
     }
 
     let isManagingIntervals = false;
@@ -1440,7 +1430,6 @@
 
         if (document.visibilityState === 'visible') {
             console.log('Karta aktywna, włączam aktualizacje');
-            // Czyść istniejące interwały, jeśli istnieją
             if (cryptoIntervalId) {
                 clearInterval(cryptoIntervalId);
                 cryptoIntervalId = null;
@@ -1454,7 +1443,6 @@
                 fearGreedIntervalId = null;
             }
 
-            // Sprawdź, czy minął minimalny czas od ostatniego odświeżenia
             if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
                 console.log('Minął minimalny czas, odświeżam dane');
                 startCryptoUpdateInterval();
@@ -1463,7 +1451,6 @@
                 lastUpdateTime = now;
             } else {
                 console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
-                // Ustaw interwały bez natychmiastowego odświeżania
                 cryptoIntervalId = setInterval(() => {
                     console.log('Aktualizuję kryptowaluty...');
                     getCryptoData();
@@ -1479,7 +1466,6 @@
             }
         } else {
             console.log('Karta nieaktywna, wstrzymuję aktualizacje');
-            // Czyść interwały i resetuj zmienne
             if (cryptoIntervalId) {
                 clearInterval(cryptoIntervalId);
                 cryptoIntervalId = null;
@@ -1497,7 +1483,6 @@
         isManagingIntervals = false;
     }
 
-    // Funkcja do ładowania modalu z terms.html
     async function loadTermsModal(language) {
         const modalOverlay = document.getElementById('modalOverlay');
         const modalContent = document.getElementById('modalContent');
@@ -1547,13 +1532,12 @@
         console.log('Strona załadowana, uruchamiam funkcje...');
         handleNetworkStatus();
         if (document.visibilityState === 'visible') {
-            lastUpdateTime = Date.now(); // Ustaw czas pierwszego ładowania
+            lastUpdateTime = Date.now();
             manageUpdateIntervals();
         }
         window.addEventListener('online', handleNetworkStatus);
         window.addEventListener('offline', handleNetworkStatus);
         document.addEventListener('visibilitychange', manageUpdateIntervals);
-        // Obsługa linków w stopce
         document.getElementById('termsLinkPL').addEventListener('click', (e) => {
             e.preventDefault();
             loadTermsModal('pl');
