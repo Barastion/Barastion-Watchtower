@@ -39,7 +39,7 @@
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
                     <div class="weather-ticker">
-                        <div id="tickerContent">
+                         <div id="tickerContent">
                             <span class="ticker-segment">Ładowanie...</span>
                         </div>
                     </div>
@@ -147,7 +147,7 @@
                     throw new Error(`Błąd HTTP: ${response.status}`);
                 }
                 return await response.json();
-            } catch (err) {
+            } catch ( ไม่) {
                 console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
                 if (err.message === 'RateLimitExceeded' || attempt === retries + rateLimitRetries) {
                     throw err;
@@ -261,6 +261,7 @@
                 console.log(`Inicjalizuję dane fallback dla ${section.key}`);
                 try {
                     const data = await section.fetchFn();
+                    lot
                     if (data) {
                         setCachedData(fallbackKey, fallbackTimeKey, data);
                         console.log(`Zapisano dane fallback dla ${section.key}`);
@@ -444,19 +445,43 @@
         const ema15 = calculateEMA(parsedValues, 15);
         const difference = ema5 - ema15;
 
-        // Wczesne ostrzeżenie: spadek >= 10 punktów
+        // Wczesne ostrzeżenie: spadek lub wzrost >= 10 punktów
         const lastDayValue = parsedValues[0];
         const avgDays2to4 = parsedValues.slice(1, 4).reduce((sum, val) => sum + val, 0) / 3;
-        const earlyWarning = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue < avgDays2to4;
+        const earlyWarningDown = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue < avgDays2to4;
+        const earlyWarningUp = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue > avgDays2to4;
+
+        // Logi debugujące
+        console.log('Trend Debug:', {
+            parsedValues: parsedValues.slice(0, 5), // Tylko ostatnie 5 wartości dla czytelności
+            ema5: ema5.toFixed(2),
+            ema15: ema15.toFixed(2),
+            difference: difference.toFixed(2),
+            lastDayValue: lastDayValue.toFixed(2),
+            avgDays2to4: avgDays2to4.toFixed(2),
+            earlyWarningUp,
+            earlyWarningDown
+        });
 
         // Określenie trendu
-        if (Math.abs(difference) < 2) {
+        if (Math.abs(difference) < 1.5) {
+            if (earlyWarningUp) {
+                console.log('Trend: Wzrostowy (EarlyWarningUp)');
+                return { symbol: '▲', class: 'trend-up' };
+            } else if (earlyWarningDown) {
+                console.log('Trend: Spadkowy (EarlyWarningDown)');
+                return { symbol: '▼', class: 'trend-down' };
+            }
+            console.log('Trend: Neutralny (mała różnica)');
             return { symbol: '■', class: 'trend-neutral' };
-        } else if (difference >= 2) {
+        } else if (difference >= 1.5) {
+            console.log('Trend: Wzrostowy (różnica >= 1.5)');
             return { symbol: '▲', class: 'trend-up' };
-        } else if (difference <= -2 && earlyWarning) {
+        } else if (difference <= -1.5) {
+            console.log('Trend: Spadkowy (różnica <= -1.5)');
             return { symbol: '▼', class: 'trend-down' };
         } else {
+            console.log('Trend: Neutralny (domyślny)');
             return { symbol: '■', class: 'trend-neutral' };
         }
     }
