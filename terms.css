@@ -22,13 +22,6 @@ body {
     box-sizing: border-box; /* Upewnia się, że padding nie wpływa na szerokość */
 }
 
-body.modal-open {
-    overflow: hidden; /* Blokuje przewijanie tła */
-    position: fixed; /* Zapobiega przesunięciom */
-    width: 100%; /* Utrzymuje pełną szerokość */
-    height: 100%; /* Utrzymuje pełną wysokość */
-}
-
 .modal-overlay {
     position: fixed;
     top: 0;
