@@ -13,6 +13,17 @@ body {
     margin: 0;
     padding: 20px;
     line-height: 1.6;
+    width: 100%; /* Zapewnia stałą szerokość */
+    box-sizing: border-box; /* Upewnia się, że padding nie wpływa na szerokość */
+}
+
+body.modal-open {
+    overflow: hidden; /* Blokuje przewijanie */
+    position: fixed; /* Zapobiega przesunięciu strony */
+    width: 100%; /* Zachowuje szerokość */
+    height: 100%; /* Zachowuje wysokość */
+    top: 0; /* Ustawia pozycję na górze */
+    left: 0; /* Ustawia pozycję na lewo */
 }
 
 .container {
@@ -22,6 +33,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative; /* Zapewnia, że elementy w środku nie wpływają na tło */
 }
 
 .network-status {
@@ -351,7 +363,7 @@ body {
         -0.4px  0    0 black, /* Lewo */
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, — Dół */
+         0     0.4px 0 black, /* Dół */
          0 0 0.5px black, /* Węższy kontur */
          0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
     line-height: 1;
@@ -455,7 +467,7 @@ body {
          0.4px  0    0 black, /* Prawo */
          0    -0.4px 0 black, /* Góra */
          0     0.4px 0 black, /* Dół */
-         0 0 0.5px black њег — Węższy kontur */
+         0 0 0.5px black, /* Węższy kontur */
          0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
 }
 
