@@ -461,7 +461,7 @@
         });
 
         // Próg 2.5
-        if (Math.abs(difference) < 2.5) {
+        if (Math.abs(difference) < 3.0) {
             if (earlyWarningUp) {
                 console.log('Trend: Wzrostowy (EarlyWarningUp)');
                 return { symbol: '▲', class: 'trend-up' };
@@ -471,10 +471,10 @@
             }
             console.log('Trend: Neutralny (różnica < 2.5)');
             return { symbol: '■', class: 'trend-neutral' };
-        } else if (difference >= 2.5) {
+        } else if (difference >= 3.0) {
             console.log('Trend: Wzrostowy (różnica >= 2.5)');
             return { symbol: '▲', class: 'trend-up' };
-        } else if (difference <= -2.5) {
+        } else if (difference <= -3.0) {
             console.log('Trend: Spadkowy (różnica <= -2.5)');
             return { symbol: '▼', class: 'trend-down' };
         } else {
