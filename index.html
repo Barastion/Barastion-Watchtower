@@ -563,7 +563,7 @@
  const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
  const ip = await getIp();
  const location = await getLocation(ip);
- const userAgent = navigator traguarda
+ const userAgent = navigator.userAgent;
  const device = getDeviceType(userAgent);
  const isp = location.isp || 'Nieznany dostawca';
  const timestamp = now.getTime();
