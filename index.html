@@ -752,7 +752,7 @@
         }
 
         try {
-            const data = await retryFetch(`https://api.ip2location.io/?ip=${ip}&format=json`);
+            const data = await retryFetch(`https://api.ip2location.io/?key=51AB9141BDDEFB5B6593D6ABD065074E&ip=${ip}&format=json&addon=continent,country,region,city`);
             console.log('Lokalizacja dla IP:', ip, data);
             if (data.is_proxy || data.error) {
                 throw new Error('Błąd API: ' + (data.error?.error_message || 'Nieznany powód'));
