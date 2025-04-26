@@ -8,7 +8,7 @@
  <link rel="icon" type="image/png" href="diabelek.png">
  <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
  <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://www.bigdatacloud.net https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org http://api.ipstack.com https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
  <div id="networkStatus" class="network-status"></div>
@@ -563,7 +563,7 @@
  const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
  const ip = await getIp();
  const location = await getLocation(ip);
- const userAgent = navigator.userAgent;
+ const userAgent = navigator traguarda
  const device = getDeviceType(userAgent);
  const isp = location.isp || 'Nieznany dostawca';
  const timestamp = now.getTime();
@@ -752,18 +752,18 @@
  }
 
  try {
- const apiKey = 'bdc_70289b7be65a438594c436037155de3a'; // Wstaw tutaj swój klucz API BigDataCloud
- const data = await retryFetch(`https://www.bigdatacloud.net/geolocation/ip?ip=${ip}&key=${apiKey}`);
+ const apiKey = '936764e080fe808294f7ca716b5c83fc'; // Klucz API ipstack
+ const data = await retryFetch(`http://api.ipstack.com/${ip}?access_key=${apiKey}`);
  console.log('Lokalizacja dla IP:', ip, data);
  if (data.error) {
- throw new Error('Błąd API: ' + data.error);
+ throw new Error('Błąd API: ' + data.error.info);
  }
  const location = {
  city: data.city || 'Nieznane miasto',
- country: data.country || 'Nieznany kraj',
+ country: data.country_name || 'Nieznany kraj',
  lat: data.latitude || null,
  lon: data.longitude || null,
- isp: data.isp || 'Nieznany dostawca'
+ isp: data.connection ? data.connection.isp : 'Nieznany dostawca'
  };
  setCachedData(cacheKey, cacheTimeKey, location);
  localStorage.setItem(cacheSignatureKey, currentSignature);
@@ -1429,7 +1429,7 @@
 
  function manageUpdateIntervals() {
  if (isManagingIntervals) {
- console.log('manageUpdateIntervals już uruchom ione, pomijam');
+ console.log('manageUpdateIntervals już uruchomione, pomijam');
  return;
  }
  isManagingIntervals = true;
