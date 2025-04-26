@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
     <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://ipapi.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.bigdatacloud.net https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -752,17 +752,18 @@
         }
 
         try {
-            const data = await retryFetch(`https://ipapi.co/${ip}/json/`);
+            const apiKey = 'bdc_70289b7be65a438594c436037155de3a';
+            const data = await retryFetch(`https://api.bigdatacloud.net/data/client-info?key=${apiKey}`);
             console.log('Lokalizacja dla IP:', ip, data);
             if (data.error) {
                 throw new Error('Błąd API: ' + (data.reason || 'Nieznany powód'));
             }
             const location = {
-                city: data.city || 'Nieznane miasto',
-                country: data.country_name || 'Nieznany kraj',
-                lat: data.latitude || null,
-                lon: data.longitude || null,
-                isp: data.org || 'Nieznany dostawca'
+                city: data.location?.city || 'Nieznane miasto',
+                country: data.location?.country?.name || 'Nieznany kraj',
+                lat: data.location?.latitude || null,
+                lon: data.location?.longitude || null,
+                isp: data.isp || 'Nieznany dostawca'
             };
             setCachedData(cacheKey, cacheTimeKey, location);
             localStorage.setItem(cacheSignatureKey, currentSignature);
