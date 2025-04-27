@@ -411,11 +411,11 @@
     }
 
     function getBannerColor(value) {
-        if (value <= 20) return 'var(--fear-greed-opportunity)';
-        if (value <= 40) return 'var(--fear-greed-consider-buy)';
-        if (value <= 60) return 'var(--fear-greed-hold)';
-        if (value <= 80) return 'var(--fear-greed-consider-sell)';
-        return 'var(--fear-greed-sell)';
+    if (value <= 20) return 'var(--fear-greed-sell)';
+    if (value <= 40) return 'var(--fear-greed-consider-sell)';
+    if (value <= 60) return 'var(--fear-greed-hold)';
+    if (value <= 80) return 'var(--fear-greed-consider-buy)';
+    return 'var(--fear-greed-opportunity)';
     }
 
     function getSignal(value, ema30, std30) {
