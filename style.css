@@ -378,39 +378,38 @@ body {
     display: inline-block;
     padding: 2px 6px;
     z-index: 2; /* Tekst na wierzchu */
-}
-
-/* Styl pulsującego cienia za sygnałem */
-.fear-greed-indicator .fear-greed-signal::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 4px;
-    z-index: -1; /* Cień za tekstem */
+    text-shadow: 
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* Pulsujący cień dla każdego sygnału */
-.fear-greed-indicator .fear-greed-signal.all-in::after {
-    animation: pulse-shadow-positive 2s infinite;
+.fear-greed-indicator .fear-greed-signal.all-in {
+    animation: pulse-shadow-positive 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.buy-slowly::after {
-    animation: pulse-shadow-positive-buy 2s infinite;
+.fear-greed-indicator .fear-greed-signal.buy-slowly {
+    animation: pulse-shadow-positive-buy 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.hodl::after {
-    animation: pulse-shadow-neutral 2s infinite;
+.fear-greed-indicator .fear-greed-signal.hodl {
+    animation: pulse-shadow-neutral 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.sell-slowly::after {
-    animation: pulse-shadow-negative-sell 2s infinite;
+.fear-greed-indicator .fear-greed-signal.sell-slowly {
+    animation: pulse-shadow-negative-sell 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.cash-out::after {
-    animation: pulse-shadow-negative 2s infinite;
+.fear-greed-indicator .fear-greed-signal.cash-out {
+    animation: pulse-shadow-negative 1.5s ease-in-out infinite;
 }
 
 .crypto-grid {
@@ -754,37 +753,37 @@ tr:hover td:last-child {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
 }
 
 @keyframes pulse-shadow-positive {
-    0% { box-shadow: 0 0 6px rgba(0, 200, 0, 0.9); }
-    50% { box-shadow: 0 0 12px rgba(50, 255, 50, 1); } /* Jaśniejszy zielony */
-    100% { box-shadow: 0 0 6px rgba(0, 200, 0, 0.9); }
+    0% { text-shadow: 0 08px rgba(0, 200, 0, 0.9), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    50% { text-shadow: 0 0 16px rgba(50, 255, 50, 1), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    100% { text-shadow: 0 0 8px rgba(0, 200, 0, 0.9), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
 }
 
 @keyframes pulse-shadow-positive-buy {
-    0% { box-shadow: 0 0 6px rgba(0, 120, 0, 0.6); }
-    50% { box-shadow: 0 0 12px rgba(50, 200, 50, 0.8); } /* Jaśniejszy zielony */
-    100% { box-shadow: 0 0 6px rgba(0, 120, 0, 0.6); }
+    0% { text-shadow: 0 0 8px rgba(0, 120, 0, 0.6), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    50% { text-shadow: 0 0 16px rgba(50, 200, 50, 0.8), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    100% { text-shadow: 0 0 8px rgba(0, 120, 0, 0.6), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
 }
 
 @keyframes pulse-shadow-neutral {
-    0% { box-shadow: 0 0 6px #e6b800; }
-    50% { box-shadow: 0 0 12px #ffeb3b; } /* Jaśniejszy żółty */
-    100% { box-shadow: 0 0 6px #e6b800; }
+    0% { text-shadow: 0 0 8px #e6b800, -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    50% { text-shadow: 0 0 16px #ffeb3b, -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    100% { text-shadow: 0 0 8px #e6b800, -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
 }
 
 @keyframes pulse-shadow-negative-sell {
-    0% { box-shadow: 0 0 6px rgba(120, 0, 0, 0.6); }
-    50% { box-shadow: 0 0 12px rgba(180, 50, 50, 0.8); } /* Jaśniejszy czerwony */
-    100% { box-shadow: 0 0 6px rgba(120, 0, 0, 0.6); }
+    0% { text-shadow: 0 0 8px rgba(120, 0, 0, 0.6), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    50% { text-shadow: 0 0 16px rgba(180, 50, 50, 0.8), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    100% { text-shadow: 0 0 8px rgba(120, 0, 0, 0.6), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
 }
 
 @keyframes pulse-shadow-negative {
-    0% { box-shadow: 0 0 6px rgba(200, 0, 0, 0.9); }
-    50% { box-shadow: 0 0 12px rgba(255, 50, 50, 1); } /* Jaśniejszy czerwony */
-    100% { box-shadow: 0 0 6px rgba(200, 0, 0, 0.9); }
+    0% { text-shadow: 0 0 8px rgba(200, 0, 0, 0.9), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    50% { text-shadow: 0 0 16px rgba(255, 50, 50, 1), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
+    100% { text-shadow: 0 0 8px rgba(200, 0, 0, 0.9), -0.4px -0.4px 0 black, 0.4px -0.4px 0 black, -0.4px 0.4px 0 black, 0.4px 0.4px 0 black, -0.4px 0 0 black, 0.4px 0 0 black, 0 -0.4px 0 black, 0 0.4px 0 black, 0 0 0.5px black, 0 0 2px rgba(0, 0, 0, 1); }
 }
 
 @keyframes glow-positive {
@@ -923,39 +922,38 @@ tr:hover td:last-child {
         display: inline-block;
         padding: 2px 6px;
         z-index: 2; /* Tekst na wierzchu */
-    }
-
-    /* Styl pulsującego cienia za sygnałem */
-    .fear-greed-indicator .fear-greed-signal::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 4px;
-        z-index: -1; /* Cień za tekstem */
+        text-shadow: 
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     /* Pulsujący cień dla każdego sygnału */
-    .fear-greed-indicator .fear-greed-signal.all-in::after {
-        animation: pulse-shadow-positive 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.all-in {
+        animation: pulse-shadow-positive 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.buy-slowly::after {
-        animation: pulse-shadow-positive-buy 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.buy-slowly {
+        animation: pulse-shadow-positive-buy 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.hodl::after {
-        animation: pulse-shadow-neutral 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.hodl {
+        animation: pulse-shadow-neutral 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.sell-slowly::after {
-        animation: pulse-shadow-negative-sell 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.sell-slowly {
+        animation: pulse-shadow-negative-sell 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.cash-out::after {
-        animation: pulse-shadow-negative 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.cash-out {
+        animation: pulse-shadow-negative 1.5s ease-in-out infinite;
     }
 
     .crypto-grid {
