@@ -276,7 +276,7 @@ body {
 
 #tickerContent {
     display: inline-block;
-    padding-left: 100%;
+ Neutral   padding-left: 100%;
     animation: ticker 180s linear infinite;
     -webkit-animation: ticker 180s linear infinite;
     font-size: 0.8em;
@@ -305,7 +305,7 @@ body {
 
 .fear-greed-indicator {
     background-color: #808080;
-    color: #ffffff; /* Zapewnienie białego koloru tekstu */
+    color: #ffffff;
     padding: 8px 10px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -313,62 +313,60 @@ body {
     min-height: 30px;
     text-align: center;
     font-size: 0.85em;
-    font-weight: 600; /* Pogrubienie całego tekstu */
+    font-weight: 600;
     transition: background-color 0.3s ease;
     overflow: hidden;
     white-space: normal;
     box-sizing: border-box;
-    /* Zewnętrzny czarny kontur za pomocą text-shadow */
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .fear-greed-indicator .fear-greed-value {
-    color: #ffffff; /* Zapewnienie białego koloru tekstu */
-    /* Kontur i cień dziedziczone z .fear-greed-indicator */
+    color: #ffffff;
 }
 
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 3px;
-    margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" */
+    margin-left: 8px;
     vertical-align: baseline;
-    /* Zewnętrzny czarny kontur za pomocą text-shadow */
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, — Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
     line-height: 1;
 }
 
 .fear-greed-indicator .trend-up {
-    color: #00ff00; /* Zielony dla trendu wzrostowego */
+    color: #00ff00;
     animation: glow-positive 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-down {
-    color: var(--fear-greed-sell); /* Czerwony dla trendu spadkowego */
+    color: var(--fear-greed-sell);
     animation: glow-negative 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-neutral {
-    color: var(--fear-greed-hold); /* Żółty dla trendu neutralnego */
+    color: var(--fear-greed-hold);
+    animation: glow-neutral 1.5s ease-in-out infinite;
 }
 
 .crypto-grid {
@@ -431,47 +429,47 @@ body {
     font-weight: bold;
     margin-bottom: 1px;
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 1px;
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black њег — Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .crypto-change {
     font-size: 0.6em;
     text-shadow: 
-        -0.4px -0.4px 0 black, /* Góra-lewo */
-         0.4px -0.4px 0 black, /* Góra-prawo */
-        -0.4px  0.4px 0 black, /* Dół-lewo */
-         0.4px  0.4px 0 black, /* Dół-prawo */
-        -0.4px  0    0 black, /* Lewo */
-         0.4px  0    0 black, /* Prawo */
-         0    -0.4px 0 black, /* Góra */
-         0     0.4px 0 black, /* Dół */
-         0 0 0.5px black, /* Węższy kontur */
-         0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
 
 .crypto-error {
@@ -490,8 +488,8 @@ body {
 }
 
 .table-wrapper {
-    overflow-y: hidden; /* Wyłącza przewijanie pionowe */
-    overflow-x: auto; /* Zachowuje przewijanie poziome, jeśli potrzebne */
+    overflow-y: hidden;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -506,9 +504,9 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
     table-layout: auto;
-    min-width: 100%; /* Zapewnia, że tabela nie przekracza kontenera */
-    max-width: 100%; /* Zapobiega rozszerzaniu się tabeli poza kontener */
-    box-sizing: border-box; /* Upewnia się, że padding i border są wliczone w szerokość */
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 thead tr {
@@ -648,13 +646,41 @@ tr:hover td:last-child {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
-    position: relative; /* Stabilizuje transformacje */
+    position: relative;
 }
 
 .toggle-button:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
+}
+
+/* Stylizacja suwaków przewijania */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2d2d2d;
+    border-radius: 6px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #5a6268, #4a5258);
+    border-radius: 6px;
+    border: 2px solid #2d2d2d;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #6a7278, #5a6268);
+}
+
+::-webkit-scrollbar-corner {
+    background: #2d2d2d;
 }
 
 @keyframes ticker {
@@ -697,6 +723,12 @@ tr:hover td:last-child {
     0% { color: var(--fear-greed-sell); }
     50% { color: rgba(255, 100, 100, 0.9); }
     100% { color: var(--fear-greed-sell); }
+}
+
+@keyframes glow-neutral {
+    0% { color: var(--fear-greed-hold); }
+    50% { color: #ffeb3b; }
+    100% { color: var(--fear-greed-hold); }
 }
 
 @media (max-width: 768px) {
@@ -783,30 +815,29 @@ tr:hover td:last-child {
         text-align: center;
         font-size: 0.75em;
         padding: 8px 10px;
-        font-weight: 600; /* Pogrubienie całego tekstu */
+        font-weight: 600;
     }
 
     .fear-greed-indicator .fear-greed-value {
-        color: #ffffff; /* Zapewnienie białego koloru tekstu */
+        color: #ffffff;
     }
 
     .fear-greed-indicator .trend-indicator {
         font-size: 0.9em;
         margin-right: 2px;
-        margin-left: 8px; /* Większa przerwa po "Miesięczny sygnał:" dla widoku mobilnego */
+        margin-left: 8px;
         vertical-align: baseline;
-        /* Zewnętrzny czarny kontur za pomocą text-shadow */
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-grid {
@@ -830,47 +861,47 @@ tr:hover td:last-child {
         white-space: nowrap;
         width: 100%;
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-price {
         font-size: 0.65em;
         margin-bottom: 0.5px;
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-change {
         font-size: 0.5em;
         text-shadow: 
-            -0.4px -0.4px 0 black, /* Góra-lewo */
-             0.4px -0.4px 0 black, /* Góra-prawo */
-            -0.4px  0.4px 0 black, /* Dół-lewo */
-             0.4px  0.4px 0 black, /* Dół-prawo */
-            -0.4px  0    0 black, /* Lewo */
-             0.4px  0    0 black, /* Prawo */
-             0    -0.4px 0 black, /* Góra */
-             0     0.4px 0 black, /* Dół */
-             0 0 0.5px black, /* Węższy kontur */
-             0 0 2px rgba(0, 0, 0, 1); /* Mniejszy, ale intensywny cień */
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
     }
 
     .crypto-error {
@@ -883,8 +914,8 @@ tr:hover td:last-child {
     }
 
     .table-wrapper {
-        overflow-y: hidden; /* Wyłącza przewijanie pionowe */
-        overflow-x: auto; /* Zachowuje przewijanie poziome */
+        overflow-y: hidden;
+        overflow-x: auto;
     }
 
     .table-container {
@@ -895,9 +926,9 @@ tr:hover td:last-child {
         width: 100%;
         font-size: 0.75em;
         table-layout: fixed;
-        min-width: 100%; /* Zapewnia, że tabela nie przekracza kontenera */
-        max-width: 100%; /* Zapobiega rozszerzaniu się tabeli poza kontener */
-        box-sizing: border-box; /* Upewnia się, że padding i border są wliczone w szerokość */
+        min-width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     thead tr {
@@ -967,31 +998,31 @@ tr:hover td:last-child {
         border-bottom-right-radius: 8px;
     }
 
-    th:nth-child(1), td:nth-child(1) { /* Data */
+    th:nth-child(1), td:nth-child(1) {
         width: 50px;
         min-width: 50px;
     }
 
-    th:nth-child(2), td:nth-child(2) { /* Dzień */
+    th:nth-child(2), td:nth-child(2) {
         width: 50px;
         min-width: 50px;
     }
 
-    th:nth-child(3), td:nth-child(3) { /* Godzina */
+    th:nth-child(3), td:nth-child(3) {
         width: 40px;
         min-width: 40px;
     }
 
-    th:nth-child(4), td:nth-child(4) { /* IP */
+    th:nth-child(4), td:nth-child(4) {
         width: 60px;
         min-width: 60px;
     }
 
-    th.location-header, td.location-cell { /* Lokalizacja */
+    th.location-header, td.location-cell {
         min-width: 90px;
     }
 
-    th:nth-child(6), td:nth-child(6) { /* Urządzenie */
+    th:nth-child(6), td:nth-child(6) {
         min-width: 90px;
     }
 
@@ -1047,7 +1078,7 @@ tr:hover td:last-child {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         min-width: 70px;
-        position: relative; /* Stabilizuje transformacje */
+        position: relative;
     }
 
     .toggle-button:hover {
@@ -1063,6 +1094,33 @@ tr:hover td:last-child {
     .nasa-container {
         max-width: 100%;
     }
+
+    /* Stylizacja suwaków przewijania dla widoku mobilnego */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #2d2d2d;
+        border-radius: 4px;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+        border-radius: 4px;
+        border: 1px solid #2d2d2d;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #6a7278, #5a6268);
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: #2d2d2d;
+    }
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
@@ -1071,16 +1129,15 @@ tr:hover td:last-child {
     }
 }
 
-/* Stopka */
 .footer {
     text-align: center;
     margin-top: 20px;
-    font-size: 0.75em; /* Mniejsza czcionka w wersji desktopowej */
+    font-size: 0.75em;
     color: #cccccc;
 }
 
 .footer p {
-    margin: 2px 0; /* Mniejsze odstępy między wierszami */
+    margin: 2px 0;
 }
 
 .footer a {
@@ -1094,14 +1151,14 @@ tr:hover td:last-child {
 
 @media (max-width: 768px) {
     .footer {
-        font-size: 0.45em; /* Dużo mniejsza czcionka w wersji mobilnej */
-        color: #cccccc; /* Taki sam szary kolor jak w wersji desktopowej */
+        font-size: 0.45em;
+        color: #cccccc;
     }
 
     .footer p {
-        margin: 1px 0; /* Jeszcze mniejsze odstępy między wierszami */
-        white-space: nowrap; /* Zapobiega zawijaniu tekstu */
-        overflow: hidden; /* Ukrywa nadmiar tekstu */
-        text-overflow: ellipsis; /* Dodaje wielokropek, jeśli tekst jest za długi */
+        margin: 1px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
