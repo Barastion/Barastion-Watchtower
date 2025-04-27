@@ -391,40 +391,33 @@ body {
     width: 75%;
     height: 1px;
     background-color: transparent; /* Linia niewidoczna */
-    z-index: -1; /* Za tekstem, nad banerem */
-}
-
-/* Pseudoelement dla pulsującego cienia */
-.fear-greed-indicator .fear-greed-signal::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75%;
-    height: 100%;
-    z-index: -2; /* Za linią, nad banerem */
-    border-radius: 4px;
+    z-index: 0; /* Pod cieniem */
+    box-shadow: 
+        0 0 3px 3px transparent,
+        0 0 6px 5px transparent,
+        0 0 8px 7px transparent,
+        0 0 11px 9px transparent,
+        0 0 14px 11px transparent; /* Początkowy cień niewidoczny */
 }
 
 /* Pulsujący efekt dla każdego sygnału */
-.fear-greed-indicator .fear-greed-signal.all-in::after {
+.fear-greed-indicator .fear-greed-signal.all-in::before {
     animation: pulse-glow-positive 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.buy-slowly::after {
+.fear-greed-indicator .fear-greed-signal.buy-slowly::before {
     animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.hodl::after {
+.fear-greed-indicator .fear-greed-signal.hodl::before {
     animation: pulse-glow-neutral 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.sell-slowly::after {
+.fear-greed-indicator .fear-greed-signal.sell-slowly::before {
     animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.cash-out::after {
+.fear-greed-indicator .fear-greed-signal.cash-out::before {
     animation: pulse-glow-negative 1.5s ease-in-out infinite;
 }
 
@@ -769,7 +762,7 @@ tr:hover td:last-child {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
 }
 
 @keyframes pulse-glow-positive {
@@ -1060,47 +1053,40 @@ tr:hover td:last-child {
     /* Pseudoelement dla pulsującego efektu (cienka linia) */
     .fear-greed-indicator .fear-greed-signal::before {
         content: '';
-        position: absolute;
+        position: Casablancaabsolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 75%;
         height: 1px;
         background-color: transparent; /* Linia niewidoczna */
-        z-index: -1; /* Za tekstem, nad banerem */
-    }
-
-    /* Pseudoelement dla pulsującego cienia */
-    .fear-greed-indicator .fear-greed-signal::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 75%;
-        height: 100%;
-        z-index: -2; /* Za linią, nad banerem */
-        border-radius: 4px;
+        z-index: 0; /* Pod cieniem */
+        box-shadow: 
+            0 0 3px 3px transparent,
+            0 0 6px 5px transparent,
+            0 0 8px 7px transparent,
+            0 0 11px 9px transparent,
+            0 0 14px 11px transparent; /* Początkowy cień niewidoczny */
     }
 
     /* Pulsujący efekt dla każdego sygnału */
-    .fear-greed-indicator .fear-greed-signal.all-in::after {
+    .fear-greed-indicator .fear-greed-signal.all-in::before {
         animation: pulse-glow-positive 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.buy-slowly::after {
+    .fear-greed-indicator .fear-greed-signal.buy-slowly::before {
         animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.hodl::after {
+    .fear-greed-indicator .fear-greed-signal.hodl::before {
         animation: pulse-glow-neutral 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.sell-slowly::after {
+    .fear-greed-indicator .fear-greed-signal.sell-slowly::before {
         animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.cash-out::after {
+    .fear-greed-indicator .fear-greed-signal.cash-out::before {
         animation: pulse-glow-negative 1.5s ease-in-out infinite;
     }
 
