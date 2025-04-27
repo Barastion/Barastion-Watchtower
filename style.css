@@ -381,16 +381,17 @@ body {
         0 0 2px rgba(0, 0, 0, 1); /* Czarny kontur */
 }
 
-/* Pseudoelement dla pulsującego efektu (pozioma linia) */
+/* Pseudoelement dla pulsującego efektu (prostokąt zamiast linii) */
 .fear-greed-indicator .fear-greed-signal::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80%;
-    height: 1px;
+    width: 69%;
+    height: 100%;
     z-index: -1; /* Za tekstem, nad banerem */
+    border-radius: 4px;
 }
 
 /* Pulsujący efekt dla każdego sygnału */
@@ -761,79 +762,79 @@ tr:hover td:last-child {
 @keyframes pulse-glow-positive {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 200, 0, 1),
-            0 0 6px 5px rgba(0, 200, 0, 1),
-            0 0 8px 7px rgba(0, 200, 0, 1),
-            0 0 11px 9px rgba(0, 200, 0, 0.75),
-            0 0 14px 11px rgba(0, 200, 0, 0.75);
+            0 0 3px 3px rgba(0, 200, 0, 0.9),
+            0 0 6px 5px rgba(0, 200, 0, 0.9),
+            0 0 8px 7px rgba(0, 200, 0, 0.9),
+            0 0 11px 9px rgba(0, 200, 0, 0.675),
+            0 0 14px 11px rgba(0, 200, 0, 0.675);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(0, 255, 0, 1),
-            0 0 7px 5px rgba(0, 255, 0, 1),
-            0 0 10px 7px rgba(0, 255, 0, 1),
-            0 0 13px 9px rgba(0, 255, 0, 0.75),
-            0 0 15px 11px rgba(0, 255, 0, 0.75);
+            0 0 5px 3px rgba(0, 220, 0, 0.9),
+            0 0 7px 5px rgba(0, 220, 0, 0.9),
+            0 0 10px 7px rgba(0, 220, 0, 0.9),
+            0 0 13px 9px rgba(0, 220, 0, 0.675),
+            0 0 15px 11px rgba(0, 220, 0, 0.675);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 200, 0, 1),
-            0 0 6px 5px rgba(0, 200, 0, 1),
-            0 0 8px 7px rgba(0, 200, 0, 1),
-            0 0 11px 9px rgba(0, 200, 0, 0.75),
-            0 0 14px 11px rgba(0, 200, 0, 0.75);
+            0 0 3px 3px rgba(0, 200, 0, 0.9),
+            0 0 6px 5px rgba(0, 200, 0, 0.9),
+            0 0 8px 7px rgba(0, 200, 0, 0.9),
+            0 0 11px 9px rgba(0, 200, 0, 0.675),
+            0 0 14px 11px rgba(0, 200, 0, 0.675);
     }
 }
 
 @keyframes pulse-glow-positive-buy {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 120, 0, 1),
-            0 0 6px 5px rgba(0, 120, 0, 1),
-            0 0 8px 7px rgba(0, 120, 0, 1),
-            0 0 11px 9px rgba(0, 120, 0, 0.75),
-            0 0 14px 11px rgba(0, 120, 0, 0.75);
+            0 0 3px 3px rgba(0, 120, 0, 0.6),
+            0 0 6px 5px rgba(0, 120, 0, 0.6),
+            0 0 8px 7px rgba(0, 120, 0, 0.6),
+            0 0 11px 9px rgba(0, 120, 0, 0.45),
+            0 0 14px 11px rgba(0, 120, 0, 0.45);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(0, 160, 0, 1),
-            0 0 7px 5px rgba(0, 160, 0, 1),
-            0 0 10px 7px rgba(0, 160, 0, 1),
-            0 0 13px 9px rgba(0, 160, 0, 0.75),
-            0 0 15px 11px rgba(0, 160, 0, 0.75);
+            0 0 5px 3px rgba(0, 140, 0, 0.6),
+            0 0 7px 5px rgba(0, 140, 0, 0.6),
+            0 0 10px 7px rgba(0, 140, 0, 0.6),
+            0 0 13px 9px rgba(0, 140, 0, 0.45),
+            0 0 15px 11px rgba(0, 140, 0, 0.45);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 120, 0, 1),
-            0 0 6px 5px rgba(0, 120, 0, 1),
-            0 0 8px 7px rgba(0, 120, 0, 1),
-            0 0 11px 9px rgba(0, 120, 0, 0.75),
-            0 0 14px 11px rgba(0, 120, 0, 0.75);
+            0 0 3px 3px rgba(0, 120, 0, 0.6),
+            0 0 6px 5px rgba(0, 120, 0, 0.6),
+            0 0 8px 7px rgba(0, 120, 0, 0.6),
+            0 0 11px 9px rgba(0, 120, 0, 0.45),
+            0 0 14px 11px rgba(0, 120, 0, 0.45);
     }
 }
 
 @keyframes pulse-glow-neutral {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(230, 184, 0, 1),
-            0 0 6px 5px rgba(230, 184, 0, 1),
-            0 0 8px 7px rgba(230, 184, 0, 1),
+            0 0 3px 3px #e6b800,
+            0 0 6px 5px #e6b800,
+            0 0 8px 7px #e6b800,
             0 0 11px 9px rgba(230, 184, 0, 0.75),
             0 0 14px 11px rgba(230, 184, 0, 0.75);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(255, 235, 59, 1),
-            0 0 7px 5px rgba(255, 235, 59, 1),
-            0 0 10px 7px rgba(255, 235, 59, 1),
-            0 0 13px 9px rgba(255, 235, 59, 0.75),
-            0 0 15px 11px rgba(255, 235, 59, 0.75);
+            0 0 5px 3px #ffcc1a,
+            0 0 7px 5px #ffcc1a,
+            0 0 10px 7px #ffcc1a,
+            0 0 13px 9px rgba(255, 204, 26, 0.75),
+            0 0 15px 11px rgba(255, 204, 26, 0.75);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(230, 184, 0, 1),
-            0 0 6px 5px rgba(230, 184, 0, 1),
-            0 0 8px 7px rgba(230, 184, 0, 1),
+            0 0 3px 3px #e6b800,
+            0 0 6px 5px #e6b800,
+            0 0 8px 7px #e6b800,
             0 0 11px 9px rgba(230, 184, 0, 0.75),
             0 0 14px 11px rgba(230, 184, 0, 0.75);
     }
@@ -842,72 +843,72 @@ tr:hover td:last-child {
 @keyframes pulse-glow-negative-sell {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(120, 0, 0, 1),
-            0 0 6px 5px rgba(120, 0, 0, 1),
-            0 0 8px 7px rgba(120, 0, 0, 1),
-            0 0 11px 9px rgba(120, 0, 0, 0.75),
-            0 0 14px 11px rgba(120, 0, 0, 0.75);
+            0 0 3px 3px rgba(120, 0, 0, 0.6),
+            0 0 6px 5px rgba(120, 0, 0, 0.6),
+            0 0 8px 7px rgba(120, 0, 0, 0.6),
+            0 0 11px 9px rgba(120, 0, 0, 0.45),
+            0 0 14px 11px rgba(120, 0, 0, 0.45);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(255, 0, 0, 1),
-            0 0 7px 5px rgba(255, 0, 0, 1),
-            0 0 10px 7px rgba(255, 0, 0, 1),
-            0 0 13px 9px rgba(255, 0, 0, 0.75),
-            0 0 15px 11px rgba(255, 0, 0, 0.75);
+            0 0 5px 3px rgba(140, 0, 0, 0.6),
+            0 0 7px 5px rgba(140, 0, 0, 0.6),
+            0 0 10px 7px rgba(140, 0, 0, 0.6),
+            0 0 13px 9px rgba(140, 0, 0, 0.45),
+            0 0 15px 11px rgba(140, 0, 0, 0.45);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(120, 0, 0, 1),
-            0 0 6px 5px rgba(120, 0, 0, 1),
-            0 0 8px 7px rgba(120, 0, 0, 1),
-            0 0 11px 9px rgba(120, 0, 0, 0.75),
-            0 0 14px 11px rgba(120, 0, 0, 0.75);
+            0 0 3px 3px rgba(120, 0, 0, 0.6),
+            0 0 6px 5px rgba(120, 0, 0, 0.6),
+            0 0 8px 7px rgba(120, 0, 0, 0.6),
+            0 0 11px 9px rgba(120, 0, 0, 0.45),
+            0 0 14px 11px rgba(120, 0, 0, 0.45);
     }
 }
 
 @keyframes pulse-glow-negative {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(200, 0, 0, 1),
-            0 0 6px 5px rgba(200, 0, 0, 1),
-            0 0 8px 7px rgba(200, 0, 0, 1),
-            0 0 11px 9px rgba(200, 0, 0, 0.75),
-            0 0 14px 11px rgba(200, 0, 0, 0.75);
+            0 0 3px 3px rgba(200, 0, 0, 0.9),
+            0 0 6px 5px rgba(200, 0, 0, 0.9),
+            0 0 8px 7px rgba(200, 0, 0, 0.9),
+            0 0 11px 9px rgba(200, 0, 0, 0.675),
+            0 0 14px 11px rgba(200, 0, 0, 0.675);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(255, 80, 80, 1),
-            0 0 7px 5px rgba(255, 80, 80, 1),
-            0 0 10px 7px rgba(255, 80, 80, 1),
-            0 0 13px 9px rgba(255, 80, 80, 0.75),
-            0 0 15px 11px rgba(255, 80, 80, 0.75);
+            0 0 5px 3px rgba(220, 0, 0, 0.9),
+            0 0 7px 5px rgba(220, 0, 0, 0.9),
+            0 0 10px 7px rgba(220, 0, 0, 0.9),
+            0 0 13px 9px rgba(220, 0, 0, 0.675),
+            0 0 15px 11px rgba(220, 0, 0, 0.675);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(200, 0, 0, 1),
-            0 0 6px 5px rgba(200, 0, 0, 1),
-            0 0 8px 7px rgba(200, 0, 0, 1),
-            0 0 11px 9px rgba(200, 0, 0, 0.75),
-            0 0 14px 11px rgba(200, 0, 0, 0.75);
+            0 0 3px 3px rgba(200, 0, 0, 0.9),
+            0 0 6px 5px rgba(200, 0, 0, 0.9),
+            0 0 8px 7px rgba(200, 0, 0, 0.9),
+            0 0 11px 9px rgba(200, 0, 0, 0.675),
+            0 0 14px 11px rgba(200, 0, 0, 0.675);
     }
 }
 
 @keyframes glow-positive {
     0% { color: #00ff00; }
-    50% { color: #66ff66; }
+    50% { color: #14ff14; }
     100% { color: #00ff00; }
 }
 
 @keyframes glow-negative {
     0% { color: var(--fear-greed-sell); }
-    50% { color: rgba(255, 100, 100, 0.9); }
+    50% { color: rgba(220, 20, 20, 0.9); }
     100% { color: var(--fear-greed-sell); }
 }
 
 @keyframes glow-neutral {
     0% { color: var(--fear-greed-hold); }
-    50% { color: #ffeb3b; }
+    50% { color: #ffcc1a; }
     100% { color: var(--fear-greed-hold); }
 }
 
@@ -1043,16 +1044,17 @@ tr:hover td:last-child {
             0 0 2px rgba(0, 0, 0, 1);
     }
 
-    /* Pseudoelement dla pulsującego efektu (pozioma linia) */
+    /* Pseudoelement dla pulsującego efektu (prostokąt zamiast linii) */
     .fear-greed-indicator .fear-greed-signal::before {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 80%;
-        height: 1px;
+        width: 69%;
+        height: 100%;
         z-index: -1; /* Za tekstem, nad banerem */
+        border-radius: 4px;
     }
 
     /* Pulsujący efekt dla każdego sygnału */
