@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
@@ -31,7 +30,7 @@
             </form>
         </div>
         <div class="daily-fact">
-            <span class="fact-header"> Ciekawostka na dziś:</span>
+            <span class="fact-header">💡 Ciekawostka na dziś:</span>
             <div class="fact-content" id="dailyFact">Ładowanie...</div>
         </div>
         <div class="content-frame">
@@ -92,6 +91,7 @@
         <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" id="termsLinkEN">Terms and Conditions</a>.</p>
         <p>© 2025 Barastion Watchtower.</p>
     </footer>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
@@ -421,7 +421,7 @@
     function getSignal(value, ema30, std30) {
         const allInThreshold = ema30 - 1.8 * std30;
         const buySlowlyThreshold = ema30 - 0.8 * std30;
-        const sellSlowlyThreshold = ema30 + 1.0 * std30;
+        const sellSlowlyThreshold = ema30 + 0.8 * std30;
         const cashOutThreshold = ema30 + 1.8 * std30;
 
         if (value < allInThreshold && value < 25) {
@@ -430,7 +430,7 @@
             return { signal: 'BUY SLOWLY', color: 'var(--fear-greed-consider-buy)' };
         } else if (value > cashOutThreshold && value > 75) {
             return { signal: 'CASH OUT!', color: 'var(--fear-greed-sell)' };
-        } else if (value > sellSlowlyThreshold && value > 70) {
+        } else if (value > sellSlowlyThreshold && value > 55) {
             return { signal: 'SELL SLOWLY', color: 'var(--fear-greed-consider-sell)' };
         } else {
             return { signal: 'HODL', color: 'var(--fear-greed-hold)' };
@@ -461,8 +461,7 @@
         const indicator = document.getElementById('fearGreedIndicator');
         const roundedAverage = Math.round(averageData.average);
         const { signal, color } = averageData.signal;
-        const signalClass = signal.toLowerCase().replace(/\s+/g, '-');
-        indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value ${signalClass}">${roundedAverage} – ${signal}</span>`;
+        indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${roundedAverage} – ${signal}</span>`;
         indicator.style.backgroundColor = color;
     }
 
@@ -760,17 +759,17 @@
     }
 
     const weatherIcons = {
-        0: '', 1: '', 2: '', 3: '',
-        45: '', 48: '',
-        51: '', 53: '', 55: '',
-        56: '', 57: '',
-        61: '', 63: '', 65: '',
-        66: '', 67: '',
-        71: '', 73: '', 75: '',
-        77: '',
-        80: '', 81: '', 82: '',
-        85: '', 86: '',
-        95: '', 96: '', 99: ''
+        0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+        45: '🌫️', 48: '🌫️',
+        51: '🌦️', 53: '🌧️', 55: '🌧️',
+        56: '🌧️', 57: '🌧️',
+        61: '🌦️', 63: '🌧️', 65: '🌧️',
+        66: '🌧️', 67: '🌧️',
+        71: '🌨️', 73: '🌨️', 75: '🌨️',
+        77: '🌨️',
+        80: '🌦️', 81: '🌧️', 82: '🌧️',
+        85: '🌨️', 86: '🌨️',
+        95: '⛈️', 96: '⛈️', 99: '⛈️'
     };
 
     const weatherDescriptions = {
@@ -881,7 +880,7 @@
             forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
             forecastBar.innerHTML = `
                 <div class="forecast-date">${formattedDate}</div>
-                <div class="weather-icon">${weatherIcons[weatherCode] || ''}</div>
+                <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
                 <div class="weather-day">${dayName}</div>
                 <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
                 <div class="weather-temps">
@@ -902,13 +901,13 @@
 
                 const tickerText = `
                     <span class="ticker-segment">
-                         Warunki na: <span class="ticker-value">${todayDate}</span> • 
-                         Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
-                         Zachód słońca: <span class="ticker-value">${sunset}</span> • 
-                         Odczuwalna temperatura: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
-                         Opady deszczu: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
-                         Siła wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
-                         Wiatr wieje z: <span class="ticker-value">${windDirection}</span>
+                        🌍 Warunki na: <span class="ticker-value">${todayDate}</span> • 
+                        🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
+                        🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
+                        🌡️ Odczuwalna temperatura: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
+                        🌧️ Opady deszczu: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
+                        💨 Siła wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
+                        🪁 Wiatr wieje z: <span class="ticker-value">${windDirection}</span>
                     </span>
                 `;
                 document.getElementById('tickerContent').innerHTML = tickerText.repeat(5);
@@ -1501,7 +1500,7 @@
             setLanguage(language);
             modalOverlay.style.display = 'flex';
         } catch (error) {
-            console.error('Błąd ładowania regulaminu:', error);
+                        console.error('Błąd ładowania regulaminu:', error);
             modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
             modalOverlay.style.display = 'flex';
         }
@@ -1529,6 +1528,6 @@
 
     window.addEventListener('load', checkCSSLoaded);
 </script>
+
 </body>
 </html>
-
