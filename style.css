@@ -1,9 +1,9 @@
 :root {
-    --fear-greed-hold: #e6b800; /* Żółty dla Trzymaj, ciepły i czytelny */
-    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6); /* Zielony dla Rozważ zakup */
-    --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla OKAZJA! */
-    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6); /* Czerwony dla Rozważ sprzedaż */
-    --fear-greed-sell: rgba(200, 0, 0, 0.9); /* Intensywnie czerwony dla SPRZEDAJ! */
+    --fear-greed-hold: #e6b800; /* Żółty dla HODL, ciepły i czytelny */
+    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6); /* Zielony dla BUY SLOWLY */
+    --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla ALL IN! */
+    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6); /* Czerwony dla SELL SLOWLY */
+    --fear-greed-sell: rgba(200, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
 }
 
 body {
@@ -337,7 +337,7 @@ body {
     margin-right: 8px;
 }
 
-/* Styl strzałki trendu (bez zmian) */
+/* Styl strzałki trendu */
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 3px;
@@ -373,54 +373,44 @@ body {
 }
 
 /* Styl sygnału */
-.fear-greed-indicator .fear-greed-value {
+.fear-greed-indicator .fear-greed-signal {
     position: relative;
     display: inline-block;
+    padding: 2px 6px;
+    z-index: 2; /* Tekst na wierzchu */
 }
 
-/* Styl pulsującego tła za sygnałem */
-.fear-greed-indicator .signal-background {
+/* Styl pulsującego cienia za sygnałem */
+.fear-greed-indicator .fear-greed-signal::after {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     border-radius: 4px;
-    z-index: 1; /* Tło za tekstem */
+    z-index: -1; /* Cień za tekstem */
 }
 
-/* Styl tekstu sygnału */
-.fear-greed-indicator .signal-text {
-    position: relative;
-    z-index: 2; /* Tekst na wierzchu */
-    display: inline-block;
-    padding: 2px 6px;
+/* Pulsujący cień dla każdego sygnału */
+.fear-greed-indicator .fear-greed-signal.all-in::after {
+    animation: pulse-shadow-positive 2s infinite;
 }
 
-/* Pulsujące tło dla każdego sygnału */
-.fear-greed-indicator .signal-background.all-in {
-    background-color: var(--fear-greed-opportunity);
-    animation: pulse-positive-bg 2s infinite;
+.fear-greed-indicator .fear-greed-signal.buy-slowly::after {
+    animation: pulse-shadow-positive-buy 2s infinite;
 }
 
-.fear-greed-indicator .signal-background.buy-slowly {
-    background-color: var(--fear-greed-consider-buy);
-    animation: pulse-positive-bg 2s infinite;
+.fear-greed-indicator .fear-greed-signal.hodl::after {
+    animation: pulse-shadow-neutral 2s infinite;
 }
 
-.fear-greed-indicator .signal-background.hodl {
-    background-color: var(--fear-greed-hold);
-    animation: pulse-neutral-bg 2s infinite;
+.fear-greed-indicator .fear-greed-signal.sell-slowly::after {
+    animation: pulse-shadow-negative-sell 2s infinite;
 }
 
-.fear-greed-indicator .signal-background.sell-slowly {
-    background-color: var(--fear-greed-consider-sell);
-    animation: pulse-negative-sell-slowly-bg 2s infinite;
-}
-
-.fear-greed-indicator .signal-background.cash-out {
-    background-color: var(--fear-greed-sell);
-    animation: pulse-negative-bg 2s infinite;
+.fear-greed-indicator .fear-greed-signal.cash-out::after {
+    animation: pulse-shadow-negative 2s infinite;
 }
 
 .crypto-grid {
@@ -758,7 +748,7 @@ tr:hover td:last-child {
 @keyframes pulse-positive {
     0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(0, 255, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
 }
 
 @keyframes pulse-negative {
@@ -767,28 +757,34 @@ tr:hover td:last-child {
     100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
 
-@keyframes pulse-positive-bg {
-    0% { background-color: rgba(0, 200, 0, 0.9); }
-    50% { background-color: rgba(50, 255, 50, 0.9); } /* Jaśniejszy zielony */
-    100% { background-color: rgba(0, 200, 0, 0.9); }
+@keyframes pulse-shadow-positive {
+    0% { box-shadow: 0 0 6px rgba(0, 200, 0, 0.9); }
+    50% { box-shadow: 0 0 12px rgba(50, 255, 50, 1); } /* Jaśniejszy zielony */
+    100% { box-shadow: 0 0 6px rgba(0, 200, 0, 0.9); }
 }
 
-@keyframes pulse-negative-bg {
-    0% { background-color: rgba(200, 0, 0, 0.9); } /* Dotyczy CASH OUT! */
-    50% { background-color: rgba(255, 50, 50, 0.9); } /* Jaśniejszy czerwony */
-    100% { background-color: rgba(200, 0, 0, 0.9); }
+@keyframes pulse-shadow-positive-buy {
+    0% { box-shadow: 0 0 6px rgba(0, 120, 0, 0.6); }
+    50% { box-shadow: 0 0 12px rgba(50, 200, 50, 0.8); } /* Jaśniejszy zielony */
+    100% { box-shadow: 0 0 6px rgba(0, 120, 0, 0.6); }
 }
 
-@keyframes pulse-negative-sell-slowly-bg {
-    0% { background-color: rgba(120, 0, 0, 0.6); } /* Dotyczy SELL SLOWLY */
-    50% { background-color: rgba(180, 50, 50, 0.6); } /* Jaśniejszy czerwony */
-    100% { background-color: rgba(120, 0, 0, 0.6); }
+@keyframes pulse-shadow-neutral {
+    0% { box-shadow: 0 0 6px #e6b800; }
+    50% { box-shadow: 0 0 12px #ffeb3b; } /* Jaśniejszy żółty */
+    100% { box-shadow: 0 0 6px #e6b800; }
 }
 
-@keyframes pulse-neutral-bg {
-    0% { background-color: #e6b800; }
-    50% { background-color: #ffeb3b; } /* Jaśniejszy żółty */
-    100% { background-color: #e6b800; }
+@keyframes pulse-shadow-negative-sell {
+    0% { box-shadow: 0 0 6px rgba(120, 0, 0, 0.6); }
+    50% { box-shadow: 0 0 12px rgba(180, 50, 50, 0.8); } /* Jaśniejszy czerwony */
+    100% { box-shadow: 0 0 6px rgba(120, 0, 0, 0.6); }
+}
+
+@keyframes pulse-shadow-negative {
+    0% { box-shadow: 0 0 6px rgba(200, 0, 0, 0.9); }
+    50% { box-shadow: 0 0 12px rgba(255, 50, 50, 1); } /* Jaśniejszy czerwony */
+    100% { box-shadow: 0 0 6px rgba(200, 0, 0, 0.9); }
 }
 
 @keyframes glow-positive {
@@ -902,7 +898,7 @@ tr:hover td:last-child {
         margin-right: 8px;
     }
 
-    /* Styl strzałki trendu (bez zmian) */
+    /* Styl strzałki trendu */
     .fear-greed-indicator .trend-indicator {
         font-size: 0.9em;
         margin-right: 2px;
@@ -922,54 +918,44 @@ tr:hover td:last-child {
     }
 
     /* Styl sygnału */
-    .fear-greed-indicator .fear-greed-value {
+    .fear-greed-indicator .fear-greed-signal {
         position: relative;
         display: inline-block;
+        padding: 2px 6px;
+        z-index: 2; /* Tekst na wierzchu */
     }
 
-    /* Styl pulsującego tła za sygnałem */
-    .fear-greed-indicator .signal-background {
+    /* Styl pulsującego cienia za sygnałem */
+    .fear-greed-indicator .fear-greed-signal::after {
+        content: '';
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         border-radius: 4px;
-        z-index: 1; /* Tło za tekstem */
+        z-index: -1; /* Cień za tekstem */
     }
 
-    /* Styl tekstu sygnału */
-    .fear-greed-indicator .signal-text {
-        position: relative;
-        z-index: 2; /* Tekst na wierzchu */
-        display: inline-block;
-        padding: 2px 6px;
+    /* Pulsujący cień dla każdego sygnału */
+    .fear-greed-indicator .fear-greed-signal.all-in::after {
+        animation: pulse-shadow-positive 2s infinite;
     }
 
-    /* Pulsujące tło dla każdego sygnału */
-    .fear-greed-indicator .signal-background.all-in {
-        background-color: var(--fear-greed-opportunity);
-        animation: pulse-positive-bg 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.buy-slowly::after {
+        animation: pulse-shadow-positive-buy 2s infinite;
     }
 
-    .fear-greed-indicator .signal-background.buy-slowly {
-        background-color: var(--fear-greed-consider-buy);
-        animation: pulse-positive-bg 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.hodl::after {
+        animation: pulse-shadow-neutral 2s infinite;
     }
 
-    .fear-greed-indicator .signal-background.hodl {
-        background-color: var(--fear-greed-hold);
-        animation: pulse-neutral-bg 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.sell-slowly::after {
+        animation: pulse-shadow-negative-sell 2s infinite;
     }
 
-    .fear-greed-indicator .signal-background.sell-slowly {
-        background-color: var(--fear-greed-consider-sell);
-        animation: pulse-negative-sell-slowly-bg 2s infinite;
-    }
-
-    .fear-greed-indicator .signal-background.cash-out {
-        background-color: var(--fear-greed-sell);
-        animation: pulse-negative-bg 2s infinite;
+    .fear-greed-indicator .fear-greed-signal.cash-out::after {
+        animation: pulse-shadow-negative 2s infinite;
     }
 
     .crypto-grid {
