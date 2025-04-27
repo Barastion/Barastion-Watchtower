@@ -388,10 +388,9 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 120%;
-    height: 150%;
+    width: 150%;
+    height: 200%;
     z-index: -1; /* Za tekstem, nad banerem */
-    border-radius: 4px;
 }
 
 /* Pulsujący efekt dla każdego sygnału */
@@ -1051,10 +1050,9 @@ tr:hover td:last-child {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 120%;
-        height: 150%;
+        width: 150%;
+        height: 200%;
         z-index: -1; /* Za tekstem, nad banerem */
-        border-radius: 4px;
     }
 
     /* Pulsujący efekt dla każdego sygnału */
