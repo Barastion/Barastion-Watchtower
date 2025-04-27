@@ -744,12 +744,12 @@
                 }));
                 console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
-            // Fallback na Katowice w przypadku błędu
+            // Fallback na Opole w przypadku błędu
             const fallbackLocation = {
-                city: 'Katowice',
+                city: 'Opole',
                 country: 'Polska',
-                lat: 50.2649,
-                lon: 19.0238,
+                lat: 50.6721,
+                lon: 17.9253,
                 isp: 'Nieznany dostawca'
             };
             setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
