@@ -353,7 +353,7 @@
             if (!data.data || data.data.length < 30) {
                 throw new Error('Za mało danych do obliczenia trendu');
             }
-            const sortedData = data.data.sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));
+            const sortedData = data.data.sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
             const validatedData = sortedData.map(item => ({
                 ...item,
                 value: isNaN(parseFloat(item.value)) ? "0" : item.value,
@@ -389,34 +389,17 @@
     }
 
     function calculateWeightedIndex(values) {
-        if (!values || values.length < 15) {
+        if (!values || values.length < 30) {
             console.error('Niewystarczająca liczba danych do obliczenia średniej');
             return 0;
         }
 
-        const groups = [];
-        for (let i = 0; i < values.length && groups.length < 15; i += 2) {
-            const group = values.slice(i, i + 2).map(item => {
-                const value = parseFloat(item.value);
-                return isNaN(value) ? 0 : parseFloat(value.toFixed(1));
-            });
-            const groupAverage = group.length > 0 ? group.reduce((sum, val) => sum + val, 0) / group.length : 0;
-            groups.push(parseFloat(groupAverage.toFixed(1)));
-        }
+        const ema30 = calculateEMA(values.map(item => parseFloat(item.value) || 0), 30);
+        const std30 = calculateStandardDeviation(values.map(item => parseFloat(item.value) || 0), 30);
+        const lastValue = parseFloat(values[0].value) || 0;
 
-        const weights = Array.from({ length: 15 }, (_, i) => Math.pow(0.5, i));
-        const sumWeights = weights.reduce((sum, w) => sum + w, 0);
-        let weightedSum = 0;
-
-        for (let i = 0; i < groups.length; i++) {
-            weightedSum += groups[i] * weights[i];
-        }
-
-        const weightedAverage = weightedSum / sumWeights;
-        const lastDayValue = parseFloat(values[0].value) || 0;
-
-        const finalAverage = 0.8 * weightedAverage + 0.2 * lastDayValue;
-        return parseFloat(finalAverage.toFixed(1));
+        const signal = getSignal(lastValue, ema30, std30);
+        return { average: parseFloat(lastValue.toFixed(1)), signal };
     }
 
     function calculateEMA(values, period) {
@@ -428,73 +411,56 @@
         return ema;
     }
 
+    function calculateStandardDeviation(values, period) {
+        const ema = calculateEMA(values, period);
+        const squaredDiffs = values.map(val => Math.pow(val - ema, 2));
+        const emaSquaredDiffs = calculateEMA(squaredDiffs, period);
+        return Math.sqrt(emaSquaredDiffs);
+    }
+
+    function getSignal(value, ema30, std30) {
+        const allInThreshold = ema30 - 1.8 * std30;
+        const buySlowlyThreshold = ema30 - 0.8 * std30;
+        const sellSlowlyThreshold = ema30 + 0.8 * std30;
+        const cashOutThreshold = ema30 + 1.8 * std30;
+
+        if (value < allInThreshold && value < 25) {
+            return { signal: 'ALL IN!', color: 'var(--fear-greed-opportunity)' };
+        } else if (value < buySlowlyThreshold && value < 45) {
+            return { signal: 'BUY SLOWLY', color: 'var(--fear-greed-consider-buy)' };
+        } else if (value > cashOutThreshold && value > 75) {
+            return { signal: 'CASH OUT!', color: 'var(--fear-greed-sell)' };
+        } else if (value > sellSlowlyThreshold && value > 55) {
+            return { signal: 'SELL SLOWLY', color: 'var(--fear-greed-consider-sell)' };
+        } else {
+            return { signal: 'HODL', color: 'var(--fear-greed-hold)' };
+        }
+    }
+
     function calculateTrend(values) {
         if (!values || values.length < 30) {
             console.error('Niewystarczająca liczba danych do trendu (potrzeba 30 dni)');
             return { symbol: '■', class: 'trend-neutral' };
         }
 
-        // Sortuj dane według timestamp od najstarszych do najnowszych
-        const sortedValues = values.sort((a, b) => parseInt(a.timestamp) - parseInt(b.timestamp));
-        const parsedValues = sortedValues.map(item => parseFloat(item.value) || 0);
+        const parsedValues = values.map(item => parseFloat(item.value) || 0);
+        const ema2 = calculateEMA(parsedValues, 2);
+        const ema8 = calculateEMA(parsedValues, 8);
+        const difference = ema2 - ema8;
 
-        // Oblicz EMA5 i EMA15 na pełnym zestawie 30 dni
-        const ema5 = calculateEMA(parsedValues, 5);
-        const ema15 = calculateEMA(parsedValues, 15);
-        const difference = ema5 - ema15;
-
-        // System wczesnego ostrzegania
-        const lastDayValue = parsedValues[parsedValues.length - 1];
-        const avgDays2to4 = parsedValues.slice(-4, -1).reduce((sum, val) => sum + val, 0) / 3;
-        const earlyWarningDown = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue < avgDays2to4;
-        const earlyWarningUp = Math.abs(lastDayValue - avgDays2to4) >= 10 && lastDayValue > avgDays2to4;
-
-        console.log('Trend Debug:', {
-            last5Values: parsedValues.slice(-5),
-            ema5: ema5.toFixed(2),
-            ema15: ema15.toFixed(2),
-            difference: difference.toFixed(2),
-            lastDayValue: lastDayValue.toFixed(2),
-            avgDays2to4: avgDays2to4.toFixed(2),
-            earlyWarningUp,
-            earlyWarningDown
-        });
-
-        // Próg 3.0
-        if (Math.abs(difference) < 3.0) {
-            if (earlyWarningUp) {
-                console.log('Trend: Wzrostowy (EarlyWarningUp)');
-                return { symbol: '▲', class: 'trend-up' };
-            } else if (earlyWarningDown) {
-                console.log('Trend: Spadkowy (EarlyWarningDown)');
-                return { symbol: '▼', class: 'trend-down' };
-            }
-            console.log('Trend: Neutralny (różnica < 3.0)');
+        if (Math.abs(difference) < 0.5) {
             return { symbol: '■', class: 'trend-neutral' };
-        } else if (difference >= 3.0) {
-            console.log('Trend: Wzrostowy (różnica >= 3.0)');
+        } else if (difference >= 0.5) {
             return { symbol: '▲', class: 'trend-up' };
-        } else if (difference <= -3.0) {
-            console.log('Trend: Spadkowy (różnica <= -3.0)');
-            return { symbol: '▼', class: 'trend-down' };
         } else {
-            console.log('Trend: Neutralny (domyślny)');
-            return { symbol: '■', class: 'trend-neutral' };
+            return { symbol: '▼', class: 'trend-down' };
         }
     }
 
-    function getSignalAndColor(value) {
-        if (value <= 24) return { signal: 'ALL IN!', color: 'var(--fear-greed-opportunity)' };
-        if (value <= 49) return { signal: 'BUY SLOWLY', color: 'var(--fear-greed-consider-buy)' };
-        if (value <= 74) return { signal: 'HODL', color: 'var(--fear-greed-hold)' };
-        if (value <= 89) return { signal: 'SELL SLOWLY', color: 'var(--fear-greed-consider-sell)' };
-        return { signal: 'CASH OUT!', color: 'var(--fear-greed-sell)' };
-    }
-
-    function displayFearGreed(average, trend) {
+    function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
-        const roundedAverage = Math.round(average);
-        const { signal, color } = getSignalAndColor(roundedAverage);
+        const roundedAverage = Math.round(averageData.average);
+        const { signal, color } = averageData.signal;
         indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${roundedAverage} – ${signal}</span>`;
         indicator.style.backgroundColor = color;
     }
@@ -780,10 +746,10 @@
             }
             // Fallback na Katowice w przypadku błędu
             const fallbackLocation = {
-                city: 'Warszawa',
+                city: 'Katowice',
                 country: 'Polska',
-                lat: 52.2297,
-                lon: 21.0122,
+                lat: 50.2649,
+                lon: 19.0238,
                 isp: 'Nieznany dostawca'
             };
             setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
@@ -1220,7 +1186,7 @@
 
                 const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
                 if (isDeriv) {
-                    console.log(`Pominięto pochodną: ${coin.symbol} (bazowa: ${baseSymbol})`);
+                    console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol}`);
                     return false;
                 }
 
@@ -1534,7 +1500,7 @@
             setLanguage(language);
             modalOverlay.style.display = 'flex';
         } catch (error) {
-            console.error('Błąd ładowania regulaminu:', error);
+                        console.error('Błąd ładowania regulaminu:', error);
             modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
             modalOverlay.style.display = 'flex';
         }
