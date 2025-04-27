@@ -381,15 +381,15 @@ body {
         0 0 2px rgba(0, 0, 0, 1); /* Czarny kontur */
 }
 
-/* Pseudoelement dla pulsującego efektu */
+/* Pseudoelement dla pulsującego efektu (pozioma linia) */
 .fear-greed-indicator .fear-greed-signal::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 150%;
-    height: 200%;
+    width: 100%;
+    height: 4px;
     z-index: -1; /* Za tekstem, nad banerem */
 }
 
@@ -1043,15 +1043,15 @@ tr:hover td:last-child {
             0 0 2px rgba(0, 0, 0, 1);
     }
 
-    /* Pseudoelement dla pulsującego efektu */
+    /* Pseudoelement dla pulsującego efektu (pozioma linia) */
     .fear-greed-indicator .fear-greed-signal::before {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 150%;
-        height: 200%;
+        width: 100%;
+        height: 4px;
         z-index: -1; /* Za tekstem, nad banerem */
     }
 
