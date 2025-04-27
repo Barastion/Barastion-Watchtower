@@ -411,11 +411,11 @@
     }
 
     function getBannerColor(value) {
-    if (value <= 20) return 'var(--fear-greed-opportunity)';
-    if (value <= 40) return 'var(--fear-greed-consider-buy)';
-    if (value <= 60) return 'var(--fear-greed-hold)';
-    if (value <= 80) return 'var(--fear-greed-consider-sell)';
-    return 'var(--fear-greed-sell)';
+        if (value <= 20) return 'var(--fear-greed-opportunity)';
+        if (value <= 40) return 'var(--fear-greed-consider-buy)';
+        if (value <= 60) return 'var(--fear-greed-hold)';
+        if (value <= 80) return 'var(--fear-greed-consider-sell)';
+        return 'var(--fear-greed-sell)';
     }
 
     function getSignal(value, ema30, std30) {
@@ -465,14 +465,8 @@
         indicator.innerHTML = `
             Miesięczny sygnał: 
             <span class="trend-indicator ${trend.class}">${trend.symbol}</span> 
-            <span class="fear-greed-value">
-                <span class="signal-background ${signalClass}"></span>
-                <span class="signal-text">${roundedAverage}</span>
-            </span> – 
-            <span class="fear-greed-signal">
-                <span class="signal-background ${signalClass}"></span>
-                <span class="signal-text">${signal}</span>
-            </span>
+            <span class="fear-greed-value">${roundedAverage}</span> – 
+            <span class="fear-greed-signal ${signalClass}">${signal}</span>
         `;
         indicator.style.backgroundColor = bannerColor;
     }
@@ -1307,7 +1301,6 @@
                 .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
                 .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
                 .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
- Hugging Face: https://huggingface.co/spaces/gradio/theme-calculator/calculator.png
                 .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
                 .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                 .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
