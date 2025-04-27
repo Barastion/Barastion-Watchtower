@@ -391,33 +391,39 @@ body {
     width: 75%;
     height: 1px;
     background-color: transparent; /* Linia niewidoczna */
-    z-index: 0; /* Pod cieniem */
-    box-shadow: 
-        0 0 3px 3px transparent,
-        0 0 6px 5px transparent,
-        0 0 8px 7px transparent,
-        0 0 11px 9px transparent,
-        0 0 14px 11px transparent; /* Początkowy cień niewidoczny */
+    z-index: 1; /* Pod tekstem, nad cieniem */
+}
+
+/* Pseudoelement dla pulsującego cienia */
+.fear-greed-indicator .fear-greed-signal::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75%;
+    height: 1px;
+    z-index: 0; /* Pod paskiem */
 }
 
 /* Pulsujący efekt dla każdego sygnału */
-.fear-greed-indicator .fear-greed-signal.all-in::before {
+.fear-greed-indicator .fear-greed-signal.all-in::after {
     animation: pulse-glow-positive 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.buy-slowly::before {
+.fear-greed-indicator .fear-greed-signal.buy-slowly::after {
     animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.hodl::before {
+.fear-greed-indicator .fear-greed-signal.hodl::after {
     animation: pulse-glow-neutral 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.sell-slowly::before {
+.fear-greed-indicator .fear-greed-signal.sell-slowly::after {
     animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
 }
 
-.fear-greed-indicator .fear-greed-signal.cash-out::before {
+.fear-greed-indicator .fear-greed-signal.cash-out::after {
     animation: pulse-glow-negative 1.5s ease-in-out infinite;
 }
 
@@ -762,141 +768,141 @@ tr:hover td:last-child {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(0, 0, 0, 0.7); }
+    100% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
 }
 
 @keyframes pulse-glow-positive {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 200, 0, 0.9),
-            0 0 6px 5px rgba(0, 200, 0, 0.9),
-            0 0 8px 7px rgba(0, 200, 0, 0.9),
-            0 0 11px 9px rgba(0, 200, 0, 0.675),
-            0 0 14px 11px rgba(0, 200, 0, 0.675);
+            inset 0 0 5px 5px rgba(0, 200, 0, 1),
+            0 0 9px 7px rgba(0, 200, 0, 0.9),
+            0 0 13px 9px rgba(0, 200, 0, 0.8),
+            0 0 16px 11px rgba(0, 200, 0, 0.7),
+            0 0 20px 13px rgba(0, 200, 0, 0.6);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(0, 220, 0, 0.9),
-            0 0 7px 5px rgba(0, 220, 0, 0.9),
-            0 0 10px 7px rgba(0, 220, 0, 0.9),
-            0 0 13px 9px rgba(0, 220, 0, 0.675),
-            0 0 15px 11px rgba(0, 220, 0, 0.675);
+            inset 0 0 8px 5px rgba(0, 225, 0, 1),
+            0 0 12px 7px rgba(0, 225, 0, 0.9),
+            0 0 15px 9px rgba(0, 225, 0, 0.8),
+            0 0 19px 11px rgba(0, 225, 0, 0.7),
+            0 0 23px 13px rgba(0, 225, 0, 0.6);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 200, 0, 0.9),
-            0 0 6px 5px rgba(0, 200, 0, 0.9),
-            0 0 8px 7px rgba(0, 200, 0, 0.9),
-            0 0 11px 9px rgba(0, 200, 0, 0.675),
-            0 0 14px 11px rgba(0, 200, 0, 0.675);
+            inset 0 0 5px 5px rgba(0, 200, 0, 1),
+            0 0 9px 7px rgba(0, 200, 0, 0.9),
+            0 0 13px 9px rgba(0, 200, 0, 0.8),
+            0 0 16px 11px rgba(0, 200, 0, 0.7),
+            0 0 20px 13px rgba(0, 200, 0, 0.6);
     }
 }
 
 @keyframes pulse-glow-positive-buy {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 120, 0, 0.6),
-            0 0 6px 5px rgba(0, 120, 0, 0.6),
-            0 0 8px 7px rgba(0, 120, 0, 0.6),
-            0 0 11px 9px rgba(0, 120, 0, 0.45),
-            0 0 14px 11px rgba(0, 120, 0, 0.45);
+            inset 0 0 5px 5px rgba(0, 120, 0, 1),
+            0 0 9px 7px rgba(0, 120, 0, 0.9),
+            0 0 13px 9px rgba(0, 120, 0, 0.8),
+            0 0 16px 11px rgba(0, 120, 0, 0.7),
+            0 0 20px 13px rgba(0, 120, 0, 0.6);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(0, 140, 0, 0.6),
-            0 0 7px 5px rgba(0, 140, 0, 0.6),
-            0 0 10px 7px rgba(0, 140, 0, 0.6),
-            0 0 13px 9px rgba(0, 140, 0, 0.45),
-            0 0 15px 11px rgba(0, 140, 0, 0.45);
+            inset 0 0 8px 5px rgba(0, 145, 0, 1),
+            0 0 12px 7px rgba(0, 145, 0, 0.9),
+            0 0 15px 9px rgba(0, 145, 0, 0.8),
+            0 0 19px 11px rgba(0, 145, 0, 0.7),
+            0 0 23px 13px rgba(0, 145, 0, 0.6);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(0, 120, 0, 0.6),
-            0 0 6px 5px rgba(0, 120, 0, 0.6),
-            0 0 8px 7px rgba(0, 120, 0, 0.6),
-            0 0 11px 9px rgba(0, 120, 0, 0.45),
-            0 0 14px 11px rgba(0, 120, 0, 0.45);
+            inset 0 0 5px 5px rgba(0, 120, 0, 1),
+            0 0 9px 7px rgba(0, 120, 0, 0.9),
+            0 0 13px 9px rgba(0, 120, 0, 0.8),
+            0 0 16px 11px rgba(0, 120, 0, 0.7),
+            0 0 20px 13px rgba(0, 120, 0, 0.6);
     }
 }
 
 @keyframes pulse-glow-neutral {
     0% {
         box-shadow: 
-            0 0 3px 3px #e6b800,
-            0 0 6px 5px #e6b800,
-            0 0 8px 7px #e6b800,
-            0 0 11px 9px rgba(230, 184, 0, 0.75),
-            0 0 14px 11px rgba(230, 184, 0, 0.75);
+            inset 0 0 5px 5px rgba(230, 184, 0, 1),
+            0 0 9px 7px rgba(230, 184, 0, 0.9),
+            0 0 13px 9px rgba(230, 184, 0, 0.8),
+            0 0 16px 11px rgba(230, 184, 0, 0.7),
+            0 0 20px 13px rgba(230, 184, 0, 0.6);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px #ffcc1a,
-            0 0 7px 5px #ffcc1a,
-            0 0 10px 7px #ffcc1a,
-            0 0 13px 9px rgba(255, 204, 26, 0.75),
-            0 0 15px 11px rgba(255, 204, 26, 0.75);
+            inset 0 0 8px 5px rgba(255, 209, 25, 1),
+            0 0 12px 7px rgba(255, 209, 25, 0.9),
+            0 0 15px 9px rgba(255, 209, 25, 0.8),
+            0 0 19px 11px rgba(255, 209, 25, 0.7),
+            0 0 23px 13px rgba(255, 209, 25, 0.6);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px #e6b800,
-            0 0 6px 5px #e6b800,
-            0 0 8px 7px #e6b800,
-            0 0 11px 9px rgba(230, 184, 0, 0.75),
-            0 0 14px 11px rgba(230, 184, 0, 0.75);
+            inset 0 0 5px 5px rgba(230, 184, 0, 1),
+            0 0 9px 7px rgba(230, 184, 0, 0.9),
+            0 0 13px 9px rgba(230, 184, 0, 0.8),
+            0 0 16px 11px rgba(230, 184, 0, 0.7),
+            0 0 20px 13px rgba(230, 184, 0, 0.6);
     }
 }
 
 @keyframes pulse-glow-negative-sell {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(120, 0, 0, 0.6),
-            0 0 6px 5px rgba(120, 0, 0, 0.6),
-            0 0 8px 7px rgba(120, 0, 0, 0.6),
-            0 0 11px 9px rgba(120, 0, 0, 0.45),
-            0 0 14px 11px rgba(120, 0, 0, 0.45);
+            inset 0 0 5px 5px rgba(120, 0, 0, 1),
+            0 0 9px 7px rgba(120, 0, 0, 0.9),
+            0 0 13px 9px rgba(120, 0, 0, 0.8),
+            0 0 16px 11px rgba(120, 0, 0, 0.7),
+            0 0 20px 13px rgba(120, 0, 0, 0.6);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(140, 0, 0, 0.6),
-            0 0 7px 5px rgba(140, 0, 0, 0.6),
-            0 0 10px 7px rgba(140, 0, 0, 0.6),
-            0 0 13px 9px rgba(140, 0, 0, 0.45),
-            0 0 15px 11px rgba(140, 0, 0, 0.45);
+            inset 0 0 8px 5px rgba(145, 25, 25, 1),
+            0 0 12px 7px rgba(145, 25, 25, 0.9),
+            0 0 15px 9px rgba(145, 25, 25, 0.8),
+            0 0 19px 11px rgba(145, 25, 25, 0.7),
+            0 0 23px 13px rgba(145, 25, 25, 0.6);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(120, 0, 0, 0.6),
-            0 0 6px 5px rgba(120, 0, 0, 0.6),
-            0 0 8px 7px rgba(120, 0, 0, 0.6),
-            0 0 11px 9px rgba(120, 0, 0, 0.45),
-            0 0 14px 11px rgba(120, 0, 0, 0.45);
+            inset 0 0 5px 5px rgba(120, 0, 0, 1),
+            0 0 9px 7px rgba(120, 0, 0, 0.9),
+            0 0 13px 9px rgba(120, 0, 0, 0.8),
+            0 0 16px 11px rgba(120, 0, 0, 0.7),
+            0 0 20px 13px rgba(120, 0, 0, 0.6);
     }
 }
 
 @keyframes pulse-glow-negative {
     0% {
         box-shadow: 
-            0 0 3px 3px rgba(200, 0, 0, 0.9),
-            0 0 6px 5px rgba(200, 0, 0, 0.9),
-            0 0 8px 7px rgba(200, 0, 0, 0.9),
-            0 0 11px 9px rgba(200, 0, 0, 0.675),
-            0 0 14px 11px rgba(200, 0, 0, 0.675);
+            inset 0 0 5px 5px rgba(200, 0, 0, 1),
+            0 0 9px 7px rgba(200, 0, 0, 0.9),
+            0 0 13px 9px rgba(200, 0, 0, 0.8),
+            0 0 16px 11px rgba(200, 0, 0, 0.7),
+            0 0 20px 13px rgba(200, 0, 0, 0.6);
     }
     50% {
         box-shadow: 
-            0 0 5px 3px rgba(220, 0, 0, 0.9),
-            0 0 7px 5px rgba(220, 0, 0, 0.9),
-            0 0 10px 7px rgba(220, 0, 0, 0.9),
-            0 0 13px 9px rgba(220, 0, 0, 0.675),
-            0 0 15px 11px rgba(220, 0, 0, 0.675);
+            inset 0 0 8px 5px rgba(225, 25, 25, 1),
+            0 0 12px 7px rgba(225, 25, 25, 0.9),
+            0 0 15px 9px rgba(225, 25, 25, 0.8),
+            0 0 19px 11px rgba(225, 25, 25, 0.7),
+            0 0 23px 13px rgba(225, 25, 25, 0.6);
     }
     100% {
         box-shadow: 
-            0 0 3px 3px rgba(200, 0, 0, 0.9),
-            0 0 6px 5px rgba(200, 0, 0, 0.9),
-            0 0 8px 7px rgba(200, 0, 0, 0.9),
-            0 0 11px 9px rgba(200, 0, 0, 0.675),
-            0 0 14px 11px rgba(200, 0, 0, 0.675);
+            inset 0 0 5px 5px rgba(200, 0, 0, 1),
+            0 0 9px 7px rgba(200, 0, 0, 0.9),
+            0 0 13px 9px rgba(200, 0, 0, 0.8),
+            0 0 16px 11px rgba(200, 0, 0, 0.7),
+            0 0 20px 13px rgba(200, 0, 0, 0.6);
     }
 }
 
@@ -908,7 +914,7 @@ tr:hover td:last-child {
 
 @keyframes glow-negative {
     0% { color: var(--fear-greed-sell); }
-    50% { color: rgba(220, 20, 20, 0.9); }
+    50% { color: rgba(225, 25, 25, 0.9); }
     100% { color: var(--fear-greed-sell); }
 }
 
@@ -1053,40 +1059,46 @@ tr:hover td:last-child {
     /* Pseudoelement dla pulsującego efektu (cienka linia) */
     .fear-greed-indicator .fear-greed-signal::before {
         content: '';
-        position: Casablancaabsolute;
+        position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 75%;
         height: 1px;
         background-color: transparent; /* Linia niewidoczna */
-        z-index: 0; /* Pod cieniem */
-        box-shadow: 
-            0 0 3px 3px transparent,
-            0 0 6px 5px transparent,
-            0 0 8px 7px transparent,
-            0 0 11px 9px transparent,
-            0 0 14px 11px transparent; /* Początkowy cień niewidoczny */
+        z-index: 1; /* Pod tekstem, nad cieniem */
+    }
+
+    /* Pseudoelement dla pulsującego cienia */
+    .fear-greed-indicator .fear-greed-signal::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 75%;
+        height: 1px;
+        z-index: 0; /* Pod paskiem */
     }
 
     /* Pulsujący efekt dla każdego sygnału */
-    .fear-greed-indicator .fear-greed-signal.all-in::before {
+    .fear-greed-indicator .fear-greed-signal.all-in::after {
         animation: pulse-glow-positive 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.buy-slowly::before {
+    .fear-greed-indicator .fear-greed-signal.buy-slowly::after {
         animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.hodl::before {
+    .fear-greed-indicator .fear-greed-signal.hodl::after {
         animation: pulse-glow-neutral 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.sell-slowly::before {
+    .fear-greed-indicator .fear-greed-signal.sell-slowly::after {
         animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
     }
 
-    .fear-greed-indicator .fear-greed-signal.cash-out::before {
+    .fear-greed-indicator .fear-greed-signal.cash-out::after {
         animation: pulse-glow-negative 1.5s ease-in-out infinite;
     }
 
