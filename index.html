@@ -49,9 +49,7 @@
                 <div class="crypto-header">
                     <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sygnał: Ładowanie...</div>
                 </div>
-                <div class="crypto-grid" id="cryptoGrid">
-                    <!-- Kafelki będą generowane dynamicznie przez JavaScript -->
-                </div>
+                <div class="crypto-grid" id="cryptoGrid"></div>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
@@ -82,9 +80,7 @@
         </div>
     </div>
     <div id="modalOverlay" class="modal-overlay" style="display: none;">
-        <div class="modal-container" id="modalContent">
-            <!-- Treść modalu będzie ładowana dynamicznie -->
-        </div>
+        <div class="modal-container" id="modalContent"></div>
     </div>
     <footer class="footer">
         <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" id="termsLinkPL">Regulaminu</a>.</p>
@@ -109,7 +105,6 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    // Funkcja do ponawiania żądań z timeoutem i obsługą błędu 429
     async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
         let rateLimitRetries = 3;
         let rateLimitDelay = 10000;
@@ -157,7 +152,6 @@
         }
     }
 
-    // Funkcja czyszcząca stare dane z localStorage
     function cleanOldCache() {
         const now = Date.now();
         const cleanupInterval = 3600000;
@@ -195,7 +189,6 @@
         console.log('Czyszczenie localStorage zakończone');
     }
 
-    // Funkcje cache
     function setCachedData(cacheKey, cacheTimeKey, data) {
         const minifiedData = minifyData(cacheKey, data);
         localStorage.setItem(cacheKey, JSON.stringify(minifiedData));
@@ -318,7 +311,6 @@
         return data;
     }
 
-    // Fear and Greed Index
     async function getFearAndGreedData() {
         const cacheKey = 'fear_greed_data';
         const rawDataKey = 'fear_greed_raw_data';
@@ -418,6 +410,14 @@
         return Math.sqrt(emaSquaredDiffs);
     }
 
+    function getBannerColor(value) {
+    if (value <= 20) return 'var(--fear-greed-opportunity)';
+    if (value <= 40) return 'var(--fear-greed-consider-buy)';
+    if (value <= 60) return 'var(--fear-greed-hold)';
+    if (value <= 80) return 'var(--fear-greed-consider-sell)';
+    return 'var(--fear-greed-sell)';
+    }
+
     function getSignal(value, ema30, std30) {
         const allInThreshold = ema30 - 1.8 * std30;
         const buySlowlyThreshold = ema30 - 0.8 * std30;
@@ -425,15 +425,15 @@
         const cashOutThreshold = ema30 + 1.8 * std30;
 
         if (value < allInThreshold && value < 25) {
-            return { signal: 'ALL IN!', color: 'var(--fear-greed-opportunity)' };
+            return { signal: 'ALL IN!', class: 'all-in', color: 'var(--fear-greed-opportunity)' };
         } else if (value < buySlowlyThreshold && value < 45) {
-            return { signal: 'BUY SLOWLY', color: 'var(--fear-greed-consider-buy)' };
+            return { signal: 'BUY SLOWLY', class: 'buy-slowly', color: 'var(--fear-greed-consider-buy)' };
         } else if (value > cashOutThreshold && value > 75) {
-            return { signal: 'CASH OUT!', color: 'var(--fear-greed-sell)' };
+            return { signal: 'CASH OUT!', class: 'cash-out', color: 'var(--fear-greed-sell)' };
         } else if (value > sellSlowlyThreshold && value > 55) {
-            return { signal: 'SELL SLOWLY', color: 'var(--fear-greed-consider-sell)' };
+            return { signal: 'SELL SLOWLY', class: 'sell-slowly', color: 'var(--fear-greed-consider-sell)' };
         } else {
-            return { signal: 'HODL', color: 'var(--fear-greed-hold)' };
+            return { signal: 'HODL', class: 'hodl', color: 'var(--fear-greed-hold)' };
         }
     }
 
@@ -460,9 +460,21 @@
     function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
         const roundedAverage = Math.round(averageData.average);
-        const { signal, color } = averageData.signal;
-        indicator.innerHTML = `Miesięczny sygnał: <span class="trend-indicator ${trend.class}">${trend.symbol}</span> <span class="fear-greed-value">${roundedAverage} – ${signal}</span>`;
-        indicator.style.backgroundColor = color;
+        const { signal, class: signalClass } = averageData.signal;
+        const bannerColor = getBannerColor(roundedAverage);
+        indicator.innerHTML = `
+            Miesięczny sygnał: 
+            <span class="trend-indicator ${trend.class}">${trend.symbol}</span> 
+            <span class="fear-greed-value">
+                <span class="signal-background ${signalClass}"></span>
+                <span class="signal-text">${roundedAverage}</span>
+            </span> – 
+            <span class="fear-greed-signal">
+                <span class="signal-background ${signalClass}"></span>
+                <span class="signal-text">${signal}</span>
+            </span>
+        `;
+        indicator.style.backgroundColor = bannerColor;
     }
 
     async function updateFearGreedIndicator() {
@@ -486,7 +498,6 @@
         }
     }
 
-    // Funkcje pomocnicze
     function getDeviceType(userAgent) {
         if (userAgent.includes('Android')) return 'Android';
         if (userAgent.includes('iPhone')) return 'iPhone';
@@ -701,7 +712,7 @@
     async function getLocation(ip) {
         const cacheKey = `location_${ip}`;
         const cacheTimeKey = `${cacheKey}_time`;
-        const cacheDuration = 24 * 60 * 60 * 1000; // Cache na 24 godziny
+        const cacheDuration = 24 * 60 * 60 * 1000;
         const extendedCacheDuration = cacheDuration * 2;
         const userAgent = navigator.userAgent;
         const device = getDeviceType(userAgent);
@@ -718,7 +729,7 @@
         }
 
         try {
-            const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc'; // Twój klucz API Ipregistry
+            const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
             const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
             console.log('Lokalizacja dla IP:', ip, data);
             if (data.error) {
@@ -744,7 +755,6 @@
                 }));
                 console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
-            // Fallback na Opole w przypadku błędu
             const fallbackLocation = {
                 city: 'Opole',
                 country: 'Polska',
@@ -1297,6 +1307,7 @@
                 .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
                 .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
                 .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
+ Hugging Face: https://huggingface.co/spaces/gradio/theme-calculator/calculator.png
                 .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
                 .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                 .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
@@ -1500,7 +1511,7 @@
             setLanguage(language);
             modalOverlay.style.display = 'flex';
         } catch (error) {
-                        console.error('Błąd ładowania regulaminu:', error);
+            console.error('Błąd ładowania regulaminu:', error);
             modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
             modalOverlay.style.display = 'flex';
         }
