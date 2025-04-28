@@ -9,6 +9,8 @@
     <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
     <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -25,12 +27,16 @@
         </div>
         <div class="search-container">
             <form action="https://www.google.com/search" method="get" target="_blank">
-                <label for="search-input"> Szukaj w Google:</label>
+                <label for="search-input">Szukaj w Google:</label>
                 <input type="text" id="search-input" name="q" placeholder="Wpisz frazę...">
             </form>
         </div>
         <div class="daily-fact">
-            <span class="fact-header">💡 Ciekawostka na dziś:</span>
+            <div class="fact-header">
+                <i class="fas fa-star"></i>
+                <span>Ciekawostka na dziś</span>
+                <i class="fas fa-star"></i>
+            </div>
             <div class="fact-content" id="dailyFact">Ładowanie...</div>
         </div>
         <div class="content-frame">
@@ -39,7 +45,7 @@
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
                     <div class="weather-ticker">
-                         <div id="tickerContent">
+                        <div id="tickerContent">
                             <span class="ticker-segment">Ładowanie...</span>
                         </div>
                     </div>
@@ -47,7 +53,12 @@
             </div>
             <div class="crypto-info">
                 <div class="crypto-header">
-                    <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sentyment: Ładowanie...</div>
+                    <div class="fear-greed-indicator" id="fearGreedIndicator">
+                        <span class="fear-greed-label">Miesięczny sygnał:</span>
+                        <span class="trend-indicator" id="trendIndicator"></span>
+                        <span class="fear-greed-value" id="fearGreedValue"></span>
+                        <span class="fear-greed-signal" id="fearGreedSignal"></span>
+                    </div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
             </div>
@@ -63,11 +74,12 @@
                                     <th>IP</th>
                                     <th class="location-header">Lokalizacja</th>
                                     <th>Urządzenie</th>
+                                    <th>ISP</th>
                                 </tr>
                             </thead>
                             <tbody id="logTableBody">
                                 <tr>
-                                    <td colspan="6">Ładowanie logów...</td>
+                                    <td colspan="7">Ładowanie logów...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -495,15 +507,13 @@
 
     function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
-        const { sdwa, sentiment, signal } = averageData;
+        const { sdwa, signal } = averageData;
         const bannerColor = getBannerColor(sdwa);
         indicator.innerHTML = `
-            <span class="fear-greed-label">Miesięczny sygnał:</span> 
-            <span class="fear-greed-signal ${signal.class}">${signal.signal}</span> | 
-            <span class="fear-greed-label">Trend:</span> 
-            <span class="trend-indicator ${trend.class}">${trend.symbol}</span> | 
-            <span class="fear-greed-label">SDWA:</span> 
-            <span class="fear-greed-value">${sdwa}</span> – ${sentiment}
+            <span class="fear-greed-label">Miesięczny sygnał:</span>
+            <span class="trend-indicator ${trend.class}">${trend.symbol}</span>
+            <span class="fear-greed-value">${sdwa}</span>
+            <span class="fear-greed-signal ${signal.class}">${signal.signal}</span>
         `;
         indicator.style.backgroundColor = bannerColor;
     }
@@ -524,7 +534,7 @@
             displayFearGreed(anyCachedAverage, anyCachedTrend);
         } else if (!data) {
             const indicator = document.getElementById('fearGreedIndicator');
-            indicator.innerHTML = 'Miesięczny sentyment: Brak danych';
+            indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
             indicator.style.backgroundColor = '#808080';
         }
     }
@@ -622,7 +632,7 @@
             console.error('Błąd pobierania logów:', error);
             const logTableBody = document.getElementById('logTableBody');
             if (logTableBody) {
-                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                logTableBody.innerHTML = '<tr><td colspan="7">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
             }
         }
     }
@@ -640,7 +650,7 @@
         if (logs.length === 0) {
             console.log('Brak logów do wyświetlenia.');
             toggleButton.style.display = 'none';
-            logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>';
+            logTableBody.innerHTML = '<tr><td colspan="7">Brak logów do wyświetlenia.</td></tr>';
             return;
         }
 
@@ -660,6 +670,8 @@
                 </td>
                 <td>
                     <div class="device">${log.device || 'Brak'}</div>
+                </td>
+                <td>
                     <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                 </td>
             `;
@@ -681,6 +693,8 @@
                     </td>
                     <td>
                         <div class="device">${log.device || 'Brak'}</div>
+                    </td>
+                    <td>
                         <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
@@ -762,7 +776,7 @@
         try {
             const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
             const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
-            console.log('Lokalizacja dla IP striped:', ip, data);
+            console.log('Lokalizacja dla IP:', ip, data);
             if (data.error) {
                 throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
             }
@@ -1382,7 +1396,7 @@
                             console.error('Błąd ładowania logów:', err);
                             const logTableBody = document.getElementById('logTableBody');
                             if (logTableBody) {
-                                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
+                                logTableBody.innerHTML = '<tr><td colspan="7">Nie udało się załadować logów.</td></tr>';
                             }
                         }
                     }, 500);
