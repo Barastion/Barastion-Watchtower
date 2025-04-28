@@ -47,7 +47,7 @@
             </div>
             <div class="crypto-info">
                 <div class="crypto-header">
-                    <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sygnał: Ładowanie...</div>
+                    <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sentyment: Ładowanie...</div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
             </div>
@@ -330,7 +330,7 @@
         const cachedData = getCachedData(rawDataKey, cacheTimeKey, cacheDuration);
         if (cachedData) {
             console.log('Używam danych Fear and Greed z cache');
-            const average = calculateWeightedIndex(cachedData);
+            const average = calculateSDWA(cachedData);
             const trend = calculateTrend(cachedData);
             setCachedData(cacheKey, cacheTimeKey, average);
             setCachedData(trendKey, cacheTimeKey, trend);
@@ -343,17 +343,17 @@
         try {
             const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
             if (!data.data || data.data.length < 30) {
-                throw new Error('Za mało danych do obliczenia trendu');
+                throw new Error('Za mało danych do obliczenia SDWA');
             }
             const sortedData = data.data.sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
             const validatedData = sortedData.map(item => ({
                 ...item,
-                value: isNaN(parseFloat(item.value)) ? "0" : item.value,
+                value: isNaN(parseFloat(item.value)) ? "50" : item.value,
                 timestamp: parseInt(item.timestamp)
             }));
             setCachedData(rawDataKey, cacheTimeKey, validatedData);
             setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, validatedData);
-            const average = calculateWeightedIndex(validatedData);
+            const average = calculateSDWA(validatedData);
             const trend = calculateTrend(validatedData);
             setCachedData(cacheKey, cacheTimeKey, average);
             setCachedData(trendKey, cacheTimeKey, trend);
@@ -371,7 +371,7 @@
                 console.log(`Wydłużono cache dla ${rawDataKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
             if (anyCachedRawData) {
-                const average = calculateWeightedIndex(anyCachedRawData);
+                const average = calculateSDWA(anyCachedRawData);
                 const trend = calculateTrend(anyCachedRawData);
                 displayFearGreed(average, trend);
                 return anyCachedRawData;
@@ -380,18 +380,54 @@
         }
     }
 
-    function calculateWeightedIndex(values) {
-        if (!values || values.length < 30) {
-            console.error('Niewystarczająca liczba danych do obliczenia średniej');
-            return 0;
+    function calculateSDWA(values, k = 0.11, maxDays = 30) {
+        if (!values || values.length < maxDays) {
+            console.error('Niewystarczająca liczba danych do obliczenia SDWA');
+            return { sdwa: 50, sentiment: 'Neutral', signal: { signal: 'HODL', class: 'hodl', color: 'var(--fear-greed-hold)' } };
         }
 
-        const ema30 = calculateEMA(values.map(item => parseFloat(item.value) || 0), 30);
-        const std30 = calculateStandardDeviation(values.map(item => parseFloat(item.value) || 0), 30);
-        const lastValue = parseFloat(values[0].value) || 0;
+        const parsedValues = values.map(item => parseFloat(item.value) || 50).slice(0, maxDays);
+        const weights = [];
+        let weightSum = 0;
 
+        for (let i = 0; i < maxDays; i++) {
+            let multiplier = 1;
+            if (i < 10) {
+                let baseMultiplier = 1;
+                if (parsedValues[i] > 75) {
+                    baseMultiplier = Math.min(1.2, 1 + 0.05 * (parsedValues[i] - 75) / 10);
+                } else if (parsedValues[i] < 25) {
+                    baseMultiplier = Math.min(1.2, 1 + 0.05 * (25 - parsedValues[i]) / 10);
+                }
+                multiplier = 1 + (baseMultiplier - 1) * (10 - i) / 9;
+            }
+            weights[i] = Math.exp(-k * i) * multiplier;
+            weightSum += weights[i];
+        }
+
+        for (let i = 0; i < maxDays; i++) {
+            weights[i] /= weightSum;
+        }
+
+        let sdwa = 0;
+        for (let i = 0; i < maxDays; i++) {
+            sdwa += parsedValues[i] * weights[i];
+        }
+
+        const roundedSDWA = parseFloat(sdwa.toFixed(1));
+        let sentiment;
+        if (roundedSDWA < 20) sentiment = 'Extreme Fear';
+        else if (roundedSDWA < 40) sentiment = 'Fear';
+        else if (roundedSDWA < 60) sentiment = 'Neutral';
+        else if (roundedSDWA < 80) sentiment = 'Greed';
+        else sentiment = 'Extreme Greed';
+
+        const lastValue = parseFloat(values[0].value) || 50;
+        const ema30 = calculateEMA(parsedValues, 30);
+        const std30 = calculateStandardDeviation(parsedValues, 30);
         const signal = getSignal(lastValue, ema30, std30);
-        return { average: parseFloat(lastValue.toFixed(1)), signal };
+
+        return { sdwa: roundedSDWA, sentiment, signal };
     }
 
     function calculateEMA(values, period) {
@@ -411,11 +447,11 @@
     }
 
     function getBannerColor(value) {
-    if (value <= 20) return 'var(--fear-greed-sell)';
-    if (value <= 40) return 'var(--fear-greed-consider-sell)';
-    if (value <= 60) return 'var(--fear-greed-hold)';
-    if (value <= 80) return 'var(--fear-greed-consider-buy)';
-    return 'var(--fear-greed-opportunity)';
+        if (value <= 20) return 'var(--fear-greed-sell)';
+        if (value <= 40) return 'var(--fear-greed-consider-sell)';
+        if (value <= 60) return 'var(--fear-greed-hold)';
+        if (value <= 80) return 'var(--fear-greed-consider-buy)';
+        return 'var(--fear-greed-opportunity)';
     }
 
     function getSignal(value, ema30, std30) {
@@ -443,7 +479,7 @@
             return { symbol: '■', class: 'trend-neutral' };
         }
 
-        const parsedValues = values.map(item => parseFloat(item.value) || 0);
+        const parsedValues = values.map(item => parseFloat(item.value) || 50);
         const ema2 = calculateEMA(parsedValues, 2);
         const ema8 = calculateEMA(parsedValues, 8);
         const difference = ema2 - ema8;
@@ -459,14 +495,15 @@
 
     function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
-        const roundedAverage = Math.round(averageData.average);
-        const { signal, class: signalClass } = averageData.signal;
-        const bannerColor = getBannerColor(roundedAverage);
+        const { sdwa, sentiment, signal } = averageData;
+        const bannerColor = getBannerColor(sdwa);
         indicator.innerHTML = `
-            Miesięczny sygnał: 
-            <span class="trend-indicator ${trend.class}">${trend.symbol}</span> 
-            <span class="fear-greed-value">${roundedAverage}</span> – 
-            <span class="fear-greed-signal ${signalClass}">${signal}</span>
+            <span class="fear-greed-label">Miesięczny sygnał:</span> 
+            <span class="fear-greed-signal ${signal.class}">${signal.signal}</span> | 
+            <span class="fear-greed-label">Trend:</span> 
+            <span class="trend-indicator ${trend.class}">${trend.symbol}</span> | 
+            <span class="fear-greed-label">SDWA:</span> 
+            <span class="fear-greed-value">${sdwa}</span> – ${sentiment}
         `;
         indicator.style.backgroundColor = bannerColor;
     }
@@ -487,7 +524,7 @@
             displayFearGreed(anyCachedAverage, anyCachedTrend);
         } else if (!data) {
             const indicator = document.getElementById('fearGreedIndicator');
-            indicator.innerHTML = 'Miesięczny sygnał: Brak danych';
+            indicator.innerHTML = 'Miesięczny sentyment: Brak danych';
             indicator.style.backgroundColor = '#808080';
         }
     }
@@ -725,7 +762,7 @@
         try {
             const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
             const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
-            console.log('Lokalizacja dla IP:', ip, data);
+            console.log('Lokalizacja dla IP striped:', ip, data);
             if (data.error) {
                 throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
             }
