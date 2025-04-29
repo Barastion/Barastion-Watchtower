@@ -344,10 +344,10 @@ body {
     font-weight: 600;
     margin-right: 8px;
     text-shadow: 
-    -1.5px -1.5px 0 #000000,
-    1.5px -1.5px 0 #000000,
-    -1.5px 1.5px 0 #000000,
-    1.5px 1.5px 0 #000000,
+        -2px -2px 0 #000000,
+        2px -2px 0 #000000,
+        -2px 2px 0 #000000,
+        2px 2px 0 #000000,
         0 0 2px rgba(0, 0, 0, 1);
 }
 
@@ -377,10 +377,10 @@ body {
     margin-right: 8px;
     color: #ffffff;
     text-shadow: 
-    -1.5px -1.5px 0 #000000,
-    1.5px -1.5px 0 #000000,
-    -1.5px 1.5px 0 #000000,
-    1.5px 1.5px 0 #000000,
+        -2px -2px 0 #000000,
+        2px -2px 0 #000000,
+        -2px 2px 0 #000000,
+        2px 2px 0 #000000,
         0 0 2px rgba(0, 0, 0, 1);
 }
 
@@ -391,10 +391,10 @@ body {
     margin-left: 8px;
     vertical-align: baseline;
     text-shadow: 
-    -1.5px -1.5px 0 #000000,
-    1.5px -1.5px 0 #000000,
-    -1.5px 1.5px 0 #000000,
-    1.5px 1.5px 0 #000000,
+        -2px -2px 0 #000000,
+        2px -2px 0 #000000,
+        -2px 2px 0 #000000,
+        2px 2px 0 #000000,
         0 0 2px rgba(0, 0, 0, 1);
     line-height: 1;
 }
@@ -422,10 +422,10 @@ body {
     z-index: 2;
     color: #ffffff;
     text-shadow: 
-    -1.5px -1.5px 0 #000000,
-    1.5px -1.5px 0 #000000,
-    -1.5px 1.5px 0 #000000,
-    1.5px 1.5px 0 #000000,
+        -2px -2px 0 #000000,
+        2px -2px 0 #000000,
+        -2px 2px 0 #000000,
+        2px 2px 0 #000000,
         0 0 2px rgba(0, 0, 0, 1;
 }
 
@@ -935,19 +935,19 @@ tr:hover td:last-child {
 
     .fear-greed-indicator .fgi-value {
         text-shadow: 
-        -1.5px -1.5px 0 #000000,
-        1.5px -1.5px 0 #000000,
-        -1.5px 1.5px 0 #000000,
-        1.5px 1.5px 0 #000000,
+            -2px -2px 0 #000000,
+            2px -2px 0 #000000,
+            -2px 2px 0 #000000,
+            2px 2px 0 #000000,
             0 0 2px rgba(0, 0, 0, 1);
     }
 
     .fear-greed-indicator .fgi-label {
         text-shadow: 
-        -1.5px -1.5px 0 #000000,
-        1.5px -1.5px 0 #000000,
-        -1.5px 1.5px 0 #000000,
-        1.5px 1.5px 0 #000000,
+            -2px -2px 0 #000000,
+            2px -2px 0 #000000,
+            -2px 2px 0 #000000,
+            2px 2px 0 #000000,
             0 0 2px rgba(0, 0, 0, 1);
     }
 
@@ -955,19 +955,19 @@ tr:hover td:last-child {
         font-size: 0.9em;
         margin-right: 2px;
         text-shadow: 
-            -1.5px -1.5px 0 #000000,
-            1.5px -1.5px 0 #000000,
-            -1.5px 1.5px 0 #000000,
-            1.5px 1.5px 0 #000000,
+            -2px -2px 0 #000000,
+            2px -2px 0 #000000,
+            -2px 2px 0 #000000,
+            2px 2px 0 #000000,
             0 0 2px rgba(0, 0, 0, 1);
     }
 
     .fear-greed-indicator .fear-greed-signal {
         text-shadow: 
-        -1.5px -1.5px 0 #000000,
-        1.5px -1.5px 0 #000000,
-        -1.5px 1.5px 0 #000000,
-        1.5px 1.5px 0 #000000,
+            -2px -2px 0 #000000,
+            2px -2px 0 #000000,
+            -2px 2px 0 #000000,
+            2px 2px 0 #000000,
             0 0 2px rgba(0, 0, 0, 1);
     }
 
