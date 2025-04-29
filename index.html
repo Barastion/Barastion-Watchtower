@@ -450,29 +450,29 @@
     }
 
     function getSignal(value, ema30, std30) {
-        const allInThreshold = ema30 - 1.8 * std30;
+        const allInThreshold = ema30 - 2.0 * std30;
         const buySlowlyThreshold = ema30 - 0.8 * std30;
         const sellSlowlyThreshold = ema30 + 0.8 * std30;
-        const cashOutThreshold = ema30 + 1.8 * std30;
+        const cashOutThreshold = ema30 + 2.0 * std30;
 
         let signal, signalClass, reason = '';
 
-        if (value < allInThreshold && value < 25) {
+        if (value < allInThreshold && value < 20) {
             signal = 'ALL IN!';
             signalClass = 'all-in';
-            reason = `Wskaźnik sygnału pokazuje ALL IN!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg allInThreshold = ${allInThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 25`;
-        } else if (value < buySlowlyThreshold && value < 45) {
+            reason = `Wskaźnik sygnału pokazuje ALL IN!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg allInThreshold = ${allInThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 20`;
+        } else if (value < buySlowlyThreshold && value < 40) {
             signal = 'BUY SLOWLY';
             signalClass = 'buy-slowly';
-            reason = `Wskaźnik sygnału pokazuje BUY SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg buySlowlyThreshold = ${buySlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 45`;
-        } else if (value > cashOutThreshold && value > 75) {
+            reason = `Wskaźnik sygnału pokazuje BUY SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg buySlowlyThreshold = ${buySlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 40`;
+        } else if (value > cashOutThreshold && value > 80) {
             signal = 'CASH OUT!';
             signalClass = 'cash-out';
-            reason = `Wskaźnik sygnału pokazuje CASH OUT!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg cashOutThreshold = ${cashOutThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 75`;
-        } else if (value > sellSlowlyThreshold && value > 55) {
+            reason = `Wskaźnik sygnału pokazuje CASH OUT!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg cashOutThreshold = ${cashOutThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 80`;
+        } else if (value > sellSlowlyThreshold && value > 60) {
             signal = 'SELL SLOWLY';
             signalClass = 'sell-slowly';
-            reason = `Wskaźnik sygnału pokazuje SELL SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg sellSlowlyThreshold = ${sellSlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 55`;
+            reason = `Wskaźnik sygnału pokazuje SELL SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg sellSlowlyThreshold = ${sellSlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 60`;
         } else {
             signal = 'HODL';
             signalClass = 'hodl';
