@@ -1,5 +1,5 @@
 :root {
-    --fear-greed-hold: #bf8f00; /* Żółty dla HODL, ciepły i czytelny */
+    --fear-greed-hold: #bf8f00; /* Żółty dla HODL */
     --fear-greed-consider-buy: rgba(0, 120, 0, 0.6); /* Zielony dla BUY SLOWLY */
     --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla ALL IN! */
     --fear-greed-consider-sell: rgba(120, 0, 0, 0.6); /* Czerwony dla SELL SLOWLY */
@@ -304,8 +304,6 @@ body {
 }
 
 .fear-greed-indicator {
-    background-color: #808080;
-    color: #ffffff;
     padding: 8px 10px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -320,28 +318,70 @@ body {
     box-sizing: border-box;
 }
 
-/* Styl wartości FGI */
+/* Kolory banera w zależności od sygnału */
+.fear-greed-indicator.all-in {
+    background-color: var(--fear-greed-opportunity);
+}
+
+.fear-greed-indicator.buy-slowly {
+    background-color: var(--fear-greed-consider-buy);
+}
+
+.fear-greed-indicator.hodl {
+    background-color: var(--fear-greed-hold);
+}
+
+.fear-greed-indicator.sell-slowly {
+    background-color: var(--fear-greed-consider-sell);
+}
+
+.fear-greed-indicator.cash-out {
+    background-color: var(--fear-greed-sell);
+}
+
+/* Styl wartości FGI z kolorami zależnymi od przedziału */
 .fear-greed-indicator .fgi-value {
     font-weight: 600;
     margin-right: 8px;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8); /* Uproszczony, wyraźny kontur i cień */
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
+        0 0 2px rgba(0, 0, 0, 0.8);
+}
+
+.fear-greed-indicator .fgi-value.extreme-fear {
+    color: var(--fear-greed-sell); /* 1-20 */
+}
+
+.fear-greed-indicator .fgi-value.fear {
+    color: var(--fear-greed-consider-sell); /* 21-40 */
+}
+
+.fear-greed-indicator .fgi-value.neutral {
+    color: var(--fear-greed-hold); /* 41-60 */
+}
+
+.fear-greed-indicator .fgi-value.greedy {
+    color: var(--fear-greed-consider-buy); /* 61-80 */
+}
+
+.fear-greed-indicator .fgi-value.extreme-greedy {
+    color: var(--fear-greed-opportunity); /* 81-100 */
 }
 
 /* Styl napisu "Miesięczny sygnał:" */
 .fear-greed-indicator .fgi-label {
     font-weight: 600;
     margin-right: 8px;
+    color: #ffffff;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8); /* Uproszczony, wyraźny kontur i cień */
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
+        0 0 2px rgba(0, 0, 0, 0.8);
 }
 
 /* Styl strzałki trendu */
@@ -351,10 +391,10 @@ body {
     margin-left: 8px;
     vertical-align: baseline;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
     line-height: 1;
 }
@@ -379,60 +419,14 @@ body {
     position: relative;
     display: inline-block;
     padding: 2px 6px;
-    z-index: 2; /* Tekst na wierzchu */
-    color: #ffffff; /* Biały tekst */
+    z-index: 2;
+    color: #ffffff;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8); /* Uproszczony, wyraźny kontur */
-}
-
-/* Pseudoelement dla paska (cienka linia) */
-.fear-greed-indicator .fear-greed-signal::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75%;
-    height: 1px;
-    background-color: transparent; /* Linia niewidoczna */
-    z-index: 1; /* Pod tekstem, nad cieniem */
-}
-
-/* Pseudoelement dla pulsującego cienia */
-.fear-greed-indicator .fear-greed-signal::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75%;
-    height: 1px;
-    z-index: -1; /* Pod tekstem i paskiem */
-}
-
-/* Pulsujący efekt dla każdego sygnału */
-.fear-greed-indicator .fear-greed-signal.all-in::after {
-    animation: pulse-glow-positive 1.5s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.buy-slowly::after {
-    animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.hodl::after {
-    animation: pulse-glow-neutral 1.5s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.sell-slowly::after {
-    animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.cash-out::after {
-    animation: pulse-glow-negative 1.5s ease-in-out infinite;
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
+        0 0 2px rgba(0, 0, 0, 0.8);
 }
 
 .crypto-grid {
@@ -697,7 +691,6 @@ tr:hover td:last-child {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
-    position: relative;
 }
 
 .toggle-button:hover {
@@ -706,7 +699,6 @@ tr:hover td:last-child {
     filter: brightness(1.1);
 }
 
-/* Stylizacja suwaków przewijania */
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
@@ -735,21 +727,13 @@ tr:hover td:last-child {
 }
 
 @keyframes ticker {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-100%);
-    }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
 @-webkit-keyframes ticker {
-    0% {
-        -webkit-transform: translateX(0);
-    }
-    100% {
-        -webkit-transform: translateX(-100%);
-    }
+    0% { -webkit-transform: translateX(0); }
+    100% { -webkit-transform: translateX(-100%); }
 }
 
 @keyframes pulse-positive {
@@ -761,142 +745,7 @@ tr:hover td:last-child {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
-}
-
-@keyframes pulse-glow-positive {
-    0% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(0, 200, 0, 1),
-            0 0 6px 5px rgba(0, 200, 0, 0.9),
-            0 0 8px 7px rgba(0, 200, 0, 0.8),
-            0 0 10px 9px rgba(0, 200, 0, 0.7),
-            0 0 12px 11px rgba(0, 200, 0, 0.6);
-    }
-    50% {
-        box-shadow: 
-            inset 0 0 5px 3px rgba(0, 225, 0, 1),
-            0 0 7px 5px rgba(0, 225, 0, 0.9),
-            0 0 9px 7px rgba(0, 225, 0, 0.8),
-            0 0 11px 9px rgba(0, 225, 0, 0.7),
-            0 0 13px 11px rgba(0, 225, 0, 0.6);
-    }
-    100% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(0, 200, 0, 1),
-            0 0 6px 5px rgba(0, 200, 0, 0.9),
-            0 0 8px 7px rgba(0, 200, 0, 0.8),
-            0 0 10px 9px rgba(0, 200, 0, 0.7),
-            0 0 12px 11px rgba(0, 200, 0, 0.6);
-    }
-}
-
-@keyframes pulse-glow-positive-buy {
-    0% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(0, 120, 0, 1),
-            0 0 6px 5px rgba(0, 120, 0, 0.9),
-            0 0 8px 7px rgba(0, 120, 0, 0.8),
-            0 0 10px 9px rgba(0, 120, 0, 0.7),
-            0 0 12px 11px rgba(0, 120, 0, 0.6);
-    }
-    50% {
-        box-shadow: 
-            inset 0 0 5px 3px rgba(0, 145, 0, 1),
-            0 0 7px 5px rgba(0, 145, 0, 0.9),
-            0 0 9px 7px rgba(0, 145, 0, 0.8),
-            0 0 11px 9px rgba(0, 145, 0, 0.7),
-            0 0 13px 11px rgba(0, 145, 0, 0.6);
-    }
-    100% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(0, 120, 0, 1),
-            0 0 6px 5px rgba(0, 120, 0, 0.9),
-            0 0 8px 7px rgba(0, 120, 0, 0.8),
-            0 0 10px 9px rgba(0, 120, 0, 0.7),
-            0 0 12px 11px rgba(0, 120, 0, 0.6);
-    }
-}
-
-@keyframes pulse-glow-neutral {
-    0% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(230, 184, 0, 1),
-            0 0 6px 5px rgba(230, 184, 0, 0.9),
-            0 0 8px 7px rgba(230, 184, 0, 0.8),
-            0 0 10px 9px rgba(230, 184, 0, 0.7),
-            0 0 12px 11px rgba(230, 184, 0, 0.6);
-    }
-    50% {
-        box-shadow: 
-            inset 0 0 5px 3px rgba(255, 209, 25, 1),
-            0 0 7px 5px rgba(255, 209, 25, 0.9),
-            0 0 9px 7px rgba(255, 209, 25, 0.8),
-            0 0 11px 9px rgba(255, 209, 25, 0.7),
-            0 0 13px 11px rgba(255, 209, 25, 0.6);
-    }
-    100% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(230, 184, 0, 1),
-            0 0 6px 5px rgba(230, 184, 0, 0.9),
-            0 0 8px 7px rgba(230, 184, 0, 0.8),
-            0 0 10px 9px rgba(230, 184, 0, 0.7),
-            0 0 12px 11px rgba(230, 184, 0, 0.6);
-    }
-}
-
-@keyframes pulse-glow-negative-sell {
-    0% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(120, 0, 0, 1),
-            0 0 6px 5px rgba(120, 0, 0, 0.9),
-            0 0 8px 7px rgba(120, 0, 0, 0.8),
-            0 0 10px 9px rgba(120, 0, 0, 0.7),
-            0 0 12px 11px rgba(120, 0, 0, 0.6);
-    }
-    50% {
-        box-shadow: 
-            inset 0 0 5px 3px rgba(145, 25, 25, 1),
-            0 0 7px 5px rgba(145, 25, 25, 0.9),
-            0 0 9px 7px rgba(145, 25, 25, 0.8),
-            0 0 11px 9px rgba(145, 25, 25, 0.7),
-            0 0 13px 11px rgba(145, 25, 25, 0.6);
-    }
-    100% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(120, 0, 0, 1),
-            0 0 6px 5px rgba(120, 0, 0, 0.9),
-            0 0 8px 7px rgba(120, 0, 0, 0.8),
-            0 0 10px 9px rgba(120, 0, 0, 0.7),
-            0 0 12px 11px rgba(120, 0, 0, 0.6);
-    }
-}
-
-@keyframes pulse-glow-negative {
-    0% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(200, 0, 0, 1),
-            0 0 6px 5px rgba(200, 0, 0, 0.9),
-            0 0 8px 7px rgba(200, 0, 0, 0.8),
-            0 0 10px 9px rgba(200, 0, 0, 0.7),
-            0 0 12px 11px rgba(200, 0, 0, 0.6);
-    }
-    50% {
-        box-shadow: 
-            inset 0 0 5px 3px rgba(225, 25, 25, 1),
-            0 0 7px 5px rgba(225, 25, 25, 0.9),
-            0 0 9px 7px rgba(225, 25, 25, 0.8),
-            0 0 11px 9px rgba(225, 25, 25, 0.7),
-            0 0 13px 11px rgba(225, 25, 25, 0.6);
-    }
-    100% {
-        box-shadow: 
-            inset 0 0 3px 3px rgba(200, 0, 0, 1),
-            0 0 6px 5px rgba(200, 0, 0, 0.9),
-            0 0 8px 7px rgba(200, 0, 0, 0.8),
-            0 0 10px 9px rgba(200, 0, 0, 0.7),
-            0 0 12px 11px rgba(200, 0, 0, 0.6);
-    }
+    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
 
 @keyframes glow-positive {
@@ -915,6 +764,98 @@ tr:hover td:last-child {
     0% { color: var(--fear-greed-hold); }
     50% { color: #ffcc1a; }
     100% { color: var(--fear-greed-hold); }
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-container {
+    background-color: #2d2d2d;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    position: relative;
+}
+
+.modal-container h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.modal-container p {
+    margin: 10px 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.language-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.language-switch button {
+    background: linear-gradient(135deg, #5a6268, #4a5258);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.language-switch button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.language-switch button.active {
+    background: linear-gradient(135deg, #6a7278, #5a6268);
+    transform: scale(1.05);
+}
+
+.close-button {
+    background: linear-gradient(135deg, #ff4d4d, #d43f3f);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    display: block;
+    margin: 15px auto 0;
+}
+
+.close-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
 }
 
 @media (max-width: 768px) {
@@ -959,7 +900,6 @@ tr:hover td:last-child {
         flex-wrap: nowrap;
         gap: 5px;
         padding: 10px 0;
-        -webkit-overflow-scrolling: touch;
     }
 
     .forecast-bar {
@@ -981,126 +921,54 @@ tr:hover td:last-child {
 
     .forecast-error {
         font-size: 0.7em;
-        color: #999999;
-        text-align: center;
         padding: 8px;
-        width: 100%;
     }
 
     .crypto-info {
         padding: 10px;
     }
 
-    .crypto-header {
-        margin-bottom: 2px;
-    }
-
     .fear-greed-indicator {
-        width: 100%;
-        min-height: 30px;
-        text-align: center;
         font-size: 0.75em;
         padding: 8px 10px;
-        font-weight: 600;
     }
 
-    /* Styl wartości FGI */
     .fear-greed-indicator .fgi-value {
-        font-weight: 600;
-        margin-right: 8px;
         text-shadow: 
-            -0.5px -0.5px 0 #000000,
-            0.5px -0.5px 0 #000000,
-            -0.5px 0.5px 0 #000000,
-            0.5px 0.5px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
     }
 
-    /* Styl napisu "Miesięczny sygnał:" */
     .fear-greed-indicator .fgi-label {
-        font-weight: 600;
-        margin-right: 8px;
         text-shadow: 
-            -0.5px -0.5px 0 #000000,
-            0.5px -0.5px 0 #000000,
-            -0.5px 0.5px 0 #000000,
-            0.5px 0.5px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
     }
 
-    /* Styl strzałki trendu */
     .fear-greed-indicator .trend-indicator {
         font-size: 0.9em;
         margin-right: 2px;
-        margin-left: 8px;
-        vertical-align: baseline;
         text-shadow: 
-            -0.5px -0.5px 0 #000000,
-            0.5px -0.5px 0 #000000,
-            -0.5px 0.5px 0 #000000,
-            0.5px 0.5px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
     }
 
-    /* Styl sygnału */
     .fear-greed-indicator .fear-greed-signal {
-        position: relative;
-        display: inline-block;
-        padding: 2px 6px;
-        z-index: 2; /* Tekst na wierzchu */
-        color: #ffffff; /* Biały tekst */
         text-shadow: 
-            -0.5px -0.5px 0 #000000,
-            0.5px -0.5px 0 #000000,
-            -0.5px 0.5px 0 #000000,
-            0.5px 0.5px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
-    }
-
-    /* Pseudoelement dla paska (cienka linia) */
-    .fear-greed-indicator .fear-greed-signal::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 75%;
-        height: 1px;
-        background-color: transparent; /* Linia niewidoczna */
-        z-index: 1; /* Pod tekstem, nad cieniem */
-    }
-
-    /* Pseudoelement dla pulsującego cienia */
-    .fear-greed-indicator .fear-greed-signal::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 75%;
-        height: 1px;
-        z-index: -1; /* Pod tekstem i paskiem */
-    }
-
-    /* Pulsujący efekt dla każdego sygnału */
-    .fear-greed-indicator .fear-greed-signal.all-in::after {
-        animation: pulse-glow-positive 1.5s ease-in-out infinite;
-    }
-
-    .fear-greed-indicator .fear-greed-signal.buy-slowly::after {
-        animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
-    }
-
-    .fear-greed-indicator .fear-greed-signal.hodl::after {
-        animation: pulse-glow-neutral 1.5s ease-in-out infinite;
-    }
-
-    .fear-greed-indicator .fear-greed-signal.sell-slowly::after {
-        animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
-    }
-
-    .fear-greed-indicator .fear-greed-signal.cash-out::after {
-        animation: pulse-glow-negative 1.5s ease-in-out infinite;
     }
 
     .crypto-grid {
@@ -1112,8 +980,6 @@ tr:hover td:last-child {
     .crypto-tile {
         min-height: 22px;
         padding: 2px;
-        box-sizing: border-box;
-        transition: transform 0.2s, background-color 0.5s ease;
     }
 
     .crypto-symbol {
@@ -1123,33 +989,15 @@ tr:hover td:last-child {
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 100%;
-        text-shadow: 
-            -0.5px -0.5px 0 #000000,
-            0.5px -0.5px 0 #000000,
-            -0.5px 0.5px 0 #000000,
-            0.5px 0.5px 0 #000000,
-            0 0 2px rgba(0, 0, 0, 0.8);
     }
 
     .crypto-price {
         font-size: 0.65em;
         margin-bottom: 0.5px;
-        text-shadow: 
-            -0.5px -0.5px 0 #000000,
-            0.5px -0.5px 0 #000000,
-            -0.5px 0.5px 0 #000000,
-            0.5px 0.5px 0 #000000,
-            0 0 2px rgba(0, 0, 0, 0.8);
     }
 
     .crypto-change {
         font-size: 0.5em;
-        text-shadow: 
-            -0.5px -0.5px 0 #000000,
-            0.5px -0.5px 0 #000000,
-            -0.5px 0.5px 0 #000000,
-            0.5px 0.5px 0 #000000,
-            0 0 2px rgba(0, 0, 0, 0.8);
     }
 
     .crypto-error {
@@ -1161,89 +1009,15 @@ tr:hover td:last-child {
         padding: 15px;
     }
 
-    .table-wrapper {
-        overflow-y: hidden;
-        overflow-x: auto;
-    }
-
-    .table-container {
-        overflow: hidden;
-    }
-
     table {
-        width: 100%;
         font-size: 0.75em;
         table-layout: fixed;
-        min-width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-
-    thead tr {
-        background: linear-gradient(135deg, #5a6268, #4a5258);
     }
 
     th, td {
         padding: 2px;
         height: 28px;
         font-size: 0.7em;
-        vertical-align: middle;
-        box-sizing: border-box;
-    }
-
-    th {
-        background: transparent;
-        color: white;
-        font-weight: 700;
-        text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        transition: filter 0.3s ease;
-    }
-
-    th:hover {
-        filter: brightness(1.1);
-    }
-
-    th:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
-
-    th:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    }
-
-    tr:nth-child(odd) {
-        background-color: #3a3a3a;
-    }
-
-    tr:nth-child(even) {
-        background-color: #2d2d2d;
-    }
-
-    tr:hover {
-        background-color: #4a4a4a;
-    }
-
-    tr:not(:first-child) td:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
-
-    tr:not(:first-child) td:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
-    }
-
-    tr:hover td:first-child {
-        border-top-left-radius: 8px;
-        border-bottom-left-radius: 8px;
-    }
-
-    tr:hover td:last-child {
-        border-top-right-radius: 8px;
-        border-bottom-right-radius: 8px;
     }
 
     th:nth-child(1), td:nth-child(1) {
@@ -1274,65 +1048,15 @@ tr:hover td:last-child {
         min-width: 90px;
     }
 
-    .location-cell {
-        min-width: 90px;
-    }
-
-    .city {
+    .city, .device, .country, .isp {
         font-size: 0.7em;
-        display: block;
-        overflow-wrap: break-word;
-        white-space: normal;
         line-height: 1.15;
-        hyphens: auto;
-    }
-
-    .device {
-        font-size: 0.7em;
-        display: block;
-        overflow-wrap: break-word;
-        white-space: normal;
-        line-height: 1.15;
-        hyphens: auto;
-    }
-
-    .country {
-        font-size: 0.7em;
-        color: #cccccc;
-        margin-top: 0;
-        display: block;
-        line-height: 1.15;
-        hyphens: auto;
-    }
-
-    .isp {
-        font-size: 0.7em;
-        color: #cccccc;
-        margin-top: 0;
-        display: block;
-        line-height: 1.15;
-        hyphens: auto;
     }
 
     .toggle-button {
-        background: linear-gradient(135deg, #5a6268, #4a5258);
-        color: white;
-        border: none;
         padding: 2px 4px;
-        border-radius: 8px;
         font-size: 0.55em;
-        font-weight: 600;
-        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-        box-shadow: 0 2px 4px rgba Caballero, Jose - xAI0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
         min-width: 70px;
-        position: relative;
-    }
-
-    .toggle-button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-        filter: brightness(1.1);
     }
 
     .nasa-ticker {
@@ -1343,31 +1067,20 @@ tr:hover td:last-child {
         max-width: 100%;
     }
 
-    /* Stylizacja suwaków przewijania dla widoku mobilnego */
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
 
     ::-webkit-scrollbar-track {
-        background: #2d2d2d;
         border-radius: 4px;
         box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
     }
 
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #5a6268, #4a5258);
         border-radius: 4px;
         border: 1px solid #2d2d2d;
         box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #6a7278, #5a6268);
-    }
-
-    ::-webkit-scrollbar-corner {
-        background: #2d2d2d;
     }
 }
 
@@ -1400,7 +1113,6 @@ tr:hover td:last-child {
 @media (max-width: 768px) {
     .footer {
         font-size: 0.45em;
-        color: #cccccc;
     }
 
     .footer p {
