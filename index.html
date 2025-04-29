@@ -9,8 +9,6 @@
     <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
     <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -27,14 +25,12 @@
         </div>
         <div class="search-container">
             <form action="https://www.google.com/search" method="get" target="_blank">
-                <label for="search-input">Szukaj w Google:</label>
+                <label for="search-input"> Szukaj w Google:</label>
                 <input type="text" id="search-input" name="q" placeholder="Wpisz frazę...">
             </form>
         </div>
         <div class="daily-fact">
-            <div class="fact-header">
-                <span>💡 Ciekawostka na dziś:</span>
-            </div>
+            <span class="fact-header"> Ciekawostka na dziś:</span>
             <div class="fact-content" id="dailyFact">Ładowanie...</div>
         </div>
         <div class="content-frame">
@@ -43,7 +39,7 @@
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
                     <div class="weather-ticker">
-                        <div id="tickerContent">
+                         <div id="tickerContent">
                             <span class="ticker-segment">Ładowanie...</span>
                         </div>
                     </div>
@@ -51,12 +47,7 @@
             </div>
             <div class="crypto-info">
                 <div class="crypto-header">
-                    <div class="fear-greed-indicator" id="fearGreedIndicator">
-                        <span class="fear-greed-label">Miesięczny sygnał:</span>
-                        <span class="trend-indicator" id="trendIndicator"></span>
-                        <span class="fear-greed-value" id="fearGreedValue"></span>
-                        <span class="fear-greed-signal" id="fearGreedSignal"></span>
-                    </div>
+                    <div class="fear-greed-indicator" id="fearGreedIndicator">Miesięczny sygnał: Ładowanie...</div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
             </div>
@@ -72,12 +63,11 @@
                                     <th>IP</th>
                                     <th class="location-header">Lokalizacja</th>
                                     <th>Urządzenie</th>
-                                    <th>ISP</th>
                                 </tr>
                             </thead>
                             <tbody id="logTableBody">
                                 <tr>
-                                    <td colspan="7">Ładowanie logów...</td>
+                                    <td colspan="6">Ładowanie logów...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -340,7 +330,7 @@
         const cachedData = getCachedData(rawDataKey, cacheTimeKey, cacheDuration);
         if (cachedData) {
             console.log('Używam danych Fear and Greed z cache');
-            const average = calculateSDWA(cachedData);
+            const average = calculateWeightedIndex(cachedData);
             const trend = calculateTrend(cachedData);
             setCachedData(cacheKey, cacheTimeKey, average);
             setCachedData(trendKey, cacheTimeKey, trend);
@@ -353,17 +343,17 @@
         try {
             const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
             if (!data.data || data.data.length < 30) {
-                throw new Error('Za mało danych do obliczenia SDWA');
+                throw new Error('Za mało danych do obliczenia trendu');
             }
             const sortedData = data.data.sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
             const validatedData = sortedData.map(item => ({
                 ...item,
-                value: isNaN(parseFloat(item.value)) ? "50" : item.value,
+                value: isNaN(parseFloat(item.value)) ? "0" : item.value,
                 timestamp: parseInt(item.timestamp)
             }));
             setCachedData(rawDataKey, cacheTimeKey, validatedData);
             setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, validatedData);
-            const average = calculateSDWA(validatedData);
+            const average = calculateWeightedIndex(validatedData);
             const trend = calculateTrend(validatedData);
             setCachedData(cacheKey, cacheTimeKey, average);
             setCachedData(trendKey, cacheTimeKey, trend);
@@ -381,7 +371,7 @@
                 console.log(`Wydłużono cache dla ${rawDataKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
             if (anyCachedRawData) {
-                const average = calculateSDWA(anyCachedRawData);
+                const average = calculateWeightedIndex(anyCachedRawData);
                 const trend = calculateTrend(anyCachedRawData);
                 displayFearGreed(average, trend);
                 return anyCachedRawData;
@@ -390,54 +380,18 @@
         }
     }
 
-    function calculateSDWA(values, k = 0.11, maxDays = 30) {
-        if (!values || values.length < maxDays) {
-            console.error('Niewystarczająca liczba danych do obliczenia SDWA');
-            return { sdwa: 50, sentiment: 'Neutral', signal: { signal: 'HODL', class: 'hodl', color: 'var(--fear-greed-hold)' } };
+    function calculateWeightedIndex(values) {
+        if (!values || values.length < 30) {
+            console.error('Niewystarczająca liczba danych do obliczenia średniej');
+            return 0;
         }
 
-        const parsedValues = values.map(item => parseFloat(item.value) || 50).slice(0, maxDays);
-        const weights = [];
-        let weightSum = 0;
+        const ema30 = calculateEMA(values.map(item => parseFloat(item.value) || 0), 30);
+        const std30 = calculateStandardDeviation(values.map(item => parseFloat(item.value) || 0), 30);
+        const lastValue = parseFloat(values[0].value) || 0;
 
-        for (let i = 0; i < maxDays; i++) {
-            let multiplier = 1;
-            if (i < 10) {
-                let baseMultiplier = 1;
-                if (parsedValues[i] > 75) {
-                    baseMultiplier = Math.min(1.2, 1 + 0.05 * (parsedValues[i] - 75) / 10);
-                } else if (parsedValues[i] < 25) {
-                    baseMultiplier = Math.min(1.2, 1 + 0.05 * (25 - parsedValues[i]) / 10);
-                }
-                multiplier = 1 + (baseMultiplier - 1) * (10 - i) / 9;
-            }
-            weights[i] = Math.exp(-k * i) * multiplier;
-            weightSum += weights[i];
-        }
-
-        for (let i = 0; i < maxDays; i++) {
-            weights[i] /= weightSum;
-        }
-
-        let sdwa = 0;
-        for (let i = 0; i < maxDays; i++) {
-            sdwa += parsedValues[i] * weights[i];
-        }
-
-        const roundedSDWA = parseFloat(sdwa.toFixed(1));
-        let sentiment;
-        if (roundedSDWA < 20) sentiment = 'Extreme Fear';
-        else if (roundedSDWA < 40) sentiment = 'Fear';
-        else if (roundedSDWA < 60) sentiment = 'Neutral';
-        else if (roundedSDWA < 80) sentiment = 'Greed';
-        else sentiment = 'Extreme Greed';
-
-        const lastValue = parseFloat(values[0].value) || 50;
-        const ema30 = calculateEMA(parsedValues, 30);
-        const std30 = calculateStandardDeviation(parsedValues, 30);
         const signal = getSignal(lastValue, ema30, std30);
-
-        return { sdwa: roundedSDWA, sentiment, signal };
+        return { average: parseFloat(lastValue.toFixed(1)), signal };
     }
 
     function calculateEMA(values, period) {
@@ -457,11 +411,11 @@
     }
 
     function getBannerColor(value) {
-        if (value <= 20) return 'var(--fear-greed-sell)';
-        if (value <= 40) return 'var(--fear-greed-consider-sell)';
-        if (value <= 60) return 'var(--fear-greed-hold)';
-        if (value <= 80) return 'var(--fear-greed-consider-buy)';
-        return 'var(--fear-greed-opportunity)';
+    if (value <= 20) return 'var(--fear-greed-sell)';
+    if (value <= 40) return 'var(--fear-greed-consider-sell)';
+    if (value <= 60) return 'var(--fear-greed-hold)';
+    if (value <= 80) return 'var(--fear-greed-consider-buy)';
+    return 'var(--fear-greed-opportunity)';
     }
 
     function getSignal(value, ema30, std30) {
@@ -489,7 +443,7 @@
             return { symbol: '■', class: 'trend-neutral' };
         }
 
-        const parsedValues = values.map(item => parseFloat(item.value) || 50);
+        const parsedValues = values.map(item => parseFloat(item.value) || 0);
         const ema2 = calculateEMA(parsedValues, 2);
         const ema8 = calculateEMA(parsedValues, 8);
         const difference = ema2 - ema8;
@@ -505,13 +459,14 @@
 
     function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
-        const { sdwa, signal } = averageData;
-        const bannerColor = getBannerColor(sdwa);
+        const roundedAverage = Math.round(averageData.average);
+        const { signal, class: signalClass } = averageData.signal;
+        const bannerColor = getBannerColor(roundedAverage);
         indicator.innerHTML = `
-            <span class="fear-greed-label">Miesięczny sygnał:</span>
-            <span class="trend-indicator ${trend.class}">${trend.symbol}</span>
-            <span class="fear-greed-value">${sdwa}</span>
-            <span class="fear-greed-signal ${signal.class}">${signal.signal}</span>
+            Miesięczny sygnał: 
+            <span class="trend-indicator ${trend.class}">${trend.symbol}</span> 
+            <span class="fear-greed-value">${roundedAverage}</span> – 
+            <span class="fear-greed-signal ${signalClass}">${signal}</span>
         `;
         indicator.style.backgroundColor = bannerColor;
     }
@@ -630,7 +585,7 @@
             console.error('Błąd pobierania logów:', error);
             const logTableBody = document.getElementById('logTableBody');
             if (logTableBody) {
-                logTableBody.innerHTML = '<tr><td colspan="7">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
             }
         }
     }
@@ -648,7 +603,7 @@
         if (logs.length === 0) {
             console.log('Brak logów do wyświetlenia.');
             toggleButton.style.display = 'none';
-            logTableBody.innerHTML = '<tr><td colspan="7">Brak logów do wyświetlenia.</td></tr>';
+            logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>';
             return;
         }
 
@@ -668,8 +623,6 @@
                 </td>
                 <td>
                     <div class="device">${log.device || 'Brak'}</div>
-                </td>
-                <td>
                     <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                 </td>
             `;
@@ -691,8 +644,6 @@
                     </td>
                     <td>
                         <div class="device">${log.device || 'Brak'}</div>
-                    </td>
-                    <td>
                         <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
@@ -812,17 +763,17 @@
     }
 
     const weatherIcons = {
-        0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
-        45: '🌫️', 48: '🌫️',
-        51: '🌦️', 53: '🌧️', 55: '🌧️',
-        56: '🌧️', 57: '🌧️',
-        61: '🌦️', 63: '🌧️', 65: '🌧️',
-        66: '🌧️', 67: '🌧️',
-        71: '🌨️', 73: '🌨️', 75: '🌨️',
-        77: '🌨️',
-        80: '🌦️', 81: '🌧️', 82: '🌧️',
-        85: '🌨️', 86: '🌨️',
-        95: '⛈️', 96: '⛈️', 99: '⛈️'
+        0: '', 1: '', 2: '', 3: '',
+        45: '', 48: '',
+        51: '', 53: '', 55: '',
+        56: '', 57: '',
+        61: '', 63: '', 65: '',
+        66: '', 67: '',
+        71: '', 73: '', 75: '',
+        77: '',
+        80: '', 81: '', 82: '',
+        85: '', 86: '',
+        95: '', 96: '', 99: ''
     };
 
     const weatherDescriptions = {
@@ -933,7 +884,7 @@
             forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
             forecastBar.innerHTML = `
                 <div class="forecast-date">${formattedDate}</div>
-                <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
+                <div class="weather-icon">${weatherIcons[weatherCode] || ''}</div>
                 <div class="weather-day">${dayName}</div>
                 <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
                 <div class="weather-temps">
@@ -954,13 +905,13 @@
 
                 const tickerText = `
                     <span class="ticker-segment">
-                        🌍 Warunki na: <span class="ticker-value">${todayDate}</span> • 
-                        🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
-                        🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
-                        🌡️ Odczuwalna temperatura: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
-                        🌧️ Opady deszczu: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
-                        💨 Siła wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
-                        🪁 Wiatr wieje z: <span class="ticker-value">${windDirection}</span>
+                         Warunki na: <span class="ticker-value">${todayDate}</span> • 
+                         Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
+                         Zachód słońca: <span class="ticker-value">${sunset}</span> • 
+                         Odczuwalna temperatura: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
+                         Opady deszczu: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
+                         Siła wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
+                         Wiatr wieje z: <span class="ticker-value">${windDirection}</span>
                     </span>
                 `;
                 document.getElementById('tickerContent').innerHTML = tickerText.repeat(5);
@@ -1394,7 +1345,7 @@
                             console.error('Błąd ładowania logów:', err);
                             const logTableBody = document.getElementById('logTableBody');
                             if (logTableBody) {
-                                logTableBody.innerHTML = '<tr><td colspan="7">Nie udało się załadować logów.</td></tr>';
+                                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
                             }
                         }
                     }, 500);
