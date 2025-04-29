@@ -1,9 +1,9 @@
 :root {
     --fear-greed-hold: #ffd700; /* Żółty dla HODL */
-    --fear-greed-consider-buy: rgba(0, 160, 0, 0.6); /* Zielony dla BUY SLOWLY */
-    --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla ALL IN! */
-    --fear-greed-consider-sell: rgba(160, 0, 0, 0.6); /* Czerwony dla SELL SLOWLY */
-    --fear-greed-sell: rgba(200, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
+    --fear-greed-consider-buy: rgba(0, 180, 0, 0.6); /* Zielony dla BUY SLOWLY */
+    --fear-greed-opportunity: rgba(0, 220, 0, 0.9); /* Jasnozielony dla ALL IN! */
+    --fear-greed-consider-sell: rgba(180, 0, 0, 0.6); /* Czerwony dla SELL SLOWLY */
+    --fear-greed-sell: rgba(220, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
 }
 
 body {
@@ -455,28 +455,28 @@ body {
 }
 
 .crypto-tile.positive-low {
-    background-color: rgba(0, 120, 0, 0.6);
+    background-color: rgba(0, 140, 0, 0.6);
 }
 
 .crypto-tile.positive-mid {
-    background-color: rgba(0, 160, 0, 0.75);
+    background-color: rgba(0, 180, 0, 0.75);
 }
 
 .crypto-tile.positive-high {
-    background-color: rgba(0, 200, 0, 0.9);
+    background-color: rgba(0, 220, 0, 0.9);
     animation: pulse-positive 1.5s ease-in-out infinite;
 }
 
 .crypto-tile.negative-low {
-    background-color: rgba(120, 0, 0, 0.6);
+    background-color: rgba(140, 0, 0, 0.6);
 }
 
 .crypto-tile.negative-mid {
-    background-color: rgba(160, 0, 0, 0.75);
+    background-color: rgba(180, 0, 0, 0.75);
 }
 
 .crypto-tile.negative-high {
-    background-color: rgba(200, 0, 0, 0.9);
+    background-color: rgba(220, 0, 0, 0.9);
     animation: pulse-negative 1.5s ease-in-out infinite;
 }
 
