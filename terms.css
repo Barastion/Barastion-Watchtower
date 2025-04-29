@@ -6,12 +6,16 @@
     --fear-greed-sell: rgba(200, 0, 0, 0.9);
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #1e1e1e;
     color: #ffffff;
-    margin: 0;
-    padding: 0;
     line-height: 1.6;
 }
 
@@ -21,7 +25,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8); /* Slightly darker overlay for better contrast */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -29,82 +33,67 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.container {
+.terms-container {
     max-width: 600px;
     width: 90%;
-    background-color: #2d2d2d;
+    background-color: #2d2d2d; /* Fully opaque background */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     max-height: 80vh;
-    overflow-y: auto;
-    margin: 0 15px; /* Margines od krawędzi */
-}
-
-.network-status {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ff4d4d;
-    color: #ffffff;
-    text-align: center;
-    padding: 8px;
-    font-size: 0.9em;
-    z-index: 1001;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent internal overflow */
 }
 
 .header {
     text-align: center;
     margin-bottom: 15px;
+    background-color: transparent; /* Remove green background */
 }
 
 .header h1 {
     font-size: 1.5em;
-    margin: 0 0 10px;
+    margin: 0;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
 .controls {
     display: flex;
-    justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
+    justify-content: space-between;
     align-items: center;
-    gap: 20px; /* Zwiększony gap dla lepszego rozdziału */
-    flex-wrap: wrap;
-    padding: 0 20px; /* Zwiększony padding dla odstępu od krawędzi */
+    margin-bottom: 15px;
 }
 
 .language-switcher {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
 }
 
 .language-label {
-    font-size: 0.8em;
+    font-size: 0.9em;
     color: #cccccc;
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .lang-button {
-    background: linear-gradient(135deg, #3a3a3a, #2d2d2d);
+    background: linear-gradient(135deg, #cccccc, #999999);
     color: white;
     border: none;
     padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.9em;
     font-weight: 600;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, background 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
 .lang-button.active {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
+    background: linear-gradient(135deg, #e0e0e0, #b0b0b0);
     filter: brightness(1.2);
 }
 
@@ -115,13 +104,13 @@ body {
 }
 
 .toggle-button {
-    background: linear-gradient(135deg, rgba(255, 80, 80, 0.5), rgba(200, 0, 0, 0.5));
+    background: linear-gradient(135deg, #ff4d4d, #cc0000);
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.9em;
     font-weight: 600;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -135,12 +124,12 @@ body {
 }
 
 .terms-content {
-    background-color: #3a3a3a;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     max-height: 60vh;
     overflow-y: auto;
+    background-color: #3a3a3a; /* Single background for content */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); /* Subtle inner shadow for depth */
 }
 
 .terms-content::-webkit-scrollbar {
@@ -172,26 +161,20 @@ body {
 }
 
 .terms-content p {
-    font-size: 0.8em;
+    font-size: 0.9em;
     margin: 8px 0;
     line-height: 1.5;
-    overflow-wrap: break-word;
 }
 
 .terms-content a {
-    color: #cccccc;
+    color: #ffd700;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .terms-content a:hover {
-    color: #999999;
+    color: #ffeb3b;
     text-decoration: underline;
-}
-
-.terms-language {
-    max-width: 100%;
-    margin: 0;
 }
 
 @keyframes fadeIn {
@@ -200,20 +183,10 @@ body {
 }
 
 @media (max-width: 768px) {
-    body {
-        padding: 0;
-    }
-
-    .container {
-        width: 80%; /* Zmniejszona szerokość dla mniejszego okienka */
+    .terms-container {
+        width: 95%;
         padding: 15px;
-        max-height: 85vh; /* Nieco większa wysokość, aby zmieścić treść */
-        margin: 0 10px; /* Margines od krawędzi */
-    }
-
-    .network-status {
-        font-size: 0.8em;
-        padding: 6px;
+        max-height: 85vh;
     }
 
     .header h1 {
@@ -221,53 +194,34 @@ body {
     }
 
     .controls {
-        flex-direction: row;
         flex-wrap: wrap;
-        justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
-        align-items: center;
-        gap: 8px;
-        padding: 0 10px; /* Padding dla odstępu od krawędzi */
+        gap: 10px;
     }
 
     .language-switcher {
-        flex-wrap: wrap;
-        justify-content: flex-start;
         gap: 5px;
     }
 
     .language-label {
-        font-size: 0.7em;
+        font-size: 0.8em;
     }
 
-    .lang-button {
-        padding: 5px 10px;
-        font-size: 0.7em;
-        min-width: 60px;
-    }
-
+    .lang-button,
     .toggle-button {
         padding: 5px 10px;
-        font-size: 0.7em;
-        min-width: 60px;
+        font-size: 0.8em;
     }
 
     .terms-content {
+        max-height: 65vh;
         padding: 10px;
-        max-height: 65vh; /* Dostosowana wysokość dla mniejszego okienka */
-    }
-
-    .terms-content::-webkit-scrollbar {
-        width: 6px;
     }
 
     .terms-content h2 {
         font-size: 1em;
-        margin: 12px 0 6px;
     }
 
     .terms-content p {
-        font-size: 0.7em;
-        margin: 6px 0;
-        line-height: 1.4;
+        font-size: 0.8em;
     }
 }
