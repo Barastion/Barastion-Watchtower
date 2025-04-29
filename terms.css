@@ -69,6 +69,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-left: 10px;
 }
 
 .language-label {
@@ -115,6 +116,7 @@ body {
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    margin-right: 10px;
 }
 
 .modal-close-button:hover {
@@ -200,6 +202,7 @@ body {
 
     .language-switcher {
         gap: 5px;
+        margin-left: 5px;
     }
 
     .language-label {
@@ -211,6 +214,11 @@ body {
         padding: 5px 10px;
         font-size: 0.8em;
     }
+
+    .modal-close-button {
+        margin-right: 5px;
+    }
+
 
     .terms-content {
         max-height: 65vh;
