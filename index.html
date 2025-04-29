@@ -1583,14 +1583,12 @@
         console.log('Strona załadowana, uruchamiam funkcje...');
         handleNetworkStatus();
         if (document.visibilityState === 'visible') {
-               window.onload = async function() {
-        console.log('Strona załadowana, uruchamiam funkcje...');
-        handleNetworkStatus();
-        if (document.visibilityState === 'visible') {
-            console.log('Karta widoczna, inicjalizuję dane');
+                        console.log('Karta widoczna, uruchamiam aktualizacje danych');
             try {
                 const ip = await getIp();
                 await initializeFallbackData(ip);
+
+                // Ładowanie danych równolegle z obsługą błędów
                 const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
                     getNasaApodImage(),
                     getWeather(ip),
@@ -1599,51 +1597,97 @@
                     updateFearGreedIndicator()
                 ]);
 
-                console.log('Wyniki ładowania danych:', {
+                // Logowanie wyników wywołań API
+                console.log('Wyniki wywołań API:', {
                     nasa: nasaResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${nasaResult.reason}`,
                     weather: weatherResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${weatherResult.reason}`,
-                    fact: dailyFactResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
+                    dailyFact: dailyFactResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
                     crypto: cryptoResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${cryptoResult.reason}`,
                     fearGreed: fearGreedResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${fearGreedResult.reason}`
                 });
 
+                // Logowanie odwiedzin z opóźnieniem, aby uniknąć konfliktów
                 setTimeout(async () => {
                     try {
                         await logVisit();
                     } catch (err) {
-                        console.error('Błąd zapisu logu:', err);
+                        console.error('Błąd podczas logowania odwiedzin:', err);
                         const logTableBody = document.getElementById('logTableBody');
                         if (logTableBody) {
-                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów odwiedzin.</td></tr>';
                         }
                     }
                 }, 500);
 
-                checkCSSLoaded();
-                startCryptoUpdateInterval();
-                startLogUpdateInterval();
-                startFearGreedUpdateInterval();
-                lastUpdateTime = Date.now();
+                // Uruchomienie interwałów aktualizacji
+                manageUpdateIntervals();
             } catch (err) {
-                console.error('Błąd inicjalizacji strony:', err);
-                document.getElementById('networkStatus').textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
-                document.getElementById('networkStatus').style.display = 'block';
+                console.error('Błąd podczas inicjalizacji danych:', err);
+                const networkStatus = document.getElementById('networkStatus');
+                networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
+                networkStatus.style.display = 'block';
             }
+        } else {
+            console.log('Karta niewidoczna, pomijam aktualizacje');
         }
 
+        // Sprawdzanie, czy CSS został poprawnie załadowany
+        checkCSSLoaded();
+
+        // Obsługa zmiany widoczności strony
+        document.addEventListener('visibilitychange', () => {
+            console.log(`Zmiana widoczności: ${document.visibilityState}`);
+            manageUpdateIntervals();
+        });
+
+        // Obsługa zmiany statusu sieci
         window.addEventListener('online', handleNetworkStatus);
         window.addEventListener('offline', handleNetworkStatus);
-        document.addEventListener('visibilitychange', manageUpdateIntervals);
 
-        document.getElementById('termsLinkPL').addEventListener('click', (e) => {
-            e.preventDefault();
-            loadTermsModal('pl');
+        // Obsługa przycisków regulaminu
+        const termsLinkPL = document.getElementById('termsLinkPL');
+        const termsLinkEN = document.getElementById('termsLinkEN');
+        if (termsLinkPL && termsLinkEN) {
+            termsLinkPL.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadTermsModal('pl');
+            });
+            termsLinkEN.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadTermsModal('en');
+            });
+        } else {
+            console.warn('Brak elementów termsLinkPL lub termsLinkEN');
+        }
+
+        // Obsługa przewijania tickerów
+        const tickers = document.querySelectorAll('.nasa-ticker, .weather-ticker');
+        tickers.forEach(ticker => {
+            const content = ticker.querySelector('.ticker-content');
+            if (content) {
+                content.addEventListener('animationiteration', () => {
+                    content.style.animation = 'none';
+                    setTimeout(() => {
+                        content.style.animation = '';
+                    }, 10);
+                });
+            }
         });
 
-        document.getElementById('termsLinkEN').addEventListener('click', (e) => {
-            e.preventDefault();
-            loadTermsModal('en');
-        });
+        // Czyszczenie starego cache przy starcie
+        cleanOldCache();
 
-        console.log('Zdarzenia nasłuchiwania dodane');
+        console.log('Inicjalizacja strony zakończona');
     };
+
+    // Funkcja zabezpieczająca przed wielokrotnym ładowaniem strony
+    window.addEventListener('beforeunload', () => {
+        if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+        if (logIntervalId) clearInterval(logIntervalId);
+        if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+        console.log('Wstrzymano interwały przed opuszczeniem strony');
+    });
+
+</script>
+</body>
+</html>
