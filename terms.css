@@ -1,9 +1,9 @@
 :root {
     --fear-greed-hold: #e6b800;
-    --fear-greed-consider-buy: rgba(0, 160, 0, 0.6);
-    --fear-greed-opportunity: rgba(0, 220, 0, 0.9);
-    --fear-greed-consider-sell: rgba(160, 0, 0, 0.6);
-    --fear-greed-sell: rgba(220, 0, 0, 0.9);
+    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6);
+    --fear-greed-opportunity: rgba(0, 200, 0, 0.9);
+    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6);
+    --fear-greed-sell: rgba(200, 0, 0, 0.9);
 }
 
 body {
@@ -38,7 +38,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     max-height: 80vh;
     overflow-y: auto;
-    margin: 0 15px; /* Margines od krawędzi */
+    margin: 0 15px;
 }
 
 .network-status {
@@ -69,32 +69,34 @@ body {
 
 .controls {
     display: flex;
-    justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
+    justify-content: space-between;
     align-items: center;
-    gap: 20px; /* Zwiększony gap dla lepszego rozdziału */
-    padding: 0 20px; /* Zwiększony padding dla odstępu od krawędzi */
-    flex-wrap: nowrap; /* Zapobiega zawijaniu na mniejszych ekranach */
+    gap: 20px;
+    padding: 0 20px;
+    flex-wrap: nowrap;
+    min-width: 100%; /* Zapewnia wystarczającą szerokość */
 }
 
 .language-switcher {
     display: flex;
     align-items: center;
     gap: 5px;
-    flex-shrink: 0; /* Zapobiega kurczeniu się */
+    flex-shrink: 0;
+    white-space: nowrap; /* Zapobiega zawijaniu tekstu */
 }
 
 .language-label {
     font-size: 0.8em;
-    color: #cccccc; /* Poprawiony błąd składni */
+    color: #cccccc;
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .lang-button {
-    background: linear-gradient(135deg, #3a3a3a, #2d2d2d);
+    background: linear-gradient(135deg, #cccccc, #999999); /* Jasnoszary gradient */
     color: white;
     border: none;
-    padding: 6px 12px;
+    padding: 8px 16px; /* Większy padding, jak w toggle-button */
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.8em;
@@ -102,10 +104,11 @@ body {
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, background 0.3s ease;
+    flex-shrink: 0;
 }
 
 .lang-button.active {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
+    background: linear-gradient(135deg, #e0e0e0, #b0b0b0); /* Jaśniejszy gradient dla aktywnego */
     filter: brightness(1.2);
 }
 
@@ -116,7 +119,7 @@ body {
 }
 
 .toggle-button {
-    background: linear-gradient(135deg, rgba(255, 80, 80, 0.5), rgba(200, 0, 0, 0.5));
+    background: linear-gradient(135deg, #ff4d4d, #cc0000); /* Czerwony gradient */
     color: white;
     border: none;
     padding: 8px 16px;
@@ -127,7 +130,7 @@ body {
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    flex-shrink: 0; /* Zapobiega kurczeniu się */
+    flex-shrink: 0;
 }
 
 .toggle-button:hover {
@@ -181,13 +184,13 @@ body {
 }
 
 .terms-content a {
-    color: #cccccc;
+    color: #ffd700; /* Złoty kolor linków */
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .terms-content a:hover {
-    color: #999999;
+    color: #ffeb3b; /* Jaśniejszy złoty na hover */
     text-decoration: underline;
 }
 
@@ -207,10 +210,10 @@ body {
     }
 
     .container {
-        width: 80%; /* Zmniejszona szerokość dla mniejszego okienka */
+        width: 80%;
         padding: 15px;
-        max-height: 85vh; /* Nieco większa wysokość, aby zmieścić treść */
-        margin: 0 10px; /* Margines od krawędzi */
+        max-height: 85vh;
+        margin: 0 10px;
     }
 
     .network-status {
@@ -224,11 +227,12 @@ body {
 
     .controls {
         flex-direction: row;
-        justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
+        justify-content: space-between;
         align-items: center;
         gap: 8px;
-        padding: 0 10px; /* Padding dla odstępu od krawędzi */
-        flex-wrap: nowrap; /* Zapobiega zawijaniu */
+        padding: 0 10px;
+        flex-wrap: nowrap;
+        min-width: 100%;
     }
 
     .language-switcher {
@@ -255,7 +259,7 @@ body {
 
     .terms-content {
         padding: 10px;
-        max-height: 65vh; /* Dostosowana wysokości dla mniejszego okienka */
+        max-height: 65vh;
     }
 
     .terms-content::-webkit-scrollbar {
