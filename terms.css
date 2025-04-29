@@ -72,19 +72,20 @@ body {
     justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
     align-items: center;
     gap: 20px; /* Zwiększony gap dla lepszego rozdziału */
-    flex-wrap: wrap;
     padding: 0 20px; /* Zwiększony padding dla odstępu od krawędzi */
+    flex-wrap: nowrap; /* Zapobiega zawijaniu na mniejszych ekranach */
 }
 
 .language-switcher {
     display: flex;
     align-items: center;
     gap: 5px;
+    flex-shrink: 0; /* Zapobiega kurczeniu się */
 }
 
 .language-label {
     font-size: 0.8em;
-    color Jarvis: #cccccc;
+    color: #cccccc; /* Poprawiony błąd składni */
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
@@ -126,6 +127,7 @@ body {
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    flex-shrink: 0; /* Zapobiega kurczeniu się */
 }
 
 .toggle-button:hover {
@@ -222,15 +224,15 @@ body {
 
     .controls {
         flex-direction: row;
-        flex-wrap: wrap;
         justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
         align-items: center;
         gap: 8px;
         padding: 0 10px; /* Padding dla odstępu od krawędzi */
+        flex-wrap: nowrap; /* Zapobiega zawijaniu */
     }
 
     .language-switcher {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: flex-start;
         gap: 5px;
     }
@@ -253,7 +255,7 @@ body {
 
     .terms-content {
         padding: 10px;
-        max-height: 65vh; /* Dostosowana wysokość dla mniejszego okienka */
+        max-height: 65vh; /* Dostosowana wysokości dla mniejszego okienka */
     }
 
     .terms-content::-webkit-scrollbar {
