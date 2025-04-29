@@ -344,10 +344,10 @@ body {
     font-weight: 600;
     margin-right: 8px;
     text-shadow: 
-        -2px -2px 0 #000000,
-        2px -2px 0 #000000,
-        -2px 2px 0 #000000,
-        2px 2px 0 #000000,
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
 }
 
@@ -377,10 +377,10 @@ body {
     margin-right: 8px;
     color: #ffffff;
     text-shadow: 
-        -2px -2px 0 #000000,
-        2px -2px 0 #000000,
-        -2px 2px 0 #000000,
-        2px 2px 0 #000000,
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
 }
 
@@ -391,10 +391,10 @@ body {
     margin-left: 8px;
     vertical-align: baseline;
     text-shadow: 
-        -2px -2px 0 #000000,
-        2px -2px 0 #000000,
-        -2px 2px 0 #000000,
-        2px 2px 0 #000000,
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
     line-height: 1;
 }
@@ -422,10 +422,10 @@ body {
     z-index: 2;
     color: #ffffff;
     text-shadow: 
-        -2px -2px 0 #000000,
-        2px -2px 0 #000000,
-         -2px 2px 0 #000000,
-        2px 2px 0 #000000,
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
 }
 
@@ -489,10 +489,10 @@ body {
     font-weight: bold;
     margin-bottom: 1px;
     text-shadow: 
-        -1px -1px 0 #000000,
-        1px 1px 0 #000000,
-        1px 1px 0 #000000,
-        1px 1px 0 #000000,
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
 }
 
@@ -500,20 +500,20 @@ body {
     font-size: 0.75em;
     margin-bottom: 1px;
     text-shadow: 
-        -1px -1px 0 #000000,
-        1px 1px 0 #000000,
-        1px 1px 0 #000000,
-        1px 1px 0 #000000,
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
 }
 
 .crypto-change {
     font-size: 0.6em;
     text-shadow: 
-        -1px -1px 0 #000000,
-        1px 1px 0 #000000,
-        1px 1px 0 #000000,
-        1px 1px 0 #000000,
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
         0 0 2px rgba(0, 0, 0, 0.8);
 }
 
@@ -935,19 +935,19 @@ tr:hover td:last-child {
 
     .fear-greed-indicator .fgi-value {
         text-shadow: 
-            -2px -2px 0 #000000,
-            2px -2px 0 #000000,
-            -2px 2px 0 #000000,
-            2px 2px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
     }
 
     .fear-greed-indicator .fgi-label {
         text-shadow: 
-            -2px -2px 0 #000000,
-            2px -2px 0 #000000,
-            -2px 2px 0 #000000,
-            2px 2px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
     }
 
@@ -955,19 +955,19 @@ tr:hover td:last-child {
         font-size: 0.9em;
         margin-right: 2px;
         text-shadow: 
-            -2px -2px 0 #000000,
-            2px -2px 0 #000000,
-            -2px 2px 0 #000000,
-            2px 2px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
     }
 
     .fear-greed-indicator .fear-greed-signal {
         text-shadow: 
-            -2px -2px 0 #000000,
-            2px -2px 0 #000000,
-            -2px 2px 0 #000000,
-            2px 2px 0 #000000,
+            -1px -1px 0 #000000,
+            1px -1px 0 #000000,
+            -1px 1px 0 #000000,
+            1px 1px 0 #000000,
             0 0 2px rgba(0, 0, 0, 0.8);
     }
 
