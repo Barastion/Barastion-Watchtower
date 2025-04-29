@@ -310,15 +310,15 @@ body {
 }
 .fear-greed-indicator .trend-up {
     color: #00ff00;
-    animation: glow-positive 1.5s ease-in-out infinite;
+    animation: glow-positive 2s ease-in-out infinite;
 }
 .fear-greed-indicator .trend-down {
     color: var(--fear-greed-sell);
-    animation: glow-negative 1.5s ease-in-out infinite;
+    animation: glow-negative 2s ease-in-out infinite;
 }
 .fear-greed-indicator .trend-neutral {
     color: var(--fear-greed-hold);
-    animation: glow-neutral 1.5s ease-in-out infinite;
+    animation: glow-neutral 2s ease-in-out infinite;
 }
 .fear-greed-indicator .fear-greed-signal {
     position: relative;
