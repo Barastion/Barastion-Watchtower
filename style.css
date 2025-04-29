@@ -355,19 +355,19 @@ body {
     z-index: -1;
 }
 .fear-greed-indicator .fear-greed-signal.all-in::after {
-    animation: pulse-glow-positive 2s ease-in-out infinite;
+    animation: pulse-glow-positive 4s ease-in-out infinite;
 }
 .fear-greed-indicator .fear-greed-signal.buy-slowly::after {
-    animation: pulse-glow-positive-buy 2s ease-in-out infinite;
+    animation: pulse-glow-positive-buy 4s ease-in-out infinite;
 }
 .fear-greed-indicator .fear-greed-signal.hodl::after {
-    animation: pulse-glow-neutral 2s ease-in-out infinite;
+    animation: pulse-glow-neutral 4s ease-in-out infinite;
 }
 .fear-greed-indicator .fear-greed-signal.sell-slowly::after {
-    animation: pulse-glow-negative-sell 2s ease-in-out infinite;
+    animation: pulse-glow-negative-sell 4s ease-in-out infinite;
 }
 .fear-greed-indicator .fear-greed-signal.cash-out::after {
-    animation: pulse-glow-negative 2s ease-in-out infinite;
+    animation: pulse-glow-negative 4s ease-in-out infinite;
 }
 .crypto-grid {
     display: grid;
@@ -399,7 +399,7 @@ body {
 }
 .crypto-tile.positive-high {
     background-color: rgba(0, 200, 0, 0.9);
-    animation: pulse-positive 1.5s ease-in-out infinite;
+    animation: pulse-positive 2s ease-in-out infinite;
 }
 .crypto-tile.negative-low {
     background-color: rgba(120, 0, 0, 0.6);
