@@ -30,15 +30,16 @@ body {
 }
 
 .container {
-    max-width: 500px; /* Zmniejszono z 600px */
+    max-width: 500px;
     width: 90%;
     background-color: #2d2d2d;
-    padding: 15px; /* Zmniejszono z 20px */
+    padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    max-height: 70vh; /* Zmniejszono z 80vh */
-    overflow-y: auto;
+    max-height: 70vh;
     margin: 0 15px;
+    display: flex; /* Dodano, aby lepiej kontrolować układ */
+    flex-direction: column; /* Układ pionowy */
 }
 
 .network-status {
@@ -63,7 +64,7 @@ body {
 }
 
 .container .header h1 {
-    font-size: 1.3em; /* Zmniejszono z 1.5em */
+    font-size: 1.3em;
     margin: 0 0 10px;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
@@ -77,6 +78,7 @@ body {
     flex-wrap: nowrap !important;
     width: 100% !important;
     min-width: 100% !important;
+    flex-shrink: 0; /* Zapobiega kurczeniu się sekcji z przyciskami */
 }
 
 .container .language-switcher {
@@ -90,20 +92,20 @@ body {
 }
 
 .container .language-label {
-    font-size: 0.7em; /* Zmniejszono z 0.8em */
+    font-size: 0.7em;
     color: #cccccc !important;
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 .container .lang-button {
-    background: linear-gradient(135deg, #cccccc, #999999) !important; /* Jasnoszary gradient */
+    background: linear-gradient(135deg, #cccccc, #999999) !important;
     color: white !important;
     border: none !important;
-    padding: 6px 12px !important; /* Zmniejszono z 8px 16px */
+    padding: 6px 12px !important;
     border-radius: 8px !important;
     cursor: pointer !important;
-    font-size: 0.7em !important; /* Zmniejszono z 0.8em */
+    font-size: 0.7em !important;
     font-weight: 600 !important;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5) !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
@@ -112,7 +114,7 @@ body {
 }
 
 .container .lang-button.active {
-    background: linear-gradient(135deg, #e0e0e0, #b0b0b0) !important; /* Jaśniejszy gradient dla aktywnego */
+    background: linear-gradient(135deg, #e0e0e0, #b0b0b0) !important;
     filter: brightness(1.2) !important;
 }
 
@@ -123,13 +125,13 @@ body {
 }
 
 .container .toggle-button {
-    background: linear-gradient(135deg, #ff4d4d, #cc0000) !important; /* Czerwony gradient */
+    background: linear-gradient(135deg, #ff4d4d, #cc0000) !important;
     color: white !important;
     border: none !important;
-    padding: 6px 12px !important; /* Zmniejszono z 8px 16px */
+    padding: 6px 12px !important;
     border-radius: 8px !important;
     cursor: pointer !important;
-    font-size: 0.7em !important; /* Zmniejszono z 0.8em */
+    font-size: 0.7em !important;
     font-weight: 600 !important;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5) !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
@@ -148,8 +150,9 @@ body {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    max-height: 50vh; /* Zmniejszono z 60vh, aby lepiej pasować do mniejszego modala */
-    overflow-y: auto;
+    max-height: 50vh;
+    overflow-y: auto; /* Przewijanie przypisane do .terms-content */
+    flex-grow: 1; /* Pozwala .terms-content zająć dostępną przestrzeń */
 }
 
 .container .terms-content::-webkit-scrollbar {
@@ -174,14 +177,14 @@ body {
 }
 
 .container .terms-content h2 {
-    font-size: 1em; /* Zmniejszono z 1.2em */
+    font-size: 1em;
     margin: 15px 0 8px;
     color: #ffffff;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
 .container .terms-content p {
-    font-size: 0.7em; /* Zmniejszono z 0.8em */
+    font-size: 0.7em;
     margin: 8px 0;
     line-height: 1.5;
     overflow-wrap: break-word;
@@ -215,8 +218,8 @@ body {
 
     .container {
         width: 80%;
-        padding: 10px; /* Zmniejszono z 15px */
-        max-height: 75vh; /* Zmniejszono z 85vh */
+        padding: 10px;
+        max-height: 75vh;
         margin: 0 10px;
     }
 
@@ -226,7 +229,7 @@ body {
     }
 
     .container .header h1 {
-        font-size: 1em; /* Zmniejszono z 1.2em */
+        font-size: 1em;
     }
 
     .container .controls {
@@ -248,24 +251,24 @@ body {
     }
 
     .container .language-label {
-        font-size: 0.6em; /* Zmniejszono z 0.7em */
+        font-size: 0.6em;
     }
 
     .container .lang-button {
-        padding: 4px 8px !important; /* Zmniejszono z 5px 10px */
-        font-size: 0.6em !important; /* Zmniejszono z 0.7em */
-        min-width: 50px !important; /* Zmniejszono z 60px */
+        padding: 4px 8px !important;
+        font-size: 0.6em !important;
+        min-width: 50px !important;
     }
 
     .container .toggle-button {
-        padding: 4px 8px !important; /* Zmniejszono z 5px 10px */
-        font-size: 0.6em !important; /* Zmniejszono z 0.7em */
-        min-width: 50px !important; /* Zmniejszono z 60px */
+        padding: 4px 8px !important;
+        font-size: 0.6em !important;
+        min-width: 50px !important;
     }
 
     .container .terms-content {
         padding: 10px;
-        max-height: 55vh; /* Zmniejszono z 65vh */
+        max-height: 55vh;
     }
 
     .container .terms-content::-webkit-scrollbar {
@@ -273,12 +276,12 @@ body {
     }
 
     .container .terms-content h2 {
-        font-size: 0.9em; /* Zmniejszono z 1em */
+        font-size: 0.9em;
         margin: 12px 0 6px;
     }
 
     .container .terms-content p {
-        font-size: 0.6em; /* Zmniejszono z 0.7em */
+        font-size: 0.6em;
         margin: 6px 0;
         line-height: 1.4;
     }
