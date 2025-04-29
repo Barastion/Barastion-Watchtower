@@ -136,6 +136,7 @@
     const termsEN = document.getElementById('termsEN');
     const termsTitle = document.getElementById('termsTitle');
     const closeButton = document.getElementById('closeButton');
+    const termsContent = document.querySelector('.terms-content');
     let currentLanguage = 'pl';
 
     function setLanguage(language) {
@@ -156,6 +157,8 @@
             langEnglish.classList.add('active');
             currentLanguage = 'en';
         }
+        // Przewiń treść do góry po zmianie języka
+        termsContent.scrollTop = 0;
     }
 
     langPolish.addEventListener('click', () => setLanguage('pl'));
@@ -167,6 +170,7 @@
         modalOverlay.style.display = 'none'; // Hide the modal
     });
 
-    // Initialize
-    setLanguage('pl'); // Default to Polish
+    // Initialize and scroll to top on load
+    setLanguage('pl');
+    termsContent.scrollTop = 0; // Przewiń do góry przy załadowaniu
 </script>
