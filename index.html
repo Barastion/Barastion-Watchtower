@@ -47,10 +47,15 @@
             </div>
             <div class="crypto-info">
                 <div class="crypto-header">
-                    <div class="fear-greed-indicator" id="fearGreedIndicator"><span class="fgi-label">Miesięczny sygnał:</span> Ładowanie...</div>
+                    <div class="fear-greed-indicator" id="fearGreedIndicator">
+                        <span class="fgi-label">Miesięczny sygnał:</span>
+                        <span class="trend-indicator"></span>
+                        <span class="fgi-value"></span> –
+                        <span class="fear-greed-signal"></span>
+                    </div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
-                </div>
+            </div>
             <div class="log-table">
                 <div class="table-wrapper">
                     <div class="table-container">
@@ -482,12 +487,32 @@
     function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
         const roundedAverage = Math.round(averageData.average);
-        const { signal, class: signalClass } = averageData.signal;
+        const signalClass = averageData.signal.class;
+        const trendClass = trend.class;
+
+        // Określenie klasy dla koloru tekstu wartości SDWA
+        let valueClass;
+        if (roundedAverage <= 20) {
+            valueClass = 'extreme-fear';
+        } else if (roundedAverage <= 40) {
+            valueClass = 'fear';
+        } else if (roundedAverage <= 60) {
+            valueClass = 'neutral';
+        } else if (roundedAverage <= 80) {
+            valueClass = 'greedy';
+        } else {
+            valueClass = 'extreme-greedy';
+        }
+
+        // Ustawienie klasy dla banera w zależności od sygnału
+        indicator.className = `fear-greed-indicator ${signalClass}`;
+
+        // Ustawienie zawartości HTML z odpowiednimi klasami
         indicator.innerHTML = `
             <span class="fgi-label">Miesięczny sygnał:</span>
-            <span class="trend-indicator ${trend.class}">${trend.symbol}</span>
-            <span class="fgi-value">${roundedAverage}</span> –
-            <span class="fear-greed-signal ${signalClass}">${signal}</span>
+            <span class="trend-indicator ${trendClass}">${trend.symbol}</span>
+            <span class="fgi-value ${valueClass}">${roundedAverage}</span> –
+            <span class="fear-greed-signal">${averageData.signal.signal}</span>
         `;
     }
 
@@ -783,7 +808,7 @@
 
     const weatherIcons = {
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
-        45: '🌫️', 48: '🌫️',
+        45: '�ANTS', 48: '🌫️',
         51: '🌦️', 53: '🌧️', 55: '🌧️',
         56: '🌧️', 57: '🌧️',
         61: '🌦️', 63: '🌧️', 65: '🌧️',
@@ -1059,7 +1084,7 @@
             setCachedData(cacheKey, cacheTimeKey, factData);
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, factData);
             localStorage.removeItem(`rateLimit_${cacheKey}`);
-            displayDailyFactlld(fact);
+            displayDailyFact(fact);
             return factData;
         } catch (err) {
             console.error('Błąd pobierania ciekawostki:', err);
