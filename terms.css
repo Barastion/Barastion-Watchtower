@@ -30,16 +30,15 @@ body {
 }
 
 .container {
-    max-width: 500px;
+    max-width: 600px;
     width: 90%;
     background-color: #2d2d2d;
-    padding: 15px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    max-height: 70vh;
-    margin: 0 15px;
-    display: flex; /* Dodano, aby lepiej kontrolować układ */
-    flex-direction: column; /* Układ pionowy */
+    max-height: 80vh;
+    overflow-y: auto;
+    margin: 0 15px; /* Margines od krawędzi */
 }
 
 .network-status {
@@ -57,151 +56,140 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.container .header {
+.header {
     text-align: center;
     margin-bottom: 15px;
-    background-color: #00ff00; /* TEST: Zielone tło, aby potwierdzić ładowanie terms.css */
 }
 
-.container .header h1 {
-    font-size: 1.3em;
+.header h1 {
+    font-size: 1.5em;
     margin: 0 0 10px;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
-.container .controls {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    gap: 20px;
-    padding: 0 20px;
-    flex-wrap: nowrap !important;
-    width: 100% !important;
-    min-width: 100% !important;
-    flex-shrink: 0; /* Zapobiega kurczeniu się sekcji z przyciskami */
+.controls {
+    display: flex;
+    justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
+    align-items: center;
+    gap: 20px; /* Zwiększony gap dla lepszego rozdziału */
+    flex-wrap: wrap;
+    padding: 0 20px; /* Zwiększony padding dla odstępu od krawędzi */
 }
 
-.container .language-switcher {
-    display: flex !important;
-    align-items: center !important;
+.language-switcher {
+    display: flex;
+    align-items: center;
     gap: 5px;
-    flex-shrink: 0;
-    flex: 1;
-    white-space: nowrap !important;
-    flex-wrap: nowrap !important;
 }
 
-.container .language-label {
-    font-size: 0.7em;
-    color: #cccccc !important;
+.language-label {
+    font-size: 0.8em;
+    color: #cccccc;
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
-.container .lang-button {
-    background: linear-gradient(135deg, #cccccc, #999999) !important;
-    color: white !important;
-    border: none !important;
-    padding: 6px 12px !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
-    font-size: 0.7em !important;
-    font-weight: 600 !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5) !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, background 0.3s ease !important;
-    flex-shrink: 0 !important;
+.lang-button {
+    background: linear-gradient(135deg, #3a3a3a, #2d2d2d);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease, background 0.3s ease;
 }
 
-.container .lang-button.active {
-    background: linear-gradient(135deg, #e0e0e0, #b0b0b0) !important;
-    filter: brightness(1.2) !important;
+.lang-button.active {
+    background: linear-gradient(135deg, #5a6268, #4a5258);
+    filter: brightness(1.2);
 }
 
-.container .lang-button:hover {
-    transform: scale(1.05) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
-    filter: brightness(1.1) !important;
+.lang-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
 }
 
-.container .toggle-button {
-    background: linear-gradient(135deg, #ff4d4d, #cc0000) !important;
-    color: white !important;
-    border: none !important;
-    padding: 6px 12px !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
-    font-size: 0.7em !important;
-    font-weight: 600 !important;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5) !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease !important;
-    flex-shrink: 0 !important;
+.toggle-button {
+    background: linear-gradient(135deg, rgba(255, 80, 80, 0.5), rgba(200, 0, 0, 0.5));
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
-.container .toggle-button:hover {
-    transform: scale(1.05) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
-    filter: brightness(1.1) !important;
+.toggle-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
 }
 
-.container .terms-content {
+.terms-content {
     background-color: #3a3a3a;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    max-height: 50vh;
-    overflow-y: auto; /* Przewijanie przypisane do .terms-content */
-    flex-grow: 1; /* Pozwala .terms-content zająć dostępną przestrzeń */
+    max-height: 60vh;
+    overflow-y: auto;
 }
 
-.container .terms-content::-webkit-scrollbar {
+.terms-content::-webkit-scrollbar {
     width: 8px;
 }
 
-.container .terms-content::-webkit-scrollbar-track {
+.terms-content::-webkit-scrollbar-track {
     background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
     border-radius: 8px;
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.container .terms-content::-webkit-scrollbar-thumb {
+.terms-content::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #5a6268, #4a5258);
     border-radius: 8px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.container .terms-content::-webkit-scrollbar-thumb:hover {
+.terms-content::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #808080, #666666);
     filter: brightness(1.1);
 }
 
-.container .terms-content h2 {
-    font-size: 1em;
+.terms-content h2 {
+    font-size: 1.2em;
     margin: 15px 0 8px;
     color: #ffffff;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
-.container .terms-content p {
-    font-size: 0.7em;
+.terms-content p {
+    font-size: 0.8em;
     margin: 8px 0;
     line-height: 1.5;
     overflow-wrap: break-word;
 }
 
-.container .terms-content a {
-    color: #ffd700 !important; /* Złoty kolor linków */
-    text-decoration: none !important;
-    transition: color 0.3s ease !important;
+.terms-content a {
+    color: #cccccc;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
 
-.container .terms-content a:hover {
-    color: #ffeb3b !important; /* Jaśniejszy złoty na hover */
-    text-decoration: underline !important;
+.terms-content a:hover {
+    color: #999999;
+    text-decoration: underline;
 }
 
-.container .terms-language {
+.terms-language {
     max-width: 100%;
     margin: 0;
 }
@@ -217,10 +205,10 @@ body {
     }
 
     .container {
-        width: 80%;
-        padding: 10px;
-        max-height: 75vh;
-        margin: 0 10px;
+        width: 80%; /* Zmniejszona szerokość dla mniejszego okienka */
+        padding: 15px;
+        max-height: 85vh; /* Nieco większa wysokość, aby zmieścić treść */
+        margin: 0 10px; /* Margines od krawędzi */
     }
 
     .network-status {
@@ -228,60 +216,57 @@ body {
         padding: 6px;
     }
 
-    .container .header h1 {
-        font-size: 1em;
+    .header h1 {
+        font-size: 1.2em;
     }
 
-    .container .controls {
-        flex-direction: row !important;
-        justify-content: space-between !important;
-        align-items: center !important;
+    .controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between; /* Języki po lewej, Zamknij po prawej */
+        align-items: center;
         gap: 8px;
-        padding: 0 10px;
-        flex-wrap: nowrap !important;
-        width: 100% !important;
-        min-width: 100% !important;
+        padding: 0 10px; /* Padding dla odstępu od krawędzi */
     }
 
-    .container .language-switcher {
-        flex-wrap: nowrap !important;
-        justify-content: flex-start !important;
+    .language-switcher {
+        flex-wrap: wrap;
+        justify-content: flex-start;
         gap: 5px;
-        flex: 1;
     }
 
-    .container .language-label {
-        font-size: 0.6em;
+    .language-label {
+        font-size: 0.7em;
     }
 
-    .container .lang-button {
-        padding: 4px 8px !important;
-        font-size: 0.6em !important;
-        min-width: 50px !important;
+    .lang-button {
+        padding: 5px 10px;
+        font-size: 0.7em;
+        min-width: 60px;
     }
 
-    .container .toggle-button {
-        padding: 4px 8px !important;
-        font-size: 0.6em !important;
-        min-width: 50px !important;
+    .toggle-button {
+        padding: 5px 10px;
+        font-size: 0.7em;
+        min-width: 60px;
     }
 
-    .container .terms-content {
+    .terms-content {
         padding: 10px;
-        max-height: 55vh;
+        max-height: 65vh; /* Dostosowana wysokość dla mniejszego okienka */
     }
 
-    .container .terms-content::-webkit-scrollbar {
+    .terms-content::-webkit-scrollbar {
         width: 6px;
     }
 
-    .container .terms-content h2 {
-        font-size: 0.9em;
+    .terms-content h2 {
+        font-size: 1em;
         margin: 12px 0 6px;
     }
 
-    .container .terms-content p {
-        font-size: 0.6em;
+    .terms-content p {
+        font-size: 0.7em;
         margin: 6px 0;
         line-height: 1.4;
     }
