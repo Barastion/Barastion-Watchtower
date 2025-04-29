@@ -374,7 +374,7 @@ body {
 /* Styl napisu "Miesięczny sygnał:" */
 .fear-greed-indicator .fgi-label {
     font-weight: 600;
-    margin-right: 8px;
+    margin-right: 4px;
     color: #ffffff;
     text-shadow: 
         -1px -1px 0 #000000,
@@ -387,7 +387,7 @@ body {
 /* Styl strzałki trendu */
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
-    margin-right: 4px;
+    margin-right: 8px;
     margin-left: 4px;
     vertical-align: baseline;
     text-shadow: 
