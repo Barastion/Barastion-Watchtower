@@ -348,7 +348,7 @@ body {
         1px -1px 0 #000000,
         -1px 1px 0 #000000,
         1px 1px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        0 0 3px rgba(0, 0, 0, 0.9);
 }
 
 .fear-greed-indicator .fgi-value.extreme-fear {
@@ -381,7 +381,7 @@ body {
         1px -1px 0 #000000,
         -1px 1px 0 #000000,
         1px 1px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        0 0 3px rgba(0, 0, 0, 0.9);
 }
 
 /* Styl strzałki trendu */
@@ -395,7 +395,7 @@ body {
         1px -1px 0 #000000,
         -1px 1px 0 #000000,
         1px 1px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        0 0 3px rgba(0, 0, 0, 0.9);
     line-height: 1;
 }
 
@@ -426,7 +426,7 @@ body {
         1px -1px 0 #000000,
         -1px 1px 0 #000000,
         1px 1px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        0 0 3px rgba(0, 0, 0, 0.9);
 }
 
 .crypto-grid {
@@ -493,7 +493,7 @@ body {
         0.5px -0.5px 0 #000000,
         -0.5px 0.5px 0 #000000,
         0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        0 0 3px rgba(0, 0, 0, 0.9);
 }
 
 .crypto-price {
@@ -504,7 +504,7 @@ body {
         0.5px -0.5px 0 #000000,
         -0.5px 0.5px 0 #000000,
         0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        0 0 3px rgba(0, 0, 0, 0.9);
 }
 
 .crypto-change {
@@ -514,7 +514,7 @@ body {
         0.5px -0.5px 0 #000000,
         -0.5px 0.5px 0 #000000,
         0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        0 0 3px rgba(0, 0, 0, 0.9);
 }
 
 .crypto-error {
@@ -939,7 +939,7 @@ tr:hover td:last-child {
             1px -1px 0 #000000,
             -1px 1px 0 #000000,
             1px 1px 0 #000000,
-            0 0 2px rgba(0, 0, 0, 0.8);
+            0 0 3px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .fgi-label {
@@ -948,7 +948,7 @@ tr:hover td:last-child {
             1px -1px 0 #000000,
             -1px 1px 0 #000000,
             1px 1px 0 #000000,
-            0 0 2px rgba(0, 0, 0, 0.8);
+            0 0 3px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .trend-indicator {
@@ -959,7 +959,7 @@ tr:hover td:last-child {
             1px -1px 0 #000000,
             -1px 1px 0 #000000,
             1px 1px 0 #000000,
-            0 0 2px rgba(0, 0, 0, 0.8);
+            0 0 3px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .fear-greed-signal {
@@ -968,7 +968,7 @@ tr:hover td:last-child {
             1px -1px 0 #000000,
             -1px 1px 0 #000000,
             1px 1px 0 #000000,
-            0 0 2px rgba(0, 0, 0, 0.8);
+            0 0 3px rgba(0, 0, 0, 0.9);
     }
 
     .crypto-grid {
