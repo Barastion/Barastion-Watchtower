@@ -737,15 +737,15 @@ tr:hover td:last-child {
 }
 
 @keyframes pulse-positive {
-    0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
-    50% { box-shadow: 0 0 12px rgba(0, 255, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
+    0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.8); }
+    50% { box-shadow: 0 0 13px rgba(0, 255, 0, 1); }
+    100% { box-shadow: 0 0 8px rgba(0, 255, 0, 0.8); }
 }
 
 @keyframes pulse-negative {
-    0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
-    50% { box-shadow: 0 0 12px rgba(0, 0, 0, 1); }
-    100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
+    0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.8); }
+    50% { box-shadow: 0 0 13px rgba(0, 0, 0, 1); }
+    100% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
 }
 
 @keyframes glow-positive {
