@@ -1535,49 +1535,86 @@
     }
 
     async function loadTermsModal(language) {
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalContent = document.getElementById('modalContent');
-        try {
-            const response = await fetch('terms.html');
-            if (!response.ok) throw new Error('Nie udało się załadować terms.html');
-            modalContent.innerHTML = await response.text();
-            const langPolish = modalContent.querySelector('#langPolish');
-            const langEnglish = modalContent.querySelector('#langEnglish');
-            const termsPL = modalContent.querySelector('#termsPL');
-            const termsEN = modalContent.querySelector('#termsEN');
-            const termsTitle = modalContent.querySelector('#termsTitle');
-            const closeButton = modalContent.querySelector('#closeButton');
-            function setLanguage(lang) {
-                if (lang === 'pl') {
-                    termsPL.style.display = 'block';
-                    termsEN.style.display = 'none';
-                    termsTitle.textContent = 'Regulamin Strony';
-                    closeButton.textContent = 'Zamknij';
-                    langPolish.classList.add('active');
-                    langEnglish.classList.remove('active');
-                } else {
-                    termsPL.style.display = 'none';
-                    termsEN.style.display = 'block';
-                    termsTitle.textContent = 'Terms and Conditions';
-                    closeButton.textContent = 'Close';
-                    langPolish.classList.remove('active');
-                    langEnglish.classList.add('active');
-                }
-            }
-            langPolish.addEventListener('click', () => setLanguage('pl'));
-            langEnglish.addEventListener('click', () => setLanguage('en'));
-            closeButton.addEventListener('click', () => {
-                modalOverlay.style.display = 'none';
-                modalContent.innerHTML = '';
-            });
-            setLanguage(language);
-            modalOverlay.style.display = 'flex';
-        } catch (error) {
-            console.error('Błąd ładowania regulaminu:', error);
-            modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
-            modalOverlay.style.display = 'flex';
-        }
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+
+    if (!modalOverlay || !modalContent) {
+        console.error('Błąd: Brak elementów modalOverlay lub modalContent w DOM');
+        return;
     }
+
+    try {
+        const response = await fetch('terms.html');
+        if (!response.ok) throw new Error(`Nie udało się załadować terms.html: ${response.status}`);
+        modalContent.innerHTML = await response.text();
+
+        // Load terms.css dynamically
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'terms.css';
+        document.head.appendChild(link);
+
+        const closeButton = modalContent.querySelector('#closeButton');
+        if (!closeButton) {
+            console.error('Błąd: Nie znaleziono przycisku #closeButton w terms.html');
+            modalContent.innerHTML = '<p>Błąd ładowania regulaminu: brak przycisku zamykania.</p>';
+            modalOverlay.style.display = 'flex';
+            return;
+        }
+
+        closeButton.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+            modalContent.innerHTML = '';
+            // Optionally, remove terms.css if desired
+            // document.head.removeChild(link);
+        });
+
+        const langPolish = modalContent.querySelector('#langPolish');
+        const langEnglish = modalContent.querySelector('#langEnglish');
+        const termsPL = modalContent.querySelector('#termsPL');
+        const termsEN = modalContent.querySelector('#termsEN');
+        const termsTitle = modalContent.querySelector('#termsTitle');
+
+        function setLanguage(lang) {
+            if (lang === 'pl') {
+                termsPL.style.display = 'block';
+                termsEN.style.display = 'none';
+                termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
+                closeButton.textContent = 'Zamknij';
+                langPolish.classList.add('active');
+                langEnglish.classList.remove('active');
+            } else {
+                termsPL.style.display = 'none';
+                termsEN.style.display = 'block';
+                termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
+                closeButton.textContent = 'Close';
+                langPolish.classList.remove('active');
+                langEnglish.classList.add('active');
+            }
+            // Przewiń treść do góry po zmianie języka
+            const termsContent = modalContent.querySelector('.terms-content');
+            if (termsContent) {
+                termsContent.scrollTop = 0;
+            }
+        }
+
+        langPolish.addEventListener('click', () => setLanguage('pl'));
+        langEnglish.addEventListener('click', () => setLanguage('en'));
+        setLanguage(language || 'pl');
+
+        // Przewiń treść do góry po załadowaniu
+        const termsContent = modalContent.querySelector('.terms-content');
+        if (termsContent) {
+            termsContent.scrollTop = 0;
+        }
+
+        modalOverlay.style.display = 'flex';
+    } catch (error) {
+        console.error('Błąd ładowania regulaminu:', error);
+        modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
+        modalOverlay.style.display = 'flex';
+    }
+}
 
     window.onload = async function() {
         console.log('Strona załadowana, uruchamiam funkcje...');
