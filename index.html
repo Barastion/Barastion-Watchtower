@@ -270,7 +270,8 @@
         }
     }
 
-    function minifyData(cacheKey, data) {
+    function minifyData Universiteit
+(cacheKey, data) {
         if (!data) return data;
         if (cacheKey.includes('fear_greed_raw_data')) {
             return data.map(item => ({
@@ -397,6 +398,8 @@
         const multipliers = Array(30).fill(1);
         const latestFGI = parsedValues[0];
 
+        console.log('Surowe dane FGI (30 dni):', values.map(item => ({ value: item.value, timestamp: item.timestamp })));
+
         for (let i = 0; i < 10; i++) {
             let m_high = 1, m_low = 1;
             if (parsedValues[i] > 75) {
@@ -426,6 +429,8 @@
         const std30 = calculateStandardDeviation(parsedValues, 30);
         const signal = getSignal(latestFGI, ema30, std30);
 
+        console.log(`Obliczona wartość SDWA: ${parseFloat(weightedSum.toFixed(1))}`);
+
         return { average: parseFloat(weightedSum.toFixed(1)), signal };
     }
 
@@ -451,17 +456,32 @@
         const sellSlowlyThreshold = ema30 + 0.8 * std30;
         const cashOutThreshold = ema30 + 1.8 * std30;
 
+        let signal, signalClass, reason = '';
+
         if (value < allInThreshold && value < 25) {
-            return { signal: 'ALL IN!', class: 'all-in' };
+            signal = 'ALL IN!';
+            signalClass = 'all-in';
+            reason = `Wskaźnik sygnału pokazuje ALL IN!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg allInThreshold = ${allInThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 25`;
         } else if (value < buySlowlyThreshold && value < 45) {
-            return { signal: 'BUY SLOWLY', class: 'buy-slowly' };
+            signal = 'BUY SLOWLY';
+            signalClass = 'buy-slowly';
+            reason = `Wskaźnik sygnału pokazuje BUY SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg buySlowlyThreshold = ${buySlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 45`;
         } else if (value > cashOutThreshold && value > 75) {
-            return { signal: 'CASH OUT!', class: 'cash-out' };
+            signal = 'CASH OUT!';
+            signalClass = 'cash-out';
+            reason = `Wskaźnik sygnału pokazuje CASH OUT!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg cashOutThreshold = ${cashOutThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 75`;
         } else if (value > sellSlowlyThreshold && value > 55) {
-            return { signal: 'SELL SLOWLY', class: 'sell-slowly' };
+            signal = 'SELL SLOWLY';
+            signalClass = 'sell-slowly';
+            reason = `Wskaźnik sygnału pokazuje SELL SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg sellSlowlyThreshold = ${sellSlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 55`;
         } else {
-            return { signal: 'HODL', class: 'hodl' };
+            signal = 'HODL';
+            signalClass = 'hodl';
+            reason = `Wskaźnik sygnału pokazuje HODL, ponieważ wartość FGI = ${value} nie przekracza progów sygnału, EMA30 = ${ema30.toFixed(1)}`;
         }
+
+        console.log(reason);
+        return { signal, class: signalClass };
     }
 
     function calculateTrend(values) {
@@ -475,13 +495,23 @@
         const ema8 = calculateEMA(parsedValues, 8);
         const difference = ema2 - ema8;
 
+        let trendSymbol, trendClass, trendReason;
         if (Math.abs(difference) < 0.5) {
-            return { symbol: '■', class: 'trend-neutral' };
+            trendSymbol = '■';
+            trendClass = 'trend-neutral';
+            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ■ (trend neutralny)`;
         } else if (difference >= 0.5) {
-            return { symbol: '▲', class: 'trend-up' };
+            trendSymbol = '▲';
+            trendClass = 'trend-up';
+            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▲ (trend w górę)`;
         } else {
-            return { symbol: '▼', class: 'trend-down' };
+            trendSymbol = '▼';
+            trendClass = 'trend-down';
+            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▼ (trend w dół)`;
         }
+
+        console.log(trendReason);
+        return { symbol: trendSymbol, class: trendClass };
     }
 
     function displayFearGreed(averageData, trend) {
@@ -490,7 +520,6 @@
         const signalClass = averageData.signal.class;
         const trendClass = trend.class;
 
-        // Określenie klasy dla koloru tekstu wartości SDWA
         let valueClass;
         if (roundedAverage <= 20) {
             valueClass = 'extreme-fear';
@@ -504,10 +533,7 @@
             valueClass = 'extreme-greedy';
         }
 
-        // Ustawienie klasy dla banera w zależności od sygnału
         indicator.className = `fear-greed-indicator ${signalClass}`;
-
-        // Ustawienie zawartości HTML z odpowiednimi klasami
         indicator.innerHTML = `
             <span class="fgi-label">Miesięczny sygnał:</span>
             <span class="trend-indicator ${trendClass}">${trend.symbol}</span>
@@ -808,7 +834,7 @@
 
     const weatherIcons = {
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
-        45: '�ANTS', 48: '🌫️',
+        45: '🌫️', 48: '🌫️',
         51: '🌦️', 53: '🌧️', 55: '🌧️',
         56: '🌧️', 57: '🌧️',
         61: '🌦️', 63: '🌧️', 65: '🌧️',
@@ -1557,25 +1583,72 @@
     window.onload = async function() {
         console.log('Strona załadowana, uruchamiam funkcje...');
         handleNetworkStatus();
+        if (document.visibilityState === 'visible')
+html
+    window.onload = async function() {
+        console.log('Strona załadowana, uruchamiam funkcje...');
+        handleNetworkStatus();
         if (document.visibilityState === 'visible') {
-            lastUpdateTime = Date.now();
-            manageUpdateIntervals();
+            console.log('Karta widoczna, inicjalizuję dane');
+            try {
+                const ip = await getIp();
+                await initializeFallbackData(ip);
+                const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
+                    getNasaApodImage(),
+                    getWeather(ip),
+                    getDailyFact(),
+                    getCryptoData(),
+                    updateFearGreedIndicator()
+                ]);
+
+                console.log('Wyniki ładowania danych:', {
+                    nasa: nasaResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${nasaResult.reason}`,
+                    weather: weatherResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${weatherResult.reason}`,
+                    fact: dailyFactResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
+                    crypto: cryptoResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${cryptoResult.reason}`,
+                    fearGreed: fearGreedResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${fearGreedResult.reason}`
+                });
+
+                setTimeout(async () => {
+                    try {
+                        await logVisit();
+                    } catch (err) {
+                        console.error('Błąd zapisu logu:', err);
+                        const logTableBody = document.getElementById('logTableBody');
+                        if (logTableBody) {
+                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
+                        }
+                    }
+                }, 500);
+
+                checkCSSLoaded();
+                startCryptoUpdateInterval();
+                startLogUpdateInterval();
+                startFearGreedUpdateInterval();
+                lastUpdateTime = Date.now();
+            } catch (err) {
+                console.error('Błąd inicjalizacji strony:', err);
+                document.getElementById('networkStatus').textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
+                document.getElementById('networkStatus').style.display = 'block';
+            }
         }
+
         window.addEventListener('online', handleNetworkStatus);
         window.addEventListener('offline', handleNetworkStatus);
         document.addEventListener('visibilitychange', manageUpdateIntervals);
+
         document.getElementById('termsLinkPL').addEventListener('click', (e) => {
             e.preventDefault();
             loadTermsModal('pl');
         });
+
         document.getElementById('termsLinkEN').addEventListener('click', (e) => {
             e.preventDefault();
             loadTermsModal('en');
         });
+
+        console.log('Zdarzenia nasłuchiwania dodane');
     };
-
-    window.addEventListener('load', checkCSSLoaded);
 </script>
-
 </body>
 </html>
