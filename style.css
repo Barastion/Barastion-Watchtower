@@ -1,5 +1,5 @@
 :root {
-    --fear-greed-hold: #ffd700; /* Żółty dla HODL */
+    --fear-greed-hold: #d6a000; /* Żółty dla HODL */
     --fear-greed-consider-buy: rgba(0, 120, 0, 0.6); /* Zielony dla BUY SLOWLY */
     --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla ALL IN! */
     --fear-greed-consider-sell: rgba(120, 0, 0, 0.6); /* Czerwony dla SELL SLOWLY */
@@ -744,7 +744,7 @@ tr:hover td:last-child {
 
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
-    50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
+    50% { box-shadow: 0 0 12px rgba(0, 0, 0, 1); }
     100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
 
