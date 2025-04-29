@@ -1,18 +1,19 @@
-<div id="termsModalContent">
+<div class="container">
     <div class="header">
         <h1 id="termsTitle">Regulamin Strony - Barastion Watchtower</h1>
-        <div class="controls">
-            <div class="language-switcher">
-                <span class="language-label">Language:</span>
-                <button id="langPolish" class="lang-button active">Polish</button>
-                <button id="langEnglish" class="lang-button">English</button>
-            </div>
-            <button id="closeButton" class="toggle-button">Zamknij</button>
+    </div>
+    <div class="controls">
+        <div class="language-switcher">
+            <span class="language-label">Language:</span>
+            <button id="langPolish" class="lang-button active">Polish</button>
+            <button id="langEnglish" class="lang-button">English</button>
         </div>
+        <button id="closeButton" class="toggle-button">Zamknij</button>
     </div>
     <div class="terms-content">
         <div id="termsPL" class="terms-language">
             <p><strong>Data wejścia w życie: 20 kwietnia 2025 r.</strong></p>
+
             <h2>1. Postanowienia ogólne</h2>
             <p>1.1. Niniejszy regulamin („Regulamin”) określa zasady korzystania ze strony internetowej dostępnej pod adresem <a href="https://barastion.github.io/Barastion-Watchtower/" target="_blank">https://barastion.github.io/Barastion-Watchtower/</a> („Strona”), prowadzonej przez osobę fizyczną działającą w ramach hobbystycznego projektu („Administrator”). Kontakt z Administratorem: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
             <p>1.2. Strona Barastion Watchtower jest osobistym dashboardem stworzonym w celach hobbystycznych, służącym do monitorowania pogody, kryptowalut oraz wyświetlania ciekawostek. Strona jest w 100% darmowa, nie jest reklamowana, nie generuje przychodów i została stworzona dla osób, którym podoba się pomysł Administratora na osobisty dashboard.</p>
@@ -35,7 +36,7 @@
                 - Sprostowania, usunięcia lub ograniczenia przetwarzania danych.<br>
                 - Wniesienia sprzeciwu wobec przetwarzania.<br>
                 - Wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (UODO).<br>
-                Wnioski można zgłaszać na adres: <a href="mailto:lukasz13d@gmail.com">lukasz13 pertaind@gmail.com</a>. Usunięcie logu jest możliwe po ręcznym wykonaniu operacji przez Administratora w bazie danych.</p>
+                Wnioski można zgłaszać na adres: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>. Usunięcie logu jest możliwe po ręcznym wykonaniu operacji przez Administratora w bazie danych.</p>
             <p>3.7. <strong>Odbiorcy danych</strong>: Dane są przekazywane do usługi Firebase (Google Cloud), która może przetwarzać dane poza Europejskim Obszarem Gospodarczym (EOG). Transfer danych jest zabezpieczony standardowymi klauzulami umownymi. Inne usługi, takie jak ipapi.co, mogą być używane do określania lokalizacji na podstawie IP.</p>
             <p>3.8. <strong>Brak zgody</strong>: Strona nie wymaga wyrażenia zgody na zbieranie danych, ponieważ przetwarzanie opiera się na uzasadnionym interesie. Użytkownik może wnieść sprzeciw wobec przetwarzania, kontaktując się z Administratorem.</p>
 
@@ -69,6 +70,7 @@
         </div>
         <div id="termsEN" class="terms-language" style="display: none;">
             <p><strong>Effective Date: April 20, 2025</strong></p>
+
             <h2>1. General Provisions</h2>
             <p>1.1. These terms and conditions ("Terms") govern the use of the website available at <a href="https://barastion.github.io/Barastion-Watchtower/" target="_blank">https://barastion.github.io/Barastion-Watchtower/</a> ("Website"), operated by an individual as part of a hobby project ("Administrator"). Contact with the Administrator: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
             <p>1.2. The Barastion Watchtower Website is a personal dashboard created for hobby purposes, used for monitoring weather, cryptocurrencies, and displaying trivia. The Website is 100% free, not advertised, generates no revenue, and was created for individuals who appreciate the Administrator's concept of a personal dashboard.</p>
@@ -124,44 +126,47 @@
             <p>8.3. For any questions or concerns, please contact: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
         </div>
     </div>
-    <script>
-        // Obsługa przełączania języka
-        const langPolish = document.getElementById('langPolish');
-        const langEnglish = document.getElementById('langEnglish');
-        const termsPL = document.getElementById('termsPL');
-        const termsEN = document.getElementById('termsEN');
-        const termsTitle = document.getElementById('termsTitle');
-        const closeButton = document.getElementById('closeButton');
-
-        function setLanguage(lang) {
-            if (lang === 'pl') {
-                termsPL.style.display = 'block';
-                termsEN.style.display = 'none';
-                termsTitle.textContent = 'Regulamin Strony';
-                closeButton.textContent = 'Zamknij';
-                langPolish.classList.add('active');
-                langEnglish.classList.remove('active');
-            } else {
-                termsPL.style.display = 'none';
-                termsEN.style.display = 'block';
-                termsTitle.textContent = 'Terms and Conditions';
-                closeButton.textContent = 'Close';
-                langPolish.classList.remove('active');
-                langEnglish.classList.add('active');
-            }
-        }
-
-        // Dodanie nasłuchiwania zdarzeń
-        if (langPolish && langEnglish) {
-            langPolish.addEventListener('click', () => setLanguage('pl'));
-            langEnglish.addEventListener('click', () => setLanguage('en'));
-        } else {
-            console.warn('Błąd: Nie znaleziono przycisków języka (#langPolish lub #langEnglish)');
-        }
-
-        // Ustaw domyślny język na podstawie parametru URL lub języka przeglądarki
-        const urlParams = new URLSearchParams(window.location.search);
-        const lang = urlParams.get('lang') || (navigator.language.split('-')[0] === 'pl' ? 'pl' : 'en');
-        setLanguage(lang);
-    </script>
 </div>
+
+<script>
+    // Language toggle functionality
+    const langPolish = document.getElementById('langPolish');
+    const langEnglish = document.getElementById('langEnglish');
+    const termsPL = document.getElementById('termsPL');
+    const termsEN = document.getElementById('termsEN');
+    const termsTitle = document.getElementById('termsTitle');
+    const closeButton = document.getElementById('closeButton');
+    let currentLanguage = 'pl';
+
+    function setLanguage(language) {
+        if (language === 'pl') {
+            termsPL.style.display = 'block';
+            termsEN.style.display = 'none';
+            termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
+            closeButton.textContent = 'Zamknij';
+            langPolish.classList.add('active');
+            langEnglish.classList.remove('active');
+            currentLanguage = 'pl';
+        } else {
+            termsPL.style.display = 'none';
+            termsEN.style.display = 'block';
+            termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
+            closeButton.textContent = 'Close';
+            langPolish.classList.remove('active');
+            langEnglish.classList.add('active');
+            currentLanguage = 'en';
+        }
+    }
+
+    langPolish.addEventListener('click', () => setLanguage('pl'));
+    langEnglish.addEventListener('click', () => setLanguage('en'));
+
+    // Close button functionality
+    closeButton.addEventListener('click', () => {
+        const modalOverlay = document.getElementById('modalOverlay');
+        modalOverlay.style.display = 'none'; // Hide the modal
+    });
+
+    // Initialize
+    setLanguage('pl'); // Default to Polish
+</script>
