@@ -1,10 +1,11 @@
 :root {
-    --fear-greed-hold: #bf8600;
-    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6);
-    --fear-greed-opportunity: rgba(0, 200, 0, 0.9);
-    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6);
-    --fear-greed-sell: rgba(200, 0, 0, 0.9);
+    --fear-greed-hold: #e6b800; /* Żółty dla HODL, ciepły i czytelny */
+    --fear-greed-consider-buy: rgba(0, 120, 0, 0.6); /* Zielony dla BUY SLOWLY */
+    --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla ALL IN! */
+    --fear-greed-consider-sell: rgba(120, 0, 0, 0.6); /* Czerwony dla SELL SLOWLY */
+    --fear-greed-sell: rgba(200, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
 }
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #1e1e1e;
@@ -13,6 +14,7 @@ body {
     padding: 20px;
     line-height: 1.6;
 }
+
 .container {
     max-width: 960px;
     margin: 0 auto;
@@ -21,6 +23,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
 .network-status {
     display: none;
     position: fixed;
@@ -35,11 +38,13 @@ body {
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
+
 .nasa-container {
     max-width: 640px;
     margin: 0 auto 20px;
     text-align: center;
 }
+
 .nasa-frame {
     position: relative;
     width: 100%;
@@ -50,6 +55,7 @@ body {
     background-color: #2d2d2d;
     border: 2px solid #555555;
 }
+
 .nasa-frame img,
 .nasa-frame iframe {
     position: absolute;
@@ -60,9 +66,11 @@ body {
     object-fit: cover;
     border-radius: 6px;
 }
+
 .nasa-frame iframe {
     object-fit: contain;
 }
+
 .nasa-ticker {
     width: 100%;
     background-color: rgba(0, 0, 0, 0.6);
@@ -73,31 +81,38 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     margin-top: 0;
 }
+
 #nasaTickerContent {
     display: inline-block;
     padding-left: 100%;
     animation: ticker 360s linear infinite;
+    -webkit-animation: ticker 360s linear infinite;
     font-size: 0.7em;
     color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
 }
+
 .nasa-ticker .ticker-segment {
     display: inline-block;
     padding-right: 180px;
 }
+
 .search-container {
     text-align: center;
     margin: 20px 0 10px 0;
 }
+
 .search-container form {
     display: inline-flex;
     align-items: center;
     gap: 10px;
 }
+
 .search-container label {
     font-size: 0.9em;
     color: #ffffff;
 }
+
 .search-container input[type="text"] {
     padding: 5px 10px;
     border: 1px solid #555555;
@@ -107,37 +122,44 @@ body {
     font-size: 0.9em;
     width: 200px;
 }
+
 .search-container input[type="text"]:focus {
     outline: none;
     border-color: #5a6268;
 }
+
 .daily-fact {
     text-align: center;
-    margin: 20px 5px;
+    margin: 20px 5px 20px 5px;
     font-size: 0.9em;
     color: #ffffff;
 }
+
 .fact-header {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     font-weight: 500;
 }
+
 .fact-content {
-    margin: 5px auto 0;
+    margin: 5px 5px 0 5px;
     font-size: 0.9em;
     font-style: italic;
     line-height: 1.5;
     overflow-wrap: break-word;
     white-space: normal;
-    max-width: 700px;
+    max-width: 100%;
 }
-@media
- (max-width: 768px) {
+
+@media (min-width: 769px) {
     .fact-content {
-        max-width: 100%;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
+
 .content-frame {
     max-width: 800px;
     margin: 0 auto;
@@ -146,20 +168,24 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
+
 .weather-info {
     margin-bottom: 20px;
 }
+
 .weather-forecast {
     background-color: #2d2d2d;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 .weather-city {
     text-align: center;
     margin: 2px 0;
     font-size: 1.2em;
 }
+
 .forecast-container {
     display: flex;
     gap: 10px;
@@ -167,6 +193,7 @@ body {
     padding: 10px 0;
     -webkit-overflow-scrolling: touch;
 }
+
 .forecast-bar {
     background-color: #3a3a3a;
     border-radius: 8px;
@@ -180,21 +207,26 @@ body {
     justify-content: center;
     gap: 5px;
 }
+
 .forecast-bar.today {
     border: 2px solid #5a6268;
 }
+
 .forecast-date {
     font-size: 0.7em;
     color: #cccccc;
     margin-bottom: 5px;
 }
+
 .weather-icon {
     font-size: 1.5em;
 }
+
 .weather-day {
     font-size: 0.9em;
     font-weight: bold;
 }
+
 .weather-description {
     font-size: 0.8em;
     overflow-wrap: break-word;
@@ -203,22 +235,26 @@ body {
     justify-content: center;
     height: 40px;
 }
+
 .weather-temps {
     display: flex;
     flex-direction: column;
     gap: 2px;
     align-items: center;
 }
+
 .temp-max {
     color: #ff4d4d;
     font-weight: bold;
     font-size: 1em;
 }
+
 .temp-min {
     color: #4d94ff;
     font-weight: bold;
     font-size: 1em;
 }
+
 .forecast-error {
     font-size: 0.8em;
     color: #999999;
@@ -226,6 +262,7 @@ body {
     padding: 10px;
     width: 100%;
 }
+
 .weather-ticker {
     background-color: #3a3a3a;
     padding: 4px 0;
@@ -236,19 +273,24 @@ body {
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
 #tickerContent {
     display: inline-block;
     padding-left: 100%;
     animation: ticker 180s linear infinite;
+    -webkit-animation: ticker 180s linear infinite;
     font-size: 0.8em;
 }
+
 .ticker-segment {
     display: inline-block;
     padding-right: 180px;
 }
+
 .ticker-value {
     font-weight: bold;
 }
+
 .crypto-info {
     background-color: #2d2d2d;
     padding: 15px;
@@ -256,9 +298,11 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
 }
+
 .crypto-header {
     margin-bottom: 2px;
 }
+
 .fear-greed-indicator {
     background-color: #808080;
     color: #ffffff;
@@ -275,106 +319,108 @@ body {
     white-space: normal;
     box-sizing: border-box;
 }
-.fear-greed-indicator .fear-greed-value {
+
+/* Styl wartości FGI */
+.fear-greed-indicator .fgi-value {
     font-weight: 600;
     margin-right: 8px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
 }
-.fear-greed-indicator .fear-greed-label {
-    font-weight: 600;
-    margin-right: 8px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
+
+/* Styl strzałki trendu */
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 3px;
     margin-left: 8px;
     vertical-align: baseline;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
     line-height: 1;
 }
+
 .fear-greed-indicator .trend-up {
     color: #00ff00;
-    animation: glow-positive 2s ease-in-out infinite;
+    animation: glow-positive 1.5s ease-in-out infinite;
 }
+
 .fear-greed-indicator .trend-down {
     color: var(--fear-greed-sell);
-    animation: glow-negative 2s ease-in-out infinite;
+    animation: glow-negative 1.5s ease-in-out infinite;
 }
+
 .fear-greed-indicator .trend-neutral {
     color: var(--fear-greed-hold);
-    animation: glow-neutral 2s ease-in-out infinite;
+    animation: glow-neutral 1.5s ease-in-out infinite;
 }
+
+/* Styl sygnału */
 .fear-greed-indicator .fear-greed-signal {
     position: relative;
     display: inline-block;
     padding: 2px 6px;
-    z-index: 2;
-    color: #ffffff;
+    z-index: 2; /* Tekst na wierzchu */
+    color: #ffffff; /* Biały tekst */
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1); /* Czarny kontur */
 }
+
+/* Pseudoelement dla pulsującego efektu (pozioma linia) */
 .fear-greed-indicator .fear-greed-signal::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 75%;
+    width: 80%;
     height: 1px;
-    background-color: transparent;
-    z-index: 1;
+    z-index: -1; /* Za tekstem, nad banerem */
 }
-.fear-greed-indicator .fear-greed-signal::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75%;
-    height: 1px;
-    z-index: -1;
+
+/* Pulsujący efekt dla każdego sygnału */
+.fear-greed-indicator .fear-greed-signal.all-in::before {
+    animation: pulse-glow-positive 1.5s ease-in-out infinite;
 }
-.fear-greed-indicator .fear-greed-signal.all-in::after {
-    animation: pulse-glow-positive 2s ease-in-out infinite;
+
+.fear-greed-indicator .fear-greed-signal.buy-slowly::before {
+    animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
 }
-.fear-greed-indicator .fear-greed-signal.buy-slowly::after {
-    animation: pulse-glow-positive-buy 2s ease-in-out infinite;
+
+.fear-greed-indicator .fear-greed-signal.hodl::before {
+    animation: pulse-glow-neutral 1.5s ease-in-out infinite;
 }
-.fear-greed-indicator .fear-greed-signal.hodl::after {
-    animation: pulse-glow-neutral 2s ease-in-out infinite;
+
+.fear-greed-indicator .fear-greed-signal.sell-slowly::before {
+    animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
 }
-.fear-greed-indicator .fear-greed-signal.sell-slowly::after {
-    animation: pulse-glow-negative-sell 2s ease-in-out infinite;
+
+.fear-greed-indicator .fear-greed-signal.cash-out::before {
+    animation: pulse-glow-negative 1.5s ease-in-out infinite;
 }
-.fear-greed-indicator .fear-greed-signal.cash-out::after {
-    animation: pulse-glow-negative 2s ease-in-out infinite;
-}
+
 .crypto-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
     padding: 10px;
 }
+
 .crypto-tile {
     padding: 4px;
     border-radius: 6px;
@@ -388,67 +434,95 @@ body {
     transition: transform 0.2s, background-color 0.5s ease;
     cursor: pointer;
 }
+
 .crypto-tile:hover {
     transform: scale(1.05);
 }
+
 .crypto-tile.positive-low {
     background-color: rgba(0, 120, 0, 0.6);
 }
+
 .crypto-tile.positive-mid {
     background-color: rgba(0, 160, 0, 0.75);
 }
+
 .crypto-tile.positive-high {
     background-color: rgba(0, 200, 0, 0.9);
-    animation: pulse-positive 2s ease-in-out infinite;
+    animation: pulse-positive 1.5s ease-in-out infinite;
 }
+
 .crypto-tile.negative-low {
     background-color: rgba(120, 0, 0, 0.6);
 }
+
 .crypto-tile.negative-mid {
     background-color: rgba(160, 0, 0, 0.75);
 }
+
 .crypto-tile.negative-high {
     background-color: rgba(200, 0, 0, 0.9);
-    animation: pulse-negative 2s ease-in-out infinite;
+    animation: pulse-negative 1.5s ease-in-out infinite;
 }
+
 .crypto-tile.neutral {
     background-color: rgba(128, 128, 128, 0.5);
 }
+
 .crypto-symbol {
     font-size: 0.85em;
     font-weight: bold;
     margin-bottom: 1px;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
+
 .crypto-price {
     font-size: 0.75em;
     margin-bottom: 1px;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
+
 .crypto-change {
     font-size: 0.6em;
     text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
+        -0.4px -0.4px 0 black,
+        0.4px -0.4px 0 black,
+        -0.4px 0.4px 0 black,
+        0.4px 0.4px 0 black,
+        -0.4px 0 0 black,
+        0.4px 0 0 black,
+        0 -0.4px 0 black,
+        0 0.4px 0 black,
+        0 0 0.5px black,
+        0 0 2px rgba(0, 0, 0, 1);
 }
+
 .crypto-error {
     text-align: center;
     font-size: 0.9em;
     color: #ff4d4d;
 }
+
 .log-table {
     background-color: #333333;
     padding: 20px;
@@ -457,15 +531,18 @@ body {
     max-width: 800px;
     margin: 0 auto;
 }
+
 .table-wrapper {
     overflow-y: hidden;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
+
 .table-container {
     width: 100%;
     overflow: hidden;
 }
+
 table {
     width: 100%;
     min-width: 0;
@@ -476,9 +553,11 @@ table {
     max-width: 100%;
     box-sizing: border-box;
 }
+
 thead tr {
     background: linear-gradient(135deg, #5a6268, #4a5258);
 }
+
 th, td {
     padding: 5px;
     height: 35px;
@@ -487,6 +566,7 @@ th, td {
     font-size: 0.9em;
     box-sizing: border-box;
 }
+
 th {
     background: transparent;
     color: white;
@@ -495,48 +575,61 @@ th {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transition: filter 0.3s ease;
 }
+
 th:hover {
     filter: brightness(1.1);
 }
+
 th:first-child {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
 }
+
 th:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
 th.location-header {
     max-width: 140px;
 }
+
 tr:nth-child(odd) {
     background-color: #3a3a3a;
 }
+
 tr:nth-child(even) {
     background-color: #2d2d2d;
 }
+
 tr:hover {
     background-color: #4a4a4a;
 }
+
 tr:not(:first-child) td:first-child {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
 }
+
 tr:not(:first-child) td:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
 tr:hover td:first-child {
     border-top-left-radius: 8px;
     border-bottom-left-radius: 8px;
 }
+
 tr:hover td:last-child {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
 }
+
 .location-cell {
     max-width: 140px;
 }
+
 .city {
     overflow-wrap: break-word;
     max-width: 100%;
@@ -546,6 +639,7 @@ tr:hover td:last-child {
     line-height: 1.2;
     hyphens: auto;
 }
+
 .device {
     overflow-wrap: break-word;
     max-width: 100%;
@@ -555,6 +649,7 @@ tr:hover td:last-child {
     line-height: 1.2;
     hyphens: auto;
 }
+
 .country {
     font-size: 0.8em;
     color: #cccccc;
@@ -563,6 +658,7 @@ tr:hover td:last-child {
     line-height: 1.2;
     hyphens: auto;
 }
+
 .isp {
     font-size: 0.8em;
     color: #cccccc;
@@ -571,14 +667,17 @@ tr:hover td:last-child {
     line-height: 1.2;
     hyphens: auto;
 }
+
 .hidden-log {
     display: none;
 }
+
 .toggle-container {
     display: flex;
     justify-content: center;
     margin-top: 10px;
 }
+
 .toggle-button {
     background: linear-gradient(135deg, #5a6268, #4a5258);
     color: white;
@@ -592,21 +691,27 @@ tr:hover td:last-child {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
+    position: relative;
 }
+
 .toggle-button:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
 }
+
+/* Stylizacja suwaków przewijania */
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
 }
+
 ::-webkit-scrollbar-track {
     background: #2d2d2d;
     border-radius: 6px;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
+
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, #5a6268, #4a5258);
     border-radius: 6px;
@@ -614,14 +719,16 @@ tr:hover td:last-child {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     transition: background 0.3s ease;
 }
+
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #6a7278, #5a6268);
 }
+
 ::-webkit-scrollbar-corner {
     background: #2d2d2d;
 }
-@keyframes
- ticker {
+
+@keyframes ticker {
     0% {
         transform: translateX(0);
     }
@@ -629,748 +736,665 @@ tr:hover td:last-child {
         transform: translateX(-100%);
     }
 }
-@keyframes
- pulse-positive {
+
+@-webkit-keyframes ticker {
+    0% {
+        -webkit-transform: translateX(0);
+    }
+    100% {
+        -webkit-transform: translateX(-100%);
+    }
+}
+
+@keyframes pulse-positive {
     0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(0, 255, 0, 1); }
     100% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.7); }
 }
-@keyframes
- pulse-negative {
+
+@keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
     50% { box-shadow: 0 0 12px rgba(255, 0, 0, 1); }
     100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.7); }
 }
-@keyframes
- pulse-glow-positive {
+
+@keyframes pulse-glow-positive {
     0% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(0, 200, 0, 1),
-            0 0 6px 5px rgba(0, 200, 0, 0.9),
-            0 0 8px 7px rgba(0, 200, 0, 0.8),
-            0 0 10px 9px rgba(0, 200, 0, 0.7),
-            0 0 12px 11px rgba(0, 200, 0, 0.6);
+            0 0 5px 5px rgba(0, 200, 0, 1),
+            0 0 9px 7px rgba(0, 200, 0, 1),
+            0 0 13px 9px rgba(0, 200, 0, 1),
+            0 0 16px 11px rgba(0, 200, 0, 0.75),
+            0 0 20px 13px rgba(0, 200, 0, 0.75);
     }
     50% {
         box-shadow: 
-            inset 0 0 5px 3px rgba(0, 225, 0, 1),
-            0 0 7px 5px rgba(0, 225, 0, 0.9),
-            0 0 9px 7px rgba(0, 225, 0, 0.8),
-            0 0 11px 9px rgba(0, 225, 0, 0.7),
-            0 0 13px 11px rgba(0, 225, 0, 0.6);
+            0 0 8px 5px rgba(0, 255, 0, 1),
+            0 0 12px 7px rgba(0, 255, 0, 1),
+            0 0 15px 9px rgba(0, 255, 0, 1),
+            0 0 19px 11px rgba(0, 255, 0, 0.75),
+            0 0 23px 13px rgba(0, 255, 0, 0.75);
     }
     100% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(0, 200, 0, 1),
-            0 0 6px 5px rgba(0, 200, 0, 0.9),
-            0 0 8px 7px rgba(0, 200, 0, 0.8),
-            0 0 10px 9px rgba(0, 200, 0, 0.7),
-            0 0 12px 11px rgba(0, 200, 0, 0.6);
+            0 0 5px 5px rgba(0, 200, 0, 1),
+            0 0 9px 7px rgba(0, 200, 0, 1),
+            0 0 13px 9px rgba(0, 200, 0, 1),
+            0 0 16px 11px rgba(0, 200, 0, 0.75),
+            0 0 20px 13px rgba(0, 200, 0, 0.75);
     }
 }
-@keyframes
- pulse-glow-positive-buy {
+
+@keyframes pulse-glow-positive-buy {
     0% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(0, 120, 0, 1),
-            0 0 6px 5px rgba(0, 120, 0, 0.9),
-            0 0 8px 7px rgba(0, 120, 0, 0.8),
-            0 0 10px 9px rgba(0, 120, 0, 0.7),
-            0 0 12px 11px rgba(0, 120, 0, 0.6);
+            0 0 5px 5px rgba(0, 120, 0, 1),
+            0 0 9px 7px rgba(0, 120, 0, 1),
+            0 0 13px 9px rgba(0, 120, 0, 1),
+            0 0 16px 11px rgba(0, 120, 0, 0.75),
+            0 0 20px 13px rgba(0, 120, 0, 0.75);
     }
     50% {
         box-shadow: 
-            inset 0 0 5px 3px rgba(0, 145, 0, 1),
-            0 0 7px 5px rgba(0, 145, 0, 0.9),
-            0 0 9px 7px rgba(0, 145, 0, 0.8),
-            0 0 11px 9px rgba(0, 145, 0, 0.7),
-            0 0 13px 11px rgba(0, 145, 0, 0.6);
+            0 0 8px 5px rgba(0, 160, 0, 1),
+            0 0 12px 7px rgba(0, 160, 0, 1),
+            0 0 15px 9px rgba(0, 160, 0, 1),
+            0 0 19px 11px rgba(0, 160, 0, 0.75),
+            0 0 23px 13px rgba(0, 160, 0, 0.75);
     }
     100% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(0, 120, 0, 1),
-            0 0 6px 5px rgba(0, 120, 0, 0.9),
-            0 0 8px 7px rgba(0, 120, 0, 0.8),
-            0 0 10px 9px rgba(0, 120, 0, 0.7),
-            0 0 12px 11px rgba(0, 120, 0, 0.6);
+            0 0 5px 5px rgba(0, 120, 0, 1),
+            0 0 9px 7px rgba(0, 120, 0, 1),
+            0 0 13px 9px rgba(0, 120, 0, 1),
+            0 0 16px 11px rgba(0, 120, 0, 0.75),
+            0 0 20px 13px rgba(0, 120, 0, 0.75);
     }
 }
-@keyframes
- pulse-glow-neutral {
+
+@keyframes pulse-glow-neutral {
     0% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(230, 184, 0, 1),
-            0 0 6px 5px rgba(230, 184, 0, 0.9),
-            0 0 8px 7px rgba(230, 184, 0, 0.8),
-            0 0 10px 9px rgba(230, 184, 0, 0.7),
-            0 0 12px 11px rgba(230, 184, 0, 0.6);
+            0 0 5px 5px rgba(230, 184, 0, 1),
+            0 0 9px 7px rgba(230, 184, 0, 1),
+            0 0 13px 9px rgba(230, 184, 0, 1),
+            0 0 16px 11px rgba(230, 184, 0, 0.75),
+            0 0 20px 13px rgba(230, 184, 0, 0.75);
     }
     50% {
         box-shadow: 
-            inset 0 0 5px 3px rgba(255, 209, 25, 1),
-            0 0 7px 5px rgba(255, 209, 25, 0.9),
-            0 0 9px 7px rgba(255, 209, 25, 0.8),
-            0 0 11px 9px rgba(255, 209, 25, 0.7),
-            0 0 13px 11px rgba(255, 209, 25, 0.6);
+            0 0 8px 5px rgba(255, 235, 59, 1),
+            0 0 12px 7px rgba(255, 235, 59, 1),
+            0 0 15px 9px rgba(255, 235, 59, 1),
+            0 0 19px 11px rgba(255, 235, 59, 0.75),
+            0 0 23px 13px rgba(255, 235, 59, 0.75);
     }
     100% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(230, 184, 0, 1),
-            0 0 6px 5px rgba(230, 184, 0, 0.9),
-            0 0 8px 7px rgba(230, 184, 0, 0.8),
-            0 0 10px 9px rgba(230, 184, 0, 0.7),
-            0 0 12px 11px rgba(230, 184, 0, 0.6);
+            0 0 5px 5px rgba(230, 184, 0, 1),
+            0 0 9px 7px rgba(230, 184, 0, 1),
+            0 0 13px 9px rgba(230, 184, 0, 1),
+            0 0 16px 11px rgba(230, 184, 0, 0.75),
+            0 0 20px 13px rgba(230, 184, 0, 0.75);
     }
 }
-@keyframes
- pulse-glow-negative-sell {
+
+@keyframes pulse-glow-negative-sell {
     0% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(120, 0, 0, 1),
-            0 0 6px 5px rgba(120, 0, 0, 0.9),
-            0 0 8px 7px rgba(120, 0, 0, 0.8),
-            0 0 10px 9px rgba(120, 0, 0, 0.7),
-            0 0 12px 11px rgba(120, 0, 0, 0.6);
+            0 0 5px 5px rgba(120, 0, 0, 1),
+            0 0 9px 7px rgba(120, 0, 0, 1),
+            0 0 13px 9px rgba(120, 0, 0, 1),
+            0 0 16px 11px rgba(120, 0, 0, 0.75),
+            0 0 20px 13px rgba(120, 0, 0, 0.75);
     }
     50% {
         box-shadow: 
-            inset 0 0 5px 3px rgba(145, 25, 25, 1),
-            0 0 7px 5px rgba(145, 25, 25, 0.9),
-            0 0 9px 7px rgba(145, 25, 25, 0.8),
-            0 0 11px 9px rgba(145, 25, 25, 0.7),
-            0 0 13px 11px rgba(145, 25, 25, 0.6);
+            0 0 8px 5px rgba(255, 0, 0, 1),
+            0 0 12px 7px rgba(255, 0, 0, 1),
+            0 0 15px 9px rgba(255, 0, 0, 1),
+            0 0 19px 11px rgba(255, 0, 0, 0.75),
+            0 0 23px 13px rgba(255, 0, 0, 0.75);
     }
     100% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(120, 0, 0, 1),
-            0 0 6px 5px rgba(120, 0, 0, 0.9),
-            0 0 8px 7px rgba(120, 0, 0, 0.8),
-            0 0 10px 9px rgba(120, 0, 0, 0.7),
-            0 0 12px 11px rgba(120, 0, 0, 0.6);
+            0 0 5px 5px rgba(120, 0, 0, 1),
+            0 0 9px 7px rgba(120, 0, 0, 1),
+            0 0 13px 9px rgba(120, 0, 0, 1),
+            0 0 16px 11px rgba(120, 0, 0, 0.75),
+            0 0 20px 13px rgba(120, 0, 0, 0.75);
     }
 }
-@keyframes
- pulse-glow-negative {
+
+@keyframes pulse-glow-negative {
     0% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(200, 0, 0, 1),
-            0 0 6px 5px rgba(200, 0, 0, 0.9),
-            0 0 8px 7px rgba(200, 0, 0, 0.8),
-            0 0 10px 9px rgba(200, 0, 0, 0.7),
-            0 0 12px 11px rgba(200, 0, 0, 0.6);
+            0 0 5px 5px rgba(200, 0, 0, 1),
+            0 0 9px 7px rgba(200, 0, 0, 1),
+            0 0 13px 9px rgba(200, 0, 0, 1),
+            0 0 16px 11px rgba(200, 0, 0, 0.75),
+            0 0 20px 13px rgba(200, 0, 0, 0.75);
     }
     50% {
         box-shadow: 
-            inset 0 0 5px 3px rgba(225, 25, 25, 1),
-            0 0 7px 5px rgba(225, 25, 25, 0.9),
-            0 0 9px 7px rgba(225, 25, 25, 0.8),
-            0 0 11px 9px rgba(225, 25, 25, 0.7),
-            0 0 13px 11px rgba(225, 25, 25, 0.6);
+            0 0 8px 5px rgba(255, 80, 80, 1),
+            0 0 12px 7px rgba(255, 80, 80, 1),
+            0 0 15px 9px rgba(255, 80, 80, 1),
+            0 0 19px 11px rgba(255, 80, 80, 0.75),
+            0 0 23px 13px rgba(255, 80, 80, 0.75);
     }
     100% {
         box-shadow: 
-            inset 0 0 3px 3px rgba(200, 0, 0, 1),
-            0 0 6px 5px rgba(200, 0, 0, 0.9),
-            0 0 8px 7px rgba(200, 0, 0, 0.8),
-            0 0 10px 9px rgba(200, 0, 0, 0.7),
-            0 0 12px 11px rgba(200, 0, 0, 0.6);
+            0 0 5px 5px rgba(200, 0, 0, 1),
+            0 0 9px 7px rgba(200, 0, 0, 1),
+            0 0 13px 9px rgba(200, 0, 0, 1),
+            0 0 16px 11px rgba(200, 0, 0, 0.75),
+            0 0 20px 13px rgba(200, 0, 0, 0.75);
     }
 }
-@keyframes
- glow-positive {
+
+@keyframes glow-positive {
     0% { color: #00ff00; }
-    50% { color: #14ff14; }
+    50% { color: #66ff66; }
     100% { color: #00ff00; }
 }
-@keyframes
- glow-negative {
+
+@keyframes glow-negative {
     0% { color: var(--fear-greed-sell); }
-    50% { color: rgba(225, 25, 25, 0.9); }
+    50% { color: rgba(255, 100, 100, 0.9); }
     100% { color: var(--fear-greed-sell); }
 }
-@keyframes
- glow-neutral {
+
+@keyframes glow-neutral {
     0% { color: var(--fear-greed-hold); }
-    50% { color: #ffcc1a; }
+    50% { color: #ffeb3b; }
     100% { color: var(--fear-greed-hold); }
 }
-@media
- (max-width: 768px) {
+
+@media (max-width: 768px) {
     body {
         padding: 10px;
     }
-.container {
-    padding: 10px;
-}
-
-.network-status {
-    font-size: 0.8em;
-    padding: 6px;
-}
-
-.content-frame {
-    max-width: 100%;
-    padding: 10px;
-}
-
-.daily-fact {
-    font-size: 0.75em;
-    margin: 15px 5px;
-}
-
-.fact-header {
-    font-size: 0.75em;
-}
-
-.fact-content {
-    font-size: 0.75em;
-    line-height: 1.3;
-}
-
-.weather-forecast {
-    max-width: 100%;
-    padding: 10px;
-}
-
-.forecast-container {
-    flex-wrap: nowrap;
-    gap: 5px;
-    padding: 10px 0;
-    -webkit-overflow-scrolling: touch;
-}
-
-.forecast-bar {
-    min-width: 70px;
-    padding: 5px;
-}
-
-.forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
-    font-size: 0.65em;
-}
-
-.weather-icon {
-    font-size: 1.2em;
-}
-
-.weather-ticker {
-    font-size: 0.8em;
-}
-
-.forecast-error {
-    font-size: 0.7em;
-    color: #999999;
-    text-align: center;
-    padding: 8px;
-    width: 100%;
-}
-
-.crypto-info {
-    padding: 10px;
-}
-
-.crypto-header {
-    margin-bottom: 2px;
-}
-
-.fear-greed-indicator {
-    width: 100%;
-    min-height: 30px;
-    text-align: center;
-    font-size: 0.75em;
-    padding: 8px 10px;
-    font-weight: 600;
-}
-
-.fear-greed-indicator .fear-greed-value {
-    font-weight: 600;
-    margin-right: 8px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
-
-.fear-greed-indicator .fear-greed-label {
-    font-weight: 600;
-    margin-right: 8px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
-
-.fear-greed-indicator .trend-indicator {
-    font-size: 0.9em;
-    margin-right: 2px;
-    margin-left: 8px;
-    vertical-align: baseline;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
-
-.fear-greed-indicator .fear-greed-signal {
-    position: relative;
-    display: inline-block;
-    padding: 2px 6px;
-    z-index: 2;
-    color: #ffffff;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
-
-.fear-greed-indicator .fear-greed-signal::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75%;
-    height: 1px;
-    background-color: transparent;
-    z-index: 1;
-}
-
-.fear-greed-indicator .fear-greed-signal::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75%;
-    height: 1px;
-    z-index: -1;
-}
-
-.fear-greed-indicator .fear-greed-signal.all-in::after {
-    animation: pulse-glow-positive 2s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.buy-slowly::after {
-    animation: pulse-glow-positive-buy 2s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.hodl::after {
-    animation: pulse-glow-neutral 2s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.sell-slowly::after {
-    animation: pulse-glow-negative-sell 2s ease-in-out infinite;
-}
-
-.fear-greed-indicator .fear-greed-signal.cash-out::after {
-    animation: pulse-glow-negative 2s ease-in-out infinite;
-}
-
-.crypto-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    padding: 10px;
-}
-
-.crypto-tile {
-    min-height: 22px;
-    padding: 2px;
-    box-sizing: border-box;
-    transition: transform 0.2s, background-color 0.5s ease;
-}
-
-.crypto-symbol {
-    font-size: 0.7em;
-    margin-bottom: 0.5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
-
-.crypto-price {
-    font-size: 0.65em;
-    margin-bottom: 0.5px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
-
-.crypto-change {
-    font-size: 0.5em;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px  Continental, Stefan - xAI0.5px 0 #000000,
-        0 0 2px rgba(0, 0, 0, 0.8);
-}
-
-.crypto-error {
-    font-size: 0.8em;
-}
-
-.log-table {
-    max-width: 100%;
-    padding: 15px;
-}
-
-.table-wrapper {
-    overflow-y: hidden;
-    overflow-x: auto;
-}
 
-.table-container {
-    overflow: hidden;
-}
-
-table {
-    width: 100%;
-    font-size: 0.75em;
-    table-layout: fixed;
-    min-width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-thead tr {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-}
-
-th, td {
-    padding: 2px;
-    height: 28px;
-    font-size: 0.7em;
-    vertical-align: middle;
-    box-sizing: border-box;
-}
-
-th {
-    background: transparent;
-    color: white;
-    font-weight: 700;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    transition: filter 0.3s ease;
-}
-
-th:hover {
-    filter: brightness(1.1);
-}
-
-th:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-th:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-tr:nth-child(odd) {
-    background-color: #3a3a3a;
-}
-
-tr:nth-child(even) {
-    background-color: #2d2d2d;
-}
-
-tr:hover {
-    background-color: #4a4a4a;
-}
-
-tr:not(:first-child) td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-tr:not(:first-child) td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-tr:hover td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-tr:hover td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-th:nth-child(1), td:nth-child(1) {
-    width: 50px;
-    min-width: 50px;
-}
-
-th:nth-child(2), td:nth-child(2) {
-    width: 50px;
-    min-width: 50px;
-}
-
-th:nth-child(3), td:nth-child(3) {
-    width: 40px;
-    min-width: 40px;
-}
-
-th:nth-child(4), td:nth-child(4) {
-    width: 60px;
-    min-width: 60px;
-}
-
-th.location-header, td.location-cell {
-    min-width: 90px;
-}
-
-th:nth-child(6), td:nth-child(6) {
-    min-width: 90px;
-}
-
-.location-cell {
-    min-width: 90px;
-}
-
-.city {
-    font-size: 0.7em;
-    display: block;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.15;
-    hyphens: auto;
-}
-
-.device {
-    font-size: 0.7em;
-    display: block;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.15;
-    hyphens: auto;
-}
-
-.country {
-    font-size: 0.7em;
-    color: #cccccc;
-    margin-top: 0;
-    display: block;
-    line-height: 1.15;
-    hyphens: auto;
-}
-
-.isp {
-    font-size: 0.7em;
-    color: #cccccc;
-    margin-top: 0;
-    display: block;
-    line-height: 1.15;
-    hyphens: auto;
-}
-
-.toggle-button {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-    color: white;
-    border: none;
-    padding: 2px 4px;
-    border-radius: 8px;
-    font-size: 0.55em;
-    font-weight: 600;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    min-width: 70px;
-}
-
-.toggle-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    filter: brightness(1.1);
-}
-
-.nasa-ticker {
-    font-size: 0.6em;
-}
-
-.nasa-container {
-    max-width: 100%;
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #2d2d2d;
-    border-radius: 4px;
-    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-    border-radius: 4px;
-    border: 1px solid #2d2d2d;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #6a7278, #5a6268);
-}
-
-::-webkit-scrollbar-corner {
-    background: #2d2d2d;
-}
-}
-@media
- (max-width: 768px) and (orientation: landscape) {
+    .container {
+        padding: 10px;
+    }
+
+    .network-status {
+        font-size: 0.8em;
+        padding: 6px;
+    }
+
+    .content-frame {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .daily-fact {
+        font-size: 0.75em;
+        margin-bottom: 10px;
+    }
+
+    .fact-header {
+        font-size: 0.75em;
+    }
+
+    .fact-content {
+        font-size: 0.75em;
+        line-height: 1.3;
+    }
+
+    .weather-forecast {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .forecast-container {
+        flex-wrap: nowrap;
+        gap: 5px;
+        padding: 10px 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .forecast-bar {
+        min-width: 70px;
+        padding: 5px;
+    }
+
+    .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
+        font-size: 0.65em;
+    }
+
+    .weather-icon {
+        font-size: 1.2em;
+    }
+
+    .weather-ticker {
+        font-size: 0.8em;
+    }
+
+    .forecast-error {
+        font-size: 0.7em;
+        color: #999999;
+        text-align: center;
+        padding: 8px;
+        width: 100%;
+    }
+
+    .crypto-info {
+        padding: 10px;
+    }
+
+    .crypto-header {
+        margin-bottom: 2px;
+    }
+
+    .fear-greed-indicator {
+        width: 100%;
+        min-height: 30px;
+        text-align: center;
+        font-size: 0.75em;
+        padding: 8px 10px;
+        font-weight: 600;
+    }
+
+    /* Styl wartości FGI */
+    .fear-greed-indicator .fgi-value {
+        font-weight: 600;
+        margin-right: 8px;
+    }
+
+    /* Styl strzałki trendu */
+    .fear-greed-indicator .trend-indicator {
+        font-size: 0.9em;
+        margin-right: 2px;
+        margin-left: 8px;
+        vertical-align: baseline;
+        text-shadow: 
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
+    }
+
+    /* Styl sygnału */
+    .fear-greed-indicator .fear-greed-signal {
+        position: relative;
+        display: inline-block;
+        padding: 2px 6px;
+        z-index: 2; /* Tekst na wierzchu */
+        color: #ffffff; /* Biały tekst */
+        text-shadow: 
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
+    }
+
+    /* Pseudoelement dla pulsującego efektu (pozioma linia) */
+    .fear-greed-indicator .fear-greed-signal::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 1px;
+        z-index: -1; /* Za tekstem, nad banerem */
+    }
+
+    /* Pulsujący efekt dla każdego sygnału */
+    .fear-greed-indicator .fear-greed-signal.all-in::before {
+        animation: pulse-glow-positive 1.5s ease-in-out infinite;
+    }
+
+    .fear-greed-indicator .fear-greed-signal.buy-slowly::before {
+        animation: pulse-glow-positive-buy 1.5s ease-in-out infinite;
+    }
+
+    .fear-greed-indicator .fear-greed-signal.hodl::before {
+        animation: pulse-glow-neutral 1.5s ease-in-out infinite;
+    }
+
+    .fear-greed-indicator .fear-greed-signal.sell-slowly::before {
+        animation: pulse-glow-negative-sell 1.5s ease-in-out infinite;
+    }
+
+    .fear-greed-indicator .fear-greed-signal.cash-out::before {
+        animation: pulse-glow-negative 1.5s ease-in-out infinite;
+    }
+
+    .crypto-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 10px;
+    }
+
+    .crypto-tile {
+        min-height: 22px;
+        padding: 2px;
+        box-sizing: border-box;
+        transition: transform 0.2s, background-color 0.5s ease;
+    }
+
+    .crypto-symbol {
+        font-size: 0.7em;
+        margin-bottom: 0.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        text-shadow: 
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
+    }
+
+    .crypto-price {
+        font-size: 0.65em;
+        margin-bottom: 0.5px;
+        text-shadow: 
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
+    }
+
+    .crypto-change {
+        font-size: 0.5em;
+        text-shadow: 
+            -0.4px -0.4px 0 black,
+            0.4px -0.4px 0 black,
+            -0.4px 0.4px 0 black,
+            0.4px 0.4px 0 black,
+            -0.4px 0 0 black,
+            0.4px 0 0 black,
+            0 -0.4px 0 black,
+            0 0.4px 0 black,
+            0 0 0.5px black,
+            0 0 2px rgba(0, 0, 0, 1);
+    }
+
+    .crypto-error {
+        font-size: 0.8em;
+    }
+
+    .log-table {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    .table-wrapper {
+        overflow-y: hidden;
+        overflow-x: auto;
+    }
+
+    .table-container {
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        font-size: 0.75em;
+        table-layout: fixed;
+        min-width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    thead tr {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+    }
+
+    th, td {
+        padding: 2px;
+        height: 28px;
+        font-size: 0.7em;
+        vertical-align: middle;
+        box-sizing: border-box;
+    }
+
+    th {
+        background: transparent;
+        color: white;
+        font-weight: 700;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        transition: filter 0.3s ease;
+    }
+
+    th:hover {
+        filter: brightness(1.1);
+    }
+
+    th:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    th:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    tr:nth-child(odd) {
+        background-color: #3a3a3a;
+    }
+
+    tr:nth-child(even) {
+        background-color: #2d2d2d;
+    }
+
+    tr:hover {
+        background-color: #4a4a4a;
+    }
+
+    tr:not(:first-child) td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    tr:not(:first-child) td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    tr:hover td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+
+    tr:hover td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+
+    th:nth-child(1), td:nth-child(1) {
+        width: 50px;
+        min-width: 50px;
+    }
+
+    th:nth-child(2), td:nth-child(2) {
+        width: 50px;
+        min-width: 50px;
+    }
+
+    th:nth-child(3), td:nth-child(3) {
+        width: 40px;
+        min-width: 40px;
+    }
+
+    th:nth-child(4), td:nth-child(4) {
+        width: 60px;
+        min-width: 60px;
+    }
+
+    th.location-header, td.location-cell {
+        min-width: 90px;
+    }
+
+    th:nth-child(6), td:nth-child(6) {
+        min-width: 90px;
+    }
+
+    .location-cell {
+        min-width: 90px;
+    }
+
+    .city {
+        font-size: 0.7em;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
+        line-height: 1.15;
+        hyphens: auto;
+    }
+
+    .device {
+        font-size: 0.7em;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: normal;
+        line-height: 1.15;
+        hyphens: auto;
+    }
+
+    .country {
+        font-size: 0.7em;
+        color: #cccccc;
+        margin-top: 0;
+        display: block;
+        line-height: 1.15;
+        hyphens: auto;
+    }
+
+    .isp {
+        font-size: 0.7em;
+        color: #cccccc;
+        margin-top: 0;
+        display: block;
+        line-height: 1.15;
+        hyphens: auto;
+    }
+
+    .toggle-button {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+        color: white;
+        border: none;
+        padding: 2px 4px;
+        border-radius: 8px;
+        font-size: 0.55em;
+        font-weight: 600;
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+        min-width: 70px;
+        position: relative;
+    }
+
+    .toggle-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .nasa-ticker {
+        font-size: 0.6em;
+    }
+
+    .nasa-container {
+        max-width: 100%;
+    }
+
+    /* Stylizacja suwaków przewijania dla widoku mobilnego */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #2d2d2d;
+        border-radius: 4px;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #5a6268, #4a5258);
+        border-radius: 4px;
+        border: 1px solid #2d2d2d;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #6a7278, #5a6268);
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: #2d2d2d;
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
     .crypto-grid {
         grid-template-columns: repeat(7, 1fr);
     }
 }
+
 .footer {
     text-align: center;
     margin-top: 20px;
     font-size: 0.75em;
     color: #cccccc;
 }
+
 .footer p {
     margin: 2px 0;
 }
+
 .footer a {
     color: #4d94ff;
     text-decoration: none;
 }
+
 .footer a:hover {
     text-decoration: underline;
 }
-@media
- (max-width: 768px) {
+
+@media (max-width: 768px) {
     .footer {
         font-size: 0.45em;
         color: #cccccc;
     }
-.footer p {
-    margin: 1px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-}
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-.modal-container {
-    background-color: #2d2d2d;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 90%;
-    max-height: 80%;
-    overflow-y: auto;
-    color: #ffffff;
-    position: relative;
-}
-#termsTitle {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-    text-align: center;
-}
-#langPolish, #langEnglish {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    margin: 0 5px;
-    transition: filter 0.3s ease;
-}
-#langPolish:hover, #langEnglish:hover {
-    filter: brightness(1.1);
-}
-#langPolish.active, #langEnglish.active {
-    background: linear-gradient(135deg, #6a7278, #5a6268);
-}
-#closeButton {
-    background: linear-gradient(135deg, #ff4d4d, #cc3a3a);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    margin-top: 10px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    transition: filter 0.3s ease;
-}
-#closeButton:hover {
-    filter: brightness(1.1);
-}
-#termsPL, #termsEN {
-    font-size: 0.9em;
-    line-height: 1.5;
-}
-#termsPL h2, #termsEN h2 {
-    font-size: 1.1em;
-    margin-top: 15px;
-}
-#termsPL p, #termsEN p {
-    margin: 10px 0;
-}
-@media
- (max-width: 768px) {
-    .modal-container {
-        max-width: 95%;
-        padding: 15px;
+
+    .footer p {
+        margin: 1px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
-#termsTitle {
-    font-size: 1em;
-}
-
-#langPolish, #langEnglish {
-    font-size: 0.8em;
-    padding: 4px 8px;
-}
-
-#closeButton {
-    font-size: 0.8em;
-    padding: 4px 8px;
-}
-
-#termsPL, #termsEN {
-    font-size: 0.8em;
-}
-
-#termsPL h2, #termsEN h2 {
-    font-size: 1em;
-}
 }
