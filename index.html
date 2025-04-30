@@ -392,8 +392,7 @@
         }
 
         const k = 0.11;
-        const parsedValues = values.map(item => parseFloat(item.value) ||  DigiKey Electronics
-0);
+        const parsedValues = values.map(item => parseFloat(item.value) || 0);
         const weights = Array(30).fill(0);
         const multipliers = Array(30).fill(1);
         const latestFGI = parsedValues[0];
@@ -828,7 +827,6 @@
                 isp: 'Nieznany dostawca'
             };
             setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
-            laxanadu
             localStorage.setItem(cacheSignatureKey, currentSignature);
             return fallbackLocation;
         }
@@ -1392,7 +1390,36 @@
             if (!isReloading) {
                 isReloading = true;
                 try {
-                    await loadAllData();
+                    const ip = await getIp();
+                    await initializeFallbackData(ip);
+                    const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
+                        getNasaApodImage(),
+                        getWeather(ip),
+                        getDailyFact(),
+                        getCryptoData(),
+                        updateFearGreedIndicator()
+                    ]);
+
+                    console.log('Wyniki API:', {
+                        nasa: nasaResult.status === 'fulfilled' ? 'Success' : `Failed: ${nasaResult.reason}`,
+                        weather: weatherResult.status === 'fulfilled' ? 'Success' : `Failed: ${weatherResult.reason}`,
+                        fact: dailyFactResult.status === 'fulfilled' ? 'Success' : `Failed: ${dailyFactResult.reason}`,
+                        crypto: cryptoResult.status === 'fulfilled' ? 'Success' : `Failed: ${cryptoResult.reason}`,
+                        fearGreed: fearGreedResult.status === 'fulfilled' ? 'Success' : `Failed: ${fearGreedResult.reason}`
+                    });
+
+                    setTimeout(async () => {
+                        try {
+                            await logVisit();
+                        } catch (err) {
+                            console.error('Błąd ładowania logów:', err);
+                            const logTableBody = document.getElementById('logTableBody');
+                            if (logTableBody) {
+                                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
+                            }
+                        }
+                    }, 500);
+
                     console.log('Dane załadowane po przywróceniu połączenia');
                 } catch (err) {
                     console.error('Błąd podczas ładowania danych:', err);
@@ -1412,9 +1439,6 @@
     let cryptoIntervalId = null;
     let logIntervalId = null;
     let fearGreedIntervalId = null;
-    let nasaIntervalId = null;
-    let weatherIntervalId = null;
-    let dailyFactIntervalId = null;
     let lastUpdateTime = null;
     const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
 
@@ -1445,6 +1469,77 @@
         }, 3600000);
     }
 
+    let isManagingIntervals = false;
+
+    function manageUpdateIntervals() {
+        if (isManagingIntervals) {
+            console.log('manageUpdateIntervals już uruchomione, pomijam');
+            return;
+        }
+        isManagingIntervals = true;
+
+        const now = Date.now();
+
+        if (document.visibilityState === 'visible') {
+            console.log('Karta aktywna, włączam aktualizacje');
+            if (cryptoIntervalId) {
+                clearInterval(cryptoIntervalId);
+                cryptoIntervalId = null;
+            }
+            if (logIntervalId) {
+                clearInterval(logIntervalId);
+                logIntervalId = null;
+            }
+            if (fearGreedIntervalId) {
+                clearInterval(fearGreedIntervalId);
+                fearGreedIntervalId = null;
+            }
+
+            if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
+                console.log('Minął minimalny czas, odświeżam dane');
+                startCryptoUpdateInterval();
+                startLogUpdateInterval();
+                startFearGreedUpdateInterval();
+                lastUpdateTime = now;
+            } else {
+                console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
+                cryptoIntervalId = setInterval(() => {
+                    console.log('Aktualizuję kryptowaluty...');
+                    getCryptoData();
+                }, 900000);
+                logIntervalId = setInterval(() => {
+                    console.log('Aktualizuję logi...');
+                    updateLogs();
+                }, 900000);
+                fearGreedIntervalId = setInterval(() => {
+                    console.log('Aktualizuję Fear and Greed...');
+                    updateFearGreedIndicator();
+                }, 3600000);
+            }
+        } else {
+            console.log('Karta nieaktywna, wstrzymuję aktualizacje');
+            if (cryptoIntervalId) {
+                clearInterval(cryptoIntervalId);
+                cryptoIntervalId = null;
+            }
+            if (logIntervalId) {
+                clearInterval(logIntervalId);
+                logIntervalId = null;
+            }
+            if (fearGreedIntervalId) {
+                clearInterval(fearGreedIntervalId);
+                fearGreedIntervalId = null;
+            }
+        }
+
+        isManagingIntervals = false;
+    }
+
+    // Nowe zmienne i funkcje dla automatycznego odświeżania i kolejki renderowania
+    let nasaIntervalId = null;
+    let weatherIntervalId = null;
+    let dailyFactIntervalId = null;
+
     function startNasaUpdateInterval() {
         console.log('Uruchamiam interwał aktualizacji NASA');
         getNasaApodImage();
@@ -1472,20 +1567,18 @@
         }, 10800000); // 3 godziny
     }
 
-    let isManagingIntervals = false;
-
-    async function manageUpdateIntervals() {
+    function manageAllUpdateIntervals(ip) {
         if (isManagingIntervals) {
-            console.log('manageUpdateIntervals już uruchomione, pomijam');
+            console.log('manageAllUpdateIntervals już uruchomione, pomijam');
             return;
         }
         isManagingIntervals = true;
 
         const now = Date.now();
-        const ip = await getIp();
 
         if (document.visibilityState === 'visible') {
-            console.log('Karta aktywna, włączam aktualizacje');
+            console.log('Karta aktywna, włączam wszystkie aktualizacje');
+            // Istniejące interwały
             if (cryptoIntervalId) {
                 clearInterval(cryptoIntervalId);
                 cryptoIntervalId = null;
@@ -1498,6 +1591,7 @@
                 clearInterval(fearGreedIntervalId);
                 fearGreedIntervalId = null;
             }
+            // Nowe interwały
             if (nasaIntervalId) {
                 clearInterval(nasaIntervalId);
                 nasaIntervalId = null;
@@ -1512,7 +1606,7 @@
             }
 
             if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
-                console.log('Minął minimalny czas, odświeżam dane');
+                console.log('Minął minimalny czas, odświeżam wszystkie dane');
                 startCryptoUpdateInterval();
                 startLogUpdateInterval();
                 startFearGreedUpdateInterval();
@@ -1521,7 +1615,7 @@
                 startDailyFactUpdateInterval();
                 lastUpdateTime = now;
             } else {
-                console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
+                console.log('Zbyt szybkie przełączenie, ustawiam tylko interwały');
                 cryptoIntervalId = setInterval(() => {
                     console.log('Aktualizuję kryptowaluty...');
                     getCryptoData();
@@ -1548,7 +1642,7 @@
                 }, 10800000);
             }
         } else {
-            console.log('Karta nieaktywna, wstrzymuję aktualizacje');
+            console.log('Karta nieaktywna, wstrzymuję wszystkie aktualizacje');
             if (cryptoIntervalId) {
                 clearInterval(cryptoIntervalId);
                 cryptoIntervalId = null;
@@ -1578,76 +1672,13 @@
         isManagingIntervals = false;
     }
 
-    async function loadTermsModal(language) {
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalContent = document.getElementById('modalContent');
-
-                if (!modalOverlay || !modalContent) {
-            console.error('Błąd: Brak elementów modalOverlay lub modalContent w DOM');
-            return;
-        }
-
-        try {
-            const response = await fetch(language === 'pl' ? 'terms_pl.html' : 'terms_en.html');
-            if (!response.ok) {
-                throw new Error(`Błąd ładowania regulaminu: ${response.status}`);
-            }
-            const termsContent = await response.text();
-
-            modalContent.innerHTML = `
-                <div class="modal">
-                    <div class="modal-header">
-                        <h2>${language === 'pl' ? 'Regulamin' : 'Terms and Conditions'}</h2>
-                        <button class="close-modal">&times;</button>
-                    </div>
-                    <div class="modal-body">${termsContent}</div>
-                </div>
-            `;
-
-            modalOverlay.style.display = 'flex';
-
-            const closeModal = document.querySelector('.close-modal');
-            closeModal.addEventListener('click', () => {
-                modalOverlay.style.display = 'none';
-                modalContent.innerHTML = '';
-            });
-
-            modalOverlay.addEventListener('click', (e) => {
-                if (e.target === modalOverlay) {
-                    modalOverlay.style.display = 'none';
-                    modalContent.innerHTML = '';
-                }
-            });
-        } catch (err) {
-            console.error('Błąd ładowania regulaminu:', err);
-            modalContent.innerHTML = `
-                <div class="modal">
-                    <div class="modal-header">
-                        <h2>Błąd</h2>
-                        <button class="close-modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>${language === 'pl' ? 'Nie udało się załadować regulaminu. Spróbuj ponownie później.' : 'Failed to load terms. Please try again later.'}</p>
-                    </div>
-                </div>
-            `;
-            modalOverlay.style.display = 'flex';
-
-            const closeModal = document.querySelector('.close-modal');
-            closeModal.addEventListener('click', () => {
-                modalOverlay.style.display = 'none';
-                modalContent.innerHTML = '';
-            });
-        }
-    }
-
-    async function loadAllData() {
-        console.log('Rozpoczynam ładowanie wszystkich danych...');
+    async function loadAllDataInQueue() {
+        console.log('Rozpoczynam ładowanie danych w kolejce...');
         const ip = await getIp();
         await initializeFallbackData(ip);
 
-        // Kolejka renderowania: NASA > Ciekawostka dnia > IP > Pogoda > FGI + 3 algorytmy > Kafelki kryptowalut > Logi
         try {
+            // Kolejka renderowania: NASA > Ciekawostka dnia > IP > Pogoda > FGI > Kryptowaluty > Logi
             await getNasaApodImage();
             console.log('NASA APOD załadowane');
             await getDailyFact();
@@ -1665,38 +1696,212 @@
                 console.log('Logi załadowane');
             }, 5000); // Opóźnienie ładowania logów o 5 sekund
         } catch (err) {
-            console.error('Błąd podczas ładowania danych:', err);
+            console.error('Błąd podczas ładowania danych w kolejce:', err);
             handleNetworkStatus();
         }
+
+        return ip; // Zwracamy IP do użycia w interwałach
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        console.log('DOM załadowany, inicjalizuję stronę...');
-        checkCSSLoaded();
-        await loadAllData();
+    async function loadTermsModal(language) {
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
 
+    if (!modalOverlay || !modalContent) {
+        console.error('Błąd: Brak elementów modalOverlay lub modalContent w DOM');
+        return;
+    }
+
+    try {
+        const response = await fetch('terms.html');
+        if (!response.ok) throw new Error(`Nie udało się załadować terms.html: ${response.status}`);
+        modalContent.innerHTML = await response.text();
+
+        // Load terms.css dynamically
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'terms.css';
+        document.head.appendChild(link);
+
+        const closeButton = modalContent.querySelector('#closeButton');
+        if (!closeButton) {
+            console.error('Błąd: Nie znaleziono przycisku #closeButton w terms.html');
+            modalContent.innerHTML = '<p>Błąd ładowania regulaminu: brak przycisku zamykania.</p>';
+            modalOverlay.style.display = 'flex';
+            return;
+        }
+
+        closeButton.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+            modalContent.innerHTML = '';
+            // Optionally, remove terms.css if desired
+            // document.head.removeChild(link);
+        });
+
+        const langPolish = modalContent.querySelector('#langPolish');
+        const langEnglish = modalContent.querySelector('#langEnglish');
+        const termsPL = modalContent.querySelector('#termsPL');
+        const termsEN = modalContent.querySelector('#termsEN');
+        const termsTitle = modalContent.querySelector('#termsTitle');
+
+        function setLanguage(lang) {
+            if (lang === 'pl') {
+                termsPL.style.display = 'block';
+                termsEN.style.display = 'none';
+                termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
+                closeButton.textContent = 'Akceptuję';
+                langPolish.classList.add('active');
+                langEnglish.classList.remove('active');
+            } else {
+                termsPL.style.display = 'none';
+                termsEN.style.display = 'block';
+                termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
+                closeButton.textContent = 'Accept';
+                langPolish.classList.remove('active');
+                langEnglish.classList.add('active');
+            }
+            // Przewiń treść do góry po zmianie języka
+            const termsContent = modalContent.querySelector('.terms-content');
+            if (termsContent) {
+                termsContent.scrollTop = 0;
+            }
+        }
+
+        langPolish.addEventListener('click', () => setLanguage('pl'));
+        langEnglish.addEventListener('click', () => setLanguage('en'));
+        setLanguage(language || 'pl');
+
+        // Przewiń treść do góry po załadowaniu
+        const termsContent = modalContent.querySelector('.terms-content');
+        if (termsContent) {
+            termsContent.scrollTop = 0;
+        }
+
+        modalOverlay.style.display = 'flex';
+    } catch (error) {
+        console.error('Błąd ładowania regulaminu:', error);
+        modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
+        modalOverlay.style.display = 'flex';
+    }
+}
+
+    window.onload = async function() {
+        console.log('Strona załadowana, uruchamiam funkcje...');
+        handleNetworkStatus();
+        if (document.visibilityState === 'visible') {
+            console.log('Karta widoczna, uruchamiam aktualizacje danych');
+            try {
+                const ip = await getIp();
+                await initializeFallbackData(ip);
+
+                // Ładowanie danych równolegle z obsługą błędów
+                const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
+                    getNasaApodImage(),
+                    getWeather(ip),
+                    getDailyFact(),
+                    getCryptoData(),
+                    updateFearGreedIndicator()
+                ]);
+
+                // Logowanie wyników wywołań API
+                console.log('Wyniki wywołań API:', {
+                    nasa: nasaResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${nasaResult.reason}`,
+                    weather: weatherResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${weatherResult.reason}`,
+                    dailyFact: dailyFactResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
+                    crypto: cryptoResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${cryptoResult.reason}`,
+                    fearGreed: fearGreedResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${fearGreedResult.reason}`
+                });
+
+                // Logowanie odwiedzin z opóźnieniem, aby uniknąć konfliktów
+                setTimeout(async () => {
+                    try {
+                        await logVisit();
+                    } catch (err) {
+                        console.error('Błąd podczas logowania odwiedzin:', err);
+                        const logTableBody = document.getElementById('logTableBody');
+                        if (logTableBody) {
+                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów odwiedzin.</td></tr>';
+                        }
+                    }
+                }, 500);
+
+                // Uruchomienie interwałów aktualizacji
+                manageUpdateIntervals();
+
+                // Dodatkowe ładowanie danych w kolejce i zarządzanie nowymi interwałami
+                const ipFromQueue = await loadAllDataInQueue();
+                manageAllUpdateIntervals(ipFromQueue);
+            } catch (err) {
+                console.error('Błąd podczas inicjalizacji danych:', err);
+                const networkStatus = document.getElementById('networkStatus');
+                networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
+                networkStatus.style.display = 'block';
+            }
+        } else {
+            console.log('Karta niewidoczna, pomijam aktualizacje');
+        }
+
+        // Sprawdzanie, czy CSS został poprawnie załadowany
+        checkCSSLoaded();
+
+        // Obsługa zmiany widoczności strony
+        document.addEventListener('visibilitychange', () => {
+            console.log(`Zmiana widoczności: ${document.visibilityState}`);
+            manageUpdateIntervals();
+            manageAllUpdateIntervals(getIp()); // Używamy getIp() jako fallback, jeśli IP nie jest dostępne
+        });
+
+        // Obsługa zmiany statusu sieci
         window.addEventListener('online', handleNetworkStatus);
         window.addEventListener('offline', handleNetworkStatus);
-        document.addEventListener('visibilitychange', manageUpdateIntervals);
 
+        // Obsługa przycisków regulaminu
         const termsLinkPL = document.getElementById('termsLinkPL');
         const termsLinkEN = document.getElementById('termsLinkEN');
-        if (termsLinkPL) {
+        if (termsLinkPL && termsLinkEN) {
             termsLinkPL.addEventListener('click', (e) => {
                 e.preventDefault();
                 loadTermsModal('pl');
             });
-        }
-        if (termsLinkEN) {
             termsLinkEN.addEventListener('click', (e) => {
                 e.preventDefault();
                 loadTermsModal('en');
             });
+        } else {
+            console.warn('Brak elementów termsLinkPL lub termsLinkEN');
         }
 
-        // Inicjalizacja zarządzania interwałami
-        await manageUpdateIntervals();
+        // Obsługa przewijania tickerów
+        const tickers = document.querySelectorAll('.nasa-ticker, .weather-ticker');
+        tickers.forEach(ticker => {
+            const content = ticker.querySelector('.ticker-content');
+            if (content) {
+                content.addEventListener('animationiteration', () => {
+                    content.style.animation = 'none';
+                    setTimeout(() => {
+                        content.style.animation = '';
+                    }, 10);
+                });
+            }
+        });
+
+        // Czyszczenie starego cache przy starcie
+        cleanOldCache();
+
+        console.log('Inicjalizacja strony zakończona');
+    };
+
+    // Funkcja zabezpieczająca przed wielokrotnym ładowaniem strony
+    window.addEventListener('beforeunload', () => {
+        if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+        if (logIntervalId) clearInterval(logIntervalId);
+        if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+        if (nasaIntervalId) clearInterval(nasaIntervalId);
+        if (weatherIntervalId) clearInterval(weatherIntervalId);
+        if (dailyFactIntervalId) clearInterval(dailyFactIntervalId);
+        console.log('Wstrzymano wszystkie interwały przed opuszczeniem strony');
     });
-    </script>
-    </body>
-    </html>
+
+</script>
+</body>
+</html>
