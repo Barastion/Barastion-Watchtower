@@ -1,5 +1,5 @@
 :root {
-    --fear-greed-hold: #ffd700; /* Żółty dla HODL */
+    --fear-greed-hold: #cfae02; /* Żółty dla HODL */
     --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); /* Zielony dla BUY SLOWLY */
     --fear-greed-opportunity: rgba(0, 220, 0, 0.9); /* Jasnozielony dla ALL IN! */
     --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY */
