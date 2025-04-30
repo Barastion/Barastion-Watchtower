@@ -327,7 +327,11 @@ body {
         1.5px -1.5px 0 #000000,
         -1.5px 1.5px 0 #000000,
         1.5px 1.5px 0 #000000,
-        0 0 4px rgba(0, 0, 0, 0.9);
+        -1.5px 0 0 #000000,
+        1.5px 0 0 #000000,
+        0 -1.5px 0 #000000,
+        0 1.5px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
 }
 
 /* Kolory banera w zależności od sygnału */
@@ -360,7 +364,11 @@ body {
         1.5px -1.5px 0 #000000,
         -1.5px 1.5px 0 #000000,
         1.5px 1.5px 0 #000000,
-        0 0 4px rgba(0, 0, 0, 0.9);
+        -1.5px 0 0 #000000,
+        1.5px 0 0 #000000,
+        0 -1.5px 0 #000000,
+        0 1.5px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
 }
 
 .fear-greed-indicator .fgi-value.extreme-fear {
@@ -393,7 +401,11 @@ body {
         1.5px -1.5px 0 #000000,
         -1.5px 1.5px 0 #000000,
         1.5px 1.5px 0 #000000,
-        0 0 4px rgba(0, 0, 0, 0.9);
+        -1.5px 0 0 #000000,
+        1.5px 0 0 #000000,
+        0 -1.5px 0 #000000,
+        0 1.5px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
 }
 
 /* Styl strzałki trendu */
@@ -407,7 +419,11 @@ body {
         1.5px -1.7px 0 #000000,
         -1.5px 1.7px 0 #000000,
         1.5px 1.7px 0 #000000,
-        0 0 4px rgba(0, 0, 0, 0.9);
+        -1.5px 0 0 #000000,
+        1.5px 0 0 #000000,
+        0 -1.7px 0 #000000,
+        0 1.7px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
     line-height: 1;
 }
 
@@ -438,7 +454,11 @@ body {
         1.5px -1.5px 0 #000000,
         -1.5px 1.5px 0 #000000,
         1.5px 1.5px 0 #000000,
-        0 0 4px rgba(0, 0, 0, 0.9);
+        -1.5px 0 0 #000000,
+        1.5px 0 0 #000000,
+        0 -1.5px 0 #000000,
+        0 1.5px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
 }
 
 .crypto-grid {
@@ -734,7 +754,7 @@ tr:hover td:last-child {
     background: linear-gradient(135deg, #6a7278, #5a6268);
 }
 
-::-webkit-scrollbarcorner {
+::-webkit-scrollbar-corner {
     background: #2d2d2d;
 }
 
@@ -951,7 +971,11 @@ tr:hover td:last-child {
             1.5px -1.5px 0 #000000,
             -1.5px 1.5px 0 #000000,
             1.5px 1.5px 0 #000000,
-            0 0 4px rgba(0, 0, 0, 0.9);
+            -1.5px 0 0 #000000,
+            1.5px 0 0 #000000,
+            0 -1.5px 0 #000000,
+            0 1.5px 0 #000000,
+            0 0 5px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .fgi-label {
@@ -960,7 +984,11 @@ tr:hover td:last-child {
             1.5px -1.5px 0 #000000,
             -1.5px 1.5px 0 #000000,
             1.5px 1.5px 0 #000000,
-            0 0 4px rgba(0, 0, 0, 0.9);
+            -1.5px 0 0 #000000,
+            1.5px 0 0 #000000,
+            0 -1.5px 0 #000000,
+            0 1.5px 0 #000000,
+            0 0 5px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .trend-indicator {
@@ -971,7 +999,11 @@ tr:hover td:last-child {
             1.5px -1.7px 0 #000000,
             -1.5px 1.7px 0 #000000,
             1.5px 1.7px 0 #000000,
-            0 0 4px rgba(0, 0, 0, 0.9);
+            -1.5px 0 0 #000000,
+            1.5px 0 0 #000000,
+            0 -1.7px 0 #000000,
+            0 1.7px 0 #000000,
+            0 0 5px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .fear-greed-signal {
@@ -980,7 +1012,11 @@ tr:hover td:last-child {
             1.5px -1.5px 0 #000000,
             -1.5px 1.5px 0 #000000,
             1.5px 1.5px 0 #000000,
-            0 0 4px rgba(0, 0, 0, 0.9);
+            -1.5px 0 0 #000000,
+            1.5px 0 0 #000000,
+            0 -1.5px 0 #000000,
+            0 1.5px 0 #000000,
+            0 0 5px rgba(0, 0, 0, 0.9);
     }
 
     .crypto-grid {
