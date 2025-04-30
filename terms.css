@@ -1,5 +1,5 @@
 :root {
-    --fear-greed-hold: #ffd700; 
+    --fear-greed-hold: #cfae02; 
     --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); 
     --fear-greed-opportunity: rgba(0, 220, 0, 0.9); 
     --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); 
@@ -80,7 +80,7 @@ body {
 }
 
 .modal-lang-button {
-    background: linear-gradient(135deg, #5a6268, #4a5258); /* Dopasowano do stylu toggle-button z style.css */
+    background: linear-gradient(135deg, #5a6268, #4a5258);
     color: white;
     border: none;
     padding: 6px 12px;
@@ -94,7 +94,7 @@ body {
 }
 
 .modal-lang-button.active {
-    background: linear-gradient(135deg, #6a7278, #5a6268); /* Jasniejszy gradient dla aktywnego przycisku */
+    background: linear-gradient(135deg, #6a7278, #5a6268);
     filter: brightness(1.1);
 }
 
