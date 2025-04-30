@@ -443,7 +443,7 @@ body {
 }
 
 .fear-greed-indicator .trend-neutral {
-    color: #ffd700;
+    color: #ffea00;
     animation: glow-neutral 1.5s ease-in-out infinite;
 }
 
@@ -799,7 +799,7 @@ tr:hover td:last-child {
 
 @keyframes glow-neutral {
     0% { color: #f5e698; }
-    50% { color: #ffd700; }
+    50% { color: #ffea00; }
     100% { color: #cfae02; }
 }
 
