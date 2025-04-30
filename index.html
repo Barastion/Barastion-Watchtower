@@ -1734,9 +1734,8 @@
         closeButton.addEventListener('click', () => {
             modalOverlay.style.display = 'none';
             modalContent.innerHTML = '';
-            // Optionally, remove terms.css if desired
-            // document.head.removeChild(link);
-        });
+            document.head.removeChild(link);
+});
 
         const langPolish = modalContent.querySelector('#langPolish');
         const langEnglish = modalContent.querySelector('#langEnglish');
