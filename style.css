@@ -318,6 +318,18 @@ body {
     box-sizing: border-box;
 }
 
+.fear-greed-indicator .fgi-dash {
+    font-weight: 600;
+    margin: 0 8px;
+    color: #ffffff;
+    text-shadow: 
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
 /* Kolory banera w zależności od sygnału */
 .fear-greed-indicator.all-in {
     background-color: var(--fear-greed-opportunity);
@@ -410,7 +422,7 @@ body {
 }
 
 .fear-greed-indicator .trend-neutral {
-    color: var(--fear-greed-hold);
+    color: #ffd700;
     animation: glow-neutral 1.5s ease-in-out infinite;
 }
 
@@ -749,21 +761,21 @@ tr:hover td:last-child {
 }
 
 @keyframes glow-positive {
-    0% { color: #00ff00; }
-    50% { color: #14ff14; }
-    100% { color: #00ff00; }
+    0% { color: var(--fear-greed-opportunity); }
+    50% { color: rgba(0, 255, 0, 0.9); }
+    100% { color: var(--fear-greed-opportunity); }
 }
 
 @keyframes glow-negative {
     0% { color: var(--fear-greed-sell); }
-    50% { color: rgba(225, 25, 25, 0.9); }
+    50% { color: rgba(255, 0, 0, 0.9); }
     100% { color: var(--fear-greed-sell); }
 }
 
 @keyframes glow-neutral {
-    0% { color: var(--fear-greed-hold); }
-    50% { color: #ffcc1a; }
-    100% { color: var(--fear-greed-hold); }
+    0% { color: #f5e698; }
+    50% { color: #ffd700; }
+    100% { color: #cfae02; }
 }
 
 .modal-overlay {
