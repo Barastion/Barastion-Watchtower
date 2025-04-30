@@ -89,7 +89,12 @@ body {
     -webkit-animation: ticker 360s linear infinite;
     font-size: 0.7em;
     color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+    text-shadow: 
+    -1px -1px 0 #000000,
+    1px -1px 0 #000000,
+    -1px 1px 0 #000000,
+    1px 1px 0 #000000,
+    0 0 5px rgba(0, 0, 0, 0.9);;
 }
 
 .nasa-ticker .ticker-segment {
