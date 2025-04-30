@@ -7,21 +7,21 @@
     <link rel="stylesheet" href="terms.css">
 </head>
 <body>
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="terms-container">
-            <div class="header">
-                <h1 id="termsTitle">Regulamin Strony - Barastion Watchtower</h1>
+    <div class="modal-modal-overlay" id="modal-modalOverlay">
+        <div class="modal-terms-container">
+            <div class="modal-header">
+                <h1 id="modal-termsTitle">Regulamin Strony - Barastion Watchtower</h1>
             </div>
-            <div class="controls">
-                <div class="language-switcher">
-                    <span class="language-label">Language:</span>
-                    <button id="langPolish" class="lang-button active">Polish</button>
-                    <button id="langEnglish" class="lang-button">English</button>
+            <div class="modal-controls">
+                <div class="modal-language-switcher">
+                    <span class="modal-language-label">Language:</span>
+                    <button id="modal-langPolish" class="modal-lang-button active">Polish</button>
+                    <button id="modal-langEnglish" class="modal-lang-button">English</button>
                 </div>
-                <button id="closeButton" class="modal-close-button">Zamknij</button>
+                <button id="modal-closeButton" class="modal-modal-close-button">Akceptuję</button>
             </div>
-            <div class="terms-content">
-                <div id="termsPL" class="terms-language">
+            <div class="modal-terms-content">
+                <div id="modal-termsPL" class="modal-terms-language">
                     <p><strong>Data wejścia w życie: 20 kwietnia 2025 r.</strong></p>
 
                     <h2>1. Postanowienia ogólne</h2>
@@ -78,7 +78,7 @@
                     <p>8.2. Regulamin podlega prawu polskiemu. Wszelkie spory będą rozpatrywane przez sądy powszechne w Polsce.</p>
                     <p>8.3. W razie pytań lub wątpliwości prosimy o kontakt: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
                 </div>
-                <div id="termsEN" class="terms-language" style="display: none;">
+                <div id="modal-termsEN" class="modal-terms-language" style="display: none;">
                     <p><strong>Effective Date: April 20, 2025</strong></p>
 
                     <h2>1. General Provisions</h2>
@@ -141,13 +141,13 @@
 
     <script>
         // Language toggle functionality
-        const langPolish = document.getElementById('langPolish');
-        const langEnglish = document.getElementById('langEnglish');
-        const termsPL = document.getElementById('termsPL');
-        const termsEN = document.getElementById('termsEN');
-        const termsTitle = document.getElementById('termsTitle');
-        const closeButton = document.getElementById('closeButton');
-        const termsContent = document.querySelector('.terms-content');
+        const langPolish = document.getElementById('modal-langPolish');
+        const langEnglish = document.getElementById('modal-langEnglish');
+        const termsPL = document.getElementById('modal-termsPL');
+        const termsEN = document.getElementById('modal-termsEN');
+        const termsTitle = document.getElementById('modal-termsTitle');
+        const closeButton = document.getElementById('modal-closeButton');
+        const termsContent = document.querySelector('.modal-terms-content');
         let currentLanguage = 'pl';
 
         function setLanguage(language) {
@@ -155,7 +155,7 @@
                 termsPL.style.display = 'block';
                 termsEN.style.display = 'none';
                 termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
-                closeButton.textContent = 'Zamknij';
+                closeButton.textContent = 'Akceptuję';
                 langPolish.classList.add('active');
                 langEnglish.classList.remove('active');
                 currentLanguage = 'pl';
@@ -163,7 +163,7 @@
                 termsPL.style.display = 'none';
                 termsEN.style.display = 'block';
                 termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                closeButton.textContent = 'Close';
+                closeButton.textContent = 'Accept';
                 langPolish.classList.remove('active');
                 langEnglish.classList.add('active');
                 currentLanguage = 'en';
@@ -179,7 +179,7 @@
 
         // Close button functionality
         closeButton.addEventListener('click', () => {
-            const modalOverlay = document.getElementById('modalOverlay');
+            const modalOverlay = document.getElementById('modal-modalOverlay');
             modalOverlay.style.display = 'none'; // Hide the modal
             // Reset any potential style bleed on the main page
             document.body.style.overflow = 'auto'; // Ensure body scrolling is restored
@@ -187,7 +187,7 @@
 
         // Ensure modal is visible on load
         document.addEventListener('DOMContentLoaded', () => {
-            const modalOverlay = document.getElementById('modalOverlay');
+            const modalOverlay = document.getElementById('modal-modalOverlay');
             modalOverlay.style.display = 'flex';
             // Prevent body scrolling while modal is open
             document.body.style.overflow = 'hidden';
