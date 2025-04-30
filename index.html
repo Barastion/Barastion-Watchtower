@@ -4,19 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barastion Watchtower</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" id="mainStylesheet" onload="checkCSSLoaded()" onerror="loadFallbackCSS()">
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
     <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:; font-src 'self';">
 </head>
 <body>
-    <div id="networkStatus" class="network-status"></div>
+    <div id="networkStatus" class="network-status" role="alert"></div>
+    <div class="theme-toggle">
+        <button id="themeToggle" aria-label="Przełącz motyw">🌙</button>
+    </div>
     <div class="container">
         <div class="nasa-container">
             <div class="nasa-frame">
-                <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
-                <div class="nasa-ticker">
+                <div class="loader" id="nasaLoader"></div>
+                <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day" loading="lazy">
+                <div class="nasa-ticker" role="marquee">
                     <div id="nasaTickerContent">
                         <span class="ticker-segment">Ładowanie opisu...</span>
                     </div>
@@ -25,8 +29,9 @@
         </div>
         <div class="search-container">
             <form action="https://www.google.com/search" method="get" target="_blank">
-                <label for="search-input"> Szukaj w Google:</label>
-                <input type="text" id="search-input" name="q" placeholder="Wpisz frazę...">
+                <label for="search-input">Szukaj w Google:</label>
+                <input type="text" id="search-input" name="q" placeholder="Wpisz frazę..." aria-label="Wyszukiwanie w Google">
+                <button type="submit" aria-label="Szukaj">🔍</button>
             </form>
         </div>
         <div class="daily-fact">
@@ -37,12 +42,14 @@
             <div class="weather-info">
                 <div class="weather-forecast">
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
+                    <div class="loader" id="weatherLoader"></div>
                     <div class="forecast-container" id="weatherForecast"></div>
-                    <div class="weather-ticker">
-                         <div id="tickerContent">
+                    <div class="weather-ticker" role="marquee">
+                        <div id="tickerContent">
                             <span class="ticker-segment">Ładowanie...</span>
                         </div>
                     </div>
+                    <button id="retryWeather" class="retry-button" style="display: none;">Ponów próbę</button>
                 </div>
             </div>
             <div class="crypto-info">
@@ -54,12 +61,14 @@
                         <span class="fear-greed-signal"></span>
                     </div>
                 </div>
+                <div class="loader" id="cryptoLoader"></div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
+                <button id="retryCrypto" class="retry-button" style="display: none;">Ponów próbę</button>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
                     <div class="table-container">
-                        <table id="logTable">
+                        <table id="logTable" aria-label="Logi odwiedzin">
                             <thead>
                                 <tr>
                                     <th>Data</th>
@@ -78,18 +87,18 @@
                         </table>
                     </div>
                     <div class="toggle-container">
-                        <button id="toggleLogs" class="toggle-button">Rozwiń listę</button>
+                        <button id="toggleLogs" class="toggle-button" aria-expanded="false">Rozwiń listę</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="modalOverlay" class="modal-overlay" style="display: none;">
+    <div id="modalOverlay" class="modal-overlay" style="display: none;" role="dialog" aria-labelledby="termsTitle">
         <div class="container" id="modalContent"></div>
     </div>
     <footer class="footer">
-        <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" id="termsLinkPL">Regulaminu</a>.</p>
-        <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" id="termsLinkEN">Terms and Conditions</a>.</p>
+        <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" id="termsLinkPL" aria-label="Regulamin w języku polskim">Regulaminu</a>.</p>
+        <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" id="termsLinkEN" aria-label="Terms and Conditions in English">Terms and Conditions</a>.</p>
         <p>© 2025 Barastion Watchtower.</p>
     </footer>
 
@@ -97,6 +106,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
+    // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
         authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
@@ -107,13 +117,15 @@
         appId: "1:93459469114:web:0a709b6be237705bf8f603"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
+    // Utility: Robust fetch with retry and rate-limit handling
+    async function retryFetch(url, options = {}, retries = 3, baseDelay = 2000, timeout = 5000) {
         let rateLimitRetries = 3;
         let rateLimitDelay = 10000;
-        const maxRateLimitDelay = 40000;
+        const maxRateLimitDelay = 60000;
 
         for (let attempt = 1; attempt <= retries + rateLimitRetries; attempt++) {
             try {
@@ -123,55 +135,47 @@
                 clearTimeout(id);
 
                 if (response.status === 429) {
-                    console.warn(`Błąd 429 dla ${url}, próba ${attempt}`);
+                    console.warn(`Rate limit hit for ${url}, attempt ${attempt}`);
                     const retryAfter = response.headers.get('Retry-After');
                     let delayMs = rateLimitDelay;
-
                     if (retryAfter) {
                         const retryAfterSeconds = parseInt(retryAfter, 10);
-                        if (!isNaN(retryAfterSeconds)) {
-                            delayMs = retryAfterSeconds * 1000;
-                        }
+                        delayMs = isNaN(retryAfterSeconds) ? rateLimitDelay : retryAfterSeconds * 1000;
                     }
-
                     if (attempt >= retries + rateLimitRetries) {
                         throw new Error('RateLimitExceeded');
                     }
-
                     await new Promise(resolve => setTimeout(resolve, delayMs));
                     rateLimitDelay = Math.min(rateLimitDelay * 2, maxRateLimitDelay);
                     continue;
                 }
 
                 if (!response.ok) {
-                    throw new Error(`Błąd HTTP: ${response.status}`);
+                    throw new Error(`HTTP error: ${response.status}`);
                 }
                 return await response.json();
             } catch (err) {
-                console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
+                console.error(`Attempt ${attempt} for ${url} failed:`, err);
                 if (err.message === 'RateLimitExceeded' || attempt === retries + rateLimitRetries) {
                     throw err;
                 }
-                await new Promise(resolve => setTimeout(resolve, delay));
+                await new Promise(resolve => setTimeout(resolve, baseDelay * attempt));
             }
         }
     }
 
+    // Cache Management
     function cleanOldCache() {
         const now = Date.now();
-        const cleanupInterval = 3600000;
+        const cleanupInterval = 3600000; // 1 hour
         const lastCleanupTime = localStorage.getItem('lastCleanupTime');
-        const cleanupThreshold = 48 * 60 * 60 * 1000;
-        const isCleanupTriggered = localStorage.getItem('isCleanupTriggered');
-
-        if (isCleanupTriggered === 'true' || (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval))) {
-            console.debug('Czyszczenie pominięte');
+        const cleanupThreshold = 48 * 60 * 60 * 1000; // 48 hours
+        if (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval)) {
+            console.debug('Cache cleanup skipped');
             return;
         }
 
-        console.log('Rozpoczynam czyszczenie localStorage...');
-        localStorage.setItem('isCleanupTriggered', 'true');
-
+        console.log('Cleaning localStorage...');
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -185,13 +189,11 @@
         }
 
         keysToRemove.forEach(key => {
-            console.log(`Usuwam klucz: ${key}`);
+            console.log(`Removing key: ${key}`);
             localStorage.removeItem(key);
         });
 
         localStorage.setItem('lastCleanupTime', now.toString());
-        localStorage.removeItem('isCleanupTriggered');
-        console.log('Czyszczenie localStorage zakończone');
     }
 
     function setCachedData(cacheKey, cacheTimeKey, data) {
@@ -229,7 +231,7 @@
         const fallbackDuration = 24 * 60 * 60 * 1000;
         const cachedFallback = getCachedData(fallbackKey, fallbackTimeKey, fallbackDuration);
         if (cachedFallback) {
-            console.log(`Używam danych fallback dla ${cacheKey}`);
+            console.log(`Using fallback data for ${cacheKey}`);
             return cachedFallback;
         }
         const cachedData = localStorage.getItem(cacheKey);
@@ -256,15 +258,15 @@
             const now = Date.now();
 
             if (!cachedTime || (now - parseInt(cachedTime) > fallbackDuration)) {
-                console.log(`Inicjalizuję dane fallback dla ${section.key}`);
+                console.log(`Initializing fallback data for ${section.key}`);
                 try {
                     const data = await section.fetchFn();
                     if (data) {
                         setCachedData(fallbackKey, fallbackTimeKey, data);
-                        console.log(`Zapisano dane fallback dla ${section.key}`);
+                        console.log(`Saved fallback data for ${section.key}`);
                     }
                 } catch (err) {
-                    console.error(`Błąd inicjalizacji danych fallback dla ${section.key}:`, err);
+                    console.error(`Failed to initialize fallback for ${section.key}:`, err);
                 }
             }
         }
@@ -316,6 +318,7 @@
         return data;
     }
 
+    // Fear and Greed Index
     async function getFearAndGreedData() {
         const cacheKey = 'fear_greed_data';
         const rawDataKey = 'fear_greed_raw_data';
@@ -328,13 +331,11 @@
         const anyCachedAverage = getAnyCachedData(cacheKey);
         const anyCachedTrend = getAnyCachedData(trendKey);
         if (anyCachedRawData && anyCachedAverage && anyCachedTrend) {
-            console.log('Wyświetlam starsze dane Fear and Greed');
             displayFearGreed(anyCachedAverage, anyCachedTrend);
         }
 
         const cachedData = getCachedData(rawDataKey, cacheTimeKey, cacheDuration);
         if (cachedData) {
-            console.log('Używam danych Fear and Greed z cache');
             const average = calculateSDWA(cachedData);
             const trend = calculateTrend(cachedData);
             setCachedData(cacheKey, cacheTimeKey, average);
@@ -348,7 +349,7 @@
         try {
             const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
             if (!data.data || data.data.length < 30) {
-                throw new Error('Za mało danych do obliczenia trendu');
+                throw new Error('Insufficient data for trend calculation');
             }
             const sortedData = data.data.sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
             const validatedData = sortedData.map(item => ({
@@ -367,13 +368,12 @@
             cleanOldCache();
             return validatedData;
         } catch (error) {
-            console.error('Błąd pobierania Fear and Greed:', error);
+            console.error('Failed to fetch Fear and Greed:', error);
             if (error.message === 'RateLimitExceeded') {
                 localStorage.setItem(`rateLimit_${rawDataKey}`, JSON.stringify({
                     extendedDuration: extendedCacheDuration,
                     timestamp: Date.now()
                 }));
-                console.log(`Wydłużono cache dla ${rawDataKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
             if (anyCachedRawData) {
                 const average = calculateSDWA(anyCachedRawData);
@@ -381,13 +381,12 @@
                 displayFearGreed(average, trend);
                 return anyCachedRawData;
             }
-            return null;
+            throw error;
         }
     }
 
     function calculateSDWA(values) {
         if (!values || values.length < 30) {
-            console.error('Niewystarczająca liczba danych do obliczenia SDWA');
             return { average: 0, signal: { signal: 'HODL', class: 'hodl' } };
         }
 
@@ -396,8 +395,6 @@
         const weights = Array(30).fill(0);
         const multipliers = Array(30).fill(1);
         const latestFGI = parsedValues[0];
-
-        console.log('Surowe dane FGI (30 dni):', values.map(item => ({ value: item.value, timestamp: item.timestamp })));
 
         for (let i = 0; i < 10; i++) {
             let m_high = 1, m_low = 1;
@@ -428,8 +425,6 @@
         const std30 = calculateStandardDeviation(parsedValues, 30);
         const signal = getSignal(latestFGI, ema30, std30);
 
-        console.log(`Obliczona wartość SDWA: ${parseFloat(weightedSum.toFixed(1))}`);
-
         return { average: parseFloat(weightedSum.toFixed(1)), signal };
     }
 
@@ -455,37 +450,21 @@
         const sellSlowlyThreshold = ema30 + 0.8 * std30;
         const cashOutThreshold = ema30 + 2.0 * std30;
 
-        let signal, signalClass, reason = '';
-
         if (value < allInThreshold && value < 20) {
-            signal = 'ALL IN!';
-            signalClass = 'all-in';
-            reason = `Wskaźnik sygnału pokazuje ALL IN!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg allInThreshold = ${allInThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 20`;
+            return { signal: 'ALL IN!', class: 'all-in' };
         } else if (value < buySlowlyThreshold && value < 40) {
-            signal = 'BUY SLOWLY';
-            signalClass = 'buy-slowly';
-            reason = `Wskaźnik sygnału pokazuje BUY SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg buySlowlyThreshold = ${buySlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 40`;
+            return { signal: 'BUY SLOWLY', class: 'buy-slowly' };
         } else if (value > cashOutThreshold && value > 80) {
-            signal = 'CASH OUT!';
-            signalClass = 'cash-out';
-            reason = `Wskaźnik sygnału pokazuje CASH OUT!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg cashOutThreshold = ${cashOutThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 80`;
+            return { signal: 'CASH OUT!', class: 'cash-out' };
         } else if (value > sellSlowlyThreshold && value > 60) {
-            signal = 'SELL SLOWLY';
-            signalClass = 'sell-slowly';
-            reason = `Wskaźnik sygnału pokazuje SELL SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg sellSlowlyThreshold = ${sellSlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 60`;
+            return { signal: 'SELL SLOWLY', class: 'sell-slowly' };
         } else {
-            signal = 'HODL';
-            signalClass = 'hodl';
-            reason = `Wskaźnik sygnału pokazuje HODL, ponieważ wartość FGI = ${value} nie przekracza progów sygnału, EMA30 = ${ema30.toFixed(1)}`;
+            return { signal: 'HODL', class: 'hodl' };
         }
-
-        console.log(reason);
-        return { signal, class: signalClass };
     }
 
     function calculateTrend(values) {
         if (!values || values.length < 30) {
-            console.error('Niewystarczająca liczba danych do trendu (potrzeba 30 dni)');
             return { symbol: '■', class: 'trend-neutral' };
         }
 
@@ -494,23 +473,13 @@
         const ema8 = calculateEMA(parsedValues, 8);
         const difference = ema2 - ema8;
 
-        let trendSymbol, trendClass, trendReason;
         if (Math.abs(difference) < 0.5) {
-            trendSymbol = '■';
-            trendClass = 'trend-neutral';
-            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ■ (trend neutralny)`;
+            return { symbol: '■', class: 'trend-neutral' };
         } else if (difference >= 0.5) {
-            trendSymbol = '▲';
-            trendClass = 'trend-up';
-            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▲ (trend w górę)`;
+            return { symbol: '▲', class: 'trend-up' };
         } else {
-            trendSymbol = '▼';
-            trendClass = 'trend-down';
-            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▼ (trend w dół)`;
+            return { symbol: '▼', class: 'trend-down' };
         }
-
-        console.log(trendReason);
-        return { symbol: trendSymbol, class: trendClass };
     }
 
     function displayFearGreed(averageData, trend) {
@@ -535,33 +504,34 @@
         indicator.className = `fear-greed-indicator ${signalClass}`;
         indicator.innerHTML = `
             <span class="fgi-label">Miesięczny sygnał:</span>
-            <span class="trend-indicator ${trendClass}">${trend.symbol}</span>
-            <span class="fgi-value ${valueClass}">${roundedAverage}</span>
+            <span class="trend-indicator ${trendClass}" aria-label="Trend: ${trend.symbol}">${trend.symbol}</span>
+            <span class="fgi-value ${valueClass}" aria-label="Wskaźnik: ${roundedAverage}">${roundedAverage}</span>
             <span class="fgi-dash">–</span>
-            <span class="fear-greed-signal">${averageData.signal.signal}</span>
-`;
+            <span class="fear-greed-signal" aria-label="Sygnał: ${averageData.signal.signal}">${averageData.signal.signal}</span>
+        `;
     }
 
     async function updateFearGreedIndicator() {
-        console.log('Rozpoczynam aktualizację Fear and Greed...');
-        const cacheKey = 'fear_greed_data';
-        const rawDataKey = 'fear_greed_raw_data';
-        const trendKey = 'fear_greed_trend';
-        const anyCachedAverage = getAnyCachedData(cacheKey);
-        const anyCachedTrend = getAnyCachedData(trendKey);
-        if (anyCachedAverage && anyCachedTrend) {
-            console.log('Wyświetlam starsze dane Fear and Greed');
-            displayFearGreed(anyCachedAverage, anyCachedTrend);
-        }
-        const data = await getFearAndGreedData();
-        if (!data && anyCachedAverage && anyCachedTrend) {
-            displayFearGreed(anyCachedAverage, anyCachedTrend);
-        } else if (!data) {
-            const indicator = document.getElementById('fearGreedIndicator');
-            indicator.innerHTML = '<span class="fgi-label">Miesięczny sygnał:</span> Brak danych';
+        const indicator = document.getElementById('fearGreedIndicator');
+        try {
+            const data = await getFearAndGreedData();
+            if (!data) {
+                indicator.innerHTML = '<span class="fgi-label">Miesięczny sygnał:</span> Brak danych';
+                indicator.setAttribute('aria-live', 'polite');
+            }
+        } catch (error) {
+            const anyCachedAverage = getAnyCachedData('fear_greed_data');
+            const anyCachedTrend = getAnyCachedData('fear_greed_trend');
+            if (anyCachedAverage && anyCachedTrend) {
+                displayFearGreed(anyCachedAverage, anyCachedTrend);
+            } else {
+                indicator.innerHTML = '<span class="fgi-label">Miesięczny sygnał:</span> Błąd ładowania';
+                indicator.setAttribute('aria-live', 'polite');
+            }
         }
     }
 
+    // Visitor Logging
     function getDeviceType(userAgent) {
         if (userAgent.includes('Android')) return 'Android';
         if (userAgent.includes('iPhone')) return 'iPhone';
@@ -597,7 +567,6 @@
     }
 
     async function logVisit() {
-        console.log('Rozpoczynam zapis logu...');
         const now = new Date();
         const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
@@ -611,30 +580,27 @@
 
         const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
         if (isDuplicate) {
-            console.log('Duplikat logu, pomijam zapis.');
+            console.log('Duplicate log detected, skipping.');
             await updateLogs();
             return;
         }
 
         const logEntry = { date, day, time, ip, location, device, isp, timestamp };
-        console.log('Log do zapisania:', logEntry);
-
         const logsRef = ref(database, 'logs');
         const newLogRef = push(logsRef);
 
         try {
             await set(newLogRef, logEntry);
-            console.log('Log zapisany pomyślnie:', logEntry);
             await updateLogs();
         } catch (error) {
-            console.error('Błąd zapisu logu:', error);
+            console.error('Failed to log visit:', error);
+            throw error;
         }
     }
 
     async function updateLogs() {
-        console.log('Rozpoczynam aktualizację logów...');
         const logsRef = ref(database, 'logs');
-        console.log('Pobieram logi z Firebase...');
+        const logTableBody = document.getElementById('logTableBody');
         try {
             onValue(logsRef, (snapshot) => {
                 const logsData = snapshot.val();
@@ -652,26 +618,17 @@
                 displayLogs(logs);
             }, { onlyOnce: true });
         } catch (error) {
-            console.error('Błąd pobierania logów:', error);
-            const logTableBody = document.getElementById('logTableBody');
-            if (logTableBody) {
-                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
-            }
+            console.error('Failed to fetch logs:', error);
+            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
         }
     }
 
     function displayLogs(logs) {
-        console.log('Próba wyświetlenia logów...');
         const logTableBody = document.getElementById('logTableBody');
         const toggleButton = document.getElementById('toggleLogs');
-        if (!logTableBody || !toggleButton) {
-            console.error('Brak elementu #logTableBody lub #toggleLogs');
-            return;
-        }
-
         logTableBody.innerHTML = '';
+
         if (logs.length === 0) {
-            console.log('Brak logów do wyświetlenia.');
             toggleButton.style.display = 'none';
             logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>';
             return;
@@ -722,26 +679,23 @@
 
             toggleButton.style.display = 'block';
             toggleButton.textContent = 'Rozwiń listę';
+            toggleButton.setAttribute('aria-expanded', 'false');
 
             const hiddenRows = document.querySelectorAll('.hidden-log');
             hiddenRows.forEach(row => row.style.display = 'none');
 
             toggleButton.onclick = () => {
-                if (toggleButton.textContent === 'Rozwiń listę') {
-                    hiddenRows.forEach(row => row.style.display = 'table-row');
-                    toggleButton.textContent = 'Zwiń listę';
-                } else {
-                    hiddenRows.forEach(row => row.style.display = 'none');
-                    toggleButton.textContent = 'Rozwiń listę';
-                }
+                const isExpanded = toggleButton.getAttribute('aria-expanded') === 'true';
+                hiddenRows.forEach(row => row.style.display = isExpanded ? 'none' : 'table-row');
+                toggleButton.textContent = isExpanded ? 'Rozwiń listę' : 'Zwiń listę';
+                toggleButton.setAttribute('aria-expanded', !isExpanded);
             };
         } else {
             toggleButton.style.display = 'none';
         }
-
-        console.log('Logi wyświetlone:', logs.length);
     }
 
+    // IP and Location
     async function getIp() {
         const cacheKey = 'ip_data';
         const cacheTimeKey = 'ip_time';
@@ -750,24 +704,21 @@
 
         const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
         if (cachedData) {
-            console.log('Używam IP z cache:', cachedData.ip);
             return cachedData.ip;
         }
 
         try {
             const data = await retryFetch('https://api.ipify.org?format=json');
-            console.log('IP pobrane:', data.ip);
             setCachedData(cacheKey, cacheTimeKey, data);
             localStorage.removeItem(`rateLimit_${cacheKey}`);
             return data.ip || 'Nieznany IP';
         } catch (err) {
-            console.error('Błąd pobierania IP:', err);
+            console.error('Failed to fetch IP:', err);
             if (err.message === 'RateLimitExceeded') {
                 localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
                     extendedDuration: extendedCacheDuration,
                     timestamp: Date.now()
                 }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 60000} minut`);
             }
             return 'Nieznany IP';
         }
@@ -787,7 +738,6 @@
         if (cachedSignature === currentSignature) {
             const cachedLocation = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedLocation) {
-                console.log('Używam lokalizacji z cache:', ip);
                 return cachedLocation;
             }
         }
@@ -795,9 +745,8 @@
         try {
             const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
             const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
-            console.log('Lokalizacja dla IP:', ip, data);
             if (data.error) {
-                throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
+                throw new Error('API error: ' + (data.error.message || 'Unknown reason'));
             }
             const location = {
                 city: data.location?.city || 'Nieznane miasto',
@@ -811,13 +760,12 @@
             localStorage.removeItem(`rateLimit_${cacheKey}`);
             return location;
         } catch (err) {
-            console.error('Błąd pobierania lokalizacji:', ip, err);
+            console.error('Failed to fetch location:', ip, err);
             if (err.message === 'RateLimitExceeded') {
                 localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
                     extendedDuration: extendedCacheDuration,
                     timestamp: Date.now()
                 }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
             const fallbackLocation = {
                 city: 'Opole',
@@ -832,6 +780,7 @@
         }
     }
 
+    // Weather
     const weatherIcons = {
         0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
         45: '🌫️', 48: '🌫️',
@@ -878,17 +827,21 @@
         const cacheDuration = 3600000;
         const extendedCacheDuration = cacheDuration * 2;
 
+        const weatherLoader = document.getElementById('weatherLoader');
+        const retryButton = document.getElementById('retryWeather');
+        weatherLoader.style.display = 'block';
+        retryButton.style.display = 'none';
+
         const anyCachedWeather = getAnyCachedData(cacheKey);
         if (anyCachedWeather) {
-            console.log('Wyświetlam starsze dane pogodowe:', ip);
             displayWeather(anyCachedWeather, ip);
         }
 
         const cachedWeather = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
         if (cachedWeather) {
-            console.log('Używam pogody z cache:', ip);
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedWeather);
             displayWeather(cachedWeather, ip);
+            weatherLoader.style.display = 'none';
             cleanOldCache();
             return cachedWeather;
         }
@@ -896,7 +849,7 @@
         try {
             const locationData = await getLocation(ip);
             if (!locationData.lat || !locationData.lon) {
-                throw new Error('Brak współrzędnych dla lokalizacji');
+                throw new Error('Missing coordinates for location');
             }
             const lat = locationData.lat;
             const lon = locationData.lon;
@@ -909,28 +862,32 @@
                 setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, weatherData);
                 localStorage.removeItem(`rateLimit_${cacheKey}`);
                 displayWeather(weatherData, ip);
+                weatherLoader.style.display = 'none';
                 cleanOldCache();
                 return weatherData;
             } else {
-                throw new Error('Brak danych pogodowych');
+                throw new Error('No weather data available');
             }
         } catch (err) {
-            console.error('Błąd pobierania pogody:', err);
+            console.error('Failed to fetch weather:', err);
             if (err.message === 'RateLimitExceeded') {
                 localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
                     extendedDuration: extendedCacheDuration,
                     timestamp: Date.now()
                 }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
             if (anyCachedWeather) {
                 displayWeather(anyCachedWeather, ip);
+                weatherLoader.style.display = 'none';
                 return anyCachedWeather;
             }
-            document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
+            document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Nie można pobrać prognozy pogody.</div>';
             document.getElementById('weatherCity').textContent = 'Nieznane miasto';
             document.getElementById('tickerContent').innerHTML = `<span class="ticker-segment">Błąd pobierania pogody, spróbuj ponownie później.</span>`.repeat(5);
-            return null;
+            weatherLoader.style.display = 'none';
+            retryButton.style.display = 'block';
+            retryButton.onclick = () => getWeather(ip);
+            throw err;
         }
     }
 
@@ -954,7 +911,7 @@
             forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
             forecastBar.innerHTML = `
                 <div class="forecast-date">${formattedDate}</div>
-                <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
+                <div class="weather-icon" aria-label="${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}">${weatherIcons[weatherCode] || '❓'}</div>
                 <div class="weather-day">${dayName}</div>
                 <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
                 <div class="weather-temps">
@@ -989,23 +946,26 @@
         });
     }
 
+    // NASA APOD
     async function getNasaApodImage(retries = 5, delay = 2000) {
         const cacheKey = 'nasa_apod_data';
         const cacheTimeKey = 'nasa_apod_time';
         const cacheDuration = 3600000;
         const extendedCacheDuration = cacheDuration * 2;
 
+        const nasaLoader = document.getElementById('nasaLoader');
+        nasaLoader.style.display = 'block';
+
         const anyCachedData = getAnyCachedData(cacheKey);
         if (anyCachedData) {
-            console.log('Wyświetlam starsze dane NASA APOD');
             displayNasaApod(anyCachedData);
         }
 
         const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
         if (cachedData) {
-            console.log('Używam NASA APOD z cache');
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
             displayNasaApod(cachedData);
+            nasaLoader.style.display = 'none';
             return cachedData;
         }
 
@@ -1024,15 +984,14 @@
                     setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, apodData);
                     localStorage.removeItem(`rateLimit_${cacheKey}`);
                     displayNasaApod(apodData);
+                    nasaLoader.style.display = 'none';
                     imgElement.onerror = () => {
-                        console.error('Błąd ładowania obrazu NASA, używam fallbacku');
                         imgElement.src = 'planeta.png';
                         imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                         tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
                     };
                     setTimeout(() => {
                         if (!imgElement.complete || imgElement.naturalWidth === 0) {
-                            console.error('Obraz NASA nie załadował się, używam fallbacku');
                             imgElement.src = 'planeta.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                             tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
@@ -1040,30 +999,30 @@
                     }, 5000);
                     return apodData;
                 } else {
-                    console.warn('NASA APOD to wideo, używam fallbacku');
                     imgElement.src = 'planeta.png';
                     imgElement.alt = 'NASA APOD zawiera wideo';
                     tickerElement.innerHTML = `<span class="ticker-segment">NASA APOD to wideo, wyświetlono domyślny obraz.</span>`.repeat(5);
+                    nasaLoader.style.display = 'none';
                     return null;
                 }
             } catch (err) {
-                console.error(`Próba ${attempt} NASA APOD nie powiodła się:`, err);
+                console.error(`NASA APOD attempt ${attempt} failed:`, err);
                 if (err.message === 'RateLimitExceeded') {
                     localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
                         extendedDuration: extendedCacheDuration,
                         timestamp: Date.now()
                     }));
-                    console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
                 }
                 if (attempt === retries) {
                     imgElement.src = 'planeta.png';
                     imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                     tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
+                    nasaLoader.style.display = 'none';
                     if (anyCachedData) {
                         displayNasaApod(anyCachedData);
                         return anyCachedData;
                     }
-                    return null;
+                    throw err;
                 }
                 await new Promise(resolve => setTimeout(resolve, delay));
             }
@@ -1078,6 +1037,7 @@
         tickerElement.innerHTML = `<span class="ticker-segment">${data.explanation}</span>`.repeat(5);
     }
 
+    // Daily Fact
     async function getDailyFact() {
         const cacheKey = 'daily_fact';
         const cacheTimeKey = 'daily_fact_time';
@@ -1091,13 +1051,11 @@
 
         const anyCachedFact = getAnyCachedData(cacheKey);
         if (anyCachedFact && anyCachedFact.dateKey === dateKey) {
-            console.log('Wyświetlam starszą ciekawostkę');
             displayDailyFact(anyCachedFact.fact);
         }
 
         const cachedFact = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
         if (cachedFact && cachedFact.dateKey === dateKey) {
-            console.log('Używam ciekawostki z cache');
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedFact);
             displayDailyFact(cachedFact.fact);
             return cachedFact;
@@ -1113,27 +1071,29 @@
             displayDailyFact(fact);
             return factData;
         } catch (err) {
-            console.error('Błąd pobierania ciekawostki:', err);
+            console.error('Failed to fetch daily fact:', err);
             if (err.message === 'RateLimitExceeded') {
                 localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
                     extendedDuration: extendedCacheDuration,
                     timestamp: Date.now()
                 }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
             }
             if (anyCachedFact && anyCachedFact.dateKey === dateKey) {
                 displayDailyFact(anyCachedFact.fact);
                 return anyCachedFact;
             }
             displayDailyFact('Błąd ładowania ciekawostki');
-            return null;
+            throw err;
         }
     }
 
     function displayDailyFact(fact) {
-        document.getElementById('dailyFact').textContent = fact;
+        const factElement = document.getElementById('dailyFact');
+        factElement.textContent = fact;
+        factElement.setAttribute('aria-live', 'polite');
     }
 
+    // Cryptocurrency Data
     function isDerivative(coin, usedBaseAssets, allCoins) {
         const derivativeKeywords = [
             'wrapped', 'staked', 'liquid', 'bridged', 'pegged',
@@ -1161,11 +1121,9 @@
                     const basePrice = parseFloat(baseCoin.current_price);
                     const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                     if (priceDifference <= 5) {
-                        console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
                         return { isDerivative: true, baseSymbol };
                     }
                 }
-                console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol}`);
                 return { isDerivative: true, baseSymbol };
             }
             if (symbol.startsWith('w') && symbol.slice(1).includes(baseLower)) {
@@ -1174,11 +1132,9 @@
                     const basePrice = parseFloat(baseCoin.current_price);
                     const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                     if (priceDifference <= 5) {
-                        console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w', cena: ${priceDifference.toFixed(2)}%)`);
                         return { isDerivative: true, baseSymbol };
                     }
                 }
-                console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w')`);
                 return { isDerivative: true, baseSymbol };
             }
         }
@@ -1190,11 +1146,9 @@
                 const basePrice = parseFloat(baseCoin.current_price);
                 const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
                 if (priceDifference <= 5) {
-                    console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
                     return { isDerivative: true, baseSymbol: potentialBaseSymbol };
                 }
             }
-            console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol}`);
             return { isDerivative: true, baseSymbol: potentialBaseSymbol };
         }
 
@@ -1202,23 +1156,26 @@
     }
 
     async function getCryptoData() {
-        console.log('Rozpoczynam pobieranie danych kryptowalut...');
         const cacheKey = 'crypto_data';
         const cacheTimeKey = 'crypto_time';
         const cacheDuration = 15 * 60 * 1000;
         const extendedCacheDuration = cacheDuration * 2;
 
+        const cryptoLoader = document.getElementById('cryptoLoader');
+        const retryButton = document.getElementById('retryCrypto');
+        cryptoLoader.style.display = 'block';
+        retryButton.style.display = 'none';
+
         const anyCachedData = getAnyCachedData(cacheKey);
         if (anyCachedData) {
-            console.log('Wyświetlam starsze dane kryptowalut');
             displayCryptoData(anyCachedData);
         }
 
         const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
         if (cachedData) {
-            console.log('Używam kryptowalut z cache');
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
             displayCryptoData(cachedData);
+            cryptoLoader.style.display = 'none';
             return cachedData;
         }
 
@@ -1236,12 +1193,10 @@
                 const symbol = (coin.symbol || '').toLowerCase();
 
                 if (isNaN(price)) {
-                    console.log(`Pominięto ${coin.symbol}: nieprawidłowa cena (${coin.current_price})`);
                     return false;
                 }
 
                 if (price >= 0.99 && price <= 1.01) {
-                    console.log(`Pominięto ${coin.symbol}: cena w przedziale 0.99–1.01 USD (${price} USD)`);
                     return false;
                 }
 
@@ -1249,18 +1204,15 @@
                     id.includes(currency) || name.includes(currency) || symbol.includes(currency)
                 );
                 if (isFiatRelated && price >= 0.95 && price <= 1.05) {
-                    console.log(`Pominięto stablecoin: ${coin.symbol} (cena: ${price} USD)`);
                     return false;
                 }
 
                 if (price < 0.00001) {
-                    console.log(`Pominięto ${coin.symbol}: cena ${price} USD`);
                     return false;
                 }
 
                 const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
                 if (isDeriv) {
-                    console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol}`);
                     return false;
                 }
 
@@ -1273,28 +1225,30 @@
                 price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
             }));
 
-            console.log('Przefiltrowane kryptowaluty:', filteredCoins);
             setCachedData(cacheKey, cacheTimeKey, filteredCoins);
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, filteredCoins);
             localStorage.removeItem(`rateLimit_${cacheKey}`);
             displayCryptoData(filteredCoins);
+            cryptoLoader.style.display = 'none';
             return filteredCoins;
         } catch (err) {
-            console.error('Błąd pobierania kryptowalut:', err);
+            console.error('Failed to fetch crypto data:', err);
             if (err.message === 'RateLimitExceeded') {
                 localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
                     extendedDuration: extendedCacheDuration,
                     timestamp: Date.now()
                 }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 60000} minut`);
             }
             if (anyCachedData) {
-                console.log('Używam starszych danych kryptowalut');
                 displayCryptoData(anyCachedData);
+                cryptoLoader.style.display = 'none';
                 return anyCachedData;
             }
             document.getElementById('cryptoGrid').innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut.</div>';
-            return null;
+            cryptoLoader.style.display = 'none';
+            retryButton.style.display = 'block';
+            retryButton.onclick = () => getCryptoData();
+            throw err;
         }
     }
 
@@ -1346,6 +1300,9 @@
         coins.forEach(coin => {
             const cryptoTile = document.createElement('div');
             cryptoTile.className = `crypto-tile ${getChangeClass(coin.price_change_percentage_24h)}`;
+            cryptoTile.setAttribute('role', 'button');
+            cryptoTile.setAttribute('aria-label', `${coin.symbol.toUpperCase()}: ${formatPrice(coin.current_price)}, zmiana 24h: ${coin.price_change_percentage_24h.toFixed(2)}%`);
+            cryptoTile.tabIndex = 0;
             cryptoTile.innerHTML = `
                 <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
                 <div class="crypto-price">${formatPrice(coin.current_price)}</div>
@@ -1354,37 +1311,53 @@
             cryptoTile.addEventListener('click', () => {
                 window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
             });
+            cryptoTile.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
+                }
+            });
             cryptoGrid.appendChild(cryptoTile);
         });
     }
 
+    // CSS Fallback
     function checkCSSLoaded() {
         const container = document.querySelector('.container');
         const computedStyle = window.getComputedStyle(container);
         if (computedStyle.backgroundColor !== 'rgb(45, 45, 45)') {
-            console.warn('CSS nie załadował się, ładuję fallback');
-            const style = document.createElement('style');
-            style.textContent = `
-                body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
-                .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
-                .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-                .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
-                .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
-                .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
-                .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
-                .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
-                .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
-                .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-            `;
-            document.head.appendChild(style);
+            loadFallbackCSS();
         }
     }
 
+    function loadFallbackCSS() {
+        console.warn('Main CSS failed to load, applying fallback');
+        const style = document.createElement('style');
+        style.textContent = `
+            body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
+            .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
+            .crypto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+            .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
+            .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
+            .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
+            .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
+            .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
+            .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
+            .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
+            .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 10px auto; }
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            .retry-button { display: block; margin: 10px auto; padding: 8px 16px; background: #3498db; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+            .retry-button:hover { background: #2980b9; }
+            .theme-toggle { position: fixed; top: 10px; right: 10px; }
+            .theme-toggle button { padding: 8px; background: #3498db; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Network Status
     let isReloading = false;
     async function handleNetworkStatus() {
         const networkStatus = document.getElementById('networkStatus');
         if (navigator.onLine) {
-            console.log('Połączenie przywrócone');
             networkStatus.style.display = 'none';
             networkStatus.textContent = '';
             if (!isReloading) {
@@ -1392,37 +1365,10 @@
                 try {
                     const ip = await getIp();
                     await initializeFallbackData(ip);
-                    const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
-                        getNasaApodImage(),
-                        getWeather(ip),
-                        getDailyFact(),
-                        getCryptoData(),
-                        updateFearGreedIndicator()
-                    ]);
-
-                    console.log('Wyniki API:', {
-                        nasa: nasaResult.status === 'fulfilled' ? 'Success' : `Failed: ${nasaResult.reason}`,
-                        weather: weatherResult.status === 'fulfilled' ? 'Success' : `Failed: ${weatherResult.reason}`,
-                        fact: dailyFactResult.status === 'fulfilled' ? 'Success' : `Failed: ${dailyFactResult.reason}`,
-                        crypto: cryptoResult.status === 'fulfilled' ? 'Success' : `Failed: ${cryptoResult.reason}`,
-                        fearGreed: fearGreedResult.status === 'fulfilled' ? 'Success' : `Failed: ${fearGreedResult.reason}`
-                    });
-
-                    setTimeout(async () => {
-                        try {
-                            await logVisit();
-                        } catch (err) {
-                            console.error('Błąd ładowania logów:', err);
-                            const logTableBody = document.getElementById('logTableBody');
-                            if (logTableBody) {
-                                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
-                            }
-                        }
-                    }, 500);
-
-                    console.log('Dane załadowane po przywróceniu połączenia');
+                    await loadAllData(ip);
+                    setTimeout(() => logVisit(), 500);
                 } catch (err) {
-                    console.error('Błąd podczas ładowania danych:', err);
+                    console.error('Error during data reload:', err);
                     networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
                     networkStatus.style.display = 'block';
                 } finally {
@@ -1430,371 +1376,244 @@
                 }
             }
         } else {
-            console.log('Brak połączenia z internetem');
             networkStatus.textContent = 'Brak połączenia z internetem';
             networkStatus.style.display = 'block';
         }
     }
 
+    async function loadAllData(ip) {
+        const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
+            getNasaApodImage(),
+            getWeather(ip),
+            getDailyFact(),
+            getCryptoData(),
+            updateFearGreedIndicator()
+        ]);
+
+        if (nasaResult.status === 'rejected') {
+            document.getElementById('spaceImage').src = 'planeta.png';
+            document.getElementById('nasaTickerContent').innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA.</span>`.repeat(5);
+            document.getElementById('nasaLoader').style.display = 'none';
+        }
+        if (weatherResult.status === 'rejected') {
+            document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Błąd pobierania pogody.</div>';
+            document.getElementById('weatherCity').textContent = 'Nieznane miasto';
+            document.getElementById('tickerContent').innerHTML = `<span class="ticker-segment">Błąd pobierania pogody.</span>`.repeat(5);
+            document.getElementById('weatherLoader').style.display = 'none';
+            document.getElementById('retryWeather').style.display = 'block';
+        }
+        if (dailyFactResult.status === 'rejected') {
+            document.getElementById('dailyFact').textContent = 'Błąd ładowania ciekawostki';
+        }
+        if (cryptoResult.status === 'rejected') {
+            document.getElementById('cryptoGrid').innerHTML = '<div class="crypto-error">Błąd pobierania danych kryptowalut.</div>';
+            document.getElementById('cryptoLoader').style.display = 'none';
+            document.getElementById('retryCrypto').style.display = 'block';
+        }
+        if (fearGreedResult.status === 'rejected') {
+            document.getElementById('fearGreedIndicator').innerHTML = '<span class="fgi-label">Miesięczny sygnał:</span> Błąd ładowania';
+        }
+    }
+
+    // Update Intervals
     let cryptoIntervalId = null;
     let logIntervalId = null;
     let fearGreedIntervalId = null;
-    let weatherIntervalId = null;
-    let nasaIntervalId = null;
-    let factIntervalId = null;
     let lastUpdateTime = null;
     const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
 
     function startCryptoUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji kryptowalut');
         getCryptoData();
-        cryptoIntervalId = setInterval(() => {
-            console.log('Aktualizuję kryptowaluty...');
-            getCryptoData();
-        }, 900000);
+        cryptoIntervalId = setInterval(() => getCryptoData(), 900000);
     }
 
     function startLogUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji logów');
         updateLogs();
-        logIntervalId = setInterval(() => {
-            console.log('Aktualizuję logi...');
-            updateLogs();
-        }, 900000);
+        logIntervalId = setInterval(() => updateLogs(), 900000);
     }
 
     function startFearGreedUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji Fear and Greed');
         updateFearGreedIndicator();
-        fearGreedIntervalId = setInterval(() => {
-            console.log('Aktualizuję Fear and Greed...');
-            updateFearGreedIndicator();
-        }, 3600000);
+        fearGreedIntervalId = setInterval(() => updateFearGreedIndicator(), 3600000);
     }
-    function startWeatherUpdateInterval(ip) {
-    console.log('Uruchamiam interwał aktualizacji pogody');
-    getWeather(ip);
-    weatherIntervalId = setInterval(() => {
-        console.log('Aktualizuję pogodę...');
-        getWeather(ip);
-    }, 3 * 60 * 60 * 1000); // 3 godziny
-}
-
-function startNasaUpdateInterval() {
-    console.log('Uruchamiam interwał aktualizacji NASA APOD');
-    getNasaApodImage();
-    nasaIntervalId = setInterval(() => {
-        console.log('Aktualizuję NASA APOD...');
-        getNasaApodImage();
-    }, 3 * 60 * 60 * 1000); // 3 godziny
-}
-
-function startFactUpdateInterval() {
-    console.log('Uruchamiam interwał aktualizacji ciekawostki');
-    getDailyFact();
-    factIntervalId = setInterval(() => {
-        console.log('Aktualizuję ciekawostkę...');
-        getDailyFact();
-    }, 3 * 60 * 60 * 1000); // 3 godziny
-}
 
     let isManagingIntervals = false;
+    function manageUpdateIntervals() {
+        if (isManagingIntervals) return;
+        isManagingIntervals = true;
 
-   function manageUpdateIntervals() {
-    if (isManagingIntervals) {
-        console.log('manageUpdateIntervals już uruchomione, pomijam');
-        return;
-    }
-    isManagingIntervals = true;
-
-    const now = Date.now();
-
-    if (document.visibilityState === 'visible') {
-        console.log('Karta aktywna, włączam aktualizacje');
-        if (cryptoIntervalId) {
-            clearInterval(cryptoIntervalId);
-            cryptoIntervalId = null;
-        }
-        if (logIntervalId) {
-            clearInterval(logIntervalId);
-            logIntervalId = null;
-        }
-        if (fearGreedIntervalId) {
-            clearInterval(fearGreedIntervalId);
-            fearGreedIntervalId = null;
-        }
-        if (weatherIntervalId) {
-            clearInterval(weatherIntervalId);
-            weatherIntervalId = null;
-        }
-        if (nasaIntervalId) {
-            clearInterval(nasaIntervalId);
-            nasaIntervalId = null;
-        }
-        if (factIntervalId) {
-            clearInterval(factIntervalId);
-            factIntervalId = null;
-        }
-
-        if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
-            console.log('Minął minimalny czas, odświeżam dane');
-            startCryptoUpdateInterval();
-            startLogUpdateInterval();
-            startFearGreedUpdateInterval();
-            startWeatherUpdateInterval();
-            startNasaUpdateInterval();
-            startFactUpdateInterval();
-            lastUpdateTime = now;
-        } else {
-            console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
-            cryptoIntervalId = setInterval(() => {
-                console.log('Aktualizuję kryptowaluty...');
-                getCryptoData();
-            }, 900000);
-            logIntervalId = setInterval(() => {
-                console.log('Aktualizuję logi...');
-                updateLogs();
-            }, 900000);
-            fearGreedIntervalId = setInterval(() => {
-                console.log('Aktualizuję Fear and Greed...');
-                updateFearGreedIndicator();
-            }, 3600000);
-            weatherIntervalId = setInterval(async () => {
-                console.log('Aktualizuję pogodę...');
-                const ip = await getIp();
-                getWeather(ip);
-            }, 3 * 60 * 60 * 1000);
-            nasaIntervalId = setInterval(() => {
-                console.log('Aktualizuję NASA APOD...');
-                getNasaApodImage();
-            }, 3 * 60 * 60 * 1000);
-            factIntervalId = setInterval(() => {
-                console.log('Aktualizuję ciekawostkę...');
-                getDailyFact();
-            }, 3 * 60 * 60 * 1000);
-        }
-    } else {
-        console.log('Karta nieaktywna, wstrzymuję aktualizacje');
-        if (cryptoIntervalId) {
-            clearInterval(cryptoIntervalId);
-            cryptoIntervalId = null;
-        }
-        if (logIntervalId) {
-            clearInterval(logIntervalId);
-            logIntervalId = null;
-        }
-        if (fearGreedIntervalId) {
-            clearInterval(fearGreedIntervalId);
-            fearGreedIntervalId = null;
-        }
-        if (weatherIntervalId) {
-            clearInterval(weatherIntervalId);
-            weatherIntervalId = null;
-        }
-        if (nasaIntervalId) {
-            clearInterval(nasaIntervalId);
-            nasaIntervalId = null;
-        }
-        if (factIntervalId) {
-            clearInterval(factIntervalId);
-            factIntervalId = null;
-        }
-    }
-
-    isManagingIntervals = false;
-}
-
-    async function loadTermsModal(language) {
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalContent = document.getElementById('modalContent');
-
-    if (!modalOverlay || !modalContent) {
-        console.error('Błąd: Brak elementów modalOverlay lub modalContent w DOM');
-        return;
-    }
-
-    try {
-        const response = await fetch('terms.html');
-        if (!response.ok) throw new Error(`Nie udało się załadować terms.html: ${response.status}`);
-        modalContent.innerHTML = await response.text();
-
-        // Load terms.css dynamically
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'terms.css';
-        document.head.appendChild(link);
-
-        const closeButton = modalContent.querySelector('#closeButton');
-        if (!closeButton) {
-            console.error('Błąd: Nie znaleziono przycisku #closeButton w terms.html');
-            modalContent.innerHTML = '<p>Błąd ładowania regulaminu: brak przycisku zamykania.</p>';
-            modalOverlay.style.display = 'flex';
-            return;
-        }
-
-        closeButton.addEventListener('click', () => {
-            modalOverlay.style.display = 'none';
-            modalContent.innerHTML = '';
-            // Optionally, remove terms.css if desired
-            // document.head.removeChild(link);
-        });
-
-        const langPolish = modalContent.querySelector('#langPolish');
-        const langEnglish = modalContent.querySelector('#langEnglish');
-        const termsPL = modalContent.querySelector('#termsPL');
-        const termsEN = modalContent.querySelector('#termsEN');
-        const termsTitle = modalContent.querySelector('#termsTitle');
-
-        function setLanguage(lang) {
-            if (lang === 'pl') {
-                termsPL.style.display = 'block';
-                termsEN.style.display = 'none';
-                termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
-                closeButton.textContent = 'Akceptuję';
-                langPolish.classList.add('active');
-                langEnglish.classList.remove('active');
-            } else {
-                termsPL.style.display = 'none';
-                termsEN.style.display = 'block';
-                termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                closeButton.textContent = 'Accept';
-                langPolish.classList.remove('active');
-                langEnglish.classList.add('active');
-            }
-            // Przewiń treść do góry po zmianie języka
-            const termsContent = modalContent.querySelector('.terms-content');
-            if (termsContent) {
-                termsContent.scrollTop = 0;
-            }
-        }
-
-        langPolish.addEventListener('click', () => setLanguage('pl'));
-        langEnglish.addEventListener('click', () => setLanguage('en'));
-        setLanguage(language || 'pl');
-
-        // Przewiń treść do góry po załadowaniu
-        const termsContent = modalContent.querySelector('.terms-content');
-        if (termsContent) {
-            termsContent.scrollTop = 0;
-        }
-
-        modalOverlay.style.display = 'flex';
-    } catch (error) {
-        console.error('Błąd ładowania regulaminu:', error);
-        modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
-        modalOverlay.style.display = 'flex';
-    }
-}
-
-    window.onload = async function() {
-        console.log('Strona załadowana, uruchamiam funkcje...');
-        handleNetworkStatus();
+        const now = Date.now();
         if (document.visibilityState === 'visible') {
-                        console.log('Karta widoczna, uruchamiam aktualizacje danych');
+            if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+            if (logIntervalId) clearInterval(logIntervalId);
+            if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+
+            if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
+                startCryptoUpdateInterval();
+                startLogUpdateInterval();
+                startFearGreedUpdateInterval();
+                lastUpdateTime = now;
+            } else {
+                cryptoIntervalId = setInterval(() => getCryptoData(), 900000);
+                logIntervalId = setInterval(() => updateLogs(), 900000);
+                fearGreedIntervalId = setInterval(() => updateFearGreedIndicator(), 3600000);
+            }
+        } else {
+            if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+            if (logIntervalId) clearInterval(logIntervalId);
+            if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+            cryptoIntervalId = logIntervalId = fearGreedIntervalId = null;
+        }
+
+        isManagingIntervals = false;
+    }
+
+    // Terms Modal
+    async function loadTermsModal(language) {
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+
+        try {
+            const response = await fetch('terms.html');
+            if (!response.ok) throw new Error(`Failed to load terms.html: ${response.status}`);
+            modalContent.innerHTML = await response.text();
+
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'terms.css';
+            document.head.appendChild(link);
+
+            const closeButton = modalContent.querySelector('#closeButton');
+            if (!closeButton) {
+                modalContent.innerHTML = '<p>Błąd ładowania regulaminu: brak przycisku zamykania.</p>';
+                modalOverlay.style.display = 'flex';
+                return;
+            }
+
+            closeButton.addEventListener('click', () => {
+                modalOverlay.style.display = 'none';
+                modalContent.innerHTML = '';
+            });
+
+            const langPolish = modalContent.querySelector('#langPolish');
+            const langEnglish = modalContent.querySelector('#langEnglish');
+            const termsPL = modalContent.querySelector('#termsPL');
+            const termsEN = modalContent.querySelector('#termsEN');
+            const termsTitle = modalContent.querySelector('#termsTitle');
+
+            function setLanguage(lang) {
+                if (lang === 'pl') {
+                    termsPL.style.display = 'block';
+                    termsEN.style.display = 'none';
+                    termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
+                    closeButton.textContent = 'Akceptuję';
+                    langPolish.classList.add('active');
+                    langEnglish.classList.remove('active');
+                } else {
+                    termsPL.style.display = 'none';
+                    termsEN.style.display = 'block';
+                    termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
+                    closeButton.textContent = 'Accept';
+                    langPolish.classList.remove('active');
+                    langEnglish.classList.add('active');
+                }
+                const termsContent = modalContent.querySelector('.terms-content');
+                if (termsContent) termsContent.scrollTop = 0;
+            }
+
+            langPolish.addEventListener('click', () => setLanguage('pl'));
+            langEnglish.addEventListener('click', () => setLanguage('en'));
+            setLanguage(language || 'pl');
+
+            modalOverlay.style.display = 'flex';
+            modalOverlay.focus();
+        } catch (error) {
+            console.error('Failed to load terms:', error);
+            modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
+            modalOverlay.style.display = 'flex';
+        }
+    }
+
+    // Theme Toggle
+    function initializeThemeToggle() {
+        const themeToggle = document.getElementById('themeToggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let isDark = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : prefersDark;
+
+        function applyTheme() {
+            document.body.classList.toggle('light-theme', !isDark);
+            themeToggle.textContent = isDark ? '🌙' : '☀️';
+            themeToggle.setAttribute('aria-label', isDark ? 'Przełącz na jasny motyw' : 'Przełącz na ciemny motyw');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        applyTheme();
+        themeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            applyTheme();
+        });
+    }
+
+    // Initialization
+    window.onload = async function() {
+        handleNetworkStatus();
+        initializeThemeToggle();
+        cleanOldCache();
+
+        if (document.visibilityState === 'visible') {
             try {
                 const ip = await getIp();
                 await initializeFallbackData(ip);
-
-                // Ładowanie danych równolegle z obsługą błędów
-                const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
-                    getNasaApodImage(),
-                    getWeather(ip),
-                    getDailyFact(),
-                    getCryptoData(),
-                    updateFearGreedIndicator()
-                ]);
-
-                // Logowanie wyników wywołań API
-                console.log('Wyniki wywołań API:', {
-                    nasa: nasaResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${nasaResult.reason}`,
-                    weather: weatherResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${weatherResult.reason}`,
-                    dailyFact: dailyFactResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
-                    crypto: cryptoResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${cryptoResult.reason}`,
-                    fearGreed: fearGreedResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${fearGreedResult.reason}`
-                });
-
-                // Logowanie odwiedzin z opóźnieniem, aby uniknąć konfliktów
-                setTimeout(async () => {
-                    try {
-                        await logVisit();
-                    } catch (err) {
-                        console.error('Błąd podczas logowania odwiedzin:', err);
-                        const logTableBody = document.getElementById('logTableBody');
-                        if (logTableBody) {
-                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów odwiedzin.</td></tr>';
-                        }
-                    }
-                }, 500);
-
-                // Uruchomienie interwałów aktualizacji
+                await loadAllData(ip);
+                setTimeout(() => logVisit(), 500);
                 manageUpdateIntervals();
             } catch (err) {
-                console.error('Błąd podczas inicjalizacji danych:', err);
-                const networkStatus = document.getElementById('networkStatus');
-                networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
-                networkStatus.style.display = 'block';
+                console.error('Initialization error:', err);
+                document.getElementById('networkStatus').textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
+                document.getElementById('networkStatus').style.display = 'block';
             }
-        } else {
-            console.log('Karta niewidoczna, pomijam aktualizacje');
         }
 
-        // Sprawdzanie, czy CSS został poprawnie załadowany
-        checkCSSLoaded();
-
-        // Obsługa zmiany widoczności strony
-        document.addEventListener('visibilitychange', () => {
-            console.log(`Zmiana widoczności: ${document.visibilityState}`);
-            manageUpdateIntervals();
-        });
-
-        // Obsługa zmiany statusu sieci
+        document.addEventListener('visibilitychange', manageUpdateIntervals);
         window.addEventListener('online', handleNetworkStatus);
         window.addEventListener('offline', handleNetworkStatus);
 
-        // Obsługa przycisków regulaminu
-        const termsLinkPL = document.getElementById('termsLinkPL');
-        const termsLinkEN = document.getElementById('termsLinkEN');
-        if (termsLinkPL && termsLinkEN) {
-            termsLinkPL.addEventListener('click', (e) => {
-                e.preventDefault();
-                loadTermsModal('pl');
-            });
-            termsLinkEN.addEventListener('click', (e) => {
-                e.preventDefault();
-                loadTermsModal('en');
-            });
-        } else {
-            console.warn('Brak elementów termsLinkPL lub termsLinkEN');
-        }
+        document.getElementById('termsLinkPL').addEventListener('click', (e) => {
+            e.preventDefault();
+            loadTermsModal('pl');
+        });
+                document.getElementById('termsLinkEN').addEventListener('click', (e) => {
+            e.preventDefault();
+            loadTermsModal('en');
+        });
 
-        // Obsługa przewijania tickerów
-        const tickers = document.querySelectorAll('.nasa-ticker, .weather-ticker');
-        tickers.forEach(ticker => {
-            const content = ticker.querySelector('.ticker-content');
-            if (content) {
-                content.addEventListener('animationiteration', () => {
-                    content.style.animation = 'none';
-                    setTimeout(() => {
-                        content.style.animation = '';
-                    }, 10);
-                });
+        // Ensure modal is accessible via keyboard
+        document.getElementById('modalOverlay').addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modalOverlay = document.getElementById('modalOverlay');
+                const modalContent = document.getElementById('modalContent');
+                modalOverlay.style.display = 'none';
+                modalContent.innerHTML = '';
             }
         });
 
-        // Czyszczenie starego cache przy starcie
-        cleanOldCache();
+        // Focus management for accessibility
+        document.getElementById('modalOverlay').addEventListener('focusin', () => {
+            const modalContent = document.getElementById('modalContent');
+            const focusableElements = modalContent.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusableElements.length) {
+                focusableElements[0].focus();
+            }
+        });
 
-        console.log('Inicjalizacja strony zakończona');
+        // Initialize logs display
+        try {
+            await updateLogs();
+        } catch (err) {
+            console.error('Failed to initialize logs:', err);
+            document.getElementById('logTableBody').innerHTML = '<tr><td colspan="6">Błąd ładowania logów.</td></tr>';
+        }
     };
-
-    // Funkcja zabezpieczająca przed wielokrotnym ładowaniem strony
-    window.addEventListener('beforeunload', () => {
-        if (cryptoIntervalId) clearInterval(cryptoIntervalId);
-        if (logIntervalId) clearInterval(logIntervalId);
-        if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
-        console.log('Wstrzymano interwały przed opuszczeniem strony');
-    });
-
 </script>
 </body>
 </html>
