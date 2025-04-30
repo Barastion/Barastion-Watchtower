@@ -484,33 +484,32 @@
     }
 
     function calculateTrend(values) {
-        if (!values || values.length < 30) {
-            console.error('Niewystarczająca liczba danych do trendu (potrzeba 30 dni)');
-            return { symbol: '■', class: 'trend-neutral' };
-        }
+    if (!values || values.length < 30) {
+        console.error('Niewystarczająca liczba danych do trendu (potrzeba 30 dni)');
+        return { symbol: '■', class: 'trend-neutral' };
+    }
 
-        const parsedValues = values.map(item => parseFloat(item.value) || 0);
-        const ema2 = calculateEMA(parsedValues, 2);
-        const ema8 = calculateEMA(parsedValues, 8);
-        const difference = ema2 - ema8;
+    const parsedValues = values.map(item => parseFloat(item.value) || 0);
+    const ema2 = calculateEMA(parsedValues, 2);
+    const ema6 = calculateEMA(parsedValues, 6);
+    const difference = ema2 - ema6;
 
-        let trendSymbol, trendClass, trendReason;
-        if (Math.abs(difference) < 1.5) {
+    let trendSymbol, trendClass, trendReason;
+    if (Math.abs(difference) < 1.0) {
         trendSymbol = '■';
         trendClass = 'trend-neutral';
-        trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ■ (trend neutralny)`;
-    } else if (difference >= 1.5) {
+    } else if (difference >= 1.0) {
         trendSymbol = '▲';
         trendClass = 'trend-up';
-        trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▲ (trend w górę)`;
     } else {
         trendSymbol = '▼';
         trendClass = 'trend-down';
-        trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▼ (trend w dół)`;
     }
-        console.log(trendReason);
-        return { symbol: trendSymbol, class: trendClass };
-    }
+
+    trendReason = `EMA2 = ${ema2.toFixed(1)}, EMA6 = ${ema6.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`; // Aktualizacja logowania
+    console.log(trendReason);
+    return { symbol: trendSymbol, class: trendClass };
+}
 
     function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
