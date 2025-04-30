@@ -495,20 +495,19 @@
         const difference = ema2 - ema8;
 
         let trendSymbol, trendClass, trendReason;
-        if (Math.abs(difference) < 0.5) {
-            trendSymbol = '■';
-            trendClass = 'trend-neutral';
-            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ■ (trend neutralny)`;
-        } else if (difference >= 0.5) {
-            trendSymbol = '▲';
-            trendClass = 'trend-up';
-            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▲ (trend w górę)`;
-        } else {
-            trendSymbol = '▼';
-            trendClass = 'trend-down';
-            trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▼ (trend w dół)`;
-        }
-
+        if (Math.abs(difference) < 1.5) {
+        trendSymbol = '■';
+        trendClass = 'trend-neutral';
+        trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ■ (trend neutralny)`;
+    } else if (difference >= 1.5) {
+        trendSymbol = '▲';
+        trendClass = 'trend-up';
+        trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▲ (trend w górę)`;
+    } else {
+        trendSymbol = '▼';
+        trendClass = 'trend-down';
+        trendReason = `Wskaźnik trendu: EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ▼ (trend w dół)`;
+    }
         console.log(trendReason);
         return { symbol: trendSymbol, class: trendClass };
     }
