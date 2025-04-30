@@ -1439,6 +1439,9 @@
     let cryptoIntervalId = null;
     let logIntervalId = null;
     let fearGreedIntervalId = null;
+    let weatherIntervalId = null;
+    let nasaIntervalId = null;
+    let factIntervalId = null;
     let lastUpdateTime = null;
     const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
 
@@ -1468,72 +1471,138 @@
             updateFearGreedIndicator();
         }, 3600000);
     }
+    function startWeatherUpdateInterval(ip) {
+    console.log('Uruchamiam interwał aktualizacji pogody');
+    getWeather(ip);
+    weatherIntervalId = setInterval(() => {
+        console.log('Aktualizuję pogodę...');
+        getWeather(ip);
+    }, 3 * 60 * 60 * 1000); // 3 godziny
+}
+
+function startNasaUpdateInterval() {
+    console.log('Uruchamiam interwał aktualizacji NASA APOD');
+    getNasaApodImage();
+    nasaIntervalId = setInterval(() => {
+        console.log('Aktualizuję NASA APOD...');
+        getNasaApodImage();
+    }, 3 * 60 * 60 * 1000); // 3 godziny
+}
+
+function startFactUpdateInterval() {
+    console.log('Uruchamiam interwał aktualizacji ciekawostki');
+    getDailyFact();
+    factIntervalId = setInterval(() => {
+        console.log('Aktualizuję ciekawostkę...');
+        getDailyFact();
+    }, 3 * 60 * 60 * 1000); // 3 godziny
+}
 
     let isManagingIntervals = false;
 
-    function manageUpdateIntervals() {
-        if (isManagingIntervals) {
-            console.log('manageUpdateIntervals już uruchomione, pomijam');
-            return;
-        }
-        isManagingIntervals = true;
-
-        const now = Date.now();
-
-        if (document.visibilityState === 'visible') {
-            console.log('Karta aktywna, włączam aktualizacje');
-            if (cryptoIntervalId) {
-                clearInterval(cryptoIntervalId);
-                cryptoIntervalId = null;
-            }
-            if (logIntervalId) {
-                clearInterval(logIntervalId);
-                logIntervalId = null;
-            }
-            if (fearGreedIntervalId) {
-                clearInterval(fearGreedIntervalId);
-                fearGreedIntervalId = null;
-            }
-
-            if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
-                console.log('Minął minimalny czas, odświeżam dane');
-                startCryptoUpdateInterval();
-                startLogUpdateInterval();
-                startFearGreedUpdateInterval();
-                lastUpdateTime = now;
-            } else {
-                console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
-                cryptoIntervalId = setInterval(() => {
-                    console.log('Aktualizuję kryptowaluty...');
-                    getCryptoData();
-                }, 900000);
-                logIntervalId = setInterval(() => {
-                    console.log('Aktualizuję logi...');
-                    updateLogs();
-                }, 900000);
-                fearGreedIntervalId = setInterval(() => {
-                    console.log('Aktualizuję Fear and Greed...');
-                    updateFearGreedIndicator();
-                }, 3600000);
-            }
-        } else {
-            console.log('Karta nieaktywna, wstrzymuję aktualizacje');
-            if (cryptoIntervalId) {
-                clearInterval(cryptoIntervalId);
-                cryptoIntervalId = null;
-            }
-            if (logIntervalId) {
-                clearInterval(logIntervalId);
-                logIntervalId = null;
-            }
-            if (fearGreedIntervalId) {
-                clearInterval(fearGreedIntervalId);
-                fearGreedIntervalId = null;
-            }
-        }
-
-        isManagingIntervals = false;
+   function manageUpdateIntervals() {
+    if (isManagingIntervals) {
+        console.log('manageUpdateIntervals już uruchomione, pomijam');
+        return;
     }
+    isManagingIntervals = true;
+
+    const now = Date.now();
+
+    if (document.visibilityState === 'visible') {
+        console.log('Karta aktywna, włączam aktualizacje');
+        if (cryptoIntervalId) {
+            clearInterval(cryptoIntervalId);
+            cryptoIntervalId = null;
+        }
+        if (logIntervalId) {
+            clearInterval(logIntervalId);
+            logIntervalId = null;
+        }
+        if (fearGreedIntervalId) {
+            clearInterval(fearGreedIntervalId);
+            fearGreedIntervalId = null;
+        }
+        if (weatherIntervalId) {
+            clearInterval(weatherIntervalId);
+            weatherIntervalId = null;
+        }
+        if (nasaIntervalId) {
+            clearInterval(nasaIntervalId);
+            nasaIntervalId = null;
+        }
+        if (factIntervalId) {
+            clearInterval(factIntervalId);
+            factIntervalId = null;
+        }
+
+        if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
+            console.log('Minął minimalny czas, odświeżam dane');
+            startCryptoUpdateInterval();
+            startLogUpdateInterval();
+            startFearGreedUpdateInterval();
+            startWeatherUpdateInterval();
+            startNasaUpdateInterval();
+            startFactUpdateInterval();
+            lastUpdateTime = now;
+        } else {
+            console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
+            cryptoIntervalId = setInterval(() => {
+                console.log('Aktualizuję kryptowaluty...');
+                getCryptoData();
+            }, 900000);
+            logIntervalId = setInterval(() => {
+                console.log('Aktualizuję logi...');
+                updateLogs();
+            }, 900000);
+            fearGreedIntervalId = setInterval(() => {
+                console.log('Aktualizuję Fear and Greed...');
+                updateFearGreedIndicator();
+            }, 3600000);
+            weatherIntervalId = setInterval(async () => {
+                console.log('Aktualizuję pogodę...');
+                const ip = await getIp();
+                getWeather(ip);
+            }, 3 * 60 * 60 * 1000);
+            nasaIntervalId = setInterval(() => {
+                console.log('Aktualizuję NASA APOD...');
+                getNasaApodImage();
+            }, 3 * 60 * 60 * 1000);
+            factIntervalId = setInterval(() => {
+                console.log('Aktualizuję ciekawostkę...');
+                getDailyFact();
+            }, 3 * 60 * 60 * 1000);
+        }
+    } else {
+        console.log('Karta nieaktywna, wstrzymuję aktualizacje');
+        if (cryptoIntervalId) {
+            clearInterval(cryptoIntervalId);
+            cryptoIntervalId = null;
+        }
+        if (logIntervalId) {
+            clearInterval(logIntervalId);
+            logIntervalId = null;
+        }
+        if (fearGreedIntervalId) {
+            clearInterval(fearGreedIntervalId);
+            fearGreedIntervalId = null;
+        }
+        if (weatherIntervalId) {
+            clearInterval(weatherIntervalId);
+            weatherIntervalId = null;
+        }
+        if (nasaIntervalId) {
+            clearInterval(nasaIntervalId);
+            nasaIntervalId = null;
+        }
+        if (factIntervalId) {
+            clearInterval(factIntervalId);
+            factIntervalId = null;
+        }
+    }
+
+    isManagingIntervals = false;
+}
 
     async function loadTermsModal(language) {
     const modalOverlay = document.getElementById('modalOverlay');
