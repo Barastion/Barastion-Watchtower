@@ -536,9 +536,10 @@
         indicator.innerHTML = `
             <span class="fgi-label">Miesięczny sygnał:</span>
             <span class="trend-indicator ${trendClass}">${trend.symbol}</span>
-            <span class="fgi-value ${valueClass}">${roundedAverage}</span> –
+            <span class="fgi-value ${valueClass}">${roundedAverage}</span>
+            <span class="fgi-dash">–</span>
             <span class="fear-greed-signal">${averageData.signal.signal}</span>
-        `;
+`;
     }
 
     async function updateFearGreedIndicator() {
