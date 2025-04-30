@@ -1,5 +1,5 @@
 :root {
-    --fear-greed-hold: #cfae02; 
+    --fear-greed-hold: #ffd700; 
     --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); 
     --fear-greed-opportunity: rgba(0, 220, 0, 0.9); 
     --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); 
@@ -19,7 +19,7 @@ body {
     line-height: 1.6;
 }
 
-.modal-modal-overlay {
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -33,7 +33,7 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.modal-terms-container {
+.terms-container {
     max-width: 600px;
     width: 90%;
     background-color: #2d2d2d;
@@ -46,40 +46,40 @@ body {
     overflow: hidden;
 }
 
-.modal-header {
+.header {
     text-align: center;
     margin-bottom: 15px;
     background-color: transparent;
 }
 
-.modal-header h1 {
+.header h1 {
     font-size: 1.5em;
     margin: 0;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
-.modal-controls {
+.controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
 }
 
-.modal-language-switcher {
+.language-switcher {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-left: 10px;
 }
 
-.modal-language-label {
+.language-label {
     font-size: 0.9em;
     color: #cccccc;
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
-.modal-lang-button {
+.lang-button {
     background: linear-gradient(135deg, #5a6268, #4a5258);
     color: white;
     border: none;
@@ -93,18 +93,18 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
-.modal-lang-button.active {
+.lang-button.active {
     background: linear-gradient(135deg, #6a7278, #5a6268);
     filter: brightness(1.1);
 }
 
-.modal-lang-button:hover {
+.lang-button:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
 }
 
-.modal-modal-close-button {
+.modal-close-button {
     background: linear-gradient(135deg, #cfae02, #a68e02);
     color: white;
     border: none;
@@ -119,13 +119,13 @@ body {
     margin-right: 10px;
 }
 
-.modal-modal-close-button:hover {
+.modal-close-button:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
 }
 
-.modal-terms-content {
+.terms-content {
     padding: 15px;
     border-radius: 8px;
     max-height: 60vh;
@@ -134,47 +134,47 @@ body {
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
-.modal-terms-content::-webkit-scrollbar {
+.terms-content::-webkit-scrollbar {
     width: 8px;
 }
 
-.modal-terms-content::-webkit-scrollbar-track {
+.terms-content::-webkit-scrollbar-track {
     background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
     border-radius: 8px;
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.modal-terms-content::-webkit-scrollbar-thumb {
+.terms-content::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #5a6268, #4a5258);
     border-radius: 8px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.modal-terms-content::-webkit-scrollbar-thumb:hover {
+.terms-content::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #808080, #666666);
     filter: brightness(1.1);
 }
 
-.modal-terms-content h2 {
+.terms-content h2 {
     font-size: 1.2em;
     margin: 15px 0 8px;
     color: #ffffff;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
-.modal-terms-content p {
+.terms-content p {
     font-size: 0.9em;
     margin: 8px 0;
     line-height: 1.5;
 }
 
-.modal-terms-content a {
+.terms-content a {
     color: #ffd700;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
-.modal-terms-content a:hover {
+.terms-content a:hover {
     color: #ffeb3b;
     text-decoration: underline;
 }
@@ -185,50 +185,50 @@ body {
 }
 
 @media (max-width: 768px) {
-    .modal-terms-container {
+    .terms-container {
         width: 95%;
         padding: 15px;
         max-height: 85vh;
     }
 
-    .modal-header h1 {
+    .header h1 {
         font-size: 1.2em;
     }
 
-    .modal-controls {
+    .controls {
         flex-wrap: wrap;
         gap: 10px;
     }
 
-    .modal-language-switcher {
+    .language-switcher {
         gap: 5px;
         margin-left: 5px;
     }
 
-    .modal-language-label {
+    .language-label {
         font-size: 0.8em;
     }
 
-    .modal-lang-button,
-    .modal-modal-close-button {
+    .lang-button,
+    .modal-close-button {
         padding: 5px 10px;
         font-size: 0.8em;
     }
 
-    .modal-modal-close-button {
+    .modal-close-button {
         margin-right: 5px;
     }
 
-    .modal-terms-content {
+    .terms-content {
         max-height: 65vh;
         padding: 10px;
     }
 
-    .modal-terms-content h2 {
+    .terms-content h2 {
         font-size: 1em;
     }
 
-    .modal-terms-content p {
+    .terms-content p {
         font-size: 0.8em;
     }
 }
