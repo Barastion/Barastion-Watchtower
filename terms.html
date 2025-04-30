@@ -18,7 +18,7 @@
                     <button id="langPolish" class="modal-lang-button active">Polish</button>
                     <button id="langEnglish" class="modal-lang-button">English</button>
                 </div>
-                <button id="termsCloseButton" class="modal-close-button">Akceptuję</button>
+                <button id="closeButton" class="modal-close-button">Akceptuję</button>
             </div>
             <div class="modal-terms-content">
                 <div id="termsPL" class="modal-terms-language">
@@ -144,7 +144,7 @@
         const termsPL = document.getElementById('termsPL');
         const termsEN = document.getElementById('termsEN');
         const termsTitle = document.getElementById('termsTitle');
-        const termsCloseButton = document.getElementById('termsCloseButton');
+        const closeButton = document.getElementById('closeButton');
         const termsContent = document.querySelector('.modal-terms-content');
         let currentLanguage = 'pl';
 
@@ -153,7 +153,7 @@
                 termsPL.style.display = 'block';
                 termsEN.style.display = 'none';
                 termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
-                termsCloseButton.textContent = 'Akceptuję';
+                closeButton.textContent = 'Akceptuję';
                 langPolish.classList.add('active');
                 langEnglish.classList.remove('active');
                 currentLanguage = 'pl';
@@ -161,9 +161,9 @@
                 termsPL.style.display = 'none';
                 termsEN.style.display = 'block';
                 termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                termsCloseButton.textContent = 'Accept';
-                langPolish.classList.remove('active');
-                langEnglish.classList.add('active');
+                closeButton.textContent = 'Accept';
+                langPolish.classList.add('active');
+                langEnglish.classList.remove('active');
                 currentLanguage = 'en';
             }
             // Scroll to top after language change
@@ -174,14 +174,6 @@
 
         langPolish.addEventListener('click', () => setLanguage('pl'));
         langEnglish.addEventListener('click', () => setLanguage('en'));
-
-        // Close button functionality
-        termsCloseButton.addEventListener('click', () => {
-            const modalOverlay = document.getElementById('modalOverlay');
-            modalOverlay.style.display = 'none'; // Hide the modal
-            // Reset any potential style bleed on the main page
-            document.body.style.overflow = 'auto'; // Ensure body scrolling is restored
-        });
 
         // Ensure modal is visible on load
         document.addEventListener('DOMContentLoaded', () => {
