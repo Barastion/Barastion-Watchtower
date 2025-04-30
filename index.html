@@ -450,10 +450,10 @@
     }
 
     function getSignal(value, ema30, std30) {
-        const allInThreshold = ema30 - 2.0 * std30;
+        const allInThreshold = ema30 - 1.8 * std30;
         const buySlowlyThreshold = ema30 - 0.8 * std30;
         const sellSlowlyThreshold = ema30 + 0.8 * std30;
-        const cashOutThreshold = ema30 + 2.0 * std30;
+        const cashOutThreshold = ema30 + 1.8 * std30;
 
         let signal, signalClass, reason = '';
 
