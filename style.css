@@ -385,7 +385,7 @@ body {
 }
 
 .fear-greed-indicator .fgi-value.neutral {
-    color: var(--fear-greed-hold); /* 41-60 */
+    color: #ffea00; /* 41-60 */
 }
 
 .fear-greed-indicator .fgi-value.greedy {
