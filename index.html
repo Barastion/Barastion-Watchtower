@@ -450,10 +450,10 @@
     }
 
     function getSignal(value, ema30, std30) {
-        const allInThreshold = ema30 - 1.8 * std30;
+        const allInThreshold = ema30 - 1.5 * std30;
         const buySlowlyThreshold = ema30 - 0.8 * std30;
         const sellSlowlyThreshold = ema30 + 0.8 * std30;
-        const cashOutThreshold = ema30 + 1.8 * std30;
+        const cashOutThreshold = ema30 + 1.5 * std30;
 
         let signal, signalClass, reason = '';
 
@@ -490,9 +490,9 @@
     }
 
     const parsedValues = values.map(item => parseFloat(item.value) || 0);
-    const ema2 = calculateEMA(parsedValues, 2);
-    const ema6 = calculateEMA(parsedValues, 6);
-    const difference = ema2 - ema6;
+    const ema5 = calculateEMA(parsedValues, 5);
+    const ema10 = calculateEMA(parsedValues, 10);
+    const difference = ema5 - ema10;
 
     let trendSymbol, trendClass, trendReason;
     if (Math.abs(difference) < 1.0) {
@@ -506,7 +506,7 @@
         trendClass = 'trend-down';
     }
 
-    trendReason = `EMA2 = ${ema2.toFixed(1)}, EMA6 = ${ema6.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`; // Aktualizacja logowania
+    trendReason = `EMA5 = ${ema5.toFixed(1)}, EMA10 = ${ema10.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
     console.log(trendReason);
     return { symbol: trendSymbol, class: trendClass };
 }
