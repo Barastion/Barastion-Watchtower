@@ -33,7 +33,7 @@ body {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.terms-container {
+.modal-terms-container {
     max-width: 600px;
     width: 90%;
     background-color: #2d2d2d;
@@ -46,40 +46,40 @@ body {
     overflow: hidden;
 }
 
-.header {
+.modal-header {
     text-align: center;
     margin-bottom: 15px;
     background-color: transparent;
 }
 
-.header h1 {
+.modal-header h1 {
     font-size: 1.5em;
     margin: 0;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
-.controls {
+.modal-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
 }
 
-.language-switcher {
+.modal-language-switcher {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-left: 10px;
 }
 
-.language-label {
+.modal-language-label {
     font-size: 0.9em;
     color: #cccccc;
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
-.lang-button {
+.modal-lang-button {
     background: linear-gradient(135deg, #5a6268, #4a5258);
     color: white;
     border: none;
@@ -93,12 +93,12 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
-.lang-button.active {
+.modal-lang-button.active {
     background: linear-gradient(135deg, #6a7278, #5a6268);
     filter: brightness(1.1);
 }
 
-.lang-button:hover {
+.modal-lang-button:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
@@ -125,7 +125,7 @@ body {
     filter: brightness(1.1);
 }
 
-.terms-content {
+.modal-terms-content {
     padding: 15px;
     border-radius: 8px;
     max-height: 60vh;
@@ -134,47 +134,47 @@ body {
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
-.terms-content::-webkit-scrollbar {
+.modal-terms-content::-webkit-scrollbar {
     width: 8px;
 }
 
-.terms-content::-webkit-scrollbar-track {
+.modal-terms-content::-webkit-scrollbar-track {
     background: linear-gradient(180deg, #2d2d2d, #3a3a3a);
     border-radius: 8px;
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.terms-content::-webkit-scrollbar-thumb {
+.modal-terms-content::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #5a6268, #4a5258);
     border-radius: 8px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
-.terms-content::-webkit-scrollbar-thumb:hover {
+.modal-terms-content::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #808080, #666666);
     filter: brightness(1.1);
 }
 
-.terms-content h2 {
+.modal-terms-content h2 {
     font-size: 1.2em;
     margin: 15px 0 8px;
     color: #ffffff;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
 }
 
-.terms-content p {
+.modal-terms-content p {
     font-size: 0.9em;
     margin: 8px 0;
     line-height: 1.5;
 }
 
-.terms-content a {
+.modal-terms-content a {
     color: #ffd700;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
-.terms-content a:hover {
+.modal-terms-content a:hover {
     color: #ffeb3b;
     text-decoration: underline;
 }
@@ -185,31 +185,31 @@ body {
 }
 
 @media (max-width: 768px) {
-    .terms-container {
+    .modal-terms-container {
         width: 95%;
         padding: 15px;
         max-height: 85vh;
     }
 
-    .header h1 {
+    .modal-header h1 {
         font-size: 1.2em;
     }
 
-    .controls {
+    .modal-controls {
         flex-wrap: wrap;
         gap: 10px;
     }
 
-    .language-switcher {
+    .modal-language-switcher {
         gap: 5px;
         margin-left: 5px;
     }
 
-    .language-label {
+    .modal-language-label {
         font-size: 0.8em;
     }
 
-    .lang-button,
+    .modal-lang-button,
     .modal-close-button {
         padding: 5px 10px;
         font-size: 0.8em;
@@ -219,16 +219,16 @@ body {
         margin-right: 5px;
     }
 
-    .terms-content {
+    .modal-terms-content {
         max-height: 65vh;
         padding: 10px;
     }
 
-    .terms-content h2 {
+    .modal-terms-content h2 {
         font-size: 1em;
     }
 
-    .terms-content p {
+    .modal-terms-content p {
         font-size: 0.8em;
     }
 }
