@@ -323,15 +323,11 @@ body {
     margin: 0 8px;
     color: #ffffff;
     text-shadow: 
-        -1.5px -1.5px 0 #000000,
-        1.5px -1.5px 0 #000000,
-        -1.5px 1.5px 0 #000000,
-        1.5px 1.5px 0 #000000,
-        -1.5px 0 0 #000000,
-        1.5px 0 0 #000000,
-        0 -1.5px 0 #000000,
-        0 1.5px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
+        -3px -3px 0 #000000,
+        3px -3px 0 #000000,
+        -3px 3px 0 #000000,
+        3px 3px 0 #000000,
+        0 0 10px rgba(0, 0, 0, 0.9);
 }
 
 /* Kolory banera w zależności od sygnału */
@@ -360,15 +356,11 @@ body {
     font-weight: 600;
     margin-right: 8px;
     text-shadow: 
-        -1.5px -1.5px 0 #000000,
-        1.5px -1.5px 0 #000000,
-        -1.5px 1.5px 0 #000000,
-        1.5px 1.5px 0 #000000,
-        -1.5px 0 0 #000000,
-        1.5px 0 0 #000000,
-        0 -1.5px 0 #000000,
-        0 1.5px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
+        -3px -3px 0 #000000,
+        3px -3px 0 #000000,
+        -3px 3px 0 #000000,
+        3px 3px 0 #000000,
+        0 0 10px rgba(0, 0, 0, 0.9);
 }
 
 .fear-greed-indicator .fgi-value.extreme-fear {
@@ -397,15 +389,11 @@ body {
     margin-right: 4px;
     color: #ffffff;
     text-shadow: 
-        -1.5px -1.5px 0 #000000,
-        1.5px -1.5px 0 #000000,
-        -1.5px 1.5px 0 #000000,
-        1.5px 1.5px 0 #000000,
-        -1.5px 0 0 #000000,
-        1.5px 0 0 #000000,
-        0 -1.5px 0 #000000,
-        0 1.5px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
+        -3px -3px 0 #000000,
+        3px -3px 0 #000000,
+        -3px 3px 0 #000000,
+        3px 3px 0 #000000,
+        0 0 10px rgba(0, 0, 0, 0.9);
 }
 
 /* Styl strzałki trendu */
@@ -415,15 +403,11 @@ body {
     margin-left: 4px;
     vertical-align: baseline;
     text-shadow: 
-        -1.5px -1.7px 0 #000000,
-        1.5px -1.7px 0 #000000,
-        -1.5px 1.7px 0 #000000,
-        1.5px 1.7px 0 #000000,
-        -1.5px 0 0 #000000,
-        1.5px 0 0 #000000,
-        0 -1.7px 0 #000000,
-        0 1.7px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
+        -3px -3.2px 0 #000000,
+        3px -3.2px 0 #000000,
+        -3px 3.2px 0 #000000,
+        3px 3.2px 0 #000000,
+        0 0 10px rgba(0, 0, 0, 0.9);
     line-height: 1;
 }
 
@@ -450,15 +434,11 @@ body {
     z-index: 2;
     color: #ffffff;
     text-shadow: 
-        -1.5px -1.5px 0 #000000,
-        1.5px -1.5px 0 #000000,
-        -1.5px 1.5px 0 #000000,
-        1.5px 1.5px 0 #000000,
-        -1.5px 0 0 #000000,
-        1.5px 0 0 #000000,
-        0 -1.5px 0 #000000,
-        0 1.5px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
+        -3px -3px 0 #000000,
+        3px -3px 0 #000000,
+        -3px 3px 0 #000000,
+        3px 3px 0 #000000,
+        0 0 10px rgba(0, 0, 0, 0.9);
 }
 
 .crypto-grid {
@@ -567,7 +547,7 @@ body {
 .table-wrapper {
     overflow-y: hidden;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow_SCROLLING: touch;
 }
 
 .table-container {
@@ -777,7 +757,7 @@ tr:hover td:last-child {
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.8); }
     50% { box-shadow: 0 0 13px rgba(0, 0, 0, 1); }
-    100% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
+    100% { box-shadow: 0 0 8px rgba(0, 255, 0, 0.8); }
 }
 
 @keyframes glow-positive {
@@ -967,56 +947,40 @@ tr:hover td:last-child {
 
     .fear-greed-indicator .fgi-value {
         text-shadow: 
-            -1.5px -1.5px 0 #000000,
-            1.5px -1.5px 0 #000000,
-            -1.5px 1.5px 0 #000000,
-            1.5px 1.5px 0 #000000,
-            -1.5px 0 0 #000000,
-            1.5px 0 0 #000000,
-            0 -1.5px 0 #000000,
-            0 1.5px 0 #000000,
-            0 0 5px rgba(0, 0, 0, 0.9);
+            -3px -3px 0 #000000,
+            3px -3px 0 #000000,
+            -3px 3px 0 #000000,
+            3px 3px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .fgi-label {
         text-shadow: 
-            -1.5px -1.5px 0 #000000,
-            1.5px -1.5px 0 #000000,
-            -1.5px 1.5px 0 #000000,
-            1.5px 1.5px 0 #000000,
-            -1.5px 0 0 #000000,
-            1.5px 0 0 #000000,
-            0 -1.5px 0 #000000,
-            0 1.5px 0 #000000,
-            0 0 5px rgba(0, 0, 0, 0.9);
+            -3px -3px 0 #000000,
+            3px -3px 0 #000000,
+            -3px 3px 0 #000000,
+            3px 3px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .trend-indicator {
         font-size: 0.9em;
         margin-right: 2px;
         text-shadow: 
-            -1.5px -1.7px 0 #000000,
-            1.5px -1.7px 0 #000000,
-            -1.5px 1.7px 0 #000000,
-            1.5px 1.7px 0 #000000,
-            -1.5px 0 0 #000000,
-            1.5px 0 0 #000000,
-            0 -1.7px 0 #000000,
-            0 1.7px 0 #000000,
-            0 0 5px rgba(0, 0, 0, 0.9);
+            -3px -3.2px 0 #000000,
+            3px -3.2px 0 #000000,
+            -3px 3.2px 0 #000000,
+            3px 3.2px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.9);
     }
 
     .fear-greed-indicator .fear-greed-signal {
         text-shadow: 
-            -1.5px -1.5px 0 #000000,
-            1.5px -1.5px 0 #000000,
-            -1.5px 1.5px 0 #000000,
-            1.5px 1.5px 0 #000000,
-            -1.5px 0 0 #000000,
-            1.5px 0 0 #000000,
-            0 -1.5px 0 #000000,
-            0 1.5px 0 #000000,
-            0 0 5px rgba(0, 0, 0, 0.9);
+            -3px -3px 0 #000000,
+            3px -3px 0 #000000,
+            -3px 3px 0 #000000,
+            3px 3px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.9);
     }
 
     .crypto-grid {
