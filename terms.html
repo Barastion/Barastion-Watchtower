@@ -8,20 +8,20 @@
 </head>
 <body>
     <div class="modal-overlay" id="modalOverlay">
-        <div class="terms-container">
-            <div class="header">
+        <div class="modal-terms-container">
+            <div class="modal-header">
                 <h1 id="termsTitle">Regulamin Strony - Barastion Watchtower</h1>
             </div>
-            <div class="controls">
-                <div class="language-switcher">
-                    <span class="language-label">Language:</span>
-                    <button id="langPolish" class="lang-button active">Polish</button>
-                    <button id="langEnglish" class="lang-button">English</button>
+            <div class="modal-controls">
+                <div class="modal-language-switcher">
+                    <span class="modal-language-label">Language:</span>
+                    <button id="langPolish" class="modal-lang-button active">Polish</button>
+                    <button id="langEnglish" class="modal-lang-button">English</button>
                 </div>
                 <button id="closeButton" class="modal-close-button">Akceptuję</button>
             </div>
-            <div class="terms-content">
-                <div id="termsPL" class="terms-language">
+            <div class="modal-terms-content">
+                <div id="termsPL" class="modal-terms-language">
                     <p><strong>Data wejścia w życie: 20 kwietnia 2025 r.</strong></p>
                     <h2>1. Postanowienia ogólne</h2>
                     <p>1.1. Niniejszy regulamin („Regulamin”) określa zasady korzystania ze strony internetowej dostępnej pod adresem <a href="https://barastion.github.io/Barastion-Watchtower/">https://barastion.github.io/Barastion-Watchtower/</a> („Strona”), prowadzonej przez osobę fizyczną działającą w ramach hobbystycznego projektu („Administrator”). Kontakt z Administratorem: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
@@ -77,7 +77,7 @@
                     <p>8.2. Regulamin podlega prawu polskiemu. Wszelkie spory będą rozpatrywane przez sądy powszechne w Polsce.</p>
                     <p>8.3. W razie pytań lub wątpliwości prosimy o kontakt: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
                 </div>
-                <div id="termsEN" class="terms-language" style="display: none;">
+                <div id="termsEN" class="modal-terms-language" style="display: none;">
                     <p><strong>Effective Date: April 20, 2025</strong></p>
 
                     <h2>1. General Provisions</h2>
@@ -146,7 +146,7 @@
         const termsEN = document.getElementById('termsEN');
         const termsTitle = document.getElementById('termsTitle');
         const closeButton = document.getElementById('closeButton');
-        const termsContent = document.querySelector('.terms-content');
+        const termsContent = document.querySelector('.modal-terms-content');
         let currentLanguage = 'pl';
 
         function setLanguage(language) {
