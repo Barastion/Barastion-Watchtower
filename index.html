@@ -1581,66 +1581,14 @@
                 termsPL.style.display = 'block';
                 termsEN.style.display = 'none';
                 termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
+                closeButton.textContent = 'Akceptuję';
                 langPolish.classList.add('active');
                 langEnglish.classList.remove('active');
             } else {
                 termsPL.style.display = 'none';
                 termsEN.style.display = 'block';
                 termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                langPolish.classList.remove('active');
-                langEnglish.classList.add('active');
-            }
-            // Przewiń treść do góry po zmianie języka
-            const termsContent = modalContent.querySelector('.modal-terms-content');
-            if (termsContent) {
-                termsContent.scrollTop = 0;
-            }
-        }
-
-        langPolish.addEventListener('click', () => setLanguage('pl'));
-        langEnglish.addEventListener('click', () => setLanguage('en'));
-        setLanguage(language || 'pl');
-
-        // Przewiń treść do góry po załadowaniu
-        const termsContent = modalContent.querySelector('.modal-terms-content');
-        if (termsContent) {
-            termsContent.scrollTop = 0;
-        }
-
-        modalOverlay.style.display = 'flex';
-    } catch (error) {
-        console.error('Błąd ładowania regulaminu:', error);
-        modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
-        modalOverlay.style.display = 'flex';
-    }
-}
-
-        closeButton.addEventListener('click', () => {
-            modalOverlay.style.display = 'none';
-            modalContent.innerHTML = '';
-            // Optionally, remove terms.css if desired
-            // document.head.removeChild(link);
-        });
-
-        const langPolish = modalContent.querySelector('#langPolish');
-        const langEnglish = modalContent.querySelector('#langEnglish');
-        const termsPL = modalContent.querySelector('#termsPL');
-        const termsEN = modalContent.querySelector('#termsEN');
-        const termsTitle = modalContent.querySelector('#termsTitle');
-
-        function setLanguage(lang) {
-            if (lang === 'pl') {
-                termsPL.style.display = 'block';
-                termsEN.style.display = 'none';
-                termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
-                closeButton.textContent = 'Zamknij';
-                langPolish.classList.add('active');
-                langEnglish.classList.remove('active');
-            } else {
-                termsPL.style.display = 'none';
-                termsEN.style.display = 'block';
-                termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                closeButton.textContent = 'Close';
+                closeButton.textContent = 'Accept';
                 langPolish.classList.remove('active');
                 langEnglish.classList.add('active');
             }
