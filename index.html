@@ -91,11 +91,12 @@
         <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" id="termsLinkPL">Regulaminu</a>.</p>
         <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" id="termsLinkEN">Terms and Conditions</a>.</p>
         <p>© 2025 Barastion Watchtower.</p>
+        <p>Liczba unikalnych wejść na stronę: <span id="visitCounter" style="color: #ffd700;">0</span></p>
     </footer>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+    import { getDatabase, ref, set, onValue, push, remove, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
@@ -109,6 +110,62 @@
 
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+
+    // Funkcje licznika wyświetleń
+    const visitCounterCacheKey = 'visitCounter';
+    const visitCounterCacheTimeKey = 'visitCounter_time';
+    const visitCounterCacheDuration = 48 * 60 * 60 * 1000; // 48 godzin, jak w logach
+
+    function formatNumberWithSpaces(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    async function getVisitCounter() {
+        const counterRef = ref(database, 'visitCounter');
+        const snapshot = await get(counterRef);
+        return snapshot.exists() ? snapshot.val() : 0;
+    }
+
+    async function incrementVisitCounter() {
+        const counterRef = ref(database, 'visitCounter');
+        const currentCounter = await getVisitCounter();
+        await set(counterRef, currentCounter + 1);
+        return currentCounter + 1;
+    }
+
+    async function displayVisitCounter() {
+        const cachedCounter = localStorage.getItem(visitCounterCacheKey);
+        const cachedTime = localStorage.getItem(visitCounterCacheTimeKey);
+        const sessionVisited = sessionStorage.getItem('sessionVisited');
+        const now = Date.now();
+
+        if (cachedTime && (now - parseInt(cachedTime) < visitCounterCacheDuration) && cachedCounter && !sessionVisited) {
+            document.getElementById('visitCounter').textContent = formatNumberWithSpaces(cachedCounter);
+        } else {
+            const counter = await getVisitCounter();
+            localStorage.setItem(visitCounterCacheKey, counter);
+            localStorage.setItem(visitCounterCacheTimeKey, now.toString());
+            document.getElementById('visitCounter').textContent = formatNumberWithSpaces(counter);
+        }
+
+        if (!sessionVisited) {
+            const newCounter = await incrementVisitCounter();
+            localStorage.setItem(visitCounterCacheKey, newCounter);
+            localStorage.setItem(visitCounterCacheTimeKey, now.toString());
+            sessionStorage.setItem('sessionVisited', 'true');
+            document.getElementById('visitCounter').textContent = formatNumberWithSpaces(newCounter);
+        }
+    }
+
+    function cleanVisitCounterCache() {
+        const now = Date.now();
+        const cachedTime = localStorage.getItem(visitCounterCacheTimeKey);
+        if (cachedTime && (now - parseInt(cachedTime) > visitCounterCacheDuration)) {
+            localStorage.removeItem(visitCounterCacheKey);
+            localStorage.removeItem(visitCounterCacheTimeKey);
+            console.log('Usunięto stary cache licznika odwiedzin');
+        }
+    }
 
     async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
         let rateLimitRetries = 3;
@@ -175,7 +232,7 @@
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key.endsWith('_time') && key !== 'lastCleanupTime') {
+            if (key.endsWith('_time') && key !== 'lastCleanupTime' && key !== visitCounterCacheTimeKey) {
                 const cachedTime = parseInt(localStorage.getItem(key));
                 if (now - cachedTime > cleanupThreshold) {
                     const dataKey = key.replace('_time', '');
@@ -192,6 +249,8 @@
         localStorage.setItem('lastCleanupTime', now.toString());
         localStorage.removeItem('isCleanupTriggered');
         console.log('Czyszczenie localStorage zakończone');
+
+        cleanVisitCounterCache();
     }
 
     function setCachedData(cacheKey, cacheTimeKey, data) {
@@ -484,32 +543,32 @@
     }
 
     function calculateTrend(values) {
-    if (!values || values.length < 30) {
-        console.error('Niewystarczająca liczba danych do trendu (potrzeba 30 dni)');
-        return { symbol: '■', class: 'trend-neutral' };
+        if (!values || values.length < 30) {
+            console.error('Niewystarczająca liczba danych do trendu (potrzeba 30 dni)');
+            return { symbol: '■', class: 'trend-neutral' };
+        }
+
+        const parsedValues = values.map(item => parseFloat(item.value) || 0);
+        const ema5 = calculateEMA(parsedValues, 5);
+        const ema10 = calculateEMA(parsedValues, 10);
+        const difference = ema5 - ema10;
+
+        let trendSymbol, trendClass, trendReason;
+        if (Math.abs(difference) < 1.0) {
+            trendSymbol = '■';
+            trendClass = 'trend-neutral';
+        } else if (difference >= 1.0) {
+            trendSymbol = '▲';
+            trendClass = 'trend-up';
+        } else {
+            trendSymbol = '▼';
+            trendClass = 'trend-down';
+        }
+
+        trendReason = `EMA5 = ${ema5.toFixed(1)}, EMA10 = ${ema10.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
+        console.log(trendReason);
+        return { symbol: trendSymbol, class: trendClass };
     }
-
-    const parsedValues = values.map(item => parseFloat(item.value) || 0);
-    const ema5 = calculateEMA(parsedValues, 5);
-    const ema10 = calculateEMA(parsedValues, 10);
-    const difference = ema5 - ema10;
-
-    let trendSymbol, trendClass, trendReason;
-    if (Math.abs(difference) < 1.0) {
-        trendSymbol = '■';
-        trendClass = 'trend-neutral';
-    } else if (difference >= 1.0) {
-        trendSymbol = '▲';
-        trendClass = 'trend-up';
-    } else {
-        trendSymbol = '▼';
-        trendClass = 'trend-down';
-    }
-
-    trendReason = `EMA5 = ${ema5.toFixed(1)}, EMA10 = ${ema10.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
-    console.log(trendReason);
-    return { symbol: trendSymbol, class: trendClass };
-}
 
     function displayFearGreed(averageData, trend) {
         const indicator = document.getElementById('fearGreedIndicator');
@@ -537,7 +596,7 @@
             <span class="fgi-value ${valueClass}">${roundedAverage}</span>
             <span class="fgi-dash">–</span>
             <span class="fear-greed-signal">${averageData.signal.signal}</span>
-`;
+        `;
     }
 
     async function updateFearGreedIndicator() {
@@ -1437,6 +1496,7 @@
     let cryptoIntervalId = null;
     let logIntervalId = null;
     let fearGreedIntervalId = null;
+    let visitCounterIntervalId = null;
     let lastUpdateTime = null;
     const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
 
@@ -1467,6 +1527,15 @@
         }, 3600000);
     }
 
+    function startVisitCounterUpdateInterval() {
+        console.log('Uruchamiam interwał aktualizacji licznika odwiedzin');
+        displayVisitCounter();
+        visitCounterIntervalId = setInterval(() => {
+            console.log('Aktualizuję licznik odwiedzin...');
+            displayVisitCounter();
+        }, 900000); // 15 minut, jak logi
+    }
+
     let isManagingIntervals = false;
 
     function manageUpdateIntervals() {
@@ -1492,12 +1561,17 @@
                 clearInterval(fearGreedIntervalId);
                 fearGreedIntervalId = null;
             }
+            if (visitCounterIntervalId) {
+                clearInterval(visitCounterIntervalId);
+                visitCounterIntervalId = null;
+            }
 
             if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
                 console.log('Minął minimalny czas, odświeżam dane');
                 startCryptoUpdateInterval();
                 startLogUpdateInterval();
                 startFearGreedUpdateInterval();
+                startVisitCounterUpdateInterval();
                 lastUpdateTime = now;
             } else {
                 console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
@@ -1513,6 +1587,10 @@
                     console.log('Aktualizuję Fear and Greed...');
                     updateFearGreedIndicator();
                 }, 3600000);
+                visitCounterIntervalId = setInterval(() => {
+                    console.log('Aktualizuję licznik odwiedzin...');
+                    displayVisitCounter();
+                }, 900000);
             }
         } else {
             console.log('Karta nieaktywna, wstrzymuję aktualizacje');
@@ -1528,12 +1606,15 @@
                 clearInterval(fearGreedIntervalId);
                 fearGreedIntervalId = null;
             }
+            if (visitCounterIntervalId) {
+                clearInterval(visitCounterIntervalId);
+                visitCounterIntervalId = null;
+            }
         }
 
         isManagingIntervals = false;
     }
 
-    // Nowe zmienne i funkcje dla automatycznego odświeżania i kolejki renderowania
     let nasaIntervalId = null;
     let weatherIntervalId = null;
     let dailyFactIntervalId = null;
@@ -1576,7 +1657,6 @@
 
         if (document.visibilityState === 'visible') {
             console.log('Karta aktywna, włączam wszystkie aktualizacje');
-            // Istniejące interwały
             if (cryptoIntervalId) {
                 clearInterval(cryptoIntervalId);
                 cryptoIntervalId = null;
@@ -1589,7 +1669,10 @@
                 clearInterval(fearGreedIntervalId);
                 fearGreedIntervalId = null;
             }
-            // Nowe interwały
+            if (visitCounterIntervalId) {
+                clearInterval(visitCounterIntervalId);
+                visitCounterIntervalId = null;
+            }
             if (nasaIntervalId) {
                 clearInterval(nasaIntervalId);
                 nasaIntervalId = null;
@@ -1608,6 +1691,7 @@
                 startCryptoUpdateInterval();
                 startLogUpdateInterval();
                 startFearGreedUpdateInterval();
+                startVisitCounterUpdateInterval();
                 startNasaUpdateInterval();
                 startWeatherUpdateInterval(ip);
                 startDailyFactUpdateInterval();
@@ -1626,6 +1710,10 @@
                     console.log('Aktualizuję Fear and Greed...');
                     updateFearGreedIndicator();
                 }, 3600000);
+                visitCounterIntervalId = setInterval(() => {
+                    console.log('Aktualizuję licznik odwiedzin...');
+                    displayVisitCounter();
+                }, 900000);
                 nasaIntervalId = setInterval(() => {
                     console.log('Aktualizuję NASA...');
                     getNasaApodImage();
@@ -1653,6 +1741,10 @@
                 clearInterval(fearGreedIntervalId);
                 fearGreedIntervalId = null;
             }
+            if (visitCounterIntervalId) {
+                clearInterval(visitCounterIntervalId);
+                visitCounterIntervalId = null;
+            }
             if (nasaIntervalId) {
                 clearInterval(nasaIntervalId);
                 nasaIntervalId = null;
@@ -1676,7 +1768,6 @@
         await initializeFallbackData(ip);
 
         try {
-            // Kolejka renderowania: NASA > Ciekawostka dnia > IP > Pogoda > FGI > Kryptowaluty > Logi
             await getNasaApodImage();
             console.log('NASA APOD załadowane');
             await getDailyFact();
@@ -1692,95 +1783,92 @@
             setTimeout(async () => {
                 await logVisit();
                 console.log('Logi załadowane');
-            }, 5000); // Opóźnienie ładowania logów o 5 sekund
+            }, 5000);
         } catch (err) {
             console.error('Błąd podczas ładowania danych w kolejce:', err);
             handleNetworkStatus();
         }
 
-        return ip; // Zwracamy IP do użycia w interwałach
+        return ip;
     }
 
     async function loadTermsModal(language) {
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalContent = document.getElementById('modalContent');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
 
-    if (!modalOverlay || !modalContent) {
-        console.error('Błąd: Brak elementów modalOverlay lub modalContent w DOM');
-        return;
-    }
-
-    try {
-        const response = await fetch('terms.html');
-        if (!response.ok) throw new Error(`Nie udało się załadować terms.html: ${response.status}`);
-        modalContent.innerHTML = await response.text();
-
-        // Load terms.css dynamically
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'terms.css';
-        document.head.appendChild(link);
-
-        const closeButton = modalContent.querySelector('#closeButton');
-        if (!closeButton) {
-            console.error('Błąd: Nie znaleziono przycisku #closeButton w terms.html');
-            modalContent.innerHTML = '<p>Błąd ładowania regulaminu: brak przycisku zamykania.</p>';
-            modalOverlay.style.display = 'flex';
+        if (!modalOverlay || !modalContent) {
+            console.error('Błąd: Brak elementów modalOverlay lub modalContent w DOM');
             return;
         }
 
-        closeButton.addEventListener('click', () => {
-            modalOverlay.style.display = 'none';
-            modalContent.innerHTML = '';
-            document.head.removeChild(link);
-});
+        try {
+            const response = await fetch('terms.html');
+            if (!response.ok) throw new Error(`Nie udało się załadować terms.html: ${response.status}`);
+            modalContent.innerHTML = await response.text();
 
-        const langPolish = modalContent.querySelector('#langPolish');
-        const langEnglish = modalContent.querySelector('#langEnglish');
-        const termsPL = modalContent.querySelector('#termsPL');
-        const termsEN = modalContent.querySelector('#termsEN');
-        const termsTitle = modalContent.querySelector('#termsTitle');
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'terms.css';
+            document.head.appendChild(link);
 
-        function setLanguage(lang) {
-            if (lang === 'pl') {
-                termsPL.style.display = 'block';
-                termsEN.style.display = 'none';
-                termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
-                closeButton.textContent = 'Akceptuję';
-                langPolish.classList.add('active');
-                langEnglish.classList.remove('active');
-            } else {
-                termsPL.style.display = 'none';
-                termsEN.style.display = 'block';
-                termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                closeButton.textContent = 'Accept';
-                langPolish.classList.remove('active');
-                langEnglish.classList.add('active');
+            const closeButton = modalContent.querySelector('#closeButton');
+            if (!closeButton) {
+                console.error('Błąd: Nie znaleziono przycisku #closeButton w terms.html');
+                modalContent.innerHTML = '<p>Błąd ładowania regulaminu: brak przycisku zamykania.</p>';
+                modalOverlay.style.display = 'flex';
+                return;
             }
-            // Przewiń treść do góry po zmianie języka
+
+            closeButton.addEventListener('click', () => {
+                modalOverlay.style.display = 'none';
+                modalContent.innerHTML = '';
+                document.head.removeChild(link);
+            });
+
+            const langPolish = modalContent.querySelector('#langPolish');
+            const langEnglish = modalContent.querySelector('#langEnglish');
+            const termsPL = modalContent.querySelector('#termsPL');
+            const termsEN = modalContent.querySelector('#termsEN');
+            const termsTitle = modalContent.querySelector('#termsTitle');
+
+            function setLanguage(lang) {
+                if (lang === 'pl') {
+                    termsPL.style.display = 'block';
+                    termsEN.style.display = 'none';
+                    termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
+                    closeButton.textContent = 'Akceptuję';
+                    langPolish.classList.add('active');
+                    langEnglish.classList.remove('active');
+                } else {
+                    termsPL.style.display = 'none';
+                    termsEN.style.display = 'block';
+                    termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
+                    closeButton.textContent = 'Accept';
+                    langPolish.classList.remove('active');
+                    langEnglish.classList.add('active');
+                }
+                const termsContent = modalContent.querySelector('.terms-content');
+                if (termsContent) {
+                    termsContent.scrollTop = 0;
+                }
+            }
+
+            langPolish.addEventListener('click', () => setLanguage('pl'));
+            langEnglish.addEventListener('click', () => setLanguage('en'));
+            setLanguage(language || 'pl');
+
             const termsContent = modalContent.querySelector('.terms-content');
             if (termsContent) {
                 termsContent.scrollTop = 0;
             }
+
+            modalOverlay.style.display = 'flex';
+        } catch (error) {
+            console.error('Błąd ładowania regulaminu:', error);
+            modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
+            modalOverlay.style.display = 'flex';
         }
-
-        langPolish.addEventListener('click', () => setLanguage('pl'));
-        langEnglish.addEventListener('click', () => setLanguage('en'));
-        setLanguage(language || 'pl');
-
-        // Przewiń treść do góry po załadowaniu
-        const termsContent = modalContent.querySelector('.terms-content');
-        if (termsContent) {
-            termsContent.scrollTop = 0;
-        }
-
-        modalOverlay.style.display = 'flex';
-    } catch (error) {
-        console.error('Błąd ładowania regulaminu:', error);
-        modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
-        modalOverlay.style.display = 'flex';
     }
-}
 
     window.onload = async function() {
         console.log('Strona załadowana, uruchamiam funkcje...');
@@ -1791,7 +1879,6 @@
                 const ip = await getIp();
                 await initializeFallbackData(ip);
 
-                // Ładowanie danych równolegle z obsługą błędów
                 const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
                     getNasaApodImage(),
                     getWeather(ip),
@@ -1800,7 +1887,6 @@
                     updateFearGreedIndicator()
                 ]);
 
-                // Logowanie wyników wywołań API
                 console.log('Wyniki wywołań API:', {
                     nasa: nasaResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${nasaResult.reason}`,
                     weather: weatherResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${weatherResult.reason}`,
@@ -1809,7 +1895,6 @@
                     fearGreed: fearGreedResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${fearGreedResult.reason}`
                 });
 
-                // Logowanie odwiedzin z opóźnieniem, aby uniknąć konfliktów
                 setTimeout(async () => {
                     try {
                         await logVisit();
@@ -1822,12 +1907,12 @@
                     }
                 }, 500);
 
-                // Uruchomienie interwałów aktualizacji
                 manageUpdateIntervals();
 
-                // Dodatkowe ładowanie danych w kolejce i zarządzanie nowymi interwałami
                 const ipFromQueue = await loadAllDataInQueue();
                 manageAllUpdateIntervals(ipFromQueue);
+
+                await displayVisitCounter();
             } catch (err) {
                 console.error('Błąd podczas inicjalizacji danych:', err);
                 const networkStatus = document.getElementById('networkStatus');
@@ -1838,21 +1923,17 @@
             console.log('Karta niewidoczna, pomijam aktualizacje');
         }
 
-        // Sprawdzanie, czy CSS został poprawnie załadowany
         checkCSSLoaded();
 
-        // Obsługa zmiany widoczności strony
         document.addEventListener('visibilitychange', () => {
             console.log(`Zmiana widoczności: ${document.visibilityState}`);
             manageUpdateIntervals();
-            manageAllUpdateIntervals(getIp()); // Używamy getIp() jako fallback, jeśli IP nie jest dostępne
+            manageAllUpdateIntervals(getIp());
         });
 
-        // Obsługa zmiany statusu sieci
         window.addEventListener('online', handleNetworkStatus);
         window.addEventListener('offline', handleNetworkStatus);
 
-        // Obsługa przycisków regulaminu
         const termsLinkPL = document.getElementById('termsLinkPL');
         const termsLinkEN = document.getElementById('termsLinkEN');
         if (termsLinkPL && termsLinkEN) {
@@ -1868,7 +1949,6 @@
             console.warn('Brak elementów termsLinkPL lub termsLinkEN');
         }
 
-        // Obsługa przewijania tickerów
         const tickers = document.querySelectorAll('.nasa-ticker, .weather-ticker');
         tickers.forEach(ticker => {
             const content = ticker.querySelector('.ticker-content');
@@ -1882,17 +1962,16 @@
             }
         });
 
-        // Czyszczenie starego cache przy starcie
         cleanOldCache();
 
         console.log('Inicjalizacja strony zakończona');
     };
 
-    // Funkcja zabezpieczająca przed wielokrotnym ładowaniem strony
     window.addEventListener('beforeunload', () => {
         if (cryptoIntervalId) clearInterval(cryptoIntervalId);
         if (logIntervalId) clearInterval(logIntervalId);
         if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+        if (visitCounterIntervalId) clearInterval(visitCounterIntervalId);
         if (nasaIntervalId) clearInterval(nasaIntervalId);
         if (weatherIntervalId) clearInterval(weatherIntervalId);
         if (dailyFactIntervalId) clearInterval(dailyFactIntervalId);
