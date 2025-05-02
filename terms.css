@@ -1,5 +1,5 @@
 :root {
-    --fear-greed-hold: #ffd700; 
+    --fear-greed-hold: #ffeb3b; 
     --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); 
     --fear-greed-opportunity: rgba(0, 220, 0, 0.9); 
     --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); 
@@ -169,7 +169,7 @@ body {
 }
 
 .modal-terms-content a {
-    color: #ffd700;
+    color: #ffeb3b;
     text-decoration: none;
     transition: color 0.3s ease;
 }
