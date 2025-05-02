@@ -786,13 +786,13 @@ tr:hover td:last-child {
 }
 
 @keyframes glow-positive {
-    0% { color: var(--fear-greed-opportunity); }
+    0% { color: var(--fear-greed-consider-buy); }
     50% { color: rgba(0, 255, 0, 0.9); }
     100% { color: var(--fear-greed-opportunity); }
 }
 
 @keyframes glow-negative {
-    0% { color: var(--fear-greed-sell); }
+    0% { color: var(--fear-greed-consider-sell); }
     50% { color: rgba(255, 0, 0, 0.9); }
     100% { color: var(--fear-greed-sell); }
 }
