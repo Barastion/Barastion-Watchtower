@@ -433,12 +433,12 @@ body {
 }
 
 .fear-greed-indicator .trend-up {
-    color: #00ff00;
+    color: #4bff4b;
     animation: glow-positive 1.5s ease-in-out infinite;
 }
 
 .fear-greed-indicator .trend-down {
-    color: var(--fear-greed-sell);
+    color: #ff4b4b;
     animation: glow-negative 1.5s ease-in-out infinite;
 }
 
