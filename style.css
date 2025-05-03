@@ -4,8 +4,16 @@
     --fear-greed-opportunity: rgba(0, 220, 0, 0.9); /* Jasnozielony dla ALL IN! */
     --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY */
     --fear-greed-sell: rgba(220, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
-    --gradient-start: #cfae02; /* Kolor początkowy gradientu */
-    --gradient-end: #a68e02; /* Kolor końcowy gradientu */
+    --gradient-start: #cfae02; /* Kolor początkowy gradientu dla HODL */
+    --gradient-end: #a68e02; /* Kolor końcowy gradientu dla HODL */
+    --gradient-start-all-in: rgba(0, 220, 0, 0.9); /* Kolor początkowy dla ALL IN! */
+    --gradient-end-all-in: rgba(0, 180, 0, 0.75); /* Kolor końcowy dla ALL IN! */
+    --gradient-start-buy-slowly: rgba(0, 180, 0, 0.75); /* Kolor początkowy dla BUY SLOWLY */
+    --gradient-end-buy-slowly: rgba(0, 140, 0, 0.6); /* Kolor końcowy dla BUY SLOWLY */
+    --gradient-start-sell-slowly: rgba(180, 0, 0, 0.75); /* Kolor początkowy dla SELL SLOWLY */
+    --gradient-end-sell-slowly: rgba(140, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
+    --gradient-start-cash-out: rgba(220, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
+    --gradient-end-cash-out: rgba(180, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
 }
 
 body {
@@ -324,7 +332,6 @@ body {
 .fear-greed-indicator {
     padding: 8px 10px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     width: 100%;
     min-height: 30px;
     text-align: center;
@@ -352,25 +359,25 @@ body {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
-/* Kolory banera w zależności od sygnału z gradientem dla HODL */
+/* Gradienty dla każdego stanu */
 .fear-greed-indicator.all-in {
-    background-color: var(--fear-greed-opportunity);
+    background: linear-gradient(135deg, var(--gradient-start-all-in), var(--gradient-end-all-in));
 }
 
 .fear-greed-indicator.buy-slowly {
-    background-color: var(--fear-greed-consider-buy);
+    background: linear-gradient(135deg, var(--gradient-start-buy-slowly), var(--gradient-end-buy-slowly));
 }
 
 .fear-greed-indicator.hodl {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla HODL */
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
 }
 
 .fear-greed-indicator.sell-slowly {
-    background-color: var(--fear-greed-consider-sell);
+    background: linear-gradient(135deg, var(--gradient-start-sell-slowly), var(--gradient-end-sell-slowly));
 }
 
 .fear-greed-indicator.cash-out {
-    background-color: var(--fear-greed-sell);
+    background: linear-gradient(135deg, var(--gradient-start-cash-out), var(--gradient-end-cash-out));
 }
 
 /* Styl wartości FGI z kolorami zależnymi od przedziału */
