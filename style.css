@@ -696,7 +696,7 @@ tr:hover td:last-child {
     max-width: 140px;
 }
 
-.city {
+.city, .country, .isp, .device {
     overflow-wrap: break-word;
     max-width: 100%;
     white-space: normal;
@@ -704,28 +704,15 @@ tr:hover td:last-child {
     font-size: 0.9em;
     line-height: 1.2;
     hyphens: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Ograniczenie do 2 linii */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
 }
 
-.device {
-    overflow-wrap: break-word;
-    max-width: 100%;
-    white-space: normal;
-    display: block;
-    font-size: 0.9em;
-    line-height: 1.2;
-    hyphens: auto;
-}
-
-.country {
-    font-size: 0.8em;
-    color: #cccccc;
-    margin-top: 2px;
-    display: block;
-    line-height: 1.2;
-    hyphens: auto;
-}
-
-.isp {
+.country, .isp {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
@@ -1111,6 +1098,10 @@ tr:hover td:last-child {
         font-size: 0.7em;
     }
 
+    th {
+        font-size: 0.65em; /* Delikatne zmniejszenie czcionki dla nagłówków w wersji mobilnej */
+    }
+
     th:nth-child(1), td:nth-child(1) {
         width: 50px;
         min-width: 50px;
@@ -1146,7 +1137,7 @@ tr:hover td:last-child {
 
     .toggle-button {
         padding: 2px 4px;
-        font-size: 0.55em;
+        font-size: 0.65em; /* Dopasowanie do wielkości czcionki nagłówków */
         min-width: 70px;
     }
 
