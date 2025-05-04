@@ -548,9 +548,9 @@
         }
 
         const parsedValues = values.map(item => parseFloat(item.value) || 0);
-        const ema5 = calculateEMA(parsedValues, 5);
-        const ema10 = calculateEMA(parsedValues, 10);
-        const difference = ema5 - ema10;
+        const ema3 = calculateEMA(parsedValues, 3);
+        const ema8 = calculateEMA(parsedValues, 8);
+        const difference = ema3 - ema8;
 
         let trendSymbol, trendClass, trendReason;
         if (Math.abs(difference) < 1.0) {
@@ -564,7 +564,7 @@
             trendClass = 'trend-down';
         }
 
-        trendReason = `EMA5 = ${ema5.toFixed(1)}, EMA10 = ${ema10.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
+        trendReason = `EMA3 = ${ema3.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
         console.log(trendReason);
         return { symbol: trendSymbol, class: trendClass };
     }
