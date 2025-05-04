@@ -729,19 +729,15 @@ tr:hover td:last-child {
     font-size: 0.8em;
     color: #cccccc;
     margin-top: 2px;
-    display: block;
-    line-height: 1.1; /* Minimalny odstęp między liniami dla estetyki */
-    max-width: 12ch; /* Maksymalnie 12 znaków na linię */
-    overflow-wrap: break-word; /* Podział na granicach słów */
-    white-space: normal; /* Pozwala na zawijanie tekstu */
-    hyphens: none; /* Wyłącza automatyczne dzielenie wyrazów */
-    display: -webkit-box; /* Ograniczenie do dwóch linii */
-    -webkit-line-clamp: 2; /* Maksymalnie 2 linie */
-    -webkit-box-orient: vertical;
-    overflow: hidden; /* Ukrywa nadmiar tekstu */
-    text-overflow: ellipsis; /* Elipsa dla obciętego tekstu */
-    text-align: center; /* Wyrównanie tekstu dla estetyki */
-}
+    line-height: 1.1;
+    max-width: 12ch;
+    overflow-wrap: break-word;
+    white-space: normal;
+    hyphens: none;
+    max-height: 2.2em; /* 2 linie * line-height (1.1em) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
 
 .hidden-log {
     display: none;
