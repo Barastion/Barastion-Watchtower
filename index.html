@@ -716,28 +716,77 @@
         }
     }
 
-    function displayLogs(logs) {
-        console.log('Próba wyświetlenia logów...');
-        const logTableBody = document.getElementById('logTableBody');
-        const toggleButton = document.getElementById('toggleLogs');
-        if (!logTableBody || !toggleButton) {
-            console.error('Brak elementu #logTableBody lub #toggleLogs');
-            return;
+    function truncateAndSplitText(text, maxLineLength, maxTotalLength) {
+    if (text.length > maxTotalLength) {
+        text = text.substring(0, maxTotalLength - 3) + '...';
+    }
+    const words = text.split(' ');
+    let lines = ['', ''];
+    let currentLine = 0;
+    for (const word of words) {
+        if (currentLine > 1) break;
+        const potentialLine = lines[currentLine] + (lines[currentLine] ? ' ' : '') + word;
+        if (potentialLine.length <= maxLineLength) {
+            lines[currentLine] = potentialLine;
+        } else if (currentLine === 0) {
+            lines[currentLine] = lines[currentLine].trim();
+            currentLine++;
+            if (word.length <= maxLineLength) {
+                lines[currentLine] = word;
+            } else {
+                lines[currentLine] = word.substring(0, maxLineLength - 3) + '...';
+                break;
+            }
+        } else {
+            break;
         }
+    }
+    return lines.filter(line => line).join('<br>');
+}
 
-        logTableBody.innerHTML = '';
-        if (logs.length === 0) {
-            console.log('Brak logów do wyświetlenia.');
-            toggleButton.style.display = 'none';
-            logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>';
-            return;
-        }
+function displayLogs(logs) {
+    console.log('Próba wyświetlenia logów...');
+    const logTableBody = document.getElementById('logTableBody');
+    const toggleButton = document.getElementById('toggleLogs');
+    if (!logTableBody || !toggleButton) {
+        console.error('Brak elementu #logTableBody lub #toggleLogs');
+        return;
+    }
 
-        const visibleLogs = logs.slice(0, 5);
-        const hiddenLogs = logs.slice(5);
+    logTableBody.innerHTML = '';
+    if (logs.length === 0) {
+        console.log('Brak logów do wyświetlenia.');
+        toggleButton.style.display = 'none';
+        logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>';
+        return;
+    }
 
-        visibleLogs.forEach(log => {
+    const visibleLogs = logs.slice(0, 5);
+    const hiddenLogs = logs.slice(5);
+
+    visibleLogs.forEach(log => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${log.date || 'Brak'}</td>
+            <td>${log.day || 'Brak'}</td>
+            <td>${log.time || 'Brak'}</td>
+            <td>${log.ip || 'Brak'}</td>
+            <td class="location-cell">
+                <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                <div class="country">${log.location.country || 'Nieznany kraj'}</div>
+            </td>
+            <td>
+                <div class="device">${log.device || 'Brak'}</div>
+                <div class="isp" title="${log.isp || 'Nieznany dostawca'}">${truncateAndSplitText(log.isp || 'Nieznany dostawca', 12, 24)}</div>
+            </td>
+        `;
+        logTableBody.appendChild(row);
+    });
+
+    if (hiddenLogs.length > 0) {
+        hiddenLogs.forEach(log => {
             const row = document.createElement('tr');
+            row.classList.add('hidden-log');
             row.innerHTML = `
                 <td>${log.date || 'Brak'}</td>
                 <td>${log.day || 'Brak'}</td>
@@ -749,54 +798,33 @@
                 </td>
                 <td>
                     <div class="device">${log.device || 'Brak'}</div>
-                    <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
+                    <div class="isp" title="${log.isp || 'Nieznany dostawca'}">${truncateAndSplitText(log.isp || 'Nieznany dostawca', 12, 24)}</div>
                 </td>
             `;
             logTableBody.appendChild(row);
         });
 
-        if (hiddenLogs.length > 0) {
-            hiddenLogs.forEach(log => {
-                const row = document.createElement('tr');
-                row.classList.add('hidden-log');
-                row.innerHTML = `
-                    <td>${log.date || 'Brak'}</td>
-                    <td>${log.day || 'Brak'}</td>
-                    <td>${log.time || 'Brak'}</td>
-                    <td>${log.ip || 'Brak'}</td>
-                    <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
-                    </td>
-                    <td>
-                        <div class="device">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
-                    </td>
-                `;
-                logTableBody.appendChild(row);
-            });
+        toggleButton.style.display = 'block';
+        toggleButton.textContent = 'Rozwiń listę';
 
-            toggleButton.style.display = 'block';
-            toggleButton.textContent = 'Rozwiń listę';
+        const hiddenRows = document.querySelectorAll('.hidden-log');
+        hiddenRows.forEach(row => row.style.display = 'none');
 
-            const hiddenRows = document.querySelectorAll('.hidden-log');
-            hiddenRows.forEach(row => row.style.display = 'none');
-
-            toggleButton.onclick = () => {
-                if (toggleButton.textContent === 'Rozwiń listę') {
-                    hiddenRows.forEach(row => row.style.display = 'table-row');
-                    toggleButton.textContent = 'Zwiń listę';
-                } else {
-                    hiddenRows.forEach(row => row.style.display = 'none');
-                    toggleButton.textContent = 'Rozwiń listę';
-                }
-            };
-        } else {
-            toggleButton.style.display = 'none';
-        }
-
-        console.log('Logi wyświetlone:', logs.length);
+        toggleButton.onclick = () => {
+            if (toggleButton.textContent === 'Rozwiń listę') {
+                hiddenRows.forEach(row => row.style.display = 'table-row');
+                toggleButton.textContent = 'Zwiń listę';
+            } else {
+                hiddenRows.forEach(row => row.style.display = 'none');
+                toggleButton.textContent = 'Rozwiń listę';
+            }
+        };
+    } else {
+        toggleButton.style.display = 'none';
     }
+
+    console.log('Logi wyświetlone:', logs.length);
+}
 
     async function getIp() {
         const cacheKey = 'ip_data';
