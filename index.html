@@ -733,8 +733,8 @@
             return;
         }
 
-        const visibleLogs = logs.slice(0, 10); // Zwiększono z 5 do 10
-        const hiddenLogs = logs.slice(10);     // Zwiększono z 5 do 10
+        const visibleLogs = logs.slice(0, 5);
+        const hiddenLogs = logs.slice(5);
 
         visibleLogs.forEach(log => {
             const row = document.createElement('tr');
@@ -744,12 +744,12 @@
                 <td>${log.time || 'Brak'}</td>
                 <td>${log.ip || 'Brak'}</td>
                 <td class="location-cell">
-                    <div class="city" title="${log.location.city || 'Nieznane miasto'}">${log.location.city || 'Nieznane miasto'}</div>
-                    <div class="country" title="${log.location.country || 'Nieznany kraj'}">${log.location.country || 'Nieznany kraj'}</div>
+                    <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                    <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                 </td>
                 <td>
-                    <div class="device" title="${log.device || 'Brak'}">${log.device || 'Brak'}</div>
-                    <div class="isp" title="${log.isp || 'Nieznany dostawca'}">${log.isp || 'Nieznany dostawca'}</div>
+                    <div class="device">${log.device || 'Brak'}</div>
+                    <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                 </td>
             `;
             logTableBody.appendChild(row);
@@ -765,12 +765,12 @@
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
-                        <div class="city" title="${log.location.city || 'Nieznane miasto'}">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country" title="${log.location.country || 'Nieznany kraj'}">${log.location.country || 'Nieznany kraj'}</div>
+                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
+                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td>
-                        <div class="device" title="${log.device || 'Brak'}">${log.device || 'Brak'}</div>
-                        <div class="isp" title="${log.isp || 'Nieznany dostawca'}">${log.isp || 'Nieznany dostawca'}</div>
+                        <div class="device">${log.device || 'Brak'}</div>
+                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
                 logTableBody.appendChild(row);
