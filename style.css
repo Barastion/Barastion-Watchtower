@@ -1191,9 +1191,9 @@ tr:hover td:last-child {
     }
 
     .toggle-button {
-        padding: 1px 3px;
+        padding: 2px 4px;
         font-size: 0.50em;
-        min-width: 80px;
+        min-width: 70px;
         text-shadow: 
             -1.0px -1.0px 0 #000000,
             1.0px -1.0px 0 #000000,
