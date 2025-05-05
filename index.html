@@ -110,6 +110,18 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
+    // Funkcja do skracania tekstu i dodawania tooltipów
+    function truncateTextWithTooltip() {
+        const ispElements = document.querySelectorAll('.isp');
+        ispElements.forEach(element => {
+            const text = element.textContent.trim();
+            if (text.length > 40) {
+                element.textContent = text.substring(0, 37) + '...';
+                element.setAttribute('title', text);
+            }
+        });
+    }
+
     // Funkcje licznika wyświetleń
     const visitCounterCacheKey = 'visitCounter';
     const visitCounterCacheTimeKey = 'visitCounter_time';
@@ -706,6 +718,7 @@
                 }
 
                 displayLogs(logs);
+                truncateTextWithTooltip(); // Wywołanie funkcji po wyświetleniu logów
             }, { onlyOnce: true });
         } catch (error) {
             console.error('Błąd pobierania logów:', error);
@@ -1898,7 +1911,7 @@
                     try {
                         await logVisit();
                     } catch (err) {
-                        console.error('Błąd podczas logowania odwiedzin:', err);
+                        console.error('B锐d podczas logowania odwiedzin:', err);
                         const logTableBody = document.getElementById('logTableBody');
                         if (logTableBody) {
                             logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów odwiedzin.</td></tr>';
@@ -1912,6 +1925,7 @@
                 manageAllUpdateIntervals(ipFromQueue);
 
                 await displayVisitCounter();
+                truncateTextWithTooltip(); // Wywołanie funkcji po załadowaniu strony
             } catch (err) {
                 console.error('Błąd podczas inicjalizacji danych:', err);
                 const networkStatus = document.getElementById('networkStatus');
