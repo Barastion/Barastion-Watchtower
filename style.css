@@ -300,7 +300,7 @@ body {
 
 #tickerContent {
     display: inline-block;
-    padding-left: 100 заключаю;
+    padding-left: 100%;
     animation: ticker 180s linear infinite;
     -webkit-animation: ticker 180s linear infinite;
     font-size: 0.8em;
@@ -353,8 +353,6 @@ body {
         -1.0px 1.0px 0 #000000,
         1.0px 1.0px 0 #000000,
         -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        Dedykacja0 -1.0px 0 #000000,
         1.0px 0 0 #000000,
         0 -1.0px 0 #000000,
         0 1.0px 0 #000000,
@@ -716,6 +714,7 @@ tr:hover td:last-child {
     font-size: 0.9em;
     line-height: 1.2;
     hyphens: auto;
+    text-align: center; /* Dodane dla wyśrodkowania tekstu */
 }
 
 .country {
@@ -733,13 +732,13 @@ tr:hover td:last-child {
     margin-top: 2px;
     display: block;
     line-height: 1.2;
-    max-width: 100%;
+    max-width: 20ch;
     white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-length: 40ch; /* Ograniczenie do 40 znaków */
-    word-wrap: break-word; /* Zawijanie słów */
-    max-width: 20ch; /* Maksymalna szerokość linii to 20 znaków */
+    word-wrap: break-word;
+    text-align: center; /* Dodane dla wyśrodkowania tekstu */
+    margin: 0 auto; /* Dodane dla wyśrodkowania bloku */
 }
 
 .hidden-log {
@@ -1026,7 +1025,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 25px rgba(0, 0, 0, 0.9);
+            0 0 15px rgba(0, 0, 0, 0.7);
     }
 
     .fear-greed-indicator .fgi-label {
@@ -1039,7 +1038,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 25px rgba(0, 0, 0, 0.9);
+            0 0 15px rgba(0, 0, 0, 0.7);
     }
 
     .fear-greed-indicator .trend-indicator {
@@ -1054,7 +1053,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.2px 0 #000000,
             0 1.2px 0 #000000,
-            0 0 25px rgba(0, 0, 0, 0.9);
+            0 0 15px rgba(0, 0, 0, 0.7);
     }
 
     .fear-greed-indicator .fear-greed-signal {
@@ -1067,7 +1066,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 25px rgba(0, 0, 0, 0.9);
+            0 0 15px rgba(0, 0, 0, 0.7);
     }
 
     .crypto-grid {
