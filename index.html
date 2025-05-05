@@ -665,39 +665,48 @@
     }
 
     async function logVisit() {
-        console.log('Rozpoczynam zapis logu...');
-        const now = new Date();
-        const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
-        const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-        const ip = await getIp();
-        const location = await getLocation(ip);
-        const userAgent = navigator.userAgent;
-        const device = getDeviceType(userAgent);
-        const isp = location.isp || 'Nieznany dostawca';
-        const timestamp = now.getTime();
-
-        const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
-        if (isDuplicate) {
-            console.log('Duplikat logu, pomijam zapis.');
-            await updateLogs();
-            return;
-        }
-
-        const logEntry = { date, day, time, ip, location, device, isp, timestamp };
-        console.log('Log do zapisania:', logEntry);
-
-        const logsRef = ref(database, 'logs');
-        const newLogRef = push(logsRef);
-
-        try {
-            await set(newLogRef, logEntry);
-            console.log('Log zapisany pomyślnie:', logEntry);
-            await updateLogs();
-        } catch (error) {
-            console.error('Błąd zapisu logu:', error);
-        }
+    // Sprawdź, czy log już został zapisany w tej sesji (czerwona flaga)
+    if (sessionStorage.getItem('visitLogged')) {
+        console.log('Log dla tej sesji już zapisany, pomijam.');
+        await updateLogs();
+        return;
     }
+
+    console.log('Rozpoczynam zapis logu...');
+    const now = new Date();
+    const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
+    const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+    const ip = await getIp();
+    const location = await getLocation(ip);
+    const userAgent = navigator.userAgent;
+    const device = getDeviceType(userAgent);
+    const isp = location.isp || 'Nieznany dostawca';
+    const timestamp = now.getTime();
+
+    const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
+    if (isDuplicate) {
+        console.log('Duplikat logu, pomijam zapis.');
+        await updateLogs();
+        return;
+    }
+
+    const logEntry = { date, day, time, ip, location, device, isp, timestamp };
+    console.log('Log do zapisania:', logEntry);
+
+    const logsRef = ref(database, 'logs');
+    const newLogRef = push(logsRef);
+
+    try {
+        await set(newLogRef, logEntry);
+        console.log('Log zapisany pomyślnie:', logEntry);
+        // Ustaw czerwoną flagę, że log został zapisany
+        sessionStorage.setItem('visitLogged', 'true');
+        await updateLogs();
+    } catch (error) {
+        console.error('Błąd zapisu logu:', error);
+    }
+}
 
     async function updateLogs() {
         console.log('Rozpoczynam aktualizację logów...');
