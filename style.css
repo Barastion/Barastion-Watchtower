@@ -714,7 +714,7 @@ tr:hover td:last-child {
     font-size: 0.9em;
     line-height: 1.2;
     hyphens: auto;
-    text-align: center; /* Dodane dla wyśrodkowania tekstu */
+    text-align: center; /* Wyśrodkowanie tekstu */
 }
 
 .country {
@@ -737,8 +737,33 @@ tr:hover td:last-child {
     overflow: hidden;
     text-overflow: ellipsis;
     word-wrap: break-word;
-    text-align: center; /* Dodane dla wyśrodkowania tekstu */
-    margin: 0 auto; /* Dodane dla wyśrodkowania bloku */
+    text-align: center;
+    margin: 0 auto;
+    position: relative; /* Dla tooltipa */
+}
+
+.isp:hover::after {
+    content: attr(data-full-text); /* Używa atrybutu data-full-text z HTML */
+    position: absolute;
+    background-color: #555555;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    white-space: normal;
+    width: auto;
+    max-width: 200px;
+    z-index: 10;
+    top: -40px; /* Pozycja nad elementem */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.isp:hover::after {
+    opacity: 1; /* Tooltip pojawia się po najechaniu */
 }
 
 .hidden-log {
@@ -1025,7 +1050,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 15px rgba(0, 0, 0, 0.7);
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
     }
 
     .fear-greed-indicator .fgi-label {
@@ -1038,7 +1063,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 15px rgba(0, 0, 0, 0.7);
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
     }
 
     .fear-greed-indicator .trend-indicator {
@@ -1053,7 +1078,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.2px 0 #000000,
             0 1.2px 0 #000000,
-            0 0 15px rgba(0, 0, 0, 0.7);
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
     }
 
     .fear-greed-indicator .fear-greed-signal {
@@ -1066,7 +1091,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 15px rgba(0, 0, 0, 0.7);
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
     }
 
     .crypto-grid {
@@ -1129,7 +1154,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 15px rgba(0, 0, 0, 0.7); /* Delikatniejszy cień w wersji mobilnej */
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień dla nagłówków w wersji mobilnej */
     }
 
     th:nth-child(1), td:nth-child(1) {
@@ -1166,9 +1191,19 @@ tr:hover td:last-child {
     }
 
     .toggle-button {
-        padding: 2px 4px;
-        font-size: 0.7em; /* Zmniejszona czcionka dla przycisku w wersji mobilnej, zgodna z nagłówkami */
+        padding: 1px 3px; /* Mniejsze padding dla mniejszego przycisku */
+        font-size: 0.65em; /* Mniejsza czcionka dla przycisku w wersji mobilnej */
         min-width: 70px;
+        text-shadow: 
+            -1.0px -1.0px 0 #000000,
+            1.0px -1.0px 0 #000000,
+            -1.0px 1.0px 0 #000000,
+            1.0px 1.0px 0 #000000,
+            -1.0px 0 0 #000000,
+            1.0px 0 0 #000000,
+            0 -1.0px 0 #000000,
+            0 1.0px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień dla przycisku w wersji mobilnej */
     }
 
     .nasa-ticker {
