@@ -93,6 +93,23 @@
     <p>© 2025 Barastion Watchtower. | Liczba unikalnych wejść na stronę: <span id="visitCounter" style="color: #ffd700;">0</span></p>
 </footer>
 
+<script>
+    function updateNetworkStatus() {
+        const networkStatus = document.getElementById('networkStatus');
+        if (navigator.onLine) {
+            networkStatus.style.display = 'none';
+            networkStatus.textContent = '';
+        } else {
+            networkStatus.textContent = 'Brak połączenia z internetem';
+            networkStatus.style.display = 'block';
+        }
+    }
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    window.addEventListener('load', updateNetworkStatus);
+</script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, push, remove, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
@@ -1473,58 +1490,53 @@ async function logVisit() {
     }
 
     let isReloading = false;
-    async function handleNetworkStatus() {
+
+    async function loadData() {
         const networkStatus = document.getElementById('networkStatus');
-        if (navigator.onLine) {
-            console.log('Połączenie przywrócone');
-            networkStatus.style.display = 'none';
-            networkStatus.textContent = '';
-            if (!isReloading) {
-                isReloading = true;
-                try {
-                    const ip = await getIp();
-                    await initializeFallbackData(ip);
-                    const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
-                        getNasaApodImage(),
-                        getWeather(ip),
-                        getDailyFact(),
-                        getCryptoData(),
-                        updateFearGreedIndicator()
-                    ]);
+        if (!navigator.onLine) return; // Ładuj dane tylko, jeśli online
 
-                    console.log('Wyniki API:', {
-                        nasa: nasaResult.status === 'fulfilled' ? 'Success' : `Failed: ${nasaResult.reason}`,
-                        weather: weatherResult.status === 'fulfilled' ? 'Success' : `Failed: ${weatherResult.reason}`,
-                        fact: dailyFactResult.status === 'fulfilled' ? 'Success' : `Failed: ${dailyFactResult.reason}`,
-                        crypto: cryptoResult.status === 'fulfilled' ? 'Success' : `Failed: ${cryptoResult.reason}`,
-                        fearGreed: fearGreedResult.status === 'fulfilled' ? 'Success' : `Failed: ${fearGreedResult.reason}`
-                    });
+        console.log('Połączenie aktywne, ładuję dane');
+        if (!isReloading) {
+            isReloading = true;
+            try {
+                const ip = await getIp();
+                await initializeFallbackData(ip);
+                const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
+                    getNasaApodImage(),
+                    getWeather(ip),
+                    getDailyFact(),
+                    getCryptoData(),
+                    updateFearGreedIndicator()
+                ]);
 
-                    setTimeout(async () => {
-                        try {
-                            await logVisit();
-                        } catch (err) {
-                            console.error('Błąd ładowania logów:', err);
-                            const logTableBody = document.getElementById('logTableBody');
-                            if (logTableBody) {
-                                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
-                            }
+                console.log('Wyniki API:', {
+                    nasa: nasaResult.status === 'fulfilled' ? 'Success' : `Failed: ${nasaResult.reason}`,
+                    weather: weatherResult.status === 'fulfilled' ? 'Success' : `Failed: ${weatherResult.reason}`,
+                    fact: dailyFactResult.status === 'fulfilled' ? 'Success' : `Failed: ${dailyFactResult.reason}`,
+                    crypto: cryptoResult.status === 'fulfilled' ? 'Success' : `Failed: ${cryptoResult.reason}`,
+                    fearGreed: fearGreedResult.status === 'fulfilled' ? 'Success' : `Failed: ${fearGreedResult.reason}`
+                });
+
+                setTimeout(async () => {
+                    try {
+                        await logVisit();
+                    } catch (err) {
+                        console.error('Błąd ładowania logów:', err);
+                        const logTableBody = document.getElementById('logTableBody');
+                        if (logTableBody) {
+                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
                         }
-                    }, 500);
+                    }
+                }, 500);
 
-                    console.log('Dane załadowane po przywróceniu połączenia');
-                } catch (err) {
-                    console.error('Błąd podczas ładowania danych:', err);
-                    networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
-                    networkStatus.style.display = 'block';
-                } finally {
-                    isReloading = false;
-                }
+                console.log('Dane załadowane');
+            } catch (err) {
+                console.error('Błąd podczas ładowania danych:', err);
+                networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
+                networkStatus.style.display = 'block';
+            } finally {
+                isReloading = false;
             }
-        } else {
-            console.log('Brak połączenia z internetem');
-            networkStatus.textContent = 'Brak połączenia z internetem';
-            networkStatus.style.display = 'block';
         }
     }
 
@@ -1821,7 +1833,9 @@ async function logVisit() {
             }, 5000);
         } catch (err) {
             console.error('Błąd podczas ładowania danych w kolejce:', err);
-            handleNetworkStatus();
+            const networkStatus = document.getElementById('networkStatus');
+            networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
+            networkStatus.style.display = 'block';
         }
 
         return ip;
@@ -1907,7 +1921,9 @@ async function logVisit() {
 
     window.onload = async function() {
         console.log('Strona załadowana, uruchamiam funkcje...');
-        handleNetworkStatus();
+        if (navigator.onLine) {
+            await loadData();
+        }
         if (document.visibilityState === 'visible') {
             console.log('Karta widoczna, uruchamiam aktualizacje danych');
             try {
@@ -1934,7 +1950,7 @@ async function logVisit() {
                     try {
                         await logVisit();
                     } catch (err) {
-                        console.error('B锐d podczas logowania odwiedzin:', err);
+                        console.error('Błąd podczas logowania odwiedzin:', err);
                         const logTableBody = document.getElementById('logTableBody');
                         if (logTableBody) {
                             logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów odwiedzin.</td></tr>';
@@ -1967,8 +1983,10 @@ async function logVisit() {
             manageAllUpdateIntervals(getIp());
         });
 
-        window.addEventListener('online', handleNetworkStatus);
-        window.addEventListener('offline', handleNetworkStatus);
+        window.addEventListener('online', () => {
+            console.log('Połączenie przywrócone, ładuję dane');
+            loadData();
+        });
 
         const termsLinkPL = document.getElementById('termsLinkPL');
         const termsLinkEN = document.getElementById('termsLinkEN');
