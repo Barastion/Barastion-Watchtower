@@ -1,19 +1,19 @@
 :root {
-    --fear-greed-hold: #cfae02; /* Żółty dla HODL - bez zmian */
-    --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); /* Zielony dla BUY SLOWLY - bez zmian */
-    --fear-greed-opportunity: rgba(0, 220, 0, 0.9); /* Jasnozielony dla ALL IN! - bez zmian */
-    --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY - bez zmian */
-    --fear-greed-sell: rgba(220, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! - bez zmian */
-    --gradient-start: #ffd700; /* Złoty kolor początkowy gradientu */
-    --gradient-end: #e6c200; /* Ciemniejszy złoty dla gradientu */
-    --gradient-start-all-in: rgba(0, 220, 0, 0.9);
-    --gradient-end-all-in: rgba(0, 180, 0, 0.75);
-    --gradient-start-buy-slowly: rgba(0, 180, 0, 0.75);
-    --gradient-end-buy-slowly: rgba(0, 140, 0, 0.6);
-    --gradient-start-sell-slowly: rgba(180, 0, 0, 0.75);
-    --gradient-end-sell-slowly: rgba(140, 0, 0, 0.6);
-    --gradient-start-cash-out: rgba(220, 0, 0, 0.9);
-    --gradient-end-cash-out: rgba(180, 0, 0, 0.75);
+    --fear-greed-hold: #cfae02; /* Żółty dla HODL */
+    --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); /* Zielony dla BUY SLOWLY */
+    --fear-greed-opportunity: rgba(0, 220, 0, 0.9); /* Jasnozielony dla ALL IN! */
+    --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY */
+    --fear-greed-sell: rgba(220, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
+    --gradient-start: #cfae02; /* Kolor początkowy gradientu dla HODL */
+    --gradient-end: #a68e02; /* Kolor końcowy gradientu dla HODL */
+    --gradient-start-all-in: rgba(0, 220, 0, 0.9); /* Kolor początkowy dla ALL IN! */
+    --gradient-end-all-in: rgba(0, 180, 0, 0.75); /* Kolor końcowy dla ALL IN! */
+    --gradient-start-buy-slowly: rgba(0, 180, 0, 0.75); /* Kolor początkowy dla BUY SLOWLY */
+    --gradient-end-buy-slowly: rgba(0, 140, 0, 0.6); /* Kolor końcowy dla BUY SLOWLY */
+    --gradient-start-sell-slowly: rgba(180, 0, 0, 0.75); /* Kolor początkowy dla SELL SLOWLY */
+    --gradient-end-sell-slowly: rgba(140, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
+    --gradient-start-cash-out: rgba(220, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
+    --gradient-end-cash-out: rgba(180, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
 }
 
 body {
@@ -140,7 +140,7 @@ body {
 
 .search-container input[type="text"]:focus {
     outline: none;
-    border-color: #ffd700; /* Złoty akcent przy fokusie */
+    border-color: #5a6268;
 }
 
 .daily-fact {
@@ -155,7 +155,7 @@ body {
     align-items: center;
     gap: 5px;
     font-weight: 500;
-    color: #ffd700; /* Złoty nagłówek */
+    color: #ffeb3b; /* Kolor nagłówka "Ciekawostka na dziś:" */
 }
 
 .fact-content {
@@ -166,7 +166,7 @@ body {
     overflow-wrap: break-word;
     white-space: normal;
     max-width: 100%;
-    color: #ffffff;
+    color: #ffffff; /* Treść ciekawostki pozostaje biała */
 }
 
 @media (min-width: 769px) {
@@ -201,11 +201,11 @@ body {
     text-align: center;
     margin: 2px 0;
     font-size: 1.2em;
-    color: #ffffff;
+    color: #ffffff; /* Napis "Pogoda dla:" */
 }
 
 #weatherCity {
-    color: #ffd700; /* Złota nazwa miasta */
+    color: #ffeb3b; /* Nazwa miasta w kolorze żółtym */
 }
 
 .forecast-container {
@@ -231,7 +231,7 @@ body {
 }
 
 .forecast-bar.today {
-    border: 2px solid #ffd700; /* Złota obwódka dla dzisiejszego dnia */
+    border: 2px solid #5a6268;
 }
 
 .forecast-date {
@@ -247,7 +247,7 @@ body {
 .weather-day {
     font-size: 0.9em;
     font-weight: bold;
-    color: #ffd700; /* Złote dni tygodnia */
+    color: #ffeb3b; /* Dni tygodnia w kolorze żółtym */
 }
 
 .weather-description {
@@ -257,7 +257,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 40px;
-    color: #ffffff;
+    color: #ffffff; /* Opis pogody pozostaje biały */
 }
 
 .weather-temps {
@@ -309,12 +309,12 @@ body {
 .ticker-segment {
     display: inline-block;
     padding-right: 180px;
-    color: #ffffff;
+    color: #ffffff; /* Nazwy w tickerze pozostają białe */
 }
 
 .ticker-value {
     font-weight: bold;
-    color: #ffd700; /* Złote wartości w tickerze */
+    color: #ffeb3b; /* Wartości z API w kolorze żółtym */
 }
 
 .crypto-info {
@@ -359,6 +359,7 @@ body {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
+/* Gradienty dla każdego stanu */
 .fear-greed-indicator.all-in {
     background: linear-gradient(135deg, var(--gradient-start-all-in), var(--gradient-end-all-in));
 }
@@ -379,6 +380,7 @@ body {
     background: linear-gradient(135deg, var(--gradient-start-cash-out), var(--gradient-end-cash-out));
 }
 
+/* Styl wartości FGI z kolorami zależnymi od przedziału */
 .fear-greed-indicator .fgi-value {
     font-weight: 600;
     margin-right: 8px;
@@ -395,25 +397,26 @@ body {
 }
 
 .fear-greed-indicator .fgi-value.extreme-fear {
-    color: var(--fear-greed-sell);
+    color: var(--fear-greed-sell); /* 1-20 */
 }
 
 .fear-greed-indicator .fgi-value.fear {
-    color: var(--fear-greed-consider-sell);
+    color: var(--fear-greed-consider-sell); /* 21-40 */
 }
 
 .fear-greed-indicator .fgi-value.neutral {
-    color: #ffd700; /* Złoty dla neutralnego zakresu */
+    color: #ffeb3b; /* 41-60 */
 }
 
 .fear-greed-indicator .fgi-value.greedy {
-    color: var(--fear-greed-consider-buy);
+    color: var(--fear-greed-consider-buy); /* 61-80 */
 }
 
 .fear-greed-indicator .fgi-value.extreme-greedy {
-    color: var(--fear-greed-opportunity);
+    color: var(--fear-greed-opportunity); /* 81-100 */
 }
 
+/* Styl napisu "Miesięczny sygnał:" */
 .fear-greed-indicator .fgi-label {
     font-weight: 600;
     margin-right: 4px;
@@ -430,6 +433,7 @@ body {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
+/* Styl strzałki trendu */
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 8px;
@@ -459,10 +463,11 @@ body {
 }
 
 .fear-greed-indicator .trend-neutral {
-    color: #ffd700; /* Złoty dla neutralnego trendu */
+    color: #ffea00;
     animation: glow-neutral 1.5s ease-in-out infinite;
 }
 
+/* Styl sygnału */
 .fear-greed-indicator .fear-greed-signal {
     position: relative;
     display: inline-block;
@@ -607,7 +612,7 @@ table {
 }
 
 thead tr {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Złoty gradient dla nagłówka */
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla nagłówka tabeli logów */
 }
 
 th, td {
@@ -621,7 +626,7 @@ th, td {
 
 th {
     background: transparent;
-    color: #ffffff;
+    color: white;
     font-weight: 700;
     text-shadow: 
         -1.0px -1.0px 0 #000000,
@@ -632,7 +637,7 @@ th {
         1.0px 0 0 #000000,
         0 -1.0px 0 #000000,
         0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
+        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla nagłówków tabeli logów */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transition: filter 0.3s ease;
 }
@@ -709,7 +714,7 @@ tr:hover td:last-child {
     font-size: 0.9em;
     line-height: 1.2;
     hyphens: auto;
-    text-align: center;
+    text-align: center; /* Wyśrodkowanie tekstu */
 }
 
 .country {
@@ -734,11 +739,11 @@ tr:hover td:last-child {
     word-wrap: break-word;
     text-align: center;
     margin: 0 auto;
-    position: relative;
+    position: relative; /* Dla tooltipa */
 }
 
 .isp:hover::after {
-    content: attr(data-full-text);
+    content: attr(data-full-text); /* Używa atrybutu data-full-text z HTML */
     position: absolute;
     background-color: #555555;
     color: #ffffff;
@@ -749,7 +754,7 @@ tr:hover td:last-child {
     width: auto;
     max-width: 200px;
     z-index: 10;
-    top: -40px;
+    top: -40px; /* Pozycja nad elementem */
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;
@@ -758,7 +763,7 @@ tr:hover td:last-child {
 }
 
 .isp:hover::after {
-    opacity: 1;
+    opacity: 1; /* Tooltip pojawia się po najechaniu */
 }
 
 .hidden-log {
@@ -772,8 +777,8 @@ tr:hover td:last-child {
 }
 
 .toggle-button {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Złoty gradient dla przycisku */
-    color: #ffffff;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla przycisku "Rozwiń listę/Zwiń listę" */
+    color: white;
     border: none;
     padding: 6px 12px;
     border-radius: 8px;
@@ -789,7 +794,7 @@ tr:hover td:last-child {
         1.0px 0 0 #000000,
         0 -1.0px 0 #000000,
         0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
+        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla tekstu przycisku */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
@@ -813,7 +818,7 @@ tr:hover td:last-child {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #ffd700, #e6c200); /* Złoty gradient dla paska przewijania */
+    background: linear-gradient(135deg, #5a6268, #4a5258);
     border-radius: 6px;
     border: 2px solid #2d2d2d;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
@@ -821,7 +826,7 @@ tr:hover td:last-child {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #ffe066, #ffd700);
+    background: linear-gradient(135deg, #6a7278, #5a6268);
 }
 
 ::-webkit-scrollbar-corner {
@@ -846,7 +851,7 @@ tr:hover td:last-child {
 
 @keyframes pulse-negative {
     0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.8); }
-    50% { box-shadow: 0 0 13px rgba(255, 0, 0, 1); }
+    50% { box-shadow: 0 0 13px rgba(0, 0, 0, 1); }
     100% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
 }
 
@@ -864,8 +869,8 @@ tr:hover td:last-child {
 
 @keyframes glow-neutral {
     0% { color: #f5e27f; }
-    50% { color: #ffd700; }
-    100% { color: #e6c200; }
+    50% { color: #ffeb3b; }
+    100% { color: #cfae02; }
 }
 
 .modal-overlay {
@@ -898,7 +903,6 @@ tr:hover td:last-child {
     margin-top: 0;
     font-size: 1.5em;
     text-align: center;
-    color: #ffd700; /* Złoty nagłówek w modalu */
 }
 
 .modal-container p {
@@ -916,7 +920,7 @@ tr:hover td:last-child {
 
 .language-switch button {
     background: linear-gradient(135deg, #5a6268, #4a5258);
-    color: #ffffff;
+    color: white;
     border: none;
     padding: 6px 12px;
     border-radius: 8px;
@@ -935,13 +939,13 @@ tr:hover td:last-child {
 }
 
 .language-switch button.active {
-    background: linear-gradient(135deg, #ffd700, #e6c200); /* Złoty gradient dla aktywnego języka */
+    background: linear-gradient(135deg, #6a7278, #5a6268);
     transform: scale(1.05);
 }
 
 .close-button {
     background: linear-gradient(135deg, #ff4d4d, #d43f3f);
-    color: #ffffff;
+    color: white;
     border: none;
     padding: 6px 12px;
     border-radius: 8px;
@@ -959,26 +963,6 @@ tr:hover td:last-child {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
-}
-
-.footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.75em;
-    color: #cccccc;
-}
-
-.footer p {
-    margin: 2px 0;
-}
-
-.footer a {
-    color: #ffd700; /* Złote linki w stopce */
-    text-decoration: none;
-}
-
-.footer a:hover {
-    text-decoration: underline;
 }
 
 @media (max-width: 768px) {
@@ -1056,9 +1040,7 @@ tr:hover td:last-child {
         padding: 8px 10px;
     }
 
-    .fear-greed-indicator .fgi-value,
-    .fear-greed-indicator .fgi-label,
-    .fear-greed-indicator .fear-greed-signal {
+    .fear-greed-indicator .fgi-value {
         text-shadow: 
             -1.0px -1.0px 0 #000000,
             1.0px -1.0px 0 #000000,
@@ -1068,7 +1050,20 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
+    }
+
+    .fear-greed-indicator .fgi-label {
+        text-shadow: 
+            -1.0px -1.0px 0 #000000,
+            1.0px -1.0px 0 #000000,
+            -1.0px 1.0px 0 #000000,
+            1.0px 1.0px 0 #000000,
+            -1.0px 0 0 #000000,
+            1.0px 0 0 #000000,
+            0 -1.0px 0 #000000,
+            0 1.0px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
     }
 
     .fear-greed-indicator .trend-indicator {
@@ -1083,7 +1078,20 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.2px 0 #000000,
             0 1.2px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
+    }
+
+    .fear-greed-indicator .fear-greed-signal {
+        text-shadow: 
+            -1.0px -1.0px 0 #000000,
+            1.0px -1.0px 0 #000000,
+            -1.0px 1.0px 0 #000000,
+            1.0px 1.0px 0 #000000,
+            -1.0px 0 0 #000000,
+            1.0px 0 0 #000000,
+            0 -1.0px 0 #000000,
+            0 1.0px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
     }
 
     .crypto-grid {
@@ -1136,7 +1144,7 @@ tr:hover td:last-child {
     }
 
     th {
-        font-size: 0.7em;
+        font-size: 0.7em; /* Zmniejszona czcionka dla nagłówków w wersji mobilnej */
         text-shadow: 
             -1.0px -1.0px 0 #000000,
             1.0px -1.0px 0 #000000,
@@ -1146,7 +1154,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
+            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień dla nagłówków w wersji mobilnej */
     }
 
     th:nth-child(1), td:nth-child(1) {
@@ -1226,5 +1234,38 @@ tr:hover td:last-child {
 @media (max-width: 768px) and (orientation: landscape) {
     .crypto-grid {
         grid-template-columns: repeat(7, 1fr);
+    }
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.75em;
+    color: #cccccc;
+}
+
+.footer p {
+    margin: 2px 0;
+}
+
+.footer a {
+    color: #ffeb3b;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        font-size: 0.45em;
+    }
+
+    .footer p {
+        margin: 1px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
