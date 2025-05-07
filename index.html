@@ -577,8 +577,9 @@
         }
 
         const parsedValues = values.map(item => parseFloat(item.value) || 0);
-        const ema3 = calculateEMA(parsedValues, 3);
-        const ema8 = calculateEMA(parsedValues, 8);
+        const parsedValuesChronological = parsedValues.slice().reverse(); // Odwrócenie dla chronologicznej kolejności
+        const ema3 = calculateEMA(parsedValuesChronological, 3);
+        const ema8 = calculateEMA(parsedValuesChronological, 8);
         const difference = ema3 - ema8;
 
         let trendSymbol, trendClass, trendReason;
