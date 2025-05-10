@@ -142,7 +142,7 @@
     // Funkcje licznika wyświetleń
     const visitCounterCacheKey = 'visitCounter';
     const visitCounterCacheTimeKey = 'visitCounter_time';
-    const visitCounterCacheDuration = 48 * 60 * 60 * 1000; // 48 godzin, jak w logach
+    const visitCounterCacheDuration = 48 * 60 * 60 * 1000;
 
     function formatNumberWithSpaces(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -577,7 +577,7 @@
         }
 
         const parsedValues = values.map(item => parseFloat(item.value) || 0);
-        const parsedValuesChronological = parsedValues.slice().reverse(); // Odwrócenie dla chronologicznej kolejności
+        const parsedValuesChronological = parsedValues.slice().reverse();
         const ema3 = calculateEMA(parsedValuesChronological, 3);
         const ema8 = calculateEMA(parsedValuesChronological, 8);
         const difference = ema3 - ema8;
@@ -682,63 +682,59 @@
         });
     }
 
-    // Flaga w pamięci do blokowania równoległych wywołań
-let isLoggingVisit = false;
+    let isLoggingVisit = false;
 
-async function logVisit() {
-    // Sprawdź, czy logowanie jest już w toku
-    if (isLoggingVisit) {
-        console.log('Logowanie w toku, pomijam kolejne wywołanie.');
-        await updateLogs();
-        return;
-    }
-
-    // Sprawdź, czy log już został zapisany w tej sesji (czerwona flaga)
-    if (sessionStorage.getItem('visitLogged')) {
-        console.log('Log dla tej sesji już zapisany, pomijam.');
-        await updateLogs();
-        return;
-    }
-
-    isLoggingVisit = true;
-    console.log('Rozpoczynam zapis logu...');
-
-    try {
-        const now = new Date();
-        const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
-        const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-        const ip = await getIp();
-        const location = await getLocation(ip);
-        const userAgent = navigator.userAgent;
-        const device = getDeviceType(userAgent);
-        const isp = location.isp || 'Nieznany dostawca';
-        const timestamp = now.getTime();
-
-        const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
-        if (isDuplicate) {
-            console.log('Duplikat logu, pomijam zapis.');
+    async function logVisit(source = 'watchtower') {
+        if (isLoggingVisit) {
+            console.log('Logowanie w toku, pomijam kolejne wywołanie.');
             await updateLogs();
             return;
         }
 
-        const logEntry = { date, day, time, ip, location, device, isp, timestamp };
-        console.log('Log do zapisania:', logEntry);
+        if (sessionStorage.getItem('visitLogged')) {
+            console.log('Log dla tej sesji już zapisany, pomijam.');
+            await updateLogs();
+            return;
+        }
 
-        const logsRef = ref(database, 'logs');
-        const newLogRef = push(logsRef);
+        isLoggingVisit = true;
+        console.log('Rozpoczynam zapis logu...');
 
-        await set(newLogRef, logEntry);
-        console.log('Log zapisany pomyślnie:', logEntry);
-        // Ustaw czerwoną flagę, że log został zapisany
-        sessionStorage.setItem('visitLogged', 'true');
-        await updateLogs();
-    } catch (error) {
-        console.error('Błąd zapisu logu:', error);
-    } finally {
-        isLoggingVisit = false; // Zresetuj flagę po zakończeniu
+        try {
+            const now = new Date();
+            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
+            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const ip = await getIp();
+            const location = await getLocation(ip);
+            const userAgent = navigator.userAgent;
+            const device = getDeviceType(userAgent);
+            const isp = location.isp || 'Nieznany dostawca';
+            const timestamp = now.getTime();
+
+            const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
+            if (isDuplicate) {
+                console.log('Duplikat logu, pomijam zapis.');
+                await updateLogs();
+                return;
+            }
+
+            const logEntry = { date, day, time, ip, location, device, isp, timestamp, source };
+            console.log('Log do zapisania:', logEntry);
+
+            const logsRef = ref(database, 'logs');
+            const newLogRef = push(logsRef);
+
+            await set(newLogRef, logEntry);
+            console.log('Log zapisany pomyślnie:', logEntry);
+            sessionStorage.setItem('visitLogged', 'true');
+            await updateLogs();
+        } catch (error) {
+            console.error('Błąd zapisu logu:', error);
+        } finally {
+            isLoggingVisit = false;
+        }
     }
-}
 
     async function updateLogs() {
         console.log('Rozpoczynam aktualizację logów...');
@@ -759,7 +755,7 @@ async function logVisit() {
                 }
 
                 displayLogs(logs);
-                truncateTextWithTooltip(); // Wywołanie funkcji po wyświetleniu logów
+                truncateTextWithTooltip();
             }, { onlyOnce: true });
         } catch (error) {
             console.error('Błąd pobierania logów:', error);
@@ -802,7 +798,7 @@ async function logVisit() {
                     <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                 </td>
                 <td>
-                    <div class="device">${log.device || 'Brak'}</div>
+                    <div class="device">${log.device || 'Brak'} ${log.source === 'dreamscape' ? '•' : ''}</div>
                     <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                 </td>
             `;
@@ -823,7 +819,7 @@ async function logVisit() {
                         <div class="country">${log.location.country || 'Nieznany kraj'}</div>
                     </td>
                     <td>
-                        <div class="device">${log.device || 'Brak'}</div>
+                        <div class="device">${log.device || 'Brak'} ${log.source === 'dreamscape' ? '•' : ''}</div>
                         <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
                     </td>
                 `;
@@ -1494,7 +1490,7 @@ async function logVisit() {
 
     async function loadData() {
         const networkStatus = document.getElementById('networkStatus');
-        if (!navigator.onLine) return; // Ładuj dane tylko, jeśli online
+        if (!navigator.onLine) return;
 
         console.log('Połączenie aktywne, ładuję dane');
         if (!isReloading) {
@@ -1581,7 +1577,7 @@ async function logVisit() {
         visitCounterIntervalId = setInterval(() => {
             console.log('Aktualizuję licznik odwiedzin...');
             displayVisitCounter();
-        }, 900000); // 15 minut, jak logi
+        }, 900000);
     }
 
     let isManagingIntervals = false;
@@ -1673,7 +1669,7 @@ async function logVisit() {
         nasaIntervalId = setInterval(() => {
             console.log('Aktualizuję NASA...');
             getNasaApodImage();
-        }, 10800000); // 3 godziny
+        }, 10800000);
     }
 
     function startWeatherUpdateInterval(ip) {
@@ -1682,7 +1678,7 @@ async function logVisit() {
         weatherIntervalId = setInterval(() => {
             console.log('Aktualizuję pogodę...');
             getWeather(ip);
-        }, 10800000); // 3 godziny
+        }, 10800000);
     }
 
     function startDailyFactUpdateInterval() {
@@ -1691,7 +1687,7 @@ async function logVisit() {
         dailyFactIntervalId = setInterval(() => {
             console.log('Aktualizuję ciekawostkę dnia...');
             getDailyFact();
-        }, 10800000); // 3 godziny
+        }, 10800000);
     }
 
     function manageAllUpdateIntervals(ip) {
@@ -1965,7 +1961,7 @@ async function logVisit() {
                 manageAllUpdateIntervals(ipFromQueue);
 
                 await displayVisitCounter();
-                truncateTextWithTooltip(); // Wywołanie funkcji po załadowaniu strony
+                truncateTextWithTooltip();
             } catch (err) {
                 console.error('Błąd podczas inicjalizacji danych:', err);
                 const networkStatus = document.getElementById('networkStatus');
@@ -2021,6 +2017,13 @@ async function logVisit() {
 
         console.log('Inicjalizacja strony zakończona');
     };
+
+    window.addEventListener('message', async (event) => {
+        if (event.origin !== 'https://barastion.github.io') return;
+        if (event.data.action === 'logVisit') {
+            await logVisit(event.data.source || 'watchtower');
+        }
+    });
 
     window.addEventListener('beforeunload', () => {
         if (cryptoIntervalId) clearInterval(cryptoIntervalId);
