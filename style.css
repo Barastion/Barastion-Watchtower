@@ -397,11 +397,11 @@ body {
 }
 
 .fear-greed-indicator .fgi-value.extreme-fear {
-    color: var(--fear-greed-sell); /* 1-20 */
+    color: #dc0000; /* 1-20 */
 }
 
 .fear-greed-indicator .fgi-value.fear {
-    color: var(--fear-greed-consider-sell); /* 21-40 */
+    color: #b40000; /* 21-40 */
 }
 
 .fear-greed-indicator .fgi-value.neutral {
@@ -409,11 +409,11 @@ body {
 }
 
 .fear-greed-indicator .fgi-value.greedy {
-    color: var(--fear-greed-consider-buy); /* 61-80 */
+    color: #00b400; /* 61-80 */
 }
 
 .fear-greed-indicator .fgi-value.extreme-greedy {
-    color: var(--fear-greed-opportunity); /* 81-100 */
+    color: #00dc00; /* 81-100 */
 }
 
 /* Styl napisu "Miesięczny sygnał:" */
