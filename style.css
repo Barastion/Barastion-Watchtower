@@ -1042,56 +1042,56 @@ tr:hover td:last-child {
 
     .fear-greed-indicator .fgi-value {
         text-shadow: 
-            -1.0px -1.0px 0 #000000,
-            1.0px -1.0px 0 #000000,
-            -1.0px 1.0px 0 #000000,
-            1.0px 1.0px 0 #000000,
-            -1.0px 0 0 #000000,
-            1.0px 0 0 #000000,
-            0 -1.0px 0 #000000,
-            0 1.0px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .fear-greed-indicator .fgi-label {
         text-shadow: 
-            -1.0px -1.0px 0 #000000,
-            1.0px -1.0px 0 #000000,
-            -1.0px 1.0px 0 #000000,
-            1.0px 1.0px 0 #000000,
-            -1.0px 0 0 #000000,
-            1.0px 0 0 #000000,
-            0 -1.0px 0 #000000,
-            0 1.0px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .fear-greed-indicator .trend-indicator {
         font-size: 1.1em;
         margin-right: 8px;
         text-shadow: 
-            -1.0px -1.2px 0 #000000,
-            1.0px -1.2px 0 #000000,
-            -1.0px 1.2px 0 #000000,
-            1.0px 1.2px 0 #000000,
-            -1.0px 0 0 #000000,
-            1.0px 0 0 #000000,
-            0 -1.2px 0 #000000,
-            0 1.2px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .fear-greed-indicator .fear-greed-signal {
         text-shadow: 
-            -1.0px -1.0px 0 #000000,
-            1.0px -1.0px 0 #000000,
-            -1.0px 1.0px 0 #000000,
-            1.0px 1.0px 0 #000000,
-            -1.0px 0 0 #000000,
-            1.0px 0 0 #000000,
-            0 -1.0px 0 #000000,
-            0 1.0px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5); /* Subtelniejszy cień w wersji mobilnej */
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .crypto-grid {
@@ -1146,14 +1146,14 @@ tr:hover td:last-child {
     th {
         font-size: 0.7em; /* Zmniejszona czcionka dla nagłówków w wersji mobilnej */
         text-shadow: 
-            -1.0px -1.0px 0 #000000,
-            1.0px -1.0px 0 #000000,
-            -1.0px 1.0px 0 #000000,
-            1.0px 1.0px 0 #000000,
-            -1.0px 0 0 #000000,
-            1.0px 0 0 #000000,
-            0 -1.0px 0 #000000,
-            0 1.0px 0 #000000,
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
             0 0 10px rgba(0, 0, 0, 0.5);
     }
 
@@ -1194,15 +1194,15 @@ tr:hover td:last-child {
         padding: 3px 5px;
         font-size: 0.50em;
         min-width: 60px;
-        text-shadow: 
-            -1.0px -1.0px 0 #000000,
-            1.0px -1.0px 0 #000000,
-            -1.0px 1.0px 0 #000000,
-            1.0px 1.0px 0 #000000,
-            -1.0px 0 0 #000000,
-            1.0px 0 0 #000000,
-            0 -1.0px 0 #000000,
-            0 1.0px 0 #000000,
+        text-shadow:
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
             0 0 10px rgba(0, 0, 0, 0.5);
     }
 
