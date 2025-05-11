@@ -1154,7 +1154,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.3);
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     th:nth-child(1), td:nth-child(1) {
@@ -1203,7 +1203,7 @@ tr:hover td:last-child {
             1.0px 0 0 #000000,
             0 -1.0px 0 #000000,
             0 1.0px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.3);
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .nasa-ticker {
