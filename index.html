@@ -578,9 +578,9 @@
 
         const parsedValues = values.map(item => parseFloat(item.value) || 0);
         const parsedValuesChronological = parsedValues.slice().reverse(); // Odwrócenie dla chronologicznej kolejności
-        const ema3 = calculateEMA(parsedValuesChronological, 3);
+        const ema2 = calculateEMA(parsedValuesChronological, 2);
         const ema8 = calculateEMA(parsedValuesChronological, 8);
-        const difference = ema3 - ema8;
+        const difference = ema2 - ema8;
 
         let trendSymbol, trendClass, trendReason;
         if (Math.abs(difference) < 1.0) {
@@ -594,7 +594,7 @@
             trendClass = 'trend-down';
         }
 
-        trendReason = `EMA3 = ${ema3.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
+        trendReason = `EMA2 = ${ema2.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
         console.log(trendReason);
         return { symbol: trendSymbol, class: trendClass };
     }
