@@ -852,93 +852,155 @@ async function logVisit() {
         console.log('Logi wyświetlone:', logs.length);
     }
 
-    async function getIp() {
+    async function getIp(forceRefresh = false) {
         const cacheKey = 'ip_data';
         const cacheTimeKey = 'ip_time';
-        const cacheDuration = 15 * 60 * 1000;
-        const extendedCacheDuration = cacheDuration * 2;
+        const cacheDuration = 15 * 60 * 1000; // 15 minutes
+        const lastCheckKey = 'ip_location_last_check';
+        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
 
-        const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
-        if (cachedData) {
-            console.log('Używam IP z cache:', cachedData.ip);
-            return cachedData.ip;
-        }
+        const now = Date.now();
+        const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
 
-        try {
-            const data = await retryFetch('https://api.ipify.org?format=json');
-            console.log('IP pobrane:', data.ip);
-            setCachedData(cacheKey, cacheTimeKey, data);
-            localStorage.removeItem(`rateLimit_${cacheKey}`);
-            return data.ip || 'Nieznany IP';
-        } catch (err) {
-            console.error('Błąd pobierania IP:', err);
-            if (err.message === 'RateLimitExceeded') {
-                localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                    extendedDuration: extendedCacheDuration,
-                    timestamp: Date.now()
-                }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 60000} minut`);
+        if (forceRefresh || (now - lastCheck > checkInterval)) {
+            console.log('Minęło 4 godziny lub wymuszono odświeżenie, pobieram nowe IP');
+            try {
+                const data = await retryFetch('https://api.ipify.org?format=json');
+                console.log('IP pobrane:', data.ip);
+                setCachedData(cacheKey, cacheTimeKey, data);
+                localStorage.setItem(lastCheckKey, now.toString());
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
+                return data.ip || 'Nieznany IP';
+            } catch (err) {
+                console.error('Błąd pobierania IP:', err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: cacheDuration * 2,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 60000} minut`);
+                }
+                return 'Nieznany IP';
             }
-            return 'Nieznany IP';
+        } else {
+            const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
+            if (cachedData) {
+                console.log('Używam IP z cache:', cachedData.ip);
+                return cachedData.ip;
+            }
+
+            try {
+                const data = await retryFetch('https://api.ipify.org?format=json');
+                console.log('IP pobrane:', data.ip);
+                setCachedData(cacheKey, cacheTimeKey, data);
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
+                return data.ip || 'Nieznany IP';
+            } catch (err) {
+                console.error('Błąd pobierania IP:', err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: cacheDuration * 2,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 60000} minut`);
+                }
+                return 'Nieznany IP';
+            }
         }
     }
 
-    async function getLocation(ip) {
+    async function getLocation(ip, forceRefresh = false) {
         const cacheKey = `location_${ip}`;
         const cacheTimeKey = `${cacheKey}_time`;
-        const cacheDuration = 24 * 60 * 60 * 1000;
-        const extendedCacheDuration = cacheDuration * 2;
-        const userAgent = navigator.userAgent;
-        const device = getDeviceType(userAgent);
-        const cacheSignatureKey = `${cacheKey}_signature`;
-        const currentSignature = `${ip}_${device}`;
-        const cachedSignature = localStorage.getItem(cacheSignatureKey);
+        const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
+        const lastCheckKey = 'ip_location_last_check';
+        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
 
-        if (cachedSignature === currentSignature) {
+        const now = Date.now();
+        const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
+
+        if (forceRefresh || (now - lastCheck > checkInterval)) {
+            console.log('Minęło 4 godziny lub wymuszono odświeżenie, pobieram nową lokalizację');
+            try {
+                const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
+                const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
+                console.log('Lokalizacja dla IP:', ip, data);
+                if (data.error) {
+                    throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
+                }
+                const location = {
+                    city: data.location?.city || 'Nieznane miasto',
+                    country: data.location?.country?.name || 'Nieznany kraj',
+                    lat: data.location?.latitude || null,
+                    lon: data.location?.longitude || null,
+                    isp: data.connection?.organization || 'Nieznany dostawca'
+                };
+                setCachedData(cacheKey, cacheTimeKey, location);
+                localStorage.setItem(lastCheckKey, now.toString());
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
+                return location;
+            } catch (err) {
+                console.error('Błąd pobierania lokalizacji:', ip, err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: cacheDuration * 2,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 3600000} godzin`);
+                }
+                const fallbackLocation = {
+                    city: 'Opole',
+                    country: 'Polska',
+                    lat: 50.6721,
+                    lon: 17.9253,
+                    isp: 'Nieznany dostawca'
+                };
+                setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
+                return fallbackLocation;
+            }
+        } else {
             const cachedLocation = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
             if (cachedLocation) {
                 console.log('Używam lokalizacji z cache:', ip);
                 return cachedLocation;
             }
-        }
 
-        try {
-            const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
-            const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
-            console.log('Lokalizacja dla IP:', ip, data);
-            if (data.error) {
-                throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
+            try {
+                const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
+                const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
+                console.log('Lokalizacja dla IP:', ip, data);
+                if (data.error) {
+                    throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
+                }
+                const location = {
+                    city: data.location?.city || 'Nieznane miasto',
+                    country: data.location?.country?.name || 'Nieznany kraj',
+                    lat: data.location?.latitude || null,
+                    lon: data.location?.longitude || null,
+                    isp: data.connection?.organization || 'Nieznany dostawca'
+                };
+                setCachedData(cacheKey, cacheTimeKey, location);
+                localStorage.removeItem(`rateLimit_${cacheKey}`);
+                return location;
+            } catch (err) {
+                console.error('Błąd pobierania lokalizacji:', ip, err);
+                if (err.message === 'RateLimitExceeded') {
+                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
+                        extendedDuration: cacheDuration * 2,
+                        timestamp: Date.now()
+                    }));
+                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 3600000} godzin`);
+                }
+                const fallbackLocation = {
+                    city: 'Opole',
+                    country: 'Polska',
+                    lat: 50.6721,
+                    lon: 17.9253,
+                    isp: 'Nieznany dostawca'
+                };
+                setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
+                return fallbackLocation;
             }
-            const location = {
-                city: data.location?.city || 'Nieznane miasto',
-                country: data.location?.country?.name || 'Nieznany kraj',
-                lat: data.location?.latitude || null,
-                lon: data.location?.longitude || null,
-                isp: data.connection?.organization || 'Nieznany dostawca'
-            };
-            setCachedData(cacheKey, cacheTimeKey, location);
-            localStorage.setItem(cacheSignatureKey, currentSignature);
-            localStorage.removeItem(`rateLimit_${cacheKey}`);
-            return location;
-        } catch (err) {
-            console.error('Błąd pobierania lokalizacji:', ip, err);
-            if (err.message === 'RateLimitExceeded') {
-                localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                    extendedDuration: extendedCacheDuration,
-                    timestamp: Date.now()
-                }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
-            }
-            const fallbackLocation = {
-                city: 'Opole',
-                country: 'Polska',
-                lat: 50.6721,
-                lon: 17.9253,
-                isp: 'Nieznany dostawca'
-            };
-            setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
-            localStorage.setItem(cacheSignatureKey, currentSignature);
-            return fallbackLocation;
         }
     }
 
@@ -1308,7 +1370,7 @@ async function logVisit() {
             return { isDerivative: true, baseSymbol: potentialBaseSymbol };
         }
 
-        return { isDerivative: false, baseSymbol: symbol.toUpperCase() };
+        return { isDerivative: false, baseSymbol: symbol toUpperCase() };
     }
 
     async function getCryptoData() {
