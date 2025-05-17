@@ -2096,5 +2096,26 @@ async function logVisit() {
     });
 
 </script>
+
+<script>
+    // Skrypt do obsługi efektu podążania obrazka za kursorem
+    const nasaFrame = document.querySelector('.nasa-frame');
+    const spaceImage = document.getElementById('spaceImage');
+
+    nasaFrame.addEventListener('mousemove', (e) => {
+        const rect = nasaFrame.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const deltaX = (x - centerX) / centerX;
+        const deltaY = (y - centerY) / centerY;
+        spaceImage.style.transform = `translate(${deltaX * 10}px, ${deltaY * 10}px) scale(1.1)`;
+    });
+
+    nasaFrame.addEventListener('mouseleave', () => {
+        spaceImage.style.transform = 'translate(0, 0) scale(1)';
+    });
+</script>
 </body>
 </html>
