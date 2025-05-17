@@ -1,2121 +1,1276 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barastion Watchtower</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="diabelek.png">
-    <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
-    <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
-</head>
-<body>
-    <div id="networkStatus" class="network-status"></div>
-    <div class="container">
-        <div class="nasa-container">
-            <div class="nasa-frame">
-                <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
-                <div class="nasa-ticker">
-                    <div id="nasaTickerContent">
-                        <span class="ticker-segment">Ładowanie opisu...</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="search-container">
-            <form action="https://www.google.com/search" method="get" target="_blank">
-                <label for="search-input"> Szukaj w Google:</label>
-                <input type="text" id="search-input" name="q" placeholder="Wpisz frazę...">
-            </form>
-        </div>
-        <div class="daily-fact">
-            <span class="fact-header">💡 Ciekawostka na dziś:</span>
-            <div class="fact-content" id="dailyFact">Ładowanie...</div>
-        </div>
-        <div class="content-frame">
-            <div class="weather-info">
-                <div class="weather-forecast">
-                    <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
-                    <div class="forecast-container" id="weatherForecast"></div>
-                    <div class="weather-ticker">
-                         <div id="tickerContent">
-                            <span class="ticker-segment">Ładowanie...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="crypto-info">
-                <div class="crypto-header">
-                    <div class="fear-greed-indicator" id="fearGreedIndicator">
-                        <span class="fgi-label">Miesięczny sygnał:</span>
-                        <span class="trend-indicator"></span>
-                        <span class="fgi-value"></span> –
-                        <span class="fear-greed-signal"></span>
-                    </div>
-                </div>
-                <div class="crypto-grid" id="cryptoGrid"></div>
-            </div>
-            <div class="log-table">
-                <div class="table-wrapper">
-                    <div class="table-container">
-                        <table id="logTable">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Dzień</th>
-                                    <th>Godzina</th>
-                                    <th>IP</th>
-                                    <th class="location-header">Lokalizacja</th>
-                                    <th>Urządzenie</th>
-                                </tr>
-                            </thead>
-                            <tbody id="logTableBody">
-                                <tr>
-                                    <td colspan="6">Ładowanie logów...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="toggle-container">
-                        <button id="toggleLogs" class="toggle-button">Rozwiń listę</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="modalOverlay" class="modal-overlay" style="display: none;">
-        <div class="container" id="modalContent"></div>
-    </div>
-<footer class="footer">
-    <p>Wszystkie prawa zastrzeżone. Używanie strony jest jednoznaczne z akceptacją <a href="#" id="termsLinkPL">Regulaminu</a>.</p>
-    <p>All rights reserved. Using the website constitutes acceptance of the <a href="#" id="termsLinkEN">Terms and Conditions</a>.</p>
-    <p>© 2025 Barastion Watchtower. | Liczba unikalnych wejść na stronę: <span id="visitCounter" style="color: #ffd700;">0</span></p>
-</footer>
-
-<script>
-    function updateNetworkStatus() {
-        const networkStatus = document.getElementById('networkStatus');
-        if (navigator.onLine) {
-            networkStatus.style.display = 'none';
-            networkStatus.textContent = '';
-        } else {
-            networkStatus.textContent = 'Brak połączenia z internetem';
-            networkStatus.style.display = 'block';
-        }
-    }
-
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
-    window.addEventListener('load', updateNetworkStatus);
-</script>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, push, remove, get } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
-        authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
-        databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "monitor-odwiedzin-405c9",
-        storageBucket: "monitor-odwiedzin-405c9.appspot.com",
-        messagingSenderId: "93459469114",
-        appId: "1:93459469114:web:0a709b6be237705bf8f603"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    // Funkcja do skracania tekstu i dodawania tooltipów
-    function truncateTextWithTooltip() {
-        const ispElements = document.querySelectorAll('.isp');
-        ispElements.forEach(element => {
-            const text = element.textContent.trim();
-            if (text.length > 40) {
-                element.textContent = text.substring(0, 37) + '...';
-                element.setAttribute('title', text);
-            }
-        });
-    }
-
-    // Funkcje licznika wyświetleń
-    const visitCounterCacheKey = 'visitCounter';
-    const visitCounterCacheTimeKey = 'visitCounter_time';
-    const visitCounterCacheDuration = 48 * 60 * 60 * 1000; // 48 godzin, jak w logach
-
-    function formatNumberWithSpaces(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    }
-
-    async function getVisitCounter() {
-        const counterRef = ref(database, 'visitCounter');
-        const snapshot = await get(counterRef);
-        return snapshot.exists() ? snapshot.val() : 0;
-    }
-
-    async function incrementVisitCounter() {
-        const counterRef = ref(database, 'visitCounter');
-        const currentCounter = await getVisitCounter();
-        await set(counterRef, currentCounter + 1);
-        return currentCounter + 1;
-    }
-
-    async function displayVisitCounter() {
-        const cachedCounter = localStorage.getItem(visitCounterCacheKey);
-        const cachedTime = localStorage.getItem(visitCounterCacheTimeKey);
-        const sessionVisited = sessionStorage.getItem('sessionVisited');
-        const now = Date.now();
-
-        if (cachedTime && (now - parseInt(cachedTime) < visitCounterCacheDuration) && cachedCounter && !sessionVisited) {
-            document.getElementById('visitCounter').textContent = formatNumberWithSpaces(cachedCounter);
-        } else {
-            const counter = await getVisitCounter();
-            localStorage.setItem(visitCounterCacheKey, counter);
-            localStorage.setItem(visitCounterCacheTimeKey, now.toString());
-            document.getElementById('visitCounter').textContent = formatNumberWithSpaces(counter);
-        }
-
-        if (!sessionVisited) {
-            const newCounter = await incrementVisitCounter();
-            localStorage.setItem(visitCounterCacheKey, newCounter);
-            localStorage.setItem(visitCounterCacheTimeKey, now.toString());
-            sessionStorage.setItem('sessionVisited', 'true');
-            document.getElementById('visitCounter').textContent = formatNumberWithSpaces(newCounter);
-        }
-    }
-
-    function cleanVisitCounterCache() {
-        const now = Date.now();
-        const cachedTime = localStorage.getItem(visitCounterCacheTimeKey);
-        if (cachedTime && (now - parseInt(cachedTime) > visitCounterCacheDuration)) {
-            localStorage.removeItem(visitCounterCacheKey);
-            localStorage.removeItem(visitCounterCacheTimeKey);
-            console.log('Usunięto stary cache licznika odwiedzin');
-        }
-    }
-
-    async function retryFetch(url, options = {}, retries = 2, delay = 2000, timeout = 5000) {
-        let rateLimitRetries = 3;
-        let rateLimitDelay = 10000;
-        const maxRateLimitDelay = 40000;
-
-        for (let attempt = 1; attempt <= retries + rateLimitRetries; attempt++) {
-            try {
-                const controller = new AbortController();
-                const id = setTimeout(() => controller.abort(), timeout);
-                const response = await fetch(url, { ...options, signal: controller.signal });
-                clearTimeout(id);
-
-                if (response.status === 429) {
-                    console.warn(`Błąd 429 dla ${url}, próba ${attempt}`);
-                    const retryAfter = response.headers.get('Retry-After');
-                    let delayMs = rateLimitDelay;
-
-                    if (retryAfter) {
-                        const retryAfterSeconds = parseInt(retryAfter, 10);
-                        if (!isNaN(retryAfterSeconds)) {
-                            delayMs = retryAfterSeconds * 1000;
-                        }
-                    }
-
-                    if (attempt >= retries + rateLimitRetries) {
-                        throw new Error('RateLimitExceeded');
-                    }
-
-                    await new Promise(resolve => setTimeout(resolve, delayMs));
-                    rateLimitDelay = Math.min(rateLimitDelay * 2, maxRateLimitDelay);
-                    continue;
-                }
-
-                if (!response.ok) {
-                    throw new Error(`Błąd HTTP: ${response.status}`);
-                }
-                return await response.json();
-            } catch (err) {
-                console.error(`Próba ${attempt} dla ${url} nie powiodła się:`, err);
-                if (err.message === 'RateLimitExceeded' || attempt === retries + rateLimitRetries) {
-                    throw err;
-                }
-                await new Promise(resolve => setTimeout(resolve, delay));
-            }
-        }
-    }
-
-    function cleanOldCache() {
-        const now = Date.now();
-        const cleanupInterval = 3600000;
-        const lastCleanupTime = localStorage.getItem('lastCleanupTime');
-        const cleanupThreshold = 48 * 60 * 60 * 1000;
-        const isCleanupTriggered = localStorage.getItem('isCleanupTriggered');
-
-        if (isCleanupTriggered === 'true' || (lastCleanupTime && (now - parseInt(lastCleanupTime) < cleanupInterval))) {
-            console.debug('Czyszczenie pominięte');
-            return;
-        }
-
-        console.log('Rozpoczynam czyszczenie localStorage...');
-        localStorage.setItem('isCleanupTriggered', 'true');
-
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.endsWith('_time') && key !== 'lastCleanupTime' && key !== visitCounterCacheTimeKey) {
-                const cachedTime = parseInt(localStorage.getItem(key));
-                if (now - cachedTime > cleanupThreshold) {
-                    const dataKey = key.replace('_time', '');
-                    keysToRemove.push(key, dataKey);
-                }
-            }
-        }
-
-        keysToRemove.forEach(key => {
-            console.log(`Usuwam klucz: ${key}`);
-            localStorage.removeItem(key);
-        });
-
-        localStorage.setItem('lastCleanupTime', now.toString());
-        localStorage.removeItem('isCleanupTriggered');
-        console.log('Czyszczenie localStorage zakończone');
-
-        cleanVisitCounterCache();
-    }
-
-    function setCachedData(cacheKey, cacheTimeKey, data) {
-        const minifiedData = minifyData(cacheKey, data);
-        localStorage.setItem(cacheKey, JSON.stringify(minifiedData));
-        localStorage.setItem(cacheTimeKey, Date.now().toString());
-    }
-
-    function getCachedData(cacheKey, cacheTimeKey, cacheDuration) {
-        const cachedData = localStorage.getItem(cacheKey);
-        const cachedTime = localStorage.getItem(cacheTimeKey);
-        const rateLimitKey = `rateLimit_${cacheKey}`;
-        const now = Date.now();
-
-        let effectiveDuration = cacheDuration;
-        const rateLimitData = localStorage.getItem(rateLimitKey);
-        if (rateLimitData) {
-            const { extendedDuration, timestamp } = JSON.parse(rateLimitData);
-            if (now - timestamp < extendedDuration) {
-                effectiveDuration = extendedDuration;
-            } else {
-                localStorage.removeItem(rateLimitKey);
-            }
-        }
-
-        if (cachedData && cachedTime && (now - parseInt(cachedTime) < effectiveDuration)) {
-            return JSON.parse(cachedData);
-        }
-        return null;
-    }
-
-    function getAnyCachedData(cacheKey) {
-        const fallbackKey = `${cacheKey}_fallback`;
-        const fallbackTimeKey = `${fallbackKey}_time`;
-        const fallbackDuration = 24 * 60 * 60 * 1000;
-        const cachedFallback = getCachedData(fallbackKey, fallbackTimeKey, fallbackDuration);
-        if (cachedFallback) {
-            console.log(`Używam danych fallback dla ${cacheKey}`);
-            return cachedFallback;
-        }
-        const cachedData = localStorage.getItem(cacheKey);
-        if (cachedData) {
-            return JSON.parse(cachedData);
-        }
-        return null;
-    }
-
-    async function initializeFallbackData(ip) {
-        const fallbackDuration = 24 * 60 * 60 * 1000;
-        const sections = [
-            { key: 'fear_greed_raw_data', fetchFn: getFearAndGreedData },
-            { key: 'crypto_data', fetchFn: getCryptoData },
-            { key: 'weather_' + ip, fetchFn: () => getWeather(ip) },
-            { key: 'nasa_apod_data', fetchFn: getNasaApodImage },
-            { key: 'daily_fact', fetchFn: getDailyFact }
-        ];
-
-        for (const section of sections) {
-            const fallbackKey = `${section.key}_fallback`;
-            const fallbackTimeKey = `${fallbackKey}_time`;
-            const cachedTime = localStorage.getItem(fallbackTimeKey);
-            const now = Date.now();
-
-            if (!cachedTime || (now - parseInt(cachedTime) > fallbackDuration)) {
-                console.log(`Inicjalizuję dane fallback dla ${section.key}`);
-                try {
-                    const data = await section.fetchFn();
-                    if (data) {
-                        setCachedData(fallbackKey, fallbackTimeKey, data);
-                        console.log(`Zapisano dane fallback dla ${section.key}`);
-                    }
-                } catch (err) {
-                    console.error(`Błąd inicjalizacji danych fallback dla ${section.key}:`, err);
-                }
-            }
-        }
-    }
-
-    function minifyData(cacheKey, data) {
-        if (!data) return data;
-        if (cacheKey.includes('fear_greed_raw_data')) {
-            return data.map(item => ({
-                value: item.value,
-                timestamp: item.timestamp
-            }));
-        }
-        if (cacheKey.includes('crypto_data')) {
-            return data.map(coin => ({
-                id: coin.id,
-                symbol: coin.symbol,
-                current_price: coin.current_price,
-                price_change_percentage_24h: coin.price_change_percentage_24h
-            }));
-        }
-        if (cacheKey.includes('weather_')) {
-            return {
-                city: data.city,
-                forecast: {
-                    time: data.forecast.time,
-                    temperature_2m_max: data.forecast.temperature_2m_max,
-                    temperature_2m_min: data.forecast.temperature_2m_min,
-                    weathercode: data.forecast.weathercode,
-                    sunrise: data.forecast.sunrise,
-                    sunset: data.forecast.sunset,
-                    apparent_temperature_max: data.forecast.apparent_temperature_max,
-                    precipitation_sum: data.forecast.precipitation_sum,
-                    windspeed_10m_max: data.forecast.windspeed_10m_max,
-                    winddirection_10m_dominant: data.forecast.winddirection_10m_dominant
-                }
-            };
-        }
-        if (cacheKey.includes('nasa_apod_data')) {
-            return {
-                url: data.url,
-                title: data.title,
-                explanation: data.explanation
-            };
-        }
-        if (cacheKey.includes('daily_fact')) {
-            return data;
-        }
-        return data;
-    }
-
-    async function getFearAndGreedData() {
-        const cacheKey = 'fear_greed_data';
-        const rawDataKey = 'fear_greed_raw_data';
-        const trendKey = 'fear_greed_trend';
-        const cacheTimeKey = 'fear_greed_time';
-        const cacheDuration = 3600000;
-        const extendedCacheDuration = cacheDuration * 2;
-
-        const anyCachedRawData = getAnyCachedData(rawDataKey);
-        const anyCachedAverage = getAnyCachedData(cacheKey);
-        const anyCachedTrend = getAnyCachedData(trendKey);
-        if (anyCachedRawData && anyCachedAverage && anyCachedTrend) {
-            console.log('Wyświetlam starsze dane Fear and Greed');
-            displayFearGreed(anyCachedAverage, anyCachedTrend);
-        }
-
-        const cachedData = getCachedData(rawDataKey, cacheTimeKey, cacheDuration);
-        if (cachedData) {
-            console.log('Używam danych Fear and Greed z cache');
-            const average = calculateSDWA(cachedData);
-            const trend = calculateTrend(cachedData);
-            setCachedData(cacheKey, cacheTimeKey, average);
-            setCachedData(trendKey, cacheTimeKey, trend);
-            setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
-            displayFearGreed(average, trend);
-            cleanOldCache();
-            return cachedData;
-        }
-
-        try {
-            const data = await retryFetch('https://api.alternative.me/fng/?limit=30');
-            if (!data.data || data.data.length < 30) {
-                throw new Error('Za mało danych do obliczenia trendu');
-            }
-            const sortedData = data.data.sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
-            const validatedData = sortedData.map(item => ({
-                ...item,
-                value: isNaN(parseFloat(item.value)) ? "0" : item.value,
-                timestamp: parseInt(item.timestamp)
-            }));
-            setCachedData(rawDataKey, cacheTimeKey, validatedData);
-            setCachedData(`${rawDataKey}_fallback`, `${cacheTimeKey}_fallback`, validatedData);
-            const average = calculateSDWA(validatedData);
-            const trend = calculateTrend(validatedData);
-            setCachedData(cacheKey, cacheTimeKey, average);
-            setCachedData(trendKey, cacheTimeKey, trend);
-            localStorage.removeItem(`rateLimit_${rawDataKey}`);
-            displayFearGreed(average, trend);
-            cleanOldCache();
-            return validatedData;
-        } catch (error) {
-            console.error('Błąd pobierania Fear and Greed:', error);
-            if (error.message === 'RateLimitExceeded') {
-                localStorage.setItem(`rateLimit_${rawDataKey}`, JSON.stringify({
-                    extendedDuration: extendedCacheDuration,
-                    timestamp: Date.now()
-                }));
-                console.log(`Wydłużono cache dla ${rawDataKey} do ${extendedCacheDuration / 3600000} godzin`);
-            }
-            if (anyCachedRawData) {
-                const average = calculateSDWA(anyCachedRawData);
-                const trend = calculateTrend(anyCachedRawData);
-                displayFearGreed(average, trend);
-                return anyCachedRawData;
-            }
-            return null;
-        }
-    }
-
-    function calculateSDWA(values) {
-        if (!values || values.length < 30) {
-            console.error('Niewystarczająca liczba danych do obliczenia SDWA');
-            return { average: 0, signal: { signal: 'HODL', class: 'hodl' } };
-        }
-
-        const k = 0.11;
-        const parsedValues = values.map(item => parseFloat(item.value) || 0);
-        const weights = Array(30).fill(0);
-        const multipliers = Array(30).fill(1);
-        const latestFGI = parsedValues[0];
-
-        console.log('Surowe dane FGI (30 dni):', values.map(item => ({ value: item.value, timestamp: item.timestamp })));
-
-        for (let i = 0; i < 10; i++) {
-            let m_high = 1, m_low = 1;
-            if (parsedValues[i] > 75) {
-                m_high = Math.min(1.2, 1 + 0.05 * (parsedValues[i] - 75) / 10);
-            } else if (parsedValues[i] < 25) {
-                m_low = Math.min(1.2, 1 + 0.05 * (25 - parsedValues[i]) / 10);
-            }
-            multipliers[i] = 1 + (Math.max(m_high, m_low) - 1) * (10 - i) / 9;
-        }
-
-        let weightSum = 0;
-        for (let i = 0; i < 30; i++) {
-            weights[i] = Math.exp(-k * i) * multipliers[i];
-            weightSum += weights[i];
-        }
-
-        for (let i = 0; i < 30; i++) {
-            weights[i] /= weightSum;
-        }
-
-        let weightedSum = 0;
-        for (let i = 0; i < 30; i++) {
-            weightedSum += parsedValues[i] * weights[i];
-        }
-
-        const ema30 = calculateEMA(parsedValues, 30);
-        const std30 = calculateStandardDeviation(parsedValues, 30);
-        const signal = getSignal(latestFGI, ema30, std30);
-
-        console.log(`Obliczona wartość SDWA: ${parseFloat(weightedSum.toFixed(1))}`);
-
-        return { average: parseFloat(weightedSum.toFixed(1)), signal };
-    }
-
-    function calculateEMA(values, period) {
-        const k = 2 / (period + 1);
-        let ema = values[0];
-        for (let i = 1; i < values.length; i++) {
-            ema = values[i] * k + ema * (1 - k);
-        }
-        return ema;
-    }
-
-    function calculateStandardDeviation(values, period) {
-        const ema = calculateEMA(values, period);
-        const squaredDiffs = values.map(val => Math.pow(val - ema, 2));
-        const emaSquaredDiffs = calculateEMA(squaredDiffs, period);
-        return Math.sqrt(emaSquaredDiffs);
-    }
-
-    function getSignal(value, ema30, std30) {
-        const allInThreshold = ema30 - 1.5 * std30;
-        const buySlowlyThreshold = ema30 - 0.8 * std30;
-        const sellSlowlyThreshold = ema30 + 0.8 * std30;
-        const cashOutThreshold = ema30 + 1.5 * std30;
-
-        let signal, signalClass, reason = '';
-
-        if (value < allInThreshold && value < 20) {
-            signal = 'ALL IN!';
-            signalClass = 'all-in';
-            reason = `Wskaźnik sygnału pokazuje ALL IN!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg allInThreshold = ${allInThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 20`;
-        } else if (value < buySlowlyThreshold && value < 40) {
-            signal = 'BUY SLOWLY';
-            signalClass = 'buy-slowly';
-            reason = `Wskaźnik sygnału pokazuje BUY SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg buySlowlyThreshold = ${buySlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 40`;
-        } else if (value > cashOutThreshold && value > 80) {
-            signal = 'CASH OUT!';
-            signalClass = 'cash-out';
-            reason = `Wskaźnik sygnału pokazuje CASH OUT!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg cashOutThreshold = ${cashOutThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 80`;
-        } else if (value > sellSlowlyThreshold && value > 60) {
-            signal = 'SELL SLOWLY';
-            signalClass = 'sell-slowly';
-            reason = `Wskaźnik sygnału pokazuje SELL SLOWLY, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg sellSlowlyThreshold = ${sellSlowlyThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość > 60`;
-        } else {
-            signal = 'HODL';
-            signalClass = 'hodl';
-            reason = `Wskaźnik sygnału pokazuje HODL, ponieważ wartość FGI = ${value} nie przekracza progów sygnału, EMA30 = ${ema30.toFixed(1)}`;
-        }
-
-        console.log(reason);
-        return { signal, class: signalClass };
-    }
-
-    function calculateTrend(values) {
-        if (!values || values.length < 30) {
-            console.error('Niewystarczająca liczba danych do trendu (potrzeba 30 dni)');
-            return { symbol: '■', class: 'trend-neutral' };
-        }
-
-        const parsedValues = values.map(item => parseFloat(item.value) || 0);
-        const parsedValuesChronological = parsedValues.slice().reverse(); // Odwrócenie dla chronologicznej kolejności
-        const ema3 = calculateEMA(parsedValuesChronological, 3);
-        const ema8 = calculateEMA(parsedValuesChronological, 8);
-        const difference = ema3 - ema8;
-
-        let trendSymbol, trendClass, trendReason;
-        if (Math.abs(difference) < 1.0) {
-            trendSymbol = '■';
-            trendClass = 'trend-neutral';
-        } else if (difference >= 1.0) {
-            trendSymbol = '▲';
-            trendClass = 'trend-up';
-        } else {
-            trendSymbol = '▼';
-            trendClass = 'trend-down';
-        }
-
-        trendReason = `EMA3 = ${ema3.toFixed(1)}, EMA8 = ${ema8.toFixed(1)}, Różnica = ${difference.toFixed(1)}, Symbol: ${trendSymbol}`;
-        console.log(trendReason);
-        return { symbol: trendSymbol, class: trendClass };
-    }
-
-    function displayFearGreed(averageData, trend) {
-        const indicator = document.getElementById('fearGreedIndicator');
-        const roundedAverage = Math.round(averageData.average);
-        const signalClass = averageData.signal.class;
-        const trendClass = trend.class;
-
-        let valueClass;
-        if (roundedAverage <= 20) {
-            valueClass = 'extreme-fear';
-        } else if (roundedAverage <= 40) {
-            valueClass = 'fear';
-        } else if (roundedAverage <= 60) {
-            valueClass = 'neutral';
-        } else if (roundedAverage <= 80) {
-            valueClass = 'greedy';
-        } else {
-            valueClass = 'extreme-greedy';
-        }
-
-        indicator.className = `fear-greed-indicator ${signalClass}`;
-        indicator.innerHTML = `
-            <span class="fgi-label">Miesięczny sygnał:</span>
-            <span class="trend-indicator ${trendClass}">${trend.symbol}</span>
-            <span class="fgi-value ${valueClass}">${roundedAverage}</span>
-            <span class="fgi-dash">–</span>
-            <span class="fear-greed-signal">${averageData.signal.signal}</span>
-        `;
-    }
-
-    async function updateFearGreedIndicator() {
-        console.log('Rozpoczynam aktualizację Fear and Greed...');
-        const cacheKey = 'fear_greed_data';
-        const rawDataKey = 'fear_greed_raw_data';
-        const trendKey = 'fear_greed_trend';
-        const anyCachedAverage = getAnyCachedData(cacheKey);
-        const anyCachedTrend = getAnyCachedData(trendKey);
-        if (anyCachedAverage && anyCachedTrend) {
-            console.log('Wyświetlam starsze dane Fear and Greed');
-            displayFearGreed(anyCachedAverage, anyCachedTrend);
-        }
-        const data = await getFearAndGreedData();
-        if (!data && anyCachedAverage && anyCachedTrend) {
-            displayFearGreed(anyCachedAverage, anyCachedTrend);
-        } else if (!data) {
-            const indicator = document.getElementById('fearGreedIndicator');
-            indicator.innerHTML = '<span class="fgi-label">Miesięczny sygnał:</span> Brak danych';
-        }
-    }
-
-    function getDeviceType(userAgent) {
-        if (userAgent.includes('Android')) return 'Android';
-        if (userAgent.includes('iPhone')) return 'iPhone';
-        if (userAgent.includes('iPad')) return 'Tablet';
-        if (userAgent.includes('Macintosh')) return 'Mac';
-        if (userAgent.includes('Windows') || userAgent.includes('Linux')) return 'PC';
-        return 'Inne';
-    }
-
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    async function checkDuplicateLog(ip, device, timestamp) {
-        const logsRef = ref(database, 'logs');
-        return new Promise((resolve) => {
-            onValue(logsRef, (snapshot) => {
-                const logsData = snapshot.val();
-                if (!logsData) {
-                    resolve(false);
-                    return;
-                }
-                const logs = Object.values(logsData);
-                const fiveMinutesAgo = timestamp - (5 * 60 * 1000);
-                const isDuplicate = logs.some(log =>
-                    log.ip === ip &&
-                    log.device === device &&
-                    log.timestamp > fiveMinutesAgo
-                );
-                resolve(isDuplicate);
-            }, { onlyOnce: true });
-        });
-    }
-
-    // Flaga w pamięci do blokowania równoległych wywołań
-let isLoggingVisit = false;
-
-async function logVisit() {
-    // Sprawdź, czy logowanie jest już w toku
-    if (isLoggingVisit) {
-        console.log('Logowanie w toku, pomijam kolejne wywołanie.');
-        await updateLogs();
-        return;
-    }
-
-    // Sprawdź, czy log już został zapisany w tej sesji (czerwona flaga)
-    if (sessionStorage.getItem('visitLogged')) {
-        console.log('Log dla tej sesji już zapisany, pomijam.');
-        await updateLogs();
-        return;
-    }
-
-    isLoggingVisit = true;
-    console.log('Rozpoczynam zapis logu...');
-
-    try {
-        const now = new Date();
-        const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
-        const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-        const ip = await getIp();
-        const location = await getLocation(ip);
-        const userAgent = navigator.userAgent;
-        const device = getDeviceType(userAgent);
-        const isp = location.isp || 'Nieznany dostawca';
-        const timestamp = now.getTime();
-
-        const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
-        if (isDuplicate) {
-            console.log('Duplikat logu, pomijam zapis.');
-            await updateLogs();
-            return;
-        }
-
-        const logEntry = { date, day, time, ip, location, device, isp, timestamp };
-        console.log('Log do zapisania:', logEntry);
-
-        const logsRef = ref(database, 'logs');
-        const newLogRef = push(logsRef);
-
-        await set(newLogRef, logEntry);
-        console.log('Log zapisany pomyślnie:', logEntry);
-        // Ustaw czerwoną flagę, że log został zapisany
-        sessionStorage.setItem('visitLogged', 'true');
-        await updateLogs();
-    } catch (error) {
-        console.error('Błąd zapisu logu:', error);
-    } finally {
-        isLoggingVisit = false; // Zresetuj flagę po zakończeniu
+:root {
+    --fear-greed-hold: #cfae02; /* Żółty dla HODL */
+    --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); /* Zielony dla BUY SLOWLY */
+    --fear-greed-opportunity: rgba(0, 220, 0, 0.9); /* Jasnozielony dla ALL IN! */
+    --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY */
+    --fear-greed-sell: rgba(220, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
+    --gradient-start: #cfae02; /* Kolor początkowy gradientu dla HODL */
+    --gradient-end: #a68e02; /* Kolor końcowy gradientu dla HODL */
+    --gradient-start-all-in: rgba(0, 220, 0, 0.9); /* Kolor początkowy dla ALL IN! */
+    --gradient-end-all-in: rgba(0, 180, 0, 0.75); /* Kolor końcowy dla ALL IN! */
+    --gradient-start-buy-slowly: rgba(0, 180, 0, 0.75); /* Kolor początkowy dla BUY SLOWLY */
+    --gradient-end-buy-slowly: rgba(0, 140, 0, 0.6); /* Kolor końcowy dla BUY SLOWLY */
+    --gradient-start-sell-slowly: rgba(180, 0, 0, 0.75); /* Kolor początkowy dla SELL SLOWLY */
+    --gradient-end-sell-slowly: rgba(140, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
+    --gradient-start-cash-out: rgba(220, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
+    --gradient-end-cash-out: rgba(180, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    background-color: #2d2d2d;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.network-status {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ff4d4d;
+    color: #ffffff;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.9em;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.nasa-container {
+    max-width: 640px;
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
+.nasa-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #2d2d2d;
+    border: 2px solid #555555;
+}
+
+.nasa-frame img,
+.nasa-frame iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+    transition: transform 0.3s ease; /* Płynna animacja przybliżania i przesuwania */
+}
+
+.nasa-frame:hover img {
+    transform: scale(1.1); /* Przybliżenie o 10% po najechaniu na ramkę */
+}
+
+.nasa-frame iframe {
+    object-fit: contain;
+}
+
+.nasa-ticker {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 5px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-top: 0;
+}
+
+#nasaTickerContent {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 360s linear infinite;
+    -webkit-animation: ticker 360s linear infinite;
+    font-size: 0.7em;
+    color: #ffffff;
+    text-shadow: 
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
+}
+
+.nasa-ticker .ticker-segment {
+    display: inline-block;
+    padding-right: 180px;
+}
+
+.search-container {
+    text-align: center;
+    margin: 20px 0 10px 0;
+}
+
+.search-container form {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-container label {
+    font-size: 0.9em;
+    color: #ffffff;
+}
+
+.search-container input[type="text"] {
+    padding: 5px 10px;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    background-color: #3a3a3a;
+    color: #ffffff;
+    font-size: 0.9em;
+    width: 200px;
+}
+
+.search-container input[type="text"]:focus {
+    outline: none;
+    border-color: #5a6268;
+}
+
+.daily-fact {
+    text-align: center;
+    margin: 20px 5px 20px 5px;
+    font-size: 0.9em;
+    color: #ffffff;
+}
+
+.fact-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    color: #ffeb3b; /* Kolor nagłówka "Ciekawostka na dziś:" */
+}
+
+.fact-content {
+    margin: 5px 5px 0 5px;
+    font-size: 0.9em;
+    font-style: italic;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+    color: #ffffff; /* Treść ciekawostki pozostaje biała */
+}
+
+@media (min-width: 769px) {
+    .fact-content {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
-    async function updateLogs() {
-        console.log('Rozpoczynam aktualizację logów...');
-        const logsRef = ref(database, 'logs');
-        console.log('Pobieram logi z Firebase...');
-        try {
-            onValue(logsRef, (snapshot) => {
-                const logsData = snapshot.val();
-                let logs = logsData ? Object.entries(logsData).map(([key, value]) => ({ key, ...value })) : [];
-                logs.sort((a, b) => b.timestamp - a.timestamp);
+.content-frame {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #3a3a3a;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
 
-                if (logs.length > 50) {
-                    const logsToDelete = logs.slice(50);
-                    logs = logs.slice(0, 50);
-                    logsToDelete.forEach(log => {
-                        remove(ref(database, `logs/${log.key}`));
-                    });
-                }
+.weather-info {
+    margin-bottom: 20px;
+}
 
-                displayLogs(logs);
-                truncateTextWithTooltip(); // Wywołanie funkcji po wyświetleniu logów
-            }, { onlyOnce: true });
-        } catch (error) {
-            console.error('Błąd pobierania logów:', error);
-            const logTableBody = document.getElementById('logTableBody');
-            if (logTableBody) {
-                logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów. Spróbuj ponownie później.</td></tr>';
-            }
-        }
+.weather-forecast {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.weather-city {
+    text-align: center;
+    margin: 2px 0;
+    font-size: 1.2em;
+    color: #ffffff; /* Napis "Pogoda dla:" */
+}
+
+#weatherCity {
+    color: #ffeb3b; /* Nazwa miasta w kolorze żółtym */
+}
+
+.forecast-container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.forecast-bar {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    min-width: 80px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.forecast-bar.today {
+    border: 2px solid #5a6268;
+}
+
+.forecast-date {
+    font-size: 0.7em;
+    color: #cccccc;
+    margin-bottom: 5px;
+}
+
+.weather-icon {
+    font-size: 1.5em;
+}
+
+.weather-day {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #ffeb3b; /* Dni tygodnia w kolorze żółtym */
+}
+
+.weather-description {
+    font-size: 0.8em;
+    overflow-wrap: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    color: #ffffff; /* Opis pogody pozostaje biały */
+}
+
+.weather-temps {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+}
+
+.temp-max {
+    color: #ff4d4d;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.temp-min {
+    color: #4d94ff;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.forecast-error {
+    font-size: 0.8em;
+    color: #999999;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+}
+
+.weather-ticker {
+    background-color: #3a3a3a;
+    padding: 4px 0;
+    margin-top: 10px;
+    margin-bottom: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#tickerContent {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 180s linear infinite;
+    -webkit-animation: ticker 180s linear infinite;
+    font-size: 0.8em;
+}
+
+.ticker-segment {
+    display: inline-block;
+    padding-right: 180px;
+    color: #ffffff; /* Nazwy w tickerze pozostają białe */
+}
+
+.ticker-value {
+    font-weight: bold;
+    color: #ffeb3b; /* Wartości z API w kolorze żółtym */
+}
+
+.crypto-info {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.crypto-header {
+    margin-bottom: 2px;
+}
+
+.fear-greed-indicator {
+    padding: 8px 10px;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 30px;
+    text-align: center;
+    font-size: 0.93em;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    overflow: hidden;
+    white-space: normal;
+    box-sizing: border-box;
+}
+
+.fear-greed-indicator .fgi-dash {
+    font-weight: 600;
+    margin: 0 2px;
+    color: #ffffff;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.0px 0 #000000,
+        0 1.0px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9);
+}
+
+/* Gradienty dla każdego stanu */
+.fear-greed-indicator.all-in {
+    background: linear-gradient(135deg, var(--gradient-start-all-in), var(--gradient-end-all-in));
+}
+
+.fear-greed-indicator.buy-slowly {
+    background: linear-gradient(135deg, var(--gradient-start-buy-slowly), var(--gradient-end-buy-slowly));
+}
+
+.fear-greed-indicator.hodl {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+}
+
+.fear-greed-indicator.sell-slowly {
+    background: linear-gradient(135deg, var(--gradient-start-sell-slowly), var(--gradient-end-sell-slowly));
+}
+
+.fear-greed-indicator.cash-out {
+    background: linear-gradient(135deg, var(--gradient-start-cash-out), var(--gradient-end-cash-out));
+}
+
+/* Styl wartości FGI z kolorami zależnymi od przedziału */
+.fear-greed-indicator .fgi-value {
+    font-weight: 600;
+    margin-right: 8px;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.0px 0 #000000,
+        0 1.0px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9);
+}
+
+.fear-greed-indicator .fgi-value.extreme-fear {
+    color: #dc0000; /* 1-20 */
+}
+
+.fear-greed-indicator .fgi-value.fear {
+    color: #b40000; /* 21-40 */
+}
+
+.fear-greed-indicator .fgi-value.neutral {
+    color: #ffeb3b; /* 41-60 */
+}
+
+.fear-greed-indicator .fgi-value.greedy {
+    color: #00b400; /* 61-80 */
+}
+
+.fear-greed-indicator .fgi-value.extreme-greedy {
+    color: #00dc00; /* 81-100 */
+}
+
+/* Styl napisu "Miesięczny sygnał:" */
+.fear-greed-indicator .fgi-label {
+    font-weight: 600;
+    margin-right: 4px;
+    color: #ffffff;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.0px 0 #000000,
+        0 1.0px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9);
+}
+
+/* Styl strzałki trendu */
+.fear-greed-indicator .trend-indicator {
+    font-size: 1em;
+    margin-right: 8px;
+    margin-left: 4px;
+    vertical-align: baseline;
+    text-shadow: 
+        -1.0px -1.2px 0 #000000,
+        1.0px -1.2px 0 #000000,
+        -1.0px 1.2px 0 #000000,
+        1.0px 1.2px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.2px 0 #000000,
+        0 1.2px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9);
+    line-height: 1;
+}
+
+.fear-greed-indicator .trend-up {
+    color: #4bff4b;
+    animation: glow-positive 1.5s ease-in-out infinite;
+}
+
+.fear-greed-indicator .trend-down {
+    color: #ff4b4b;
+    animation: glow-negative 1.5s ease-in-out infinite;
+}
+
+.fear-greed-indicator .trend-neutral {
+    color: #ffea00;
+    animation: glow-neutral 1.5s ease-in-out infinite;
+}
+
+/* Styl sygnału */
+.fear-greed-indicator .fear-greed-signal {
+    position: relative;
+    display: inline-block;
+    padding: 2px 6px;
+    z-index: 2;
+    color: #ffffff;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.0px 0 #000000,
+        0 1.0px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9);
+}
+
+.crypto-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    padding: 10px;
+}
+
+.crypto-tile {
+    padding: 4px;
+    border-radius: 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 34px;
+    box-sizing: border-box;
+    transition: transform 0.2s, background-color 0.5s ease;
+    cursor: pointer;
+}
+
+.crypto-tile:hover {
+    transform: scale(1.05);
+}
+
+.crypto-tile.positive-low {
+    background-color: rgba(0, 140, 0, 0.6);
+}
+
+.crypto-tile.positive-mid {
+    background-color: rgba(0, 180, 0, 0.75);
+}
+
+.crypto-tile.positive-high {
+    background-color: rgba(0, 220, 0, 0.9);
+    animation: pulse-positive 1.5s ease-in-out infinite;
+}
+
+.crypto-tile.negative-low {
+    background-color: rgba(140, 0, 0, 0.6);
+}
+
+.crypto-tile.negative-mid {
+    background-color: rgba(180, 0, 0, 0.75);
+}
+
+.crypto-tile.negative-high {
+    background-color: rgba(220, 0, 0, 0.9);
+    animation: pulse-negative 1.5s ease-in-out infinite;
+}
+
+.crypto-tile.neutral {
+    background-color: rgba(255, 215, 0, 0.75);
+}
+
+.crypto-symbol {
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-bottom: 1px;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.crypto-price {
+    font-size: 0.75em;
+    margin-bottom: 1px;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.crypto-change {
+    font-size: 0.6em;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.crypto-error {
+    text-align: center;
+    font-size: 0.9em;
+    color: #ff4d4d;
+}
+
+.log-table {
+    background-color: #333333;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.table-wrapper {
+    overflow-y: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-container {
+    width: 100%;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: auto;
+    min-width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+thead tr {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla nagłówka tabeli logów */
+}
+
+th, td {
+    padding: 5px;
+    height: 35px;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 0.9em;
+    box-sizing: border-box;
+}
+
+th {
+    background: transparent;
+    color: white;
+    font-weight: 700;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.0px 0 #000000,
+        0 1.0px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla nagłówków tabeli logów */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: filter 0.3s ease;
+}
+
+th:hover {
+    filter: brightness(1.1);
+}
+
+th:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+th:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+th.location-header {
+    max-width: 140px;
+}
+
+tr:nth-child(odd) {
+    background-color: #3a3a3a;
+}
+
+tr:nth-child(even) {
+    background-color: #2d2d2d;
+}
+
+tr:hover {
+    background-color: #4a4a4a;
+}
+
+tr:not(:first-child) td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+tr:not(:first-child) td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+tr:hover td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+tr:hover td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.location-cell {
+    max-width: 140px;
+}
+
+.city {
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    display: block;
+    font-size: 0.9em;
+    line-height: 1.2;
+    hyphens: auto;
+}
+
+.device {
+    overflow-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    display: block;
+    font-size: 0.9em;
+    line-height: 1.2;
+    hyphens: auto;
+    text-align: center; /* Wyśrodkowanie tekstu */
+}
+
+.country {
+    font-size: 0.8em;
+    color: #cccccc;
+    margin-top: 2px;
+    display: block;
+    line-height: 1.2;
+    hyphens: auto;
+}
+
+.isp {
+    font-size: 0.8em;
+    color: #cccccc;
+    margin-top: 2px;
+    display: block;
+    line-height: 1.2;
+    max-width: 20ch;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    text-align: center;
+    margin: 0 auto;
+    position: relative; /* Dla tooltipa */
+}
+
+.isp:hover::after {
+    content: attr(data-full-text); /* Używa atrybutu data-full-text z HTML */
+    position: absolute;
+    background-color: #555555;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    white-space: normal;
+    width: auto;
+    max-width: 200px;
+    z-index: 10;
+    top: -40px; /* Pozycja nad elementem */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.isp:hover::after {
+    opacity: 1; /* Tooltip pojawia się po najechaniu */
+}
+
+.hidden-log {
+    display: none;
+}
+
+.toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.toggle-button {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla przycisku "Rozwiń listę/Zwiń listę" */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.0px 0 #000000,
+        0 1.0px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla tekstu przycisku */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    min-width: 100px;
+}
+
+.toggle-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2d2d2d;
+    border-radius: 6px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #5a6268, #4a5258);
+    border-radius: 6px;
+    border: 2px solid #2d2d2d;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #6a7278, #5a6268);
+}
+
+::-webkit-scrollbar-corner {
+    background: #2d2d2d;
+}
+
+@keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+@-webkit-keyframes ticker {
+    0% { -webkit-transform: translateX(0); }
+    100% { -webkit-transform: translateX(-100%); }
+}
+
+@keyframes pulse-positive {
+    0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.8); }
+    50% { box-shadow: 0 0 13px rgba(0, 255, 0, 1); }
+    100% { box-shadow: 0 0 8px rgba(0, 255, 0, 0.8); }
+}
+
+@keyframes pulse-negative {
+    0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.8); }
+    50% { box-shadow: 0 0 13px rgba(0, 0, 0, 1); }
+    100% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
+}
+
+@keyframes glow-positive {
+    0% { color: var(--fear-greed-consider-buy); }
+    50% { color: rgba(75, 255, 75, 0.9); }
+    100% { color: var(--fear-greed-opportunity); }
+}
+
+@keyframes glow-negative {
+    0% { color: var(--fear-greed-consider-sell); }
+    50% { color: rgba(255, 75, 75, 0.9); }
+    100% { color: var(--fear-greed-sell); }
+}
+
+@keyframes glow-neutral {
+    0% { color: #f5e27f; }
+    50% { color: #ffeb3b; }
+    100% { color: #cfae02; }
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-container {
+    background-color: #2d2d2d;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    position: relative;
+}
+
+.modal-container h2 {
+    margin-top: 0;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.modal-container p {
+    margin: 10px 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.language-switch {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.language-switch button {
+    background: linear-gradient(135deg, #5a6268, #4a5258);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.language-switch button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.language-switch button.active {
+    background: linear-gradient(135deg, #6a7278, #5a6268);
+    transform: scale(1.05);
+}
+
+.close-button {
+    background: linear-gradient(135deg, #ff4d4d, #d43f3f);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    display: block;
+    margin: 15px auto 0;
+}
+
+.close-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
     }
 
-    function displayLogs(logs) {
-        console.log('Próba wyświetlenia logów...');
-        const logTableBody = document.getElementById('logTableBody');
-        const toggleButton = document.getElementById('toggleLogs');
-        if (!logTableBody || !toggleButton) {
-            console.error('Brak elementu #logTableBody lub #toggleLogs');
-            return;
-        }
-
-        logTableBody.innerHTML = '';
-        if (logs.length === 0) {
-            console.log('Brak logów do wyświetlenia.');
-            toggleButton.style.display = 'none';
-            logTableBody.innerHTML = '<tr><td colspan="6">Brak logów do wyświetlenia.</td></tr>';
-            return;
-        }
-
-        const visibleLogs = logs.slice(0, 5);
-        const hiddenLogs = logs.slice(5);
-
-        visibleLogs.forEach(log => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${log.date || 'Brak'}</td>
-                <td>${log.day || 'Brak'}</td>
-                <td>${log.time || 'Brak'}</td>
-                <td>${log.ip || 'Brak'}</td>
-                <td class="location-cell">
-                    <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                    <div class="country">${log.location.country || 'Nieznany kraj'}</div>
-                </td>
-                <td>
-                    <div class="device">${log.device || 'Brak'}</div>
-                    <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
-                </td>
-            `;
-            logTableBody.appendChild(row);
-        });
-
-        if (hiddenLogs.length > 0) {
-            hiddenLogs.forEach(log => {
-                const row = document.createElement('tr');
-                row.classList.add('hidden-log');
-                row.innerHTML = `
-                    <td>${log.date || 'Brak'}</td>
-                    <td>${log.day || 'Brak'}</td>
-                    <td>${log.time || 'Brak'}</td>
-                    <td>${log.ip || 'Brak'}</td>
-                    <td class="location-cell">
-                        <div class="city">${log.location.city || 'Nieznane miasto'}</div>
-                        <div class="country">${log.location.country || 'Nieznany kraj'}</div>
-                    </td>
-                    <td>
-                        <div class="device">${log.device || 'Brak'}</div>
-                        <div class="isp">${log.isp || 'Nieznany dostawca'}</div>
-                    </td>
-                `;
-                logTableBody.appendChild(row);
-            });
-
-            toggleButton.style.display = 'block';
-            toggleButton.textContent = 'Rozwiń listę';
-
-            const hiddenRows = document.querySelectorAll('.hidden-log');
-            hiddenRows.forEach(row => row.style.display = 'none');
-
-            toggleButton.onclick = () => {
-                if (toggleButton.textContent === 'Rozwiń listę') {
-                    hiddenRows.forEach(row => row.style.display = 'table-row');
-                    toggleButton.textContent = 'Zwiń listę';
-                } else {
-                    hiddenRows.forEach(row => row.style.display = 'none');
-                    toggleButton.textContent = 'Rozwiń listę';
-                }
-            };
-        } else {
-            toggleButton.style.display = 'none';
-        }
-
-        console.log('Logi wyświetlone:', logs.length);
+    .container {
+        padding: 10px;
     }
 
-    async function getIp(forceRefresh = false) {
-        const cacheKey = 'ip_data';
-        const cacheTimeKey = 'ip_time';
-        const cacheDuration = 15 * 60 * 1000; // 15 minutes
-        const lastCheckKey = 'ip_location_last_check';
-        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
-
-        const now = Date.now();
-        const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
-
-        if (forceRefresh || (now - lastCheck > checkInterval)) {
-            console.log('Minęło 4 godziny lub wymuszono odświeżenie, pobieram nowe IP');
-            try {
-                const data = await retryFetch('https://api.ipify.org?format=json');
-                console.log('IP pobrane:', data.ip);
-                setCachedData(cacheKey, cacheTimeKey, data);
-                localStorage.setItem(lastCheckKey, now.toString());
-                localStorage.removeItem(`rateLimit_${cacheKey}`);
-                return data.ip || 'Nieznany IP';
-            } catch (err) {
-                console.error('Błąd pobierania IP:', err);
-                if (err.message === 'RateLimitExceeded') {
-                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                        extendedDuration: cacheDuration * 2,
-                        timestamp: Date.now()
-                    }));
-                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 60000} minut`);
-                }
-                return 'Nieznany IP';
-            }
-        } else {
-            const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
-            if (cachedData) {
-                console.log('Używam IP z cache:', cachedData.ip);
-                return cachedData.ip;
-            }
-
-            try {
-                const data = await retryFetch('https://api.ipify.org?format=json');
-                console.log('IP pobrane:', data.ip);
-                setCachedData(cacheKey, cacheTimeKey, data);
-                localStorage.removeItem(`rateLimit_${cacheKey}`);
-                return data.ip || 'Nieznany IP';
-            } catch (err) {
-                console.error('Błąd pobierania IP:', err);
-                if (err.message === 'RateLimitExceeded') {
-                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                        extendedDuration: cacheDuration * 2,
-                        timestamp: Date.now()
-                    }));
-                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 60000} minut`);
-                }
-                return 'Nieznany IP';
-            }
-        }
+    .network-status {
+        font-size: 0.8em;
+        padding: 6px;
     }
 
-    async function getLocation(ip, forceRefresh = false) {
-        const cacheKey = `location_${ip}`;
-        const cacheTimeKey = `${cacheKey}_time`;
-        const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
-        const lastCheckKey = 'ip_location_last_check';
-        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
-
-        const now = Date.now();
-        const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
-
-        if (forceRefresh || (now - lastCheck > checkInterval)) {
-            console.log('Minęło 4 godziny lub wymuszono odświeżenie, pobieram nową lokalizację');
-            try {
-                const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
-                const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
-                console.log('Lokalizacja dla IP:', ip, data);
-                if (data.error) {
-                    throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
-                }
-                const location = {
-                    city: data.location?.city || 'Nieznane miasto',
-                    country: data.location?.country?.name || 'Nieznany kraj',
-                    lat: data.location?.latitude || null,
-                    lon: data.location?.longitude || null,
-                    isp: data.connection?.organization || 'Nieznany dostawca'
-                };
-                setCachedData(cacheKey, cacheTimeKey, location);
-                localStorage.setItem(lastCheckKey, now.toString());
-                localStorage.removeItem(`rateLimit_${cacheKey}`);
-                return location;
-            } catch (err) {
-                console.error('Błąd pobierania lokalizacji:', ip, err);
-                if (err.message === 'RateLimitExceeded') {
-                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                        extendedDuration: cacheDuration * 2,
-                        timestamp: Date.now()
-                    }));
-                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 3600000} godzin`);
-                }
-                const fallbackLocation = {
-                    city: 'Opole',
-                    country: 'Polska',
-                    lat: 50.6721,
-                    lon: 17.9253,
-                    isp: 'Nieznany dostawca'
-                };
-                setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
-                return fallbackLocation;
-            }
-        } else {
-            const cachedLocation = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
-            if (cachedLocation) {
-                console.log('Używam lokalizacji z cache:', ip);
-                return cachedLocation;
-            }
-
-            try {
-                const apiKey = 'ira_OaXnmZZCu9yfhUiomWbVy6blFQmAoI0BrILc';
-                const data = await retryFetch(`https://api.ipregistry.co/${ip}?key=${apiKey}`);
-                console.log('Lokalizacja dla IP:', ip, data);
-                if (data.error) {
-                    throw new Error('Błąd API: ' + (data.error.message || 'Nieznany powód'));
-                }
-                const location = {
-                    city: data.location?.city || 'Nieznane miasto',
-                    country: data.location?.country?.name || 'Nieznany kraj',
-                    lat: data.location?.latitude || null,
-                    lon: data.location?.longitude || null,
-                    isp: data.connection?.organization || 'Nieznany dostawca'
-                };
-                setCachedData(cacheKey, cacheTimeKey, location);
-                localStorage.removeItem(`rateLimit_${cacheKey}`);
-                return location;
-            } catch (err) {
-                console.error('Błąd pobierania lokalizacji:', ip, err);
-                if (err.message === 'RateLimitExceeded') {
-                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                        extendedDuration: cacheDuration * 2,
-                        timestamp: Date.now()
-                    }));
-                    console.log(`Wydłużono cache dla ${cacheKey} do ${(cacheDuration * 2) / 3600000} godzin`);
-                }
-                const fallbackLocation = {
-                    city: 'Opole',
-                    country: 'Polska',
-                    lat: 50.6721,
-                    lon: 17.9253,
-                    isp: 'Nieznany dostawca'
-                };
-                setCachedData(cacheKey, cacheTimeKey, fallbackLocation);
-                return fallbackLocation;
-            }
-        }
+    .content-frame {
+        max-width: 100%;
+        padding: 10px;
     }
 
-    const weatherIcons = {
-        0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
-        45: '🌫️', 48: '🌫️',
-        51: '🌦️', 53: '🌧️', 55: '🌧️',
-        56: '🌧️', 57: '🌧️',
-        61: '🌦️', 63: '🌧️', 65: '🌧️',
-        66: '🌧️', 67: '🌧️',
-        71: '🌨️', 73: '🌨️', 75: '🌨️',
-        77: '🌨️',
-        80: '🌦️', 81: '🌧️', 82: '🌧️',
-        85: '🌨️', 86: '🌨️',
-        95: '⛈️', 96: '⛈️', 99: '⛈️'
-    };
-
-    const weatherDescriptions = {
-        0: 'Bezchmurnie', 1: 'Lekko zachmurzone', 2: 'Częściowo zachmurzone', 3: 'Zachmurzone',
-        45: 'Mgła', 48: 'Mgła z szronem',
-        51: 'Lekka mżawka', 53: 'Umiarkowana mżawka', 55: 'Intensywna mżawka',
-        56: 'Lekka mżawka marznąca', 57: 'Intensywna mżawka marznąca',
-        61: 'Lekki deszcz', 63: 'Umiarkowany deszcz', 65: 'Ulewny deszcz',
-        66: 'Lekki deszcz marznący', 67: 'Ciężki deszcz marznący',
-        71: 'Lekki śnieg', 73: 'Umiarkowany śnieg', 75: 'Intensywny śnieg',
-        77: 'Śnieg ziarnisty',
-        80: 'Przelotne opady', 81: 'Umiarkowane opady', 82: 'Gwałtowne opady',
-        85: 'Lekkie opady śniegu', 86: 'Ciężkie opady śniegu',
-        95: 'Burza', 96: 'Burza z gradem', 99: 'Silna burza z gradem'
-    };
-
-    function degreesToDirection(degrees) {
-        if (degrees >= 337.5 || degrees < 22.5) return 'Północ';
-        if (degrees >= 22.5 && degrees < 67.5) return 'Północny Wschód';
-        if (degrees >= 67.5 && degrees < 112.5) return 'Wschód';
-        if (degrees >= 112.5 && degrees < 157.5) return 'Południowy Wschód';
-        if (degrees >= 157.5 && degrees < 202.5) return 'Południe';
-        if (degrees >= 202.5 && degrees < 247.5) return 'Południowy Zachód';
-        if (degrees >= 247.5 && degrees < 292.5) return 'Zachód';
-        if (degrees >= 292.5 && degrees < 337.5) return 'Północny Zachód';
-        return 'N';
+    .daily-fact {
+        font-size: 0.75em;
+        margin-bottom: 10px;
     }
 
-    async function getWeather(ip) {
-        const cacheKey = `weather_${ip}`;
-        const cacheTimeKey = `${cacheKey}_time`;
-        const cacheDuration = 3600000;
-        const extendedCacheDuration = cacheDuration * 2;
-
-        const anyCachedWeather = getAnyCachedData(cacheKey);
-        if (anyCachedWeather) {
-            console.log('Wyświetlam starsze dane pogodowe:', ip);
-            displayWeather(anyCachedWeather, ip);
-        }
-
-        const cachedWeather = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
-        if (cachedWeather) {
-            console.log('Używam pogody z cache:', ip);
-            setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedWeather);
-            displayWeather(cachedWeather, ip);
-            cleanOldCache();
-            return cachedWeather;
-        }
-
-        try {
-            const locationData = await getLocation(ip);
-            if (!locationData.lat || !locationData.lon) {
-                throw new Error('Brak współrzędnych dla lokalizacji');
-            }
-            const lat = locationData.lat;
-            const lon = locationData.lon;
-            const city = locationData.city || 'Nieznane miasto';
-
-            const forecastData = await retryFetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
-            if (forecastData.daily) {
-                const weatherData = { city, forecast: forecastData.daily };
-                setCachedData(cacheKey, cacheTimeKey, weatherData);
-                setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, weatherData);
-                localStorage.removeItem(`rateLimit_${cacheKey}`);
-                displayWeather(weatherData, ip);
-                cleanOldCache();
-                return weatherData;
-            } else {
-                throw new Error('Brak danych pogodowych');
-            }
-        } catch (err) {
-            console.error('Błąd pobierania pogody:', err);
-            if (err.message === 'RateLimitExceeded') {
-                localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                    extendedDuration: extendedCacheDuration,
-                    timestamp: Date.now()
-                }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
-            }
-            if (anyCachedWeather) {
-                displayWeather(anyCachedWeather, ip);
-                return anyCachedWeather;
-            }
-            document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
-            document.getElementById('weatherCity').textContent = 'Nieznane miasto';
-            document.getElementById('tickerContent').innerHTML = `<span class="ticker-segment">Błąd pobierania pogody, spróbuj ponownie później.</span>`.repeat(5);
-            return null;
-        }
+    .fact-header {
+        font-size: 0.85em;
     }
 
-    function displayWeather(weatherData, ip) {
-        const city = weatherData.city;
-        const forecastData = weatherData.forecast;
-        document.getElementById('weatherCity').textContent = city;
-
-        const forecastContainer = document.getElementById('weatherForecast');
-        forecastContainer.innerHTML = '';
-
-        forecastData.time.forEach((date, index) => {
-            const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
-            const weatherCode = forecastData.weathercode[index];
-            const maxTemp = forecastData.temperature_2m_max[index];
-            const minTemp = forecastData.temperature_2m_min[index];
-            const isToday = index === 0;
-
-            const forecastBar = document.createElement('div');
-            forecastBar.className = `forecast-bar ${isToday ? 'today' : ''}`;
-            forecastBar.innerHTML = `
-                <div class="forecast-date">${formattedDate}</div>
-                <div class="weather-icon">${weatherIcons[weatherCode] || '❓'}</div>
-                <div class="weather-day">${dayName}</div>
-                <div class="weather-description">${weatherDescriptions[weatherCode] || 'Nieznana pogoda'}</div>
-                <div class="weather-temps">
-                    <div class="temp-max">${maxTemp.toFixed(1)}°C</div>
-                    <div class="temp-min">${minTemp.toFixed(1)}°C</div>
-                </div>
-            `;
-            forecastContainer.appendChild(forecastBar);
-
-            if (isToday) {
-                const todayDate = formattedDate;
-                const sunrise = new Date(forecastData.sunrise[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-                const sunset = new Date(forecastData.sunset[0]).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-                const apparentTemp = forecastData.apparent_temperature_max[0];
-                const precipitation = forecastData.precipitation_sum[0];
-                const windSpeed = forecastData.windspeed_10m_max[0];
-                const windDirection = degreesToDirection(forecastData.winddirection_10m_dominant[0]);
-
-                const tickerText = `
-                    <span class="ticker-segment">
-                        🌍 Warunki na: <span class="ticker-value">${todayDate}</span> • 
-                        🌅 Wschód słońca: <span class="ticker-value">${sunrise}</span> • 
-                        🌇 Zachód słońca: <span class="ticker-value">${sunset}</span> • 
-                        🌡️ Odczuwalna temperatura: <span class="ticker-value">${apparentTemp.toFixed(1)}°C</span> • 
-                        🌧️ Opady deszczu: <span class="ticker-value">${precipitation.toFixed(1)} l/m²</span> • 
-                        💨 Siła wiatru: <span class="ticker-value">${windSpeed.toFixed(1)} km/h</span> • 
-                        🪁 Wiatr wieje z: <span class="ticker-value">${windDirection}</span>
-                    </span>
-                `;
-                document.getElementById('tickerContent').innerHTML = tickerText.repeat(5);
-            }
-        });
+    .fact-content {
+        font-size: 0.75em;
+        line-height: 1.3;
     }
 
-    async function getNasaApodImage(retries = 5, delay = 2000) {
-        const cacheKey = 'nasa_apod_data';
-        const cacheTimeKey = 'nasa_apod_time';
-        const cacheDuration = 3600000;
-        const extendedCacheDuration = cacheDuration * 2;
-
-        const anyCachedData = getAnyCachedData(cacheKey);
-        if (anyCachedData) {
-            console.log('Wyświetlam starsze dane NASA APOD');
-            displayNasaApod(anyCachedData);
-        }
-
-        const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
-        if (cachedData) {
-            console.log('Używam NASA APOD z cache');
-            setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
-            displayNasaApod(cachedData);
-            return cachedData;
-        }
-
-        const imgElement = document.getElementById('spaceImage');
-        const tickerElement = document.getElementById('nasaTickerContent');
-        for (let attempt = 1; attempt <= retries; attempt++) {
-            try {
-                const data = await retryFetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
-                if (data.media_type === 'image' && data.url) {
-                    const apodData = {
-                        url: data.url,
-                        title: data.title,
-                        explanation: data.explanation || 'Brak opisu.'
-                    };
-                    setCachedData(cacheKey, cacheTimeKey, apodData);
-                    setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, apodData);
-                    localStorage.removeItem(`rateLimit_${cacheKey}`);
-                    displayNasaApod(apodData);
-                    imgElement.onerror = () => {
-                        console.error('Błąd ładowania obrazu NASA, używam fallbacku');
-                        imgElement.src = 'planeta.png';
-                        imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                        tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
-                    };
-                    setTimeout(() => {
-                        if (!imgElement.complete || imgElement.naturalWidth === 0) {
-                            console.error('Obraz NASA nie załadował się, używam fallbacku');
-                            imgElement.src = 'planeta.png';
-                            imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                            tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
-                        }
-                    }, 5000);
-                    return apodData;
-                } else {
-                    console.warn('NASA APOD to wideo, używam fallbacku');
-                    imgElement.src = 'planeta.png';
-                    imgElement.alt = 'NASA APOD zawiera wideo';
-                    tickerElement.innerHTML = `<span class="ticker-segment">NASA APOD to wideo, wyświetlono domyślny obraz.</span>`.repeat(5);
-                    return null;
-                }
-            } catch (err) {
-                console.error(`Próba ${attempt} NASA APOD nie powiodła się:`, err);
-                if (err.message === 'RateLimitExceeded') {
-                    localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                        extendedDuration: extendedCacheDuration,
-                        timestamp: Date.now()
-                    }));
-                    console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
-                }
-                if (attempt === retries) {
-                    imgElement.src = 'planeta.png';
-                    imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                    tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
-                    if (anyCachedData) {
-                        displayNasaApod(anyCachedData);
-                        return anyCachedData;
-                    }
-                    return null;
-                }
-                await new Promise(resolve => setTimeout(resolve, delay));
-            }
-        }
+    .weather-forecast {
+        max-width: 100%;
+        padding: 10px;
     }
 
-    function displayNasaApod(data) {
-        const imgElement = document.getElementById('spaceImage');
-        const tickerElement = document.getElementById('nasaTickerContent');
-        imgElement.src = data.url;
-        imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-        tickerElement.innerHTML = `<span class="ticker-segment">${data.explanation}</span>`.repeat(5);
+    .forecast-container {
+        flex-wrap: nowrap;
+        gap: 5px;
+        padding: 10px 0;
     }
 
-    async function getDailyFact() {
-        const cacheKey = 'daily_fact';
-        const cacheTimeKey = 'daily_fact_time';
-        const cacheDuration = 3600000;
-        const extendedCacheDuration = cacheDuration * 2;
-
-        const now = new Date();
-        const day = String(now.getDate()).padStart(2, '0');
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const dateKey = `${day}/${month}`;
-
-        const anyCachedFact = getAnyCachedData(cacheKey);
-        if (anyCachedFact && anyCachedFact.dateKey === dateKey) {
-            console.log('Wyświetlam starszą ciekawostkę');
-            displayDailyFact(anyCachedFact.fact);
-        }
-
-        const cachedFact = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
-        if (cachedFact && cachedFact.dateKey === dateKey) {
-            console.log('Używam ciekawostki z cache');
-            setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedFact);
-            displayDailyFact(cachedFact.fact);
-            return cachedFact;
-        }
-
-        try {
-            const data = await retryFetch('calendar.json');
-            const fact = data[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
-            const factData = { dateKey, fact };
-            setCachedData(cacheKey, cacheTimeKey, factData);
-            setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, factData);
-            localStorage.removeItem(`rateLimit_${cacheKey}`);
-            displayDailyFact(fact);
-            return factData;
-        } catch (err) {
-            console.error('Błąd pobierania ciekawostki:', err);
-            if (err.message === 'RateLimitExceeded') {
-                localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                    extendedDuration: extendedCacheDuration,
-                    timestamp: Date.now()
-                }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 3600000} godzin`);
-            }
-            if (anyCachedFact && anyCachedFact.dateKey === dateKey) {
-                displayDailyFact(anyCachedFact.fact);
-                return anyCachedFact;
-            }
-            displayDailyFact('Błąd ładowania ciekawostki');
-            return null;
-        }
+    .forecast-bar {
+        min-width: 70px;
+        padding: 5px;
     }
 
-    function displayDailyFact(fact) {
-        document.getElementById('dailyFact').textContent = fact;
+    .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
+        font-size: 0.65em;
     }
 
-    function isDerivative(coin, usedBaseAssets, allCoins) {
-        const derivativeKeywords = [
-            'wrapped', 'staked', 'liquid', 'bridged', 'pegged',
-            'synthetic', 'leveraged', 'inverse', 'eth2', 'staking',
-            'yield', 'ether-fi', 'rocket', 'lido', 'weth'
-        ];
-        const id = (coin.id || '').toLowerCase();
-        const name = (coin.name || '').toLowerCase();
-        const symbol = (coin.symbol || '').toLowerCase();
-        const price = parseFloat(coin.current_price);
-
-        const hasDerivativeKeyword = derivativeKeywords.some(keyword =>
-            id.includes(keyword) || name.includes(keyword)
-        );
-
-        if (!hasDerivativeKeyword) {
-            return { isDerivative: false, baseSymbol: symbol.toUpperCase() };
-        }
-
-        for (const baseSymbol of usedBaseAssets) {
-            const baseLower = baseSymbol.toLowerCase();
-            if (symbol.includes(baseLower) || name.includes(baseLower)) {
-                const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
-                if (baseCoin) {
-                    const basePrice = parseFloat(baseCoin.current_price);
-                    const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
-                    if (priceDifference <= 5) {
-                        console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
-                        return { isDerivative: true, baseSymbol };
-                    }
-                }
-                console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol}`);
-                return { isDerivative: true, baseSymbol };
-            }
-            if (symbol.startsWith('w') && symbol.slice(1).includes(baseLower)) {
-                const baseCoin = allCoins.find(c => c.symbol.toLowerCase() === baseLower);
-                if (baseCoin) {
-                    const basePrice = parseFloat(baseCoin.current_price);
-                    const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
-                    if (priceDifference <= 5) {
-                        console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w', cena: ${priceDifference.toFixed(2)}%)`);
-                        return { isDerivative: true, baseSymbol };
-                    }
-                }
-                console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol} (prefiks 'w')`);
-                return { isDerivative: true, baseSymbol };
-            }
-        }
-
-        const potentialBaseSymbol = symbol.replace(/^(w|s|re|ls|cb|rs|ms|st|rst|lst|)/, '').toUpperCase();
-        if (usedBaseAssets.has(potentialBaseSymbol)) {
-            const baseCoin = allCoins.find(c => c.symbol.toUpperCase() === potentialBaseSymbol);
-            if (baseCoin) {
-                const basePrice = parseFloat(baseCoin.current_price);
-                const priceDifference = Math.abs((price - basePrice) / basePrice) * 100;
-                if (priceDifference <= 5) {
-                    console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol} (cena: ${priceDifference.toFixed(2)}%)`);
-                    return { isDerivative: true, baseSymbol: potentialBaseSymbol };
-                }
-            }
-            console.log(`Pochodna: ${coin.symbol} należy do ${potentialBaseSymbol}`);
-            return { isDerivative: true, baseSymbol: potentialBaseSymbol };
-        }
-
-        return { isDerivative: false, baseSymbol: symbol.toUpperCase() };
+    .weather-icon {
+        font-size: 1.2em;
     }
 
-    async function getCryptoData() {
-        console.log('Rozpoczynam pobieranie danych kryptowalut...');
-        const cacheKey = 'crypto_data';
-        const cacheTimeKey = 'crypto_time';
-        const cacheDuration = 15 * 60 * 1000;
-        const extendedCacheDuration = cacheDuration * 2;
-
-        const anyCachedData = getAnyCachedData(cacheKey);
-        if (anyCachedData) {
-            console.log('Wyświetlam starsze dane kryptowalut');
-            displayCryptoData(anyCachedData);
-        }
-
-        const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
-        if (cachedData) {
-            console.log('Używam kryptowalut z cache');
-            setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
-            displayCryptoData(cachedData);
-            return cachedData;
-        }
-
-        try {
-            const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1');
-            const isMobile = window.innerWidth <= 768;
-            const limit = isMobile ? 28 : 35;
-            const usedBaseAssets = new Set();
-            const fiatCurrencies = ['usd', 'eur', 'gbp', 'jpy', 'cny', 'aud', 'cad', 'chf', 'sgd', 'krw', 'susds'];
-
-            const filteredCoins = data.filter(coin => {
-                const price = parseFloat(coin.current_price);
-                const id = (coin.id || '').toLowerCase();
-                const name = (coin.name || '').toLowerCase();
-                const symbol = (coin.symbol || '').toLowerCase();
-
-                if (isNaN(price)) {
-                    console.log(`Pominięto ${coin.symbol}: nieprawidłowa cena (${coin.current_price})`);
-                    return false;
-                }
-
-                if (price >= 0.99 && price <= 1.01) {
-                    console.log(`Pominięto ${coin.symbol}: cena w przedziale 0.99–1.01 USD (${price} USD)`);
-                    return false;
-                }
-
-                const isFiatRelated = fiatCurrencies.some(currency =>
-                    id.includes(currency) || name.includes(currency) || symbol.includes(currency)
-                );
-                if (isFiatRelated && price >= 0.95 && price <= 1.05) {
-                    console.log(`Pominięto stablecoin: ${coin.symbol} (cena: ${price} USD)`);
-                    return false;
-                }
-
-                if (price < 0.00001) {
-                    console.log(`Pominięto ${coin.symbol}: cena ${price} USD`);
-                    return false;
-                }
-
-                const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
-                if (isDeriv) {
-                    console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol}`);
-                    return false;
-                }
-
-                usedBaseAssets.add(baseSymbol);
-                return true;
-            }).slice(0, limit).map(coin => ({
-                id: coin.id,
-                symbol: coin.symbol,
-                current_price: parseFloat(coin.current_price),
-                price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
-            }));
-
-            console.log('Przefiltrowane kryptowaluty:', filteredCoins);
-            setCachedData(cacheKey, cacheTimeKey, filteredCoins);
-            setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, filteredCoins);
-            localStorage.removeItem(`rateLimit_${cacheKey}`);
-            displayCryptoData(filteredCoins);
-            return filteredCoins;
-        } catch (err) {
-            console.error('Błąd pobierania kryptowalut:', err);
-            if (err.message === 'RateLimitExceeded') {
-                localStorage.setItem(`rateLimit_${cacheKey}`, JSON.stringify({
-                    extendedDuration: extendedCacheDuration,
-                    timestamp: Date.now()
-                }));
-                console.log(`Wydłużono cache dla ${cacheKey} do ${extendedCacheDuration / 60000} minut`);
-            }
-            if (anyCachedData) {
-                console.log('Używam starszych danych kryptowalut');
-                displayCryptoData(anyCachedData);
-                return anyCachedData;
-            }
-            document.getElementById('cryptoGrid').innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut.</div>';
-            return null;
-        }
+    .weather-ticker {
+        font-size: 0.8em;
     }
 
-    function formatPrice(price) {
-        if (price === 0) return '$ 0.00';
-        price = parseFloat(price);
-
-        if (price < 0.01 && price > 0) {
-            let formatted = price.toFixed(6);
-            formatted = parseFloat(formatted).toString();
-            return `$ ${formatted}`;
-        }
-
-        const integerPart = Math.floor(price).toString();
-        const integerLength = integerPart.length;
-
-        let formatted;
-        if (integerLength >= 7) {
-            formatted = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            if (integerLength > 7) {
-                formatted = formatted.replace(/\s/g, '').slice(0, 7);
-                formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            }
-        } else {
-            formatted = price.toFixed(2);
-            const [intPart, decPart] = formatted.split('.');
-            const formattedIntPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            formatted = `${formattedIntPart}.${decPart}`;
-        }
-
-        return `$ ${formatted}`;
+    .forecast-error {
+        font-size: 0.7em;
+        padding: 8px;
     }
 
-    function getChangeClass(change) {
-        const absChange = Math.abs(change);
-        if (absChange <= 5) {
-            return change >= 0 ? 'positive-low' : 'negative-low';
-        } else if (absChange <= 10) {
-            return change >= 0 ? 'positive-mid' : 'negative-mid';
-        } else {
-            return change >= 0 ? 'positive-high' : 'negative-high';
-        }
+    .crypto-info {
+        padding: 10px;
     }
 
-    function displayCryptoData(coins) {
-        const cryptoGrid = document.getElementById('cryptoGrid');
-        cryptoGrid.innerHTML = '';
-
-        coins.forEach(coin => {
-            const cryptoTile = document.createElement('div');
-            cryptoTile.className = `crypto-tile ${getChangeClass(coin.price_change_percentage_24h)}`;
-            cryptoTile.innerHTML = `
-                <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
-                <div class="crypto-price">${formatPrice(coin.current_price)}</div>
-                <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}% / 24h</div>
-            `;
-            cryptoTile.addEventListener('click', () => {
-                window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
-            });
-            cryptoGrid.appendChild(cryptoTile);
-        });
+    .fear-greed-indicator {
+        font-size: 0.75em;
+        padding: 8px 10px;
     }
 
-    function checkCSSLoaded() {
-        const container = document.querySelector('.container');
-        const computedStyle = window.getComputedStyle(container);
-        if (computedStyle.backgroundColor !== 'rgb(45, 45, 45)') {
-            console.warn('CSS nie załadował się, ładuję fallback');
-            const style = document.createElement('style');
-            style.textContent = `
-                body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 10px; }
-                .container { max-width: 960px; margin: 0 auto; background: #2d2d2d; padding: 10px; border-radius: 8px; }
-                .crypto-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-                .crypto-tile { padding: 4px; border-radius: 6px; text-align: center; min-height: 40px; cursor: pointer; }
-                .crypto-tile.positive-low { background: rgba(0, 200, 0, 0.4); }
-                .crypto-tile.positive-mid { background: rgba(0, 200, 0, 0.6); }
-                .crypto-tile.positive-high { background: rgba(0, 200, 0, 0.8); }
-                .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
-                .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
-                .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-            `;
-            document.head.appendChild(style);
-        }
+    .fear-greed-indicator .fgi-value {
+        text-shadow: 
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
-    let isReloading = false;
-
-    async function loadData() {
-        const networkStatus = document.getElementById('networkStatus');
-        if (!navigator.onLine) return; // Ładuj dane tylko, jeśli online
-
-        console.log('Połączenie aktywne, ładuję dane');
-        if (!isReloading) {
-            isReloading = true;
-            try {
-                const ip = await getIp();
-                await initializeFallbackData(ip);
-                const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
-                    getNasaApodImage(),
-                    getWeather(ip),
-                    getDailyFact(),
-                    getCryptoData(),
-                    updateFearGreedIndicator()
-                ]);
-
-                console.log('Wyniki API:', {
-                    nasa: nasaResult.status === 'fulfilled' ? 'Success' : `Failed: ${nasaResult.reason}`,
-                    weather: weatherResult.status === 'fulfilled' ? 'Success' : `Failed: ${weatherResult.reason}`,
-                    fact: dailyFactResult.status === 'fulfilled' ? 'Success' : `Failed: ${dailyFactResult.reason}`,
-                    crypto: cryptoResult.status === 'fulfilled' ? 'Success' : `Failed: ${cryptoResult.reason}`,
-                    fearGreed: fearGreedResult.status === 'fulfilled' ? 'Success' : `Failed: ${fearGreedResult.reason}`
-                });
-
-                setTimeout(async () => {
-                    try {
-                        await logVisit();
-                    } catch (err) {
-                        console.error('Błąd ładowania logów:', err);
-                        const logTableBody = document.getElementById('logTableBody');
-                        if (logTableBody) {
-                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów.</td></tr>';
-                        }
-                    }
-                }, 500);
-
-                console.log('Dane załadowane');
-            } catch (err) {
-                console.error('Błąd podczas ładowania danych:', err);
-                networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
-                networkStatus.style.display = 'block';
-            } finally {
-                isReloading = false;
-            }
-        }
+    .fear-greed-indicator .fgi-label {
+        text-shadow: 
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
-    let cryptoIntervalId = null;
-    let logIntervalId = null;
-    let fearGreedIntervalId = null;
-    let visitCounterIntervalId = null;
-    let lastUpdateTime = null;
-    const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
-
-    function startCryptoUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji kryptowalut');
-        getCryptoData();
-        cryptoIntervalId = setInterval(() => {
-            console.log('Aktualizuję kryptowaluty...');
-            getCryptoData();
-        }, 900000);
+    .fear-greed-indicator .trend-indicator {
+        font-size: 1.1em;
+        margin-right: 8px;
+        text-shadow: 
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
-    function startLogUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji logów');
-        updateLogs();
-        logIntervalId = setInterval(() => {
-            console.log('Aktualizuję logi...');
-            updateLogs();
-        }, 900000);
+    .fear-greed-indicator .fear-greed-signal {
+        text-shadow: 
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
     }
 
-    function startFearGreedUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji Fear and Greed');
-        updateFearGreedIndicator();
-        fearGreedIntervalId = setInterval(() => {
-            console.log('Aktualizuję Fear and Greed...');
-            updateFearGreedIndicator();
-        }, 3600000);
+    .crypto-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 10px;
     }
 
-    function startVisitCounterUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji licznika odwiedzin');
-        displayVisitCounter();
-        visitCounterIntervalId = setInterval(() => {
-            console.log('Aktualizuję licznik odwiedzin...');
-            displayVisitCounter();
-        }, 900000); // 15 minut, jak logi
+    .crypto-tile {
+        min-height: 22px;
+        padding: 2px;
     }
 
-    let isManagingIntervals = false;
-
-    function manageUpdateIntervals() {
-        if (isManagingIntervals) {
-            console.log('manageUpdateIntervals już uruchomione, pomijam');
-            return;
-        }
-        isManagingIntervals = true;
-
-        const now = Date.now();
-
-        if (document.visibilityState === 'visible') {
-            console.log('Karta aktywna, włączam aktualizacje');
-            if (cryptoIntervalId) {
-                clearInterval(cryptoIntervalId);
-                cryptoIntervalId = null;
-            }
-            if (logIntervalId) {
-                clearInterval(logIntervalId);
-                logIntervalId = null;
-            }
-            if (fearGreedIntervalId) {
-                clearInterval(fearGreedIntervalId);
-                fearGreedIntervalId = null;
-            }
-            if (visitCounterIntervalId) {
-                clearInterval(visitCounterIntervalId);
-                visitCounterIntervalId = null;
-            }
-
-            if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
-                console.log('Minął minimalny czas, odświeżam dane');
-                startCryptoUpdateInterval();
-                startLogUpdateInterval();
-                startFearGreedUpdateInterval();
-                startVisitCounterUpdateInterval();
-                lastUpdateTime = now;
-            } else {
-                console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
-                cryptoIntervalId = setInterval(() => {
-                    console.log('Aktualizuję kryptowaluty...');
-                    getCryptoData();
-                }, 900000);
-                logIntervalId = setInterval(() => {
-                    console.log('Aktualizuję logi...');
-                    updateLogs();
-                }, 900000);
-                fearGreedIntervalId = setInterval(() => {
-                    console.log('Aktualizuję Fear and Greed...');
-                    updateFearGreedIndicator();
-                }, 3600000);
-                visitCounterIntervalId = setInterval(() => {
-                    console.log('Aktualizuję licznik odwiedzin...');
-                    displayVisitCounter();
-                }, 900000);
-            }
-        } else {
-            console.log('Karta nieaktywna, wstrzymuję aktualizacje');
-            if (cryptoIntervalId) {
-                clearInterval(cryptoIntervalId);
-                cryptoIntervalId = null;
-            }
-            if (logIntervalId) {
-                clearInterval(logIntervalId);
-                logIntervalId = null;
-            }
-            if (fearGreedIntervalId) {
-                clearInterval(fearGreedIntervalId);
-                fearGreedIntervalId = null;
-            }
-            if (visitCounterIntervalId) {
-                clearInterval(visitCounterIntervalId);
-                visitCounterIntervalId = null;
-            }
-        }
-
-        isManagingIntervals = false;
+    .crypto-symbol {
+        font-size: 0.7em;
+        margin-bottom: 0.5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
     }
 
-    let nasaIntervalId = null;
-    let weatherIntervalId = null;
-    let dailyFactIntervalId = null;
-
-    function startNasaUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji NASA');
-        getNasaApodImage();
-        nasaIntervalId = setInterval(() => {
-            console.log('Aktualizuję NASA...');
-            getNasaApodImage();
-        }, 10800000); // 3 godziny
+    .crypto-price {
+        font-size: 0.65em;
+        margin-bottom: 0.5px;
     }
 
-    function startWeatherUpdateInterval(ip) {
-        console.log('Uruchamiam interwał aktualizacji pogody');
-        getWeather(ip);
-        weatherIntervalId = setInterval(() => {
-            console.log('Aktualizuję pogodę...');
-            getWeather(ip);
-        }, 10800000); // 3 godziny
+    .crypto-change {
+        font-size: 0.5em;
     }
 
-    function startDailyFactUpdateInterval() {
-        console.log('Uruchamiam interwał aktualizacji ciekawostki dnia');
-        getDailyFact();
-        dailyFactIntervalId = setInterval(() => {
-            console.log('Aktualizuję ciekawostkę dnia...');
-            getDailyFact();
-        }, 10800000); // 3 godziny
+    .crypto-error {
+        font-size: 0.8em;
     }
 
-    function manageAllUpdateIntervals(ip) {
-        if (isManagingIntervals) {
-            console.log('manageAllUpdateIntervals już uruchomione, pomijam');
-            return;
-        }
-        isManagingIntervals = true;
-
-        const now = Date.now();
-
-        if (document.visibilityState === 'visible') {
-            console.log('Karta aktywna, włączam wszystkie aktualizacje');
-            if (cryptoIntervalId) {
-                clearInterval(cryptoIntervalId);
-                cryptoIntervalId = null;
-            }
-            if (logIntervalId) {
-                clearInterval(logIntervalId);
-                logIntervalId = null;
-            }
-            if (fearGreedIntervalId) {
-                clearInterval(fearGreedIntervalId);
-                fearGreedIntervalId = null;
-            }
-            if (visitCounterIntervalId) {
-                clearInterval(visitCounterIntervalId);
-                visitCounterIntervalId = null;
-            }
-            if (nasaIntervalId) {
-                clearInterval(nasaIntervalId);
-                nasaIntervalId = null;
-            }
-            if (weatherIntervalId) {
-                clearInterval(weatherIntervalId);
-                weatherIntervalId = null;
-            }
-            if (dailyFactIntervalId) {
-                clearInterval(dailyFactIntervalId);
-                dailyFactIntervalId = null;
-            }
-
-            if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
-                console.log('Minął minimalny czas, odświeżam wszystkie dane');
-                startCryptoUpdateInterval();
-                startLogUpdateInterval();
-                startFearGreedUpdateInterval();
-                startVisitCounterUpdateInterval();
-                startNasaUpdateInterval();
-                startWeatherUpdateInterval(ip);
-                startDailyFactUpdateInterval();
-                lastUpdateTime = now;
-            } else {
-                console.log('Zbyt szybkie przełączenie, ustawiam tylko interwały');
-                cryptoIntervalId = setInterval(() => {
-                    console.log('Aktualizuję kryptowaluty...');
-                    getCryptoData();
-                }, 900000);
-                logIntervalId = setInterval(() => {
-                    console.log('Aktualizuję logi...');
-                    updateLogs();
-                }, 900000);
-                fearGreedIntervalId = setInterval(() => {
-                    console.log('Aktualizuję Fear and Greed...');
-                    updateFearGreedIndicator();
-                }, 3600000);
-                visitCounterIntervalId = setInterval(() => {
-                    console.log('Aktualizuję licznik odwiedzin...');
-                    displayVisitCounter();
-                }, 900000);
-                nasaIntervalId = setInterval(() => {
-                    console.log('Aktualizuję NASA...');
-                    getNasaApodImage();
-                }, 10800000);
-                weatherIntervalId = setInterval(() => {
-                    console.log('Aktualizuję pogodę...');
-                    getWeather(ip);
-                }, 10800000);
-                dailyFactIntervalId = setInterval(() => {
-                    console.log('Aktualizuję ciekawostkę dnia...');
-                    getDailyFact();
-                }, 10800000);
-            }
-        } else {
-            console.log('Karta nieaktywna, wstrzymuję wszystkie aktualizacje');
-            if (cryptoIntervalId) {
-                clearInterval(cryptoIntervalId);
-                cryptoIntervalId = null;
-            }
-            if (logIntervalId) {
-                clearInterval(logIntervalId);
-                logIntervalId = null;
-            }
-            if (fearGreedIntervalId) {
-                clearInterval(fearGreedIntervalId);
-                fearGreedIntervalId = null;
-            }
-            if (visitCounterIntervalId) {
-                clearInterval(visitCounterIntervalId);
-                visitCounterIntervalId = null;
-            }
-            if (nasaIntervalId) {
-                clearInterval(nasaIntervalId);
-                nasaIntervalId = null;
-            }
-            if (weatherIntervalId) {
-                clearInterval(weatherIntervalId);
-                weatherIntervalId = null;
-            }
-            if (dailyFactIntervalId) {
-                clearInterval(dailyFactIntervalId);
-                dailyFactIntervalId = null;
-            }
-        }
-
-        isManagingIntervals = false;
+    .log-table {
+        max-width: 100%;
+        padding: 15px;
     }
 
-    async function loadAllDataInQueue() {
-        console.log('Rozpoczynam ładowanie danych w kolejce...');
-        const ip = await getIp();
-        await initializeFallbackData(ip);
-
-        try {
-            await getNasaApodImage();
-            console.log('NASA APOD załadowane');
-            await getDailyFact();
-            console.log('Ciekawostka dnia załadowana');
-            await getLocation(ip);
-            console.log('Lokalizacja załadowana');
-            await getWeather(ip);
-            console.log('Pogoda załadowana');
-            await updateFearGreedIndicator();
-            console.log('Fear and Greed załadowane');
-            await getCryptoData();
-            console.log('Kryptowaluty załadowane');
-            setTimeout(async () => {
-                await logVisit();
-                console.log('Logi załadowane');
-            }, 5000);
-        } catch (err) {
-            console.error('Błąd podczas ładowania danych w kolejce:', err);
-            const networkStatus = document.getElementById('networkStatus');
-            networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
-            networkStatus.style.display = 'block';
-        }
-
-        return ip;
+    table {
+        font-size: 0.75em;
+        table-layout: fixed;
     }
 
-    async function loadTermsModal(language) {
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalContent = document.getElementById('modalContent');
-
-        if (!modalOverlay || !modalContent) {
-            console.error('Błąd: Brak elementów modalOverlay lub modalContent w DOM');
-            return;
-        }
-
-        try {
-            const response = await fetch('terms.html');
-            if (!response.ok) throw new Error(`Nie udało się załadować terms.html: ${response.status}`);
-            modalContent.innerHTML = await response.text();
-
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = 'terms.css';
-            document.head.appendChild(link);
-
-            const closeButton = modalContent.querySelector('#closeButton');
-            if (!closeButton) {
-                console.error('Błąd: Nie znaleziono przycisku #closeButton w terms.html');
-                modalContent.innerHTML = '<p>Błąd ładowania regulaminu: brak przycisku zamykania.</p>';
-                modalOverlay.style.display = 'flex';
-                return;
-            }
-
-            closeButton.addEventListener('click', () => {
-                modalOverlay.style.display = 'none';
-                modalContent.innerHTML = '';
-                document.head.removeChild(link);
-            });
-
-            const langPolish = modalContent.querySelector('#langPolish');
-            const langEnglish = modalContent.querySelector('#langEnglish');
-            const termsPL = modalContent.querySelector('#termsPL');
-            const termsEN = modalContent.querySelector('#termsEN');
-            const termsTitle = modalContent.querySelector('#termsTitle');
-
-            function setLanguage(lang) {
-                if (lang === 'pl') {
-                    termsPL.style.display = 'block';
-                    termsEN.style.display = 'none';
-                    termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
-                    closeButton.textContent = 'Akceptuję';
-                    langPolish.classList.add('active');
-                    langEnglish.classList.remove('active');
-                } else {
-                    termsPL.style.display = 'none';
-                    termsEN.style.display = 'block';
-                    termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
-                    closeButton.textContent = 'Accept';
-                    langPolish.classList.remove('active');
-                    langEnglish.classList.add('active');
-                }
-                const termsContent = modalContent.querySelector('.terms-content');
-                if (termsContent) {
-                    termsContent.scrollTop = 0;
-                }
-            }
-
-            langPolish.addEventListener('click', () => setLanguage('pl'));
-            langEnglish.addEventListener('click', () => setLanguage('en'));
-            setLanguage(language || 'pl');
-
-            const termsContent = modalContent.querySelector('.terms-content');
-            if (termsContent) {
-                termsContent.scrollTop = 0;
-            }
-
-            modalOverlay.style.display = 'flex';
-        } catch (error) {
-            console.error('Błąd ładowania regulaminu:', error);
-            modalContent.innerHTML = '<p>Błąd ładowania regulaminu.</p>';
-            modalOverlay.style.display = 'flex';
-        }
+    th, td {
+        padding: 2px;
+        height: 28px;
+        font-size: 0.7em;
     }
 
-    window.onload = async function() {
-        console.log('Strona załadowana, uruchamiam funkcje...');
-        if (navigator.onLine) {
-            await loadData();
-        }
-        if (document.visibilityState === 'visible') {
-            console.log('Karta widoczna, uruchamiam aktualizacje danych');
-            try {
-                const ip = await getIp();
-                await initializeFallbackData(ip);
+    th {
+        font-size: 0.7em; /* Zmniejszona czcionka dla nagłówków w wersji mobilnej */
+        text-shadow: 
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
+    }
 
-                const [nasaResult, weatherResult, dailyFactResult, cryptoResult, fearGreedResult] = await Promise.allSettled([
-                    getNasaApodImage(),
-                    getWeather(ip),
-                    getDailyFact(),
-                    getCryptoData(),
-                    updateFearGreedIndicator()
-                ]);
+    th:nth-child(1), td:nth-child(1) {
+        width: 50px;
+        min-width: 50px;
+    }
 
-                console.log('Wyniki wywołań API:', {
-                    nasa: nasaResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${nasaResult.reason}`,
-                    weather: weatherResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${weatherResult.reason}`,
-                    dailyFact: dailyFactResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
-                    crypto: cryptoResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${cryptoResult.reason}`,
-                    fearGreed: fearGreedResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${fearGreedResult.reason}`
-                });
+    th:nth-child(2), td:nth-child(2) {
+        width: 50px;
+        min-width: 50px;
+    }
 
-                setTimeout(async () => {
-                    try {
-                        await logVisit();
-                    } catch (err) {
-                        console.error('Błąd podczas logowania odwiedzin:', err);
-                        const logTableBody = document.getElementById('logTableBody');
-                        if (logTableBody) {
-                            logTableBody.innerHTML = '<tr><td colspan="6">Nie udało się załadować logów odwiedzin.</td></tr>';
-                        }
-                    }
-                }, 500);
+    th:nth-child(3), td:nth-child(3) {
+        width: 40px;
+        min-width: 40px;
+    }
 
-                manageUpdateIntervals();
+    th:nth-child(4), td:nth-child(4) {
+        width: 60px;
+        min-width: 60px;
+    }
 
-                const ipFromQueue = await loadAllDataInQueue();
-                manageAllUpdateIntervals(ipFromQueue);
+    th.location-header, td.location-cell {
+        min-width: 90px;
+    }
 
-                await displayVisitCounter();
-                truncateTextWithTooltip(); // Wywołanie funkcji po załadowaniu strony
-            } catch (err) {
-                console.error('Błąd podczas inicjalizacji danych:', err);
-                const networkStatus = document.getElementById('networkStatus');
-                networkStatus.textContent = 'Błąd ładowania danych. Spróbuj ponownie.';
-                networkStatus.style.display = 'block';
-            }
-        } else {
-            console.log('Karta niewidoczna, pomijam aktualizacje');
-        }
+    th:nth-child(6), td:nth-child(6) {
+        min-width: 90px;
+    }
 
-        checkCSSLoaded();
+    .city, .device, .country, .isp {
+        font-size: 0.7em;
+        line-height: 1.15;
+    }
 
-        document.addEventListener('visibilitychange', () => {
-            console.log(`Zmiana widoczności: ${document.visibilityState}`);
-            manageUpdateIntervals();
-            manageAllUpdateIntervals(getIp());
-        });
+    .toggle-button {
+        padding: 3px 5px;
+        font-size: 0.50em;
+        min-width: 60px;
+        text-shadow:
+            -0.6px -0.6px 0 #000000,
+            0.6px -0.6px 0 #000000,
+            -0.6px 0.6px 0 #000000,
+            0.6px 0.6px 0 #000000,
+            -0.6px 0 0 #000000,
+            0.6px 0 0 #000000,
+            0 -0.6px 0 #000000,
+            0 0.6px 0 #000000,
+            0 0 10px rgba(0, 0, 0, 0.5);
+    }
 
-        window.addEventListener('online', () => {
-            console.log('Połączenie przywrócone, ładuję dane');
-            loadData();
-        });
+    .nasa-ticker {
+        font-size: 0.6em;
+    }
 
-        const termsLinkPL = document.getElementById('termsLinkPL');
-        const termsLinkEN = document.getElementById('termsLinkEN');
-        if (termsLinkPL && termsLinkEN) {
-            termsLinkPL.addEventListener('click', (e) => {
-                e.preventDefault();
-                loadTermsModal('pl');
-            });
-            termsLinkEN.addEventListener('click', (e) => {
-                e.preventDefault();
-                loadTermsModal('en');
-            });
-        } else {
-            console.warn('Brak elementów termsLinkPL lub termsLinkEN');
-        }
+    .nasa-container {
+        max-width: 100%;
+    }
 
-        const tickers = document.querySelectorAll('.nasa-ticker, .weather-ticker');
-        tickers.forEach(ticker => {
-            const content = ticker.querySelector('.ticker-content');
-            if (content) {
-                content.addEventListener('animationiteration', () => {
-                    content.style.animation = 'none';
-                    setTimeout(() => {
-                        content.style.animation = '';
-                    }, 10);
-                });
-            }
-        });
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
 
-        cleanOldCache();
+    ::-webkit-scrollbar-track {
+        border-radius: 4px;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
+    }
 
-        console.log('Inicjalizacja strony zakończona');
-    };
+    ::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        border: 1px solid #2d2d2d;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    }
+}
 
-    window.addEventListener('beforeunload', () => {
-        if (cryptoIntervalId) clearInterval(cryptoIntervalId);
-        if (logIntervalId) clearInterval(logIntervalId);
-        if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
-        if (visitCounterIntervalId) clearInterval(visitCounterIntervalId);
-        if (nasaIntervalId) clearInterval(nasaIntervalId);
-        if (weatherIntervalId) clearInterval(weatherIntervalId);
-        if (dailyFactIntervalId) clearInterval(dailyFactIntervalId);
-        console.log('Wstrzymano wszystkie interwały przed opuszczeniem strony');
-    });
+@media (max-width: 768px) and (orientation: landscape) {
+    .crypto-grid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+}
 
-</script>
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.75em;
+    color: #cccccc;
+}
 
-<script>
-    // Skrypt do obsługi efektu podążania obrazka za kursorem
-    const nasaFrame = document.querySelector('.nasa-frame');
-    const spaceImage = document.getElementById('spaceImage');
+.footer p {
+    margin: 2px 0;
+}
 
-    nasaFrame.addEventListener('mousemove', (e) => {
-        const rect = nasaFrame.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const deltaX = (x - centerX) / centerX;
-        const deltaY = (y - centerY) / centerY;
-        spaceImage.style.transform = `translate(${deltaX * 10}px, ${deltaY * 10}px) scale(1.1)`;
-    });
+.footer a {
+    color: #ffeb3b;
+    text-decoration: none;
+}
 
-    nasaFrame.addEventListener('mouseleave', () => {
-        spaceImage.style.transform = 'translate(0, 0) scale(1)';
-    });
-</script>
-</body>
-</html>
+.footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        font-size: 0.45em;
+    }
+
+    .footer p {
+        margin: 1px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
