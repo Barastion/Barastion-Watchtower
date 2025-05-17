@@ -75,11 +75,6 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 6px;
-    transition: transform 0.3s ease; /* Płynna animacja przybliżania i przesuwania */
-}
-
-.nasa-frame:hover img {
-    transform: scale(1.1); /* Przybliżenie o 10% po najechaniu na ramkę */
 }
 
 .nasa-frame iframe {
