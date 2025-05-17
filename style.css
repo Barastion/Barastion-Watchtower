@@ -23,6 +23,39 @@ body {
     margin: 0;
     padding: 20px;
     line-height: 1.6;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://raw.githubusercontent.com/username/repo/main/tlo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.25;
+    z-index: -1;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid #ffeb3b;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .container {
@@ -75,11 +108,11 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 6px;
-    transition: transform 0.3s ease; /* Płynna animacja przybliżania i przesuwania */
+    transition: transform 0.3s ease;
 }
 
 .nasa-frame:hover img {
-    transform: scale(1.1); /* Przybliżenie o 10% po najechaniu na ramkę */
+    transform: scale(1.1);
 }
 
 .nasa-frame iframe {
@@ -160,7 +193,7 @@ body {
     align-items: center;
     gap: 5px;
     font-weight: 500;
-    color: #ffeb3b; /* Kolor nagłówka "Ciekawostka na dziś:" */
+    color: #ffeb3b;
 }
 
 .fact-content {
@@ -171,7 +204,7 @@ body {
     overflow-wrap: break-word;
     white-space: normal;
     max-width: 100%;
-    color: #ffffff; /* Treść ciekawostki pozostaje biała */
+    color: #ffffff;
 }
 
 @media (min-width: 769px) {
@@ -206,11 +239,11 @@ body {
     text-align: center;
     margin: 2px 0;
     font-size: 1.2em;
-    color: #ffffff; /* Napis "Pogoda dla:" */
+    color: #ffffff;
 }
 
 #weatherCity {
-    color: #ffeb3b; /* Nazwa miasta w kolorze żółtym */
+    color: #ffeb3b;
 }
 
 .forecast-container {
@@ -252,7 +285,7 @@ body {
 .weather-day {
     font-size: 0.9em;
     font-weight: bold;
-    color: #ffeb3b; /* Dni tygodnia w kolorze żółtym */
+    color: #ffeb3b;
 }
 
 .weather-description {
@@ -262,7 +295,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 40px;
-    color: #ffffff; /* Opis pogody pozostaje biały */
+    color: #ffffff;
 }
 
 .weather-temps {
@@ -314,12 +347,12 @@ body {
 .ticker-segment {
     display: inline-block;
     padding-right: 180px;
-    color: #ffffff; /* Nazwy w tickerze pozostają białe */
+    color: #ffffff;
 }
 
 .ticker-value {
     font-weight: bold;
-    color: #ffeb3b; /* Wartości z API w kolorze żółtym */
+    color: #ffeb3b;
 }
 
 .crypto-info {
@@ -364,7 +397,6 @@ body {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
-/* Gradienty dla każdego stanu */
 .fear-greed-indicator.all-in {
     background: linear-gradient(135deg, var(--gradient-start-all-in), var(--gradient-end-all-in));
 }
@@ -385,7 +417,6 @@ body {
     background: linear-gradient(135deg, var(--gradient-start-cash-out), var(--gradient-end-cash-out));
 }
 
-/* Styl wartości FGI z kolorami zależnymi od przedziału */
 .fear-greed-indicator .fgi-value {
     font-weight: 600;
     margin-right: 8px;
@@ -402,26 +433,25 @@ body {
 }
 
 .fear-greed-indicator .fgi-value.extreme-fear {
-    color: #dc0000; /* 1-20 */
+    color: #dc0000;
 }
 
 .fear-greed-indicator .fgi-value.fear {
-    color: #b40000; /* 21-40 */
+    color: #b40000;
 }
 
 .fear-greed-indicator .fgi-value.neutral {
-    color: #ffeb3b; /* 41-60 */
+    color: #ffeb3b;
 }
 
 .fear-greed-indicator .fgi-value.greedy {
-    color: #00b400; /* 61-80 */
+    color: #00b400;
 }
 
 .fear-greed-indicator .fgi-value.extreme-greedy {
-    color: #00dc00; /* 81-100 */
+    color: #00dc00;
 }
 
-/* Styl napisu "Miesięczny sygnał:" */
 .fear-greed-indicator .fgi-label {
     font-weight: 600;
     margin-right: 4px;
@@ -438,7 +468,6 @@ body {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
-/* Styl strzałki trendu */
 .fear-greed-indicator .trend-indicator {
     font-size: 1em;
     margin-right: 8px;
@@ -472,7 +501,6 @@ body {
     animation: glow-neutral 1.5s ease-in-out infinite;
 }
 
-/* Styl sygnału */
 .fear-greed-indicator .fear-greed-signal {
     position: relative;
     display: inline-block;
@@ -617,7 +645,7 @@ table {
 }
 
 thead tr {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla nagłówka tabeli logów */
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
 }
 
 th, td {
@@ -642,7 +670,7 @@ th {
         1.0px 0 0 #000000,
         0 -1.0px 0 #000000,
         0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla nagłówków tabeli logów */
+        0 0 25px rgba(0, 0, 0, 0.9);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     transition: filter 0.3s ease;
 }
@@ -719,7 +747,7 @@ tr:hover td:last-child {
     font-size: 0.9em;
     line-height: 1.2;
     hyphens: auto;
-    text-align: center; /* Wyśrodkowanie tekstu */
+    text-align: center;
 }
 
 .country {
@@ -744,11 +772,11 @@ tr:hover td:last-child {
     word-wrap: break-word;
     text-align: center;
     margin: 0 auto;
-    position: relative; /* Dla tooltipa */
+    position: relative;
 }
 
 .isp:hover::after {
-    content: attr(data-full-text); /* Używa atrybutu data-full-text z HTML */
+    content: attr(data-full-text);
     position: absolute;
     background-color: #555555;
     color: #ffffff;
@@ -759,7 +787,7 @@ tr:hover td:last-child {
     width: auto;
     max-width: 200px;
     z-index: 10;
-    top: -40px; /* Pozycja nad elementem */
+    top: -40px;
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;
@@ -768,7 +796,7 @@ tr:hover td:last-child {
 }
 
 .isp:hover::after {
-    opacity: 1; /* Tooltip pojawia się po najechaniu */
+    opacity: 1;
 }
 
 .hidden-log {
@@ -782,7 +810,7 @@ tr:hover td:last-child {
 }
 
 .toggle-button {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla przycisku "Rozwiń listę/Zwiń listę" */
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     color: white;
     border: none;
     padding: 6px 12px;
@@ -799,7 +827,7 @@ tr:hover td:last-child {
         1.0px 0 0 #000000,
         0 -1.0px 0 #000000,
         0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla tekstu przycisku */
+        0 0 25px rgba(0, 0, 0, 0.9);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     min-width: 100px;
@@ -968,6 +996,26 @@ tr:hover td:last-child {
     transform: scale(1.05);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     filter: brightness(1.1);
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.75em;
+    color: #cccccc;
+}
+
+.footer p {
+    margin: 2px 0;
+}
+
+.footer a {
+    color: #ffeb3b;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 }
 
 @media (max-width: 768px) {
@@ -1149,7 +1197,7 @@ tr:hover td:last-child {
     }
 
     th {
-        font-size: 0.7em; /* Zmniejszona czcionka dla nagłówków w wersji mobilnej */
+        font-size: 0.7em;
         text-shadow: 
             -0.6px -0.6px 0 #000000,
             0.6px -0.6px 0 #000000,
@@ -1234,35 +1282,7 @@ tr:hover td:last-child {
         border: 1px solid #2d2d2d;
         box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
     }
-}
 
-@media (max-width: 768px) and (orientation: landscape) {
-    .crypto-grid {
-        grid-template-columns: repeat(7, 1fr);
-    }
-}
-
-.footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.75em;
-    color: #cccccc;
-}
-
-.footer p {
-    margin: 2px 0;
-}
-
-.footer a {
-    color: #ffeb3b;
-    text-decoration: none;
-}
-
-.footer a:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 768px) {
     .footer {
         font-size: 0.45em;
     }
@@ -1272,5 +1292,11 @@ tr:hover td:last-child {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .crypto-grid {
+        grid-template-columns: repeat(7, 1fr);
     }
 }
