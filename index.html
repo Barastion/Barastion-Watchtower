@@ -1210,14 +1210,14 @@
                             console.error('Błąd ładowania obrazu NASA, używam fallbacku');
                             imgElement.src = 'planeta.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                            tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. 🌌</span>`.repeat(5);
+                            tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. Tymczasem może warto wyjść na zewnątrz i popatrzeć w gwiazdy na żywo?</span>`.repeat(5);
                         };
                         setTimeout(() => {
                             if (!imgElement.complete || imgElement.naturalWidth === 0) {
                                 console.error('Obraz NASA nie załadował się, używam fallbacku');
                                 imgElement.src = 'planeta.png';
                                 imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                                tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. 🌌</span>`.repeat(5);
+                                tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. Tymczasem może warto wyjść na zewnątrz i popatrzeć w gwiazdy na żywo?</span>`.repeat(5);
                             }
                         }, 5000);
                         return apodData;
@@ -1225,7 +1225,7 @@
                         console.warn('NASA APOD to wideo, używam fallbacku');
                         imgElement.src = 'planeta.png';
                         imgElement.alt = 'NASA APOD zawiera wideo';
-                        tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. 🌌</span>`.repeat(5);
+                        tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. Tymczasem może warto wyjść na zewnątrz i popatrzeć w gwiazdy na żywo?</span>`.repeat(5);
                         return null;
                     }
                 } catch (err) {
@@ -1240,7 +1240,7 @@
                     if (attempt === retries) {
                         imgElement.src = 'planeta.png';
                         imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
-                        tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. 🌌</span>`.repeat(5);
+                        tickerElement.innerHTML = `<span class="ticker-segment">Niestety, dzisiejsze zdjęcie NASA to wideo, ale nie martw się! Oto domyślny obraz, który nadal jest kosmicznie fajny. Tymczasem może warto wyjść na zewnątrz i popatrzeć w gwiazdy na żywo?</span>`.repeat(5);
                         if (anyCachedData) {
                             displayNasaApod(anyCachedData);
                             return anyCachedData;
