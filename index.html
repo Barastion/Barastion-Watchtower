@@ -7,15 +7,43 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="diabelek.png">
     <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
+    <meta name="keywords" content="kryptowaluty dashboard, osobisty dashboard">
     <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me https://api.deepl.com data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <style>
+        .nasa-frame.glow-effect {
+            transition: box-shadow 0s linear;
+        }
+        .nasa-frame.glow-effect:hover {
+            animation: glow 5s linear forwards;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 0 0 #ffeb3b; }
+            100% { box-shadow: 0 0 10px 10px #ffeb3b; }
+        }
+        .spinner {
+            display: none;
+            border: 4px solid rgba(255, 235, 59, 0.2);
+            border-top: 4px solid #ffeb3b;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
     <div class="container">
         <div class="nasa-container">
-            <div class="nasa-frame">
+            <div class="nasa-frame glow-effect">
                 <img id="spaceImage" src="" alt="NASA Astronomy Picture of the Day">
+                <div class="spinner" id="nasaSpinner"></div>
                 <div class="nasa-ticker">
                     <div id="nasaTickerContent">
                         <span class="ticker-segment">Ładowanie opisu...</span>
@@ -32,12 +60,14 @@
         <div class="daily-fact">
             <span class="fact-header">💡 Ciekawostka na dziś:</span>
             <div class="fact-content" id="dailyFact">Ładowanie...</div>
+            <div class="spinner" id="factSpinner"></div>
         </div>
         <div class="content-frame">
             <div class="weather-info">
                 <div class="weather-forecast">
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
+                    <div class="spinner" id="weatherSpinner"></div>
                     <div class="weather-ticker">
                          <div id="tickerContent">
                             <span class="ticker-segment">Ładowanie...</span>
@@ -55,6 +85,7 @@
                     </div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
+                <div class="spinner" id="cryptoSpinner"></div>
             </div>
             <div class="log-table">
                 <div class="table-wrapper">
@@ -126,6 +157,70 @@
 
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+
+    // Logika efektu glow
+    const nasaFrame = document.querySelector('.nasa-frame');
+    let startTime = null;
+    let animationFrameId = null;
+
+    function updateGlowEffect(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = (timestamp - startTime) / 1000; // Czas w sekundach
+        const progress = Math.min(elapsed / 5, 1); // Progres do 5 sekund
+        const glowSize = progress * 10; // Maksymalnie 10px
+        nasaFrame.style.boxShadow = `0 0 ${glowSize}px ${glowSize}px #ffeb3b`;
+        if (progress < 1) {
+            animationFrameId = requestAnimationFrame(updateGlowEffect);
+        }
+    }
+
+    function resetGlowEffect() {
+        cancelAnimationFrame(animationFrameId);
+        const currentShadow = getComputedStyle(nasaFrame).boxShadow;
+        const match = currentShadow.match(/(\d+\.?\d*)px/);
+        const currentSize = match ? parseFloat(match[1]) : 0;
+        const duration = (currentSize / 10) * 5; // Czas zanikania proporcjonalny
+        nasaFrame.style.transition = `box-shadow ${duration}s linear`;
+        nasaFrame.style.boxShadow = '0 0 0 0 #ffeb3b';
+        setTimeout(() => {
+            nasaFrame.style.transition = 'box-shadow 0s linear';
+        }, duration * 1000);
+        startTime = null;
+        animationFrameId = null;
+    }
+
+    nasaFrame.addEventListener('mouseenter', () => {
+        nasaFrame.style.transition = 'none';
+        animationFrameId = requestAnimationFrame(updateGlowEffect);
+    });
+
+    nasaFrame.addEventListener('mouseleave', resetGlowEffect);
+
+    // Funkcja tłumaczenia tekstu przez DeepL z publicznym kluczem testowym
+    async function translateText(text) {
+        const apiKey = 'f63c02f3-8f6b-4e14-81e2-d9d996195866:fx'; // Publiczny klucz testowy DeepL (dla celów demonstracyjnych)
+        const url = 'https://api-free.deepl.com/v2/translate';
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `DeepL-Auth-Key ${apiKey}`,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    text: text,
+                    source_lang: 'EN',
+                    target_lang: 'PL',
+                }),
+            });
+            if (!response.ok) throw new Error(`Błąd DeepL: ${response.status}`);
+            const data = await response.json();
+            return data.translations[0].text;
+        } catch (err) {
+            console.error('Błąd tłumaczenia:', err);
+            return text + ' (Błąd tłumaczenia)';
+        }
+    }
 
     // Funkcja do skracania tekstu i dodawania tooltipów
     function truncateTextWithTooltip() {
@@ -682,63 +777,59 @@
         });
     }
 
-    // Flaga w pamięci do blokowania równoległych wywołań
-let isLoggingVisit = false;
+    let isLoggingVisit = false;
 
-async function logVisit() {
-    // Sprawdź, czy logowanie jest już w toku
-    if (isLoggingVisit) {
-        console.log('Logowanie w toku, pomijam kolejne wywołanie.');
-        await updateLogs();
-        return;
-    }
-
-    // Sprawdź, czy log już został zapisany w tej sesji (czerwona flaga)
-    if (sessionStorage.getItem('visitLogged')) {
-        console.log('Log dla tej sesji już zapisany, pomijam.');
-        await updateLogs();
-        return;
-    }
-
-    isLoggingVisit = true;
-    console.log('Rozpoczynam zapis logu...');
-
-    try {
-        const now = new Date();
-        const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
-        const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-        const ip = await getIp();
-        const location = await getLocation(ip);
-        const userAgent = navigator.userAgent;
-        const device = getDeviceType(userAgent);
-        const isp = location.isp || 'Nieznany dostawca';
-        const timestamp = now.getTime();
-
-        const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
-        if (isDuplicate) {
-            console.log('Duplikat logu, pomijam zapis.');
+    async function logVisit() {
+        if (isLoggingVisit) {
+            console.log('Logowanie w toku, pomijam kolejne wywołanie.');
             await updateLogs();
             return;
         }
 
-        const logEntry = { date, day, time, ip, location, device, isp, timestamp };
-        console.log('Log do zapisania:', logEntry);
+        if (sessionStorage.getItem('visitLogged')) {
+            console.log('Log dla tej sesji już zapisany, pomijam.');
+            await updateLogs();
+            return;
+        }
 
-        const logsRef = ref(database, 'logs');
-        const newLogRef = push(logsRef);
+        isLoggingVisit = true;
+        console.log('Rozpoczynam zapis logu...');
 
-        await set(newLogRef, logEntry);
-        console.log('Log zapisany pomyślnie:', logEntry);
-        // Ustaw czerwoną flagę, że log został zapisany
-        sessionStorage.setItem('visitLogged', 'true');
-        await updateLogs();
-    } catch (error) {
-        console.error('Błąd zapisu logu:', error);
-    } finally {
-        isLoggingVisit = false; // Zresetuj flagę po zakończeniu
+        try {
+            const now = new Date();
+            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
+            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const ip = await getIp();
+            const location = await getLocation(ip);
+            const userAgent = navigator.userAgent;
+            const device = getDeviceType(userAgent);
+            const isp = location.isp || 'Nieznany dostawca';
+            const timestamp = now.getTime();
+
+            const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
+            if (isDuplicate) {
+                console.log('Duplikat logu, pomijam zapis.');
+                await updateLogs();
+                return;
+            }
+
+            const logEntry = { date, day, time, ip, location, device, isp, timestamp };
+            console.log('Log do zapisania:', logEntry);
+
+            const logsRef = ref(database, 'logs');
+            const newLogRef = push(logsRef);
+
+            await set(newLogRef, logEntry);
+            console.log('Log zapisany pomyślnie:', logEntry);
+            sessionStorage.setItem('visitLogged', 'true');
+            await updateLogs();
+        } catch (error) {
+            console.error('Błąd zapisu logu:', error);
+        } finally {
+            isLoggingVisit = false;
+        }
     }
-}
 
     async function updateLogs() {
         console.log('Rozpoczynam aktualizację logów...');
@@ -759,7 +850,7 @@ async function logVisit() {
                 }
 
                 displayLogs(logs);
-                truncateTextWithTooltip(); // Wywołanie funkcji po wyświetleniu logów
+                truncateTextWithTooltip();
             }, { onlyOnce: true });
         } catch (error) {
             console.error('Błąd pobierania logów:', error);
@@ -855,9 +946,9 @@ async function logVisit() {
     async function getIp(forceRefresh = false) {
         const cacheKey = 'ip_data';
         const cacheTimeKey = 'ip_time';
-        const cacheDuration = 15 * 60 * 1000; // 15 minutes
+        const cacheDuration = 15 * 60 * 1000; // 15 minut
         const lastCheckKey = 'ip_location_last_check';
-        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
+        const checkInterval = 4 * 60 * 60 * 1000; // 4 godziny
 
         const now = Date.now();
         const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -912,9 +1003,9 @@ async function logVisit() {
     async function getLocation(ip, forceRefresh = false) {
         const cacheKey = `location_${ip}`;
         const cacheTimeKey = `${cacheKey}_time`;
-        const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
+        const cacheDuration = 24 * 60 * 60 * 1000; // 24 godziny
         const lastCheckKey = 'ip_location_last_check';
-        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
+        const checkInterval = 4 * 60 * 60 * 1000; // 4 godziny
 
         const now = Date.now();
         const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -1074,6 +1165,7 @@ async function logVisit() {
             const lon = locationData.lon;
             const city = locationData.city || 'Nieznane miasto';
 
+            document.getElementById('weatherSpinner').style.display = 'block';
             const forecastData = await retryFetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,apparent_temperature_max,precipitation_sum,windspeed_10m_max,winddirection_10m_dominant,sunrise,sunset&timezone=auto`);
             if (forecastData.daily) {
                 const weatherData = { city, forecast: forecastData.daily };
@@ -1102,11 +1194,13 @@ async function logVisit() {
             document.getElementById('weatherForecast').innerHTML = '<div class="forecast-error">Nie można pobrać prognozy pogody. Spróbuj ponownie później.</div>';
             document.getElementById('weatherCity').textContent = 'Nieznane miasto';
             document.getElementById('tickerContent').innerHTML = `<span class="ticker-segment">Błąd pobierania pogody, spróbuj ponownie później.</span>`.repeat(5);
+            document.getElementById('weatherSpinner').style.display = 'none';
             return null;
         }
     }
 
     function displayWeather(weatherData, ip) {
+        document.getElementById('weatherSpinner').style.display = 'none';
         const city = weatherData.city;
         const forecastData = weatherData.forecast;
         document.getElementById('weatherCity').textContent = city;
@@ -1183,6 +1277,8 @@ async function logVisit() {
 
         const imgElement = document.getElementById('spaceImage');
         const tickerElement = document.getElementById('nasaTickerContent');
+        const nasaSpinner = document.getElementById('nasaSpinner');
+        nasaSpinner.style.display = 'block';
         for (let attempt = 1; attempt <= retries; attempt++) {
             try {
                 const data = await retryFetch('https://api.nasa.gov/planetary/apod?api_key=rBtAr7bwTgEu3t8xpUhxoep5qHmbkj1d03UX3joj');
@@ -1201,6 +1297,7 @@ async function logVisit() {
                         imgElement.src = 'planeta.png';
                         imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                         tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
+                        nasaSpinner.style.display = 'none';
                     };
                     setTimeout(() => {
                         if (!imgElement.complete || imgElement.naturalWidth === 0) {
@@ -1208,6 +1305,7 @@ async function logVisit() {
                             imgElement.src = 'planeta.png';
                             imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                             tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
+                            nasaSpinner.style.display = 'none';
                         }
                     }, 5000);
                     return apodData;
@@ -1216,6 +1314,7 @@ async function logVisit() {
                     imgElement.src = 'planeta.png';
                     imgElement.alt = 'NASA APOD zawiera wideo';
                     tickerElement.innerHTML = `<span class="ticker-segment">Jeśli widzisz ten komunikat, to prawdopodobnie NASA opublikowało wideo zamiast obrazka. Niestety, z powodu oszczędności zasobów, obrazki nie są generowane na stronę. Zostaje zatem ten obrazek w gwiezdnej atmosferze i zachęta, by wyjść na zewnątrz i pooglądać gwiazdy na żywo. Jeśli NASA jutro udostępni zdjęcie dnia, na pewno pojawi się ono na stronie.</span>`.repeat(5);
+                    nasaSpinner.style.display = 'none';
                     return null;
                 }
             } catch (err) {
@@ -1231,6 +1330,7 @@ async function logVisit() {
                     imgElement.src = 'planeta.png';
                     imgElement.alt = 'Błąd pobierania zdjęcia z NASA';
                     tickerElement.innerHTML = `<span class="ticker-segment">Błąd pobierania obrazu NASA, wyświetlono domyślny obraz.</span>`.repeat(5);
+                    nasaSpinner.style.display = 'none';
                     if (anyCachedData) {
                         displayNasaApod(anyCachedData);
                         return anyCachedData;
@@ -1242,12 +1342,15 @@ async function logVisit() {
         }
     }
 
-    function displayNasaApod(data) {
+    async function displayNasaApod(data) {
         const imgElement = document.getElementById('spaceImage');
         const tickerElement = document.getElementById('nasaTickerContent');
+        const nasaSpinner = document.getElementById('nasaSpinner');
         imgElement.src = data.url;
         imgElement.alt = data.title || 'NASA Astronomy Picture of the Day';
-        tickerElement.innerHTML = `<span class="ticker-segment">${data.explanation}</span>`.repeat(5);
+        const translatedExplanation = await translateText(data.explanation);
+        tickerElement.innerHTML = `<span class="ticker-segment">${translatedExplanation}</span>`.repeat(5);
+        nasaSpinner.style.display = 'none';
     }
 
     async function getDailyFact() {
@@ -1275,6 +1378,8 @@ async function logVisit() {
             return cachedFact;
         }
 
+        const factSpinner = document.getElementById('factSpinner');
+        factSpinner.style.display = 'block';
         try {
             const data = await retryFetch('calendar.json');
             const fact = data[dateKey] || 'Brak ciekawostki na dziś – sprawdź jutro!';
@@ -1298,12 +1403,14 @@ async function logVisit() {
                 return anyCachedFact;
             }
             displayDailyFact('Błąd ładowania ciekawostki');
+            factSpinner.style.display = 'none';
             return null;
         }
     }
 
     function displayDailyFact(fact) {
         document.getElementById('dailyFact').textContent = fact;
+        document.getElementById('factSpinner').style.display = 'none';
     }
 
     function isDerivative(coin, usedBaseAssets, allCoins) {
@@ -1395,6 +1502,7 @@ async function logVisit() {
         }
 
         try {
+            document.getElementById('cryptoSpinner').style.display = 'block';
             const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1');
             const isMobile = window.innerWidth <= 768;
             const limit = isMobile ? 28 : 35;
@@ -1466,6 +1574,7 @@ async function logVisit() {
                 return anyCachedData;
             }
             document.getElementById('cryptoGrid').innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut.</div>';
+            document.getElementById('cryptoSpinner').style.display = 'none';
             return null;
         }
     }
@@ -1513,6 +1622,7 @@ async function logVisit() {
 
     function displayCryptoData(coins) {
         const cryptoGrid = document.getElementById('cryptoGrid');
+        const cryptoSpinner = document.getElementById('cryptoSpinner');
         cryptoGrid.innerHTML = '';
 
         coins.forEach(coin => {
@@ -1528,6 +1638,7 @@ async function logVisit() {
             });
             cryptoGrid.appendChild(cryptoTile);
         });
+        cryptoSpinner.style.display = 'none';
     }
 
     function checkCSSLoaded() {
@@ -1556,7 +1667,7 @@ async function logVisit() {
 
     async function loadData() {
         const networkStatus = document.getElementById('networkStatus');
-        if (!navigator.onLine) return; // Ładuj dane tylko, jeśli online
+        if (!navigator.onLine) return;
 
         console.log('Połączenie aktywne, ładuję dane');
         if (!isReloading) {
@@ -1623,7 +1734,7 @@ async function logVisit() {
         console.log('Uruchamiam interwał aktualizacji logów');
         updateLogs();
         logIntervalId = setInterval(() => {
-            console.log('Aktualizuję logi...');
+            console.log('Aktualizuję logthermia...');
             updateLogs();
         }, 900000);
     }
@@ -1643,7 +1754,7 @@ async function logVisit() {
         visitCounterIntervalId = setInterval(() => {
             console.log('Aktualizuję licznik odwiedzin...');
             displayVisitCounter();
-        }, 900000); // 15 minut, jak logi
+        }, 900000);
     }
 
     let isManagingIntervals = false;
@@ -2027,7 +2138,7 @@ async function logVisit() {
                 manageAllUpdateIntervals(ipFromQueue);
 
                 await displayVisitCounter();
-                truncateTextWithTooltip(); // Wywołanie funkcji po załadowaniu strony
+                truncateTextWithTooltip();
             } catch (err) {
                 console.error('Błąd podczas inicjalizacji danych:', err);
                 const networkStatus = document.getElementById('networkStatus');
