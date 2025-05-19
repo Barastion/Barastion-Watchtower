@@ -1216,7 +1216,7 @@ async function logVisit() {
                     console.warn('NASA APOD to wideo, używam fallbacku');
                     imgElement.src = 'planeta.png';
                     imgElement.alt = 'NASA APOD zawiera wideo';
-                    tickerElement.innerHTML = `<span class="ticker-segment">NASA APOD to wideo, wyświetlono domyślny obraz.</span>`.repeat(5);
+                    tickerElement.innerHTML = `<span class="ticker-segment">Jeśli widzisz ten komunikat, to prawdopodobnie NASA opublikowało wideo zamiast obrazka. Niestety, z powodu oszczędności zasobów, obrazki nie są generowane na stronę. Zostaje zatem ten obrazek w gwiezdnej atmosferze i zachęta, by wyjść na zewnątrz i pooglądać gwiazdy na żywo. Jeśli NASA jutro udostępni zdjęcie dnia, na pewno pojawi się ono na stronie.</span>`.repeat(5);
                     return null;
                 }
             } catch (err) {
