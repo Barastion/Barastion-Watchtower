@@ -66,7 +66,8 @@ body {
     border: 2px solid #555555;
 }
 
-.nasa-frame img {
+.nasa-frame img,
+.nasa-frame iframe {
     position: absolute;
     top: 0;
     left: 0;
@@ -74,21 +75,10 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 6px;
-    transition: transform 0.3s ease; /* Płynna animacja przybliżania */
 }
 
 .nasa-frame iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     object-fit: contain;
-    border-radius: 6px;
-}
-
-.nasa-frame:hover img {
-    transform: scale(1.1); /* Przybliżenie o 10% po najechaniu na ramkę */
 }
 
 .nasa-ticker {
