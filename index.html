@@ -12,10 +12,11 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me https://api.deepl.com data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
     <style>
         .nasa-frame.glow-effect {
+            position: relative; /* Dla pozycjonowania spinnera */
             transition: box-shadow 0s linear;
         }
         .nasa-frame.glow-effect:hover {
-            animation: glow 5s linear forwards;
+            animation: glow 10s linear forwards; /* Zmiana na 10s */
         }
         @keyframes glow {
             0% { box-shadow: 0 0 0 0 #ffeb3b; }
@@ -29,11 +30,15 @@
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            position: absolute; /* Pozycjonowanie absolutne */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
@@ -162,11 +167,13 @@
     const nasaFrame = document.querySelector('.nasa-frame');
     let startTime = null;
     let animationFrameId = null;
+    let hoverTime = 0; // Śledzenie czasu najechania
 
     function updateGlowEffect(timestamp) {
         if (!startTime) startTime = timestamp;
         const elapsed = (timestamp - startTime) / 1000; // Czas w sekundach
-        const progress = Math.min(elapsed / 5, 1); // Progres do 5 sekund
+        hoverTime = elapsed; // Aktualizacja czasu najechania
+        const progress = Math.min(elapsed / 10, 1); // Progres do 10 sekund
         const glowSize = progress * 10; // Maksymalnie 10px
         nasaFrame.style.boxShadow = `0 0 ${glowSize}px ${glowSize}px #ffeb3b`;
         if (progress < 1) {
@@ -176,10 +183,7 @@
 
     function resetGlowEffect() {
         cancelAnimationFrame(animationFrameId);
-        const currentShadow = getComputedStyle(nasaFrame).boxShadow;
-        const match = currentShadow.match(/(\d+\.?\d*)px/);
-        const currentSize = match ? parseFloat(match[1]) : 0;
-        const duration = (currentSize / 10) * 5; // Czas zanikania proporcjonalny
+        const duration = Math.min(hoverTime, 10); // Czas zanikania = czas najechania, max 10s
         nasaFrame.style.transition = `box-shadow ${duration}s linear`;
         nasaFrame.style.boxShadow = '0 0 0 0 #ffeb3b';
         setTimeout(() => {
@@ -187,10 +191,12 @@
         }, duration * 1000);
         startTime = null;
         animationFrameId = null;
+        hoverTime = 0; // Reset czasu najechania
     }
 
     nasaFrame.addEventListener('mouseenter', () => {
         nasaFrame.style.transition = 'none';
+        startTime = null; // Reset przy każdym najechaniu
         animationFrameId = requestAnimationFrame(updateGlowEffect);
     });
 
@@ -642,7 +648,7 @@
         if (value < allInThreshold && value < 20) {
             signal = 'ALL IN!';
             signalClass = 'all-in';
-            reason = `Wskaźnik sygnału pokazuje ALL IN!, ponieważ wartość FGI = ${value}, EMA30 = ${ema30.toFixed(1)}, próg allInThreshold = ${allInThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 20`;
+            reason = `Wskaźnik sygnału pokazuje ALL IN!, ponieważ wartość FGI = ${value}, EMA30 = ${ EMA30.toFixed(1)}, próg allInThreshold = ${allInThreshold.toFixed(1)} przekroczony, wzmocnienie: wartość < 20`;
         } else if (value < buySlowlyThreshold && value < 40) {
             signal = 'BUY SLOWLY';
             signalClass = 'buy-slowly';
@@ -1734,7 +1740,7 @@
         console.log('Uruchamiam interwał aktualizacji logów');
         updateLogs();
         logIntervalId = setInterval(() => {
-            console.log('Aktualizuję logthermia...');
+            console.log('Aktualizuję logi...');
             updateLogs();
         }, 900000);
     }
