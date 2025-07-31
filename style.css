@@ -254,9 +254,7 @@ body {
     font-size: 0.8em;
     overflow-wrap: break-word;
     display: flex;
-    align
-
--items: center;
+    align-items: center;
     justify-content: center;
     height: 40px;
     color: #ffffff; /* Opis pogody pozostaje biały */
@@ -1278,7 +1276,7 @@ tr:hover td:last-child {
     border-radius: 8px; /* Zaokrąglone rogi */
     padding: 10px; /* Wewnętrzny odstęp */
     box-sizing: border-box; /* Zapobiega wychodzeniu poza granice */
-    margin-top: 10px; /* Odstęp od banera z sygnałami */
+    margin-bottom: 20px; /* Odstęp od sekcji kafelek */
     position: relative; /* Dla pozycjonowania etykiet i wskaźnika */
 }
 
@@ -1305,6 +1303,8 @@ tr:hover td:last-child {
     position: relative;
     border-radius: 10px; /* Zaokrąglone rogi paska */
     overflow: hidden; /* Ukrywa gradient poza granicami */
+    margin: 0 auto; /* Wyśrodkowanie paska */
+    width: 80%; /* Mniejsza szerokość dla lepszego wyglądu */
 }
 
 .indicator-gradient {
@@ -1321,7 +1321,7 @@ tr:hover td:last-child {
     position: absolute;
     top: 0;
     left: 50%; /* Domyślnie w środku */
-    width: 2px; /* Szerokość wskaźnika */
+    width: 4px; /* Szerszy wskaźnik */
     height: 100%;
     background-color: #ffffff; /* Kolor wskaźnika */
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -1329,9 +1329,12 @@ tr:hover td:last-child {
 }
 
 .indicator-labels {
+    position: absolute;
+    top: -20px; /* Umieszczenie napisów nad paskiem */
+    width: 80%; /* Dopasowanie do szerokości paska */
+    left: 10%; /* Wyśrodkowanie względem paska */
     display: flex;
     justify-content: space-between;
-    margin-top: 5px;
     font-size: 0.8em;
     color: #ffffff;
     text-shadow: 
@@ -1346,9 +1349,19 @@ tr:hover td:last-child {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
-.label-left, .label-center, .label-right {
-    flex: 1;
+.label-left {
+    text-align: left;
+    margin-left: 0;
+}
+
+.label-right {
+    text-align: right;
+    margin-right: 0;
+}
+
+.label-center {
     text-align: center;
+    flex: 1;
 }
 
 .indicator-value {
@@ -1373,7 +1386,7 @@ tr:hover td:last-child {
 @media (max-width: 768px) {
     .btc-altcoin-indicator {
         padding: 8px;
-        margin-top: 8px;
+        margin-bottom: 15px;
     }
 
     .indicator-header {
@@ -1382,9 +1395,13 @@ tr:hover td:last-child {
 
     .indicator-bar {
         height: 15px;
+        width: 90%;
     }
 
     .indicator-labels {
+        top: -15px; /* Dostosowanie dla mobilnego */
+        width: 90%;
+        left: 5%;
         font-size: 0.7em;
     }
 
