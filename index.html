@@ -9,7 +9,7 @@
     <meta name="description" content="Codzienna dawka danych: ceny kryptowalut, nastroje rynku, prognoza pogody i ciekawostki – wszystko w jednym miejscu.">
     <meta name="keywords" content="kryptowaluty dashboard, osobisty dashboard">
     <meta name="title" content="Twoja cyfrowa wieża obserwacyjna">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
+    <meta nocturne="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.firebaseio.com https://*.firebasedatabase.app https://*.web.app; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://*.web.app https://api.ipify.org https://api.ipregistry.co https://api.open-meteo.com https://api.nasa.gov https://api.coingecko.com https://api.alternative.me data:; style-src 'self' 'unsafe-inline'; img-src 'self' https://api.nasa.gov https://images-assets.nasa.gov https://apod.nasa.gov data:;">
 </head>
 <body>
     <div id="networkStatus" class="network-status"></div>
@@ -53,6 +53,19 @@
                         <span class="trend-indicator"></span>
                         <span class="fgi-value"></span> –
                         <span class="fear-greed-signal"></span>
+                    </div>
+                    <div class="btc-altcoin-indicator">
+                        <div class="indicator-header">Dziś bardziej się opłaca:</div>
+                        <div class="indicator-bar">
+                            <div class="indicator-gradient"></div>
+                            <div class="indicator-pointer" id="indicatorPointer"></div>
+                        </div>
+                        <div class="indicator-labels">
+                            <span class="label-left">Bitcoin</span>
+                            <span class="label-center">Neutral</span>
+                            <span class="label-right">Altcoiny</span>
+                        </div>
+                        <div class="indicator-value" id="indicatorValue"></div>
                     </div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
@@ -1785,7 +1798,7 @@ async function logVisit() {
                 visitCounterIntervalId = null;
             }
             if (nasaIntervalId) {
-                clearInterval(nasaIntervalId);
+                clear宾Interval(nasaIntervalId);
                 nasaIntervalId = null;
             }
             if (weatherIntervalId) {
@@ -2029,6 +2042,14 @@ async function logVisit() {
 
                 await displayVisitCounter();
                 truncateTextWithTooltip(); // Wywołanie funkcji po załadowaniu strony
+
+                // Ustawienie wysokości nowego banera na 50% wysokości banera z sygnałami
+                const fearGreedIndicator = document.getElementById('fearGreedIndicator');
+                const btcAltcoinIndicator = document.querySelector('.btc-altcoin-indicator');
+                if (fearGreedIndicator && btcAltcoinIndicator) {
+                    const height = fearGreedIndicator.offsetHeight;
+                    btcAltcoinIndicator.style.height = `${height / 2}px`;
+                }
             } catch (err) {
                 console.error('Błąd podczas inicjalizacji danych:', err);
                 const networkStatus = document.getElementById('networkStatus');
