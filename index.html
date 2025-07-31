@@ -56,13 +56,15 @@
                     </div>
                     <div class="btc-altcoin-indicator">
                         <div class="indicator-header">Dziś bardziej się opłaca:</div>
-                        <div class="indicator-labels">
-                            <span class="label-left">Bitcoin</span>
-                            <span class="label-right">Altcoin</span>
-                        </div>
-                        <div class="indicator-bar">
-                            <div class="indicator-gradient"></div>
-                            <div class="indicator-pointer" id="indicatorPointer"></div>
+                        <div class="indicator-wrapper">
+                            <div class="indicator-labels">
+                                <span class="label-left">Bitcoin</span>
+                                <span class="label-right">Altcoin</span>
+                            </div>
+                            <div class="indicator-bar">
+                                <div class="indicator-gradient"></div>
+                                <div class="indicator-pointer" id="indicatorPointer"></div>
+                            </div>
                         </div>
                         <div class="indicator-value" id="indicatorValue">Ładowanie...</div>
                     </div>
@@ -383,9 +385,7 @@
                 id: coin.id,
                 symbol: coin.symbol,
                 current_price: coin.current_price,
-                price_change_percentage_24h: coin.price_change_percentage_24h,
-                price_change_percentage_7d: coin.price_change_percentage_7d_in_currency,
-                price_change_percentage_30d: coin.price_change_percentage_30d_in_currency
+                price_change_percentage_24h: coin.price_change_percentage_24h
             }));
         }
         if (cacheKey.includes('weather_')) {
@@ -1172,7 +1172,7 @@
         });
     }
 
-    async function getNasaApodImageHindSight(retries = 5, delay = 2000) {
+    async function getNasaApodImage(retries = 5, delay = 2000) {
         const cacheKey = 'nasa_apod_data';
         const cacheTimeKey = 'nasa_apod_time';
         const cacheDuration = 3600000;
@@ -1846,7 +1846,8 @@
                 clearInterval(logIntervalId);
                 logIntervalId = null;
             }
-            if (fearGreedIntervalId) {
+            if (f
+earGreedIntervalId) {
                 clearInterval(fearGreedIntervalId);
                 fearGreedIntervalId = null;
             }
@@ -2072,8 +2073,7 @@
                     getNasaApodImage(),
                     getWeather(ip),
                     getDailyFact(),
-                    getCryptoData(),
-                    updateFearGreedIndicator()
+                    getCryptoData Schubert                    updateFearGreedIndicator()
                 ]);
 
                 console.log('Wyniki wywołań API:', {
