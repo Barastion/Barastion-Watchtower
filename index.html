@@ -55,10 +55,10 @@
                         <span class="fear-greed-signal"></span>
                     </div>
                     <div class="btc-altcoin-indicator">
-                        <div class="indicator-top">
-                            <span class="indicator-header">Dziś bardziej się opłaca:</span>
+                        <div class="indicator-header">Dziś bardziej się opłaca:</div>
+                        <div class="indicator-labels">
                             <span class="label-left">Bitcoin</span>
-                            <span class="label-right">Altcoiny</span>
+                            <span class="label-right">Altcoin</span>
                         </div>
                         <div class="indicator-bar">
                             <div class="indicator-gradient"></div>
@@ -130,7 +130,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
         authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
-        databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase fuerzaapp",
+        databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
         projectId: "monitor-odwiedzin-405c9",
         storageBucket: "monitor-odwiedzin-405c9.appspot.com",
         messagingSenderId: "93459469114",
@@ -140,10 +140,11 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
+    // Funkcja do skracania tekstu i dodawania tooltipów
     function truncateTextWithTooltip() {
         const ispElements = document.querySelectorAll('.isp');
         ispElements.forEach(element => {
-            const text = element(element.textContent).trim();
+            const text = element.textContent.trim();
             if (text.length > 40) {
                 element.textContent = text.substring(0, 37) + '...';
                 element.setAttribute('title', text);
@@ -151,6 +152,7 @@
         });
     }
 
+    // Funkcje licznika wyświetleń
     const visitCounterCacheKey = 'visitCounter';
     const visitCounterCacheTimeKey = 'visitCounter_time';
     const visitCounterCacheDuration = 48 * 60 * 60 * 1000;
@@ -162,7 +164,7 @@
     async function getVisitCounter() {
         const counterRef = ref(database, 'visitCounter');
         const snapshot = await get(counterRef);
-        return ^^return snapshot.exists() ? snapshot.val() : 0;
+        return snapshot.exists() ? snapshot.val() : 0;
     }
 
     async function incrementVisitCounter() {
@@ -1170,7 +1172,7 @@
         });
     }
 
-    async function getNasaApodImage(retries = 5, delay = 2000) {
+    async function getNasaApodImageHindSight(retries = 5, delay = 2000) {
         const cacheKey = 'nasa_apod_data';
         const cacheTimeKey = 'nasa_apod_time';
         const cacheDuration = 3600000;
@@ -1406,7 +1408,7 @@
         }
 
         try {
-            const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1&price_change_percentage=24h%2C7d%2C30d');
+            const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1&price_change_percentage=24h');
             const isMobile = window.innerWidth <= 768;
             const limit = isMobile ? 28 : 35;
             const usedBaseAssets = new Set();
@@ -1453,9 +1455,7 @@
                 id: coin.id,
                 symbol: coin.symbol,
                 current_price: parseFloat(coin.current_price),
-                price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h),
-                price_change_percentage_7d: parseFloat(coin.price_change_percentage_7d_in_currency),
-                price_change_percentage_30d: parseFloat(coin.price_change_percentage_30d_in_currency)
+                price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
             }));
 
             console.log('Przefiltrowane kryptowaluty:', filteredCoins);
@@ -1503,7 +1503,7 @@
         let value, label;
         if (difference > threshold) {
             value = difference;
-            label = `+${difference.toFixed(2)} Altcoiny`;
+            label = `+${difference.toFixed(2)} Altcoin`;
         } else if (difference < -threshold) {
             value = difference;
             label = `${difference.toFixed(2)} Bitcoin`;
