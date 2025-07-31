@@ -55,17 +55,16 @@
                         <span class="fear-greed-signal"></span>
                     </div>
                     <div class="btc-altcoin-indicator">
-                        <div class="indicator-header">Dziś bardziej się opłaca:</div>
+                        <div class="indicator-top">
+                            <span class="indicator-header">Dziś bardziej się opłaca:</span>
+                            <span class="label-left">Bitcoin</span>
+                            <span class="label-right">Altcoiny</span>
+                        </div>
                         <div class="indicator-bar">
                             <div class="indicator-gradient"></div>
                             <div class="indicator-pointer" id="indicatorPointer"></div>
                         </div>
-                        <div class="indicator-labels">
-                            <span class="label-left">Bitcoin</span>
-                            <span class="label-center">Neutral</span>
-                            <span class="label-right">Altcoiny</span>
-                        </div>
-                        <div class="indicator-value" id="indicatorValue"></div>
+                        <div class="indicator-value" id="indicatorValue">Ładowanie...</div>
                     </div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
@@ -131,7 +130,7 @@
     const firebaseConfig = {
         apiKey: "AIzaSyC333cf3uIs2QTjVeUN-rDuHtBZkGgZSLU",
         authDomain: "monitor-odwiedzin-405c9.firebaseapp.com",
-        databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase.app",
+        databaseURL: "https://monitor-odwiedzin-405c9-default-rtdb.europe-west1.firebasedatabase fuerzaapp",
         projectId: "monitor-odwiedzin-405c9",
         storageBucket: "monitor-odwiedzin-405c9.appspot.com",
         messagingSenderId: "93459469114",
@@ -141,11 +140,10 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    // Funkcja do skracania tekstu i dodawania tooltipów
     function truncateTextWithTooltip() {
         const ispElements = document.querySelectorAll('.isp');
         ispElements.forEach(element => {
-            const text = element.textContent.trim();
+            const text = element(element.textContent).trim();
             if (text.length > 40) {
                 element.textContent = text.substring(0, 37) + '...';
                 element.setAttribute('title', text);
@@ -153,10 +151,9 @@
         });
     }
 
-    // Funkcje licznika wyświetleń
     const visitCounterCacheKey = 'visitCounter';
     const visitCounterCacheTimeKey = 'visitCounter_time';
-    const visitCounterCacheDuration = 48 * 60 * 60 * 1000; // 48 godzin, jak w logach
+    const visitCounterCacheDuration = 48 * 60 * 60 * 1000;
 
     function formatNumberWithSpaces(number) {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -165,7 +162,7 @@
     async function getVisitCounter() {
         const counterRef = ref(database, 'visitCounter');
         const snapshot = await get(counterRef);
-        return snapshot.exists() ? snapshot.val() : 0;
+        return ^^return snapshot.exists() ? snapshot.val() : 0;
     }
 
     async function incrementVisitCounter() {
@@ -384,7 +381,9 @@
                 id: coin.id,
                 symbol: coin.symbol,
                 current_price: coin.current_price,
-                price_change_percentage_24h: coin.price_change_percentage_24h
+                price_change_percentage_24h: coin.price_change_percentage_24h,
+                price_change_percentage_7d: coin.price_change_percentage_7d_in_currency,
+                price_change_percentage_30d: coin.price_change_percentage_30d_in_currency
             }));
         }
         if (cacheKey.includes('weather_')) {
@@ -591,7 +590,7 @@
         }
 
         const parsedValues = values.map(item => parseFloat(item.value) || 0);
-        const parsedValuesChronological = parsedValues.slice().reverse(); // Odwrócenie dla chronologicznej kolejności
+        const parsedValuesChronological = parsedValues.slice().reverse();
         const ema3 = calculateEMA(parsedValuesChronological, 3);
         const ema8 = calculateEMA(parsedValuesChronological, 8);
         const difference = ema3 - ema8;
@@ -696,63 +695,59 @@
         });
     }
 
-    // Flaga w pamięci do blokowania równoległych wywołań
-let isLoggingVisit = false;
+    let isLoggingVisit = false;
 
-async function logVisit() {
-    // Sprawdź, czy logowanie jest już w toku
-    if (isLoggingVisit) {
-        console.log('Logowanie w toku, pomijam kolejne wywołanie.');
-        await updateLogs();
-        return;
-    }
-
-    // Sprawdź, czy log już został zapisany w tej sesji (czerwona flaga)
-    if (sessionStorage.getItem('visitLogged')) {
-        console.log('Log dla tej sesji już zapisany, pomijam.');
-        await updateLogs();
-        return;
-    }
-
-    isLoggingVisit = true;
-    console.log('Rozpoczynam zapis logu...');
-
-    try {
-        const now = new Date();
-        const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
-        const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-        const ip = await getIp();
-        const location = await getLocation(ip);
-        const userAgent = navigator.userAgent;
-        const device = getDeviceType(userAgent);
-        const isp = location.isp || 'Nieznany dostawca';
-        const timestamp = now.getTime();
-
-        const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
-        if (isDuplicate) {
-            console.log('Duplikat logu, pomijam zapis.');
+    async function logVisit() {
+        if (isLoggingVisit) {
+            console.log('Logowanie w toku, pomijam kolejne wywołanie.');
             await updateLogs();
             return;
         }
 
-        const logEntry = { date, day, time, ip, location, device, isp, timestamp };
-        console.log('Log do zapisania:', logEntry);
+        if (sessionStorage.getItem('visitLogged')) {
+            console.log('Log dla tej sesji już zapisany, pomijam.');
+            await updateLogs();
+            return;
+        }
 
-        const logsRef = ref(database, 'logs');
-        const newLogRef = push(logsRef);
+        isLoggingVisit = true;
+        console.log('Rozpoczynam zapis logu...');
 
-        await set(newLogRef, logEntry);
-        console.log('Log zapisany pomyślnie:', logEntry);
-        // Ustaw czerwoną flagę, że log został zapisany
-        sessionStorage.setItem('visitLogged', 'true');
-        await updateLogs();
-    } catch (error) {
-        console.error('Błąd zapisu logu:', error);
-    } finally {
-        isLoggingVisit = false; // Zresetuj flagę po zakończeniu
+        try {
+            const now = new Date();
+            const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const day = capitalizeFirstLetter(now.toLocaleDateString('pl-PL', { weekday: 'long' }));
+            const time = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const ip = await getIp();
+            const location = await getLocation(ip);
+            const userAgent = navigator.userAgent;
+            const device = getDeviceType(userAgent);
+            const isp = location.isp || 'Nieznany dostawca';
+            const timestamp = now.getTime();
+
+            const isDuplicate = await checkDuplicateLog(ip, device, timestamp);
+            if (isDuplicate) {
+                console.log('Duplikat logu, pomijam zapis.');
+                await updateLogs();
+                return;
+            }
+
+            const logEntry = { date, day, time, ip, location, device, isp, timestamp };
+            console.log('Log do zapisania:', logEntry);
+
+            const logsRef = ref(database, 'logs');
+            const newLogRef = push(logsRef);
+
+            await set(newLogRef, logEntry);
+            console.log('Log zapisany pomyślnie:', logEntry);
+            sessionStorage.setItem('visitLogged', 'true');
+            await updateLogs();
+        } catch (error) {
+            console.error('Błąd zapisu logu:', error);
+        } finally {
+            isLoggingVisit = false;
+        }
     }
-}
 
     async function updateLogs() {
         console.log('Rozpoczynam aktualizację logów...');
@@ -773,7 +768,7 @@ async function logVisit() {
                 }
 
                 displayLogs(logs);
-                truncateTextWithTooltip(); // Wywołanie funkcji po wyświetleniu logów
+                truncateTextWithTooltip();
             }, { onlyOnce: true });
         } catch (error) {
             console.error('Błąd pobierania logów:', error);
@@ -869,9 +864,9 @@ async function logVisit() {
     async function getIp(forceRefresh = false) {
         const cacheKey = 'ip_data';
         const cacheTimeKey = 'ip_time';
-        const cacheDuration = 15 * 60 * 1000; // 15 minutes
+        const cacheDuration = 15 * 60 * 1000;
         const lastCheckKey = 'ip_location_last_check';
-        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
+        const checkInterval = 4 * 60 * 60 * 1000;
 
         const now = Date.now();
         const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -926,9 +921,9 @@ async function logVisit() {
     async function getLocation(ip, forceRefresh = false) {
         const cacheKey = `location_${ip}`;
         const cacheTimeKey = `${cacheKey}_time`;
-        const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
+        const cacheDuration = 24 * 60 * 60 * 1000;
         const lastCheckKey = 'ip_location_last_check';
-        const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
+        const checkInterval = 4 * 60 * 60 * 1000;
 
         const now = Date.now();
         const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -1398,6 +1393,7 @@ async function logVisit() {
         if (anyCachedData) {
             console.log('Wyświetlam starsze dane kryptowalut');
             displayCryptoData(anyCachedData);
+            updateBtcAltcoinIndicator(anyCachedData);
         }
 
         const cachedData = getCachedData(cacheKey, cacheTimeKey, cacheDuration);
@@ -1405,11 +1401,12 @@ async function logVisit() {
             console.log('Używam kryptowalut z cache');
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, cachedData);
             displayCryptoData(cachedData);
+            updateBtcAltcoinIndicator(cachedData);
             return cachedData;
         }
 
         try {
-            const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1');
+            const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1&price_change_percentage=24h%2C7d%2C30d');
             const isMobile = window.innerWidth <= 768;
             const limit = isMobile ? 28 : 35;
             const usedBaseAssets = new Set();
@@ -1456,7 +1453,9 @@ async function logVisit() {
                 id: coin.id,
                 symbol: coin.symbol,
                 current_price: parseFloat(coin.current_price),
-                price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
+                price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h),
+                price_change_percentage_7d: parseFloat(coin.price_change_percentage_7d_in_currency),
+                price_change_percentage_30d: parseFloat(coin.price_change_percentage_30d_in_currency)
             }));
 
             console.log('Przefiltrowane kryptowaluty:', filteredCoins);
@@ -1464,6 +1463,7 @@ async function logVisit() {
             setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, filteredCoins);
             localStorage.removeItem(`rateLimit_${cacheKey}`);
             displayCryptoData(filteredCoins);
+            updateBtcAltcoinIndicator(filteredCoins);
             return filteredCoins;
         } catch (err) {
             console.error('Błąd pobierania kryptowalut:', err);
@@ -1477,11 +1477,68 @@ async function logVisit() {
             if (anyCachedData) {
                 console.log('Używam starszych danych kryptowalut');
                 displayCryptoData(anyCachedData);
+                updateBtcAltcoinIndicator(anyCachedData);
                 return anyCachedData;
             }
             document.getElementById('cryptoGrid').innerHTML = '<div class="crypto-error">Nie można pobrać danych kryptowalut.</div>';
+            document.getElementById('indicatorValue').textContent = 'Brak danych';
             return null;
         }
+    }
+
+    function calculateBtcAltcoinIndicator(coins) {
+        const bitcoin = coins.find(coin => coin.symbol.toLowerCase() === 'btc');
+        if (!bitcoin) return { value: 0, label: '0 - Neutral' };
+
+        const altcoins = coins.filter(coin => coin.symbol.toLowerCase() !== 'btc');
+        if (altcoins.length === 0) return { value: 0, label: '0 - Neutral' };
+
+        const bitcoinChange = bitcoin.price_change_percentage_24h;
+        const altcoinsChanges = altcoins.map(coin => coin.price_change_percentage_24h);
+        const avgAltcoinChange = altcoinsChanges.reduce((sum, change) => sum + change, 0) / altcoinsChanges.length;
+
+        const difference = avgAltcoinChange - bitcoinChange;
+        const threshold = 1.0;
+
+        let value, label;
+        if (difference > threshold) {
+            value = difference;
+            label = `+${difference.toFixed(2)} Altcoiny`;
+        } else if (difference < -threshold) {
+            value = difference;
+            label = `${difference.toFixed(2)} Bitcoin`;
+        } else {
+            value = 0;
+            label = '0 - Neutral';
+        }
+
+        return { value, label };
+    }
+
+    function updateBtcAltcoinIndicator(coins) {
+        const indicatorCacheKey = 'btc_altcoin_indicator';
+        const indicatorCacheTimeKey = 'btc_altcoin_indicator_time';
+        const cacheDuration = 24 * 60 * 60 * 1000;
+
+        const cachedIndicator = getCachedData(indicatorCacheKey, indicatorCacheTimeKey, cacheDuration);
+        const pointer = document.getElementById('indicatorPointer');
+        const valueElement = document.getElementById('indicatorValue');
+
+        let indicatorData;
+        if (cachedIndicator) {
+            console.log('Używam danych wskaźnika BTC/Altcoin z cache');
+            indicatorData = cachedIndicator;
+        } else {
+            indicatorData = calculateBtcAltcoinIndicator(coins);
+            setCachedData(indicatorCacheKey, indicatorCacheTimeKey, indicatorData);
+        }
+
+        const maxDifference = 10;
+        let position = (indicatorData.value / maxDifference) * 50 + 50;
+        position = Math.max(0, Math.min(100, position));
+
+        pointer.style.left = `${position}%`;
+        valueElement.textContent = indicatorData.label;
     }
 
     function formatPrice(price) {
@@ -1570,7 +1627,7 @@ async function logVisit() {
 
     async function loadData() {
         const networkStatus = document.getElementById('networkStatus');
-        if (!navigator.onLine) return; // Ładuj dane tylko, jeśli online
+        if (!navigator.onLine) return;
 
         console.log('Połączenie aktywne, ładuję dane');
         if (!isReloading) {
@@ -1657,7 +1714,7 @@ async function logVisit() {
         visitCounterIntervalId = setInterval(() => {
             console.log('Aktualizuję licznik odwiedzin...');
             displayVisitCounter();
-        }, 900000); // 15 minut, jak logi
+        }, 900000);
     }
 
     let isManagingIntervals = false;
@@ -1749,7 +1806,7 @@ async function logVisit() {
         nasaIntervalId = setInterval(() => {
             console.log('Aktualizuję NASA...');
             getNasaApodImage();
-        }, 10800000); // 3 godziny
+        }, 10800000);
     }
 
     function startWeatherUpdateInterval(ip) {
@@ -1758,7 +1815,7 @@ async function logVisit() {
         weatherIntervalId = setInterval(() => {
             console.log('Aktualizuję pogodę...');
             getWeather(ip);
-        }, 10800000); // 3 godziny
+        }, 10800000);
     }
 
     function startDailyFactUpdateInterval() {
@@ -1767,7 +1824,7 @@ async function logVisit() {
         dailyFactIntervalId = setInterval(() => {
             console.log('Aktualizuję ciekawostkę dnia...');
             getDailyFact();
-        }, 10800000); // 3 godziny
+        }, 10800000);
     }
 
     function manageAllUpdateIntervals(ip) {
@@ -1798,7 +1855,7 @@ async function logVisit() {
                 visitCounterIntervalId = null;
             }
             if (nasaIntervalId) {
-                clear宾Interval(nasaIntervalId);
+                clearInterval(nasaIntervalId);
                 nasaIntervalId = null;
             }
             if (weatherIntervalId) {
@@ -1902,8 +1959,12 @@ async function logVisit() {
             console.log('Pogoda załadowana');
             await updateFearGreedIndicator();
             console.log('Fear and Greed załadowane');
-            await getCryptoData();
+            const coins = await getCryptoData();
             console.log('Kryptowaluty załadowane');
+            if (coins) {
+                updateBtcAltcoinIndicator(coins);
+                console.log('Wskaźnik BTC/Altcoin załadowany');
+            }
             setTimeout(async () => {
                 await logVisit();
                 console.log('Logi załadowane');
@@ -2041,15 +2102,7 @@ async function logVisit() {
                 manageAllUpdateIntervals(ipFromQueue);
 
                 await displayVisitCounter();
-                truncateTextWithTooltip(); // Wywołanie funkcji po załadowaniu strony
-
-                // Ustawienie wysokości nowego banera na 50% wysokości banera z sygnałami
-                const fearGreedIndicator = document.getElementById('fearGreedIndicator');
-                const btcAltcoinIndicator = document.querySelector('.btc-altcoin-indicator');
-                if (fearGreedIndicator && btcAltcoinIndicator) {
-                    const height = fearGreedIndicator.offsetHeight;
-                    btcAltcoinIndicator.style.height = `${height / 2}px`;
-                }
+                truncateTextWithTooltip();
             } catch (err) {
                 console.error('Błąd podczas inicjalizacji danych:', err);
                 const networkStatus = document.getElementById('networkStatus');
@@ -2116,7 +2169,6 @@ async function logVisit() {
         if (dailyFactIntervalId) clearInterval(dailyFactIntervalId);
         console.log('Wstrzymano wszystkie interwały przed opuszczeniem strony');
     });
-
 </script>
 </body>
 </html>
