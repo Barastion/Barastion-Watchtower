@@ -1276,8 +1276,9 @@ tr:hover td:last-child {
     border-radius: 8px; /* Zaokrąglone rogi */
     padding: 10px; /* Wewnętrzny odstęp */
     box-sizing: border-box; /* Zapobiega wychodzeniu poza granice */
-    margin-bottom: 20px; /* Odstęp od sekcji kafelek */
+    margin-bottom: 30px; /* Zwiększony odstęp od sekcji kafelek, aby uniknąć nachodzenia */
     position: relative; /* Dla pozycjonowania etykiet i wskaźnika */
+    margin-top: 20px; /* Odstęp od banera sygnałów */
 }
 
 .indicator-header {
@@ -1303,8 +1304,8 @@ tr:hover td:last-child {
     position: relative;
     border-radius: 10px; /* Zaokrąglone rogi paska */
     overflow: hidden; /* Ukrywa gradient poza granicami */
-    margin: 0 auto; /* Wyśrodkowanie paska */
-    width: 80%; /* Mniejsza szerokość dla lepszego wyglądu */
+    width: 100%; /* Dopasowanie do szerokości banera */
+    margin: 0; /* Usunięcie wyśrodkowania, aby pasowało do szerokości */
 }
 
 .indicator-gradient {
@@ -1330,12 +1331,11 @@ tr:hover td:last-child {
 
 .indicator-labels {
     position: absolute;
-    top: -20px; /* Umieszczenie napisów nad paskiem */
-    width: 80%; /* Dopasowanie do szerokości paska */
-    left: 10%; /* Wyśrodkowanie względem paska */
+    top: -30px; /* Wyższa pozycja, aby dopasować się do wysokości "Dziś bardziej się opłaca:" */
+    width: 100%; /* Pełna szerokość banera */
     display: flex;
     justify-content: space-between;
-    font-size: 0.8em;
+    font-size: 0.9em; /* Dopasowanie wielkości czcionki do "Dziś bardziej się opłaca:" */
     color: #ffffff;
     text-shadow: 
         -1.0px -1.0px 0 #000000,
@@ -1352,21 +1352,24 @@ tr:hover td:last-child {
 .label-left {
     text-align: left;
     margin-left: 0;
+    position: absolute;
+    left: 0;
 }
 
 .label-right {
     text-align: right;
     margin-right: 0;
+    position: absolute;
+    right: 0;
 }
 
 .label-center {
-    text-align: center;
-    flex: 1;
+    display: none; /* Usunięcie "Neutral" z centrum */
 }
 
 .indicator-value {
     text-align: center;
-    margin-top: 5px;
+    margin-top: 10px; /* Większy odstęp pod paskiem */
     font-size: 0.9em;
     font-weight: 600;
     color: #ffeb3b; /* Żółty kolor dla wartości */
@@ -1382,11 +1385,26 @@ tr:hover td:last-child {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
+/* Dynamiczne napisy w zależności od pozycji wskaźnika (do implementacji w JS) */
+.btc-altcoin-indicator[data-value="0"] .label-left::after,
+.btc-altcoin-indicator[data-value="0"] .label-right::after {
+    content: "0 - Neutral";
+}
+
+.btc-altcoin-indicator[data-value^="+"][data-value$="Bitcoin"] .label-left::after {
+    content: attr(data-value);
+}
+
+.btc-altcoin-indicator[data-value^="+"][data-value$="Altcoin"] .label-right::after {
+    content: attr(data-value);
+}
+
 /* Responsywność dla urządzeń mobilnych */
 @media (max-width: 768px) {
     .btc-altcoin-indicator {
         padding: 8px;
-        margin-bottom: 15px;
+        margin-bottom: 20px; /* Dostosowany odstęp dla mobilnych */
+        margin-top: 15px; /* Mniejszy odstęp od banera sygnałów na mobilnych */
     }
 
     .indicator-header {
@@ -1395,17 +1413,16 @@ tr:hover td:last-child {
 
     .indicator-bar {
         height: 15px;
-        width: 90%;
+        width: 100%; /* Pełna szerokość na mobilnych */
     }
 
     .indicator-labels {
-        top: -15px; /* Dostosowanie dla mobilnego */
-        width: 90%;
-        left: 5%;
-        font-size: 0.7em;
+        top: -25px; /* Dostosowanie dla mobilnego */
+        font-size: 0.8em;
     }
 
     .indicator-value {
         font-size: 0.8em;
+        margin-top: 8px;
     }
 }
