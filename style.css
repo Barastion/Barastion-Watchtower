@@ -14,6 +14,9 @@
     --gradient-end-sell-slowly: rgba(140, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
     --gradient-start-cash-out: rgba(220, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
     --gradient-end-cash-out: rgba(180, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
+    --new-banner-bg: linear-gradient(135deg, #1a1a1a, #2d2d2d); /* Nowe tło banera */
+    --new-banner-text: #ffeb3b; /* Kolor tekstu banera */
+    --new-banner-border: 2px solid #555555; /* Obramowanie banera */
 }
 
 body {
@@ -1267,5 +1270,49 @@ tr:hover td:last-child {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+}
+
+/* Nowy baner */
+.new-banner {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    margin: 20px auto;
+    background: var(--new-banner-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: var(--new-banner-border);
+    text-align: center;
+    color: var(--new-banner-text);
+    font-size: 1.1em;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+.new-banner::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.new-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .new-banner {
+        font-size: 0.9em;
+        padding: 10px;
+        margin: 10px auto;
     }
 }
