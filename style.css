@@ -14,9 +14,9 @@
     --gradient-end-sell-slowly: rgba(140, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
     --gradient-start-cash-out: rgba(220, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
     --gradient-end-cash-out: rgba(180, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
-    --new-banner-bg: linear-gradient(135deg, #1a1a1a, #2d2d2d); /* Nowe tło banera */
-    --new-banner-text: #ffeb3b; /* Kolor tekstu banera */
-    --new-banner-border: 2px solid #555555; /* Obramowanie banera */
+    --sentiment-positive: rgba(0, 180, 0, 0.85); /* Zielony dla pozytywnego sentymentu */
+    --sentiment-negative: rgba(180, 0, 0, 0.85); /* Czerwony dla negatywnego sentymentu */
+    --sentiment-neutral: rgba(255, 215, 0, 0.85); /* Żółty dla neutralnego sentymentu */
 }
 
 body {
@@ -968,6 +968,161 @@ tr:hover td:last-child {
     filter: brightness(1.1);
 }
 
+/* New Feature: Market Sentiment Tracker */
+.sentiment-tracker {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sentiment-header {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #ffeb3b;
+    margin-bottom: 10px;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
+}
+
+.sentiment-gauge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: linear-gradient(135deg, #3a3a3a, #2d2d2d);
+    border-radius: 8px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.sentiment-gauge-bar {
+    width: 100%;
+    max-width: 600px;
+    height: 20px;
+    background: linear-gradient(to right, var(--sentiment-negative), var(--sentiment-neutral) 50%, var(--sentiment-positive));
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sentiment-gauge-pointer {
+    position: absolute;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: left 0.5s ease;
+}
+
+.sentiment-value {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 10px;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.sentiment-value.positive {
+    color: var(--sentiment-positive);
+    animation: glow-positive 1.5s ease-in-out infinite;
+}
+
+.sentiment-value.negative {
+    color: var(--sentiment-negative);
+    animation: glow-negative 1.5s ease-in-out infinite;
+}
+
+.sentiment-value.neutral {
+    color: var(--sentiment-neutral);
+    animation: glow-neutral 1.5s ease-in-out infinite;
+}
+
+.sentiment-details {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.sentiment-detail-item {
+    flex: 1;
+    background-color: #3a3a3a;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.sentiment-detail-item:hover {
+    transform: scale(1.05);
+}
+
+.sentiment-detail-label {
+    font-size: 0.8em;
+    color: #cccccc;
+    margin-bottom: 5px;
+}
+
+.sentiment-detail-value {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #ffeb3b;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.sentiment-toggle-button {
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        -1.0px 0 0 #000000,
+        1.0px 0 0 #000000,
+        0 -1.0px 0 #000000,
+        0 1.0px 0 #000000,
+        0 0 25px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    margin: 10px auto;
+    display: block;
+}
+
+.sentiment-toggle-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -1217,6 +1372,53 @@ tr:hover td:last-child {
         max-width: 100%;
     }
 
+    /* Responsive styles for Market Sentiment Tracker */
+    .sentiment-tracker {
+        padding: 10px;
+    }
+
+    .sentiment-header {
+        font-size: 1em;
+    }
+
+    .sentiment-gauge {
+        padding: 8px;
+    }
+
+    .sentiment-gauge-bar {
+        height: 16px;
+    }
+
+    .sentiment-gauge-pointer {
+        width: 3px;
+    }
+
+    .sentiment-value {
+        font-size: 0.8em;
+    }
+
+    .sentiment-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sentiment-detail-item {
+        padding: 8px;
+    }
+
+    .sentiment-detail-label {
+        font-size: 0.7em;
+    }
+
+    .sentiment-detail-value {
+        font-size: 0.8em;
+    }
+
+    .sentiment-toggle-button {
+        font-size: 0.65em;
+        padding: 5px 10px;
+    }
+
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -1270,49 +1472,5 @@ tr:hover td:last-child {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-}
-
-/* Nowy baner */
-.new-banner {
-    position: relative;
-    width: 100%;
-    max-width: 960px;
-    margin: 20px auto;
-    background: var(--new-banner-bg);
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border: var(--new-banner-border);
-    text-align: center;
-    color: var(--new-banner-text);
-    font-size: 1.1em;
-    font-weight: 600;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
-}
-
-.new-banner::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-    border-radius: 10px;
-    z-index: -1;
-}
-
-.new-banner:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    .new-banner {
-        font-size: 0.9em;
-        padding: 10px;
-        margin: 10px auto;
     }
 }
