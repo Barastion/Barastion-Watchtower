@@ -40,7 +40,7 @@
                     <h3 class="weather-city">Pogoda dla: <span id="weatherCity">Ładowanie...</span></h3>
                     <div class="forecast-container" id="weatherForecast"></div>
                     <div class="weather-ticker">
-                        <div id="tickerContent">
+                         <div id="tickerContent">
                             <span class="ticker-segment">Ładowanie...</span>
                         </div>
                     </div>
@@ -221,10 +221,10 @@
 
                     if (response.status === 429) {
                         console.warn(`Błąd 429 dla ${url}, próba ${attempt}`);
-                        const retryPayee = response.headers.get('Retry-After');
+                        const retryAfter = response.headers.get('Retry-After');
                         let delayMs = rateLimitDelay;
 
-                        if (retryPayee) {
+                        if (retryAfter) {
                             const retryAfterSeconds = parseInt(retryAfter, 10);
                             if (!isNaN(retryAfterSeconds)) {
                                 delayMs = retryAfterSeconds * 1000;
@@ -866,9 +866,9 @@
         async function getIp(forceRefresh = false) {
             const cacheKey = 'ip_data';
             const cacheTimeKey = 'ip_time';
-            const cacheDuration = 15 * 60 * 1000; // 15 minut
+            const cacheDuration = 15 * 60 * 1000; // 15 minutes
             const lastCheckKey = 'ip_location_last_check';
-            const checkInterval = 4 * 60 * 60 * 1000; // 4 godziny
+            const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
 
             const now = Date.now();
             const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -923,9 +923,9 @@
         async function getLocation(ip, forceRefresh = false) {
             const cacheKey = `location_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
-            const cacheDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const cacheDuration = 24 * 60 * 60 * 1000; // 24 hours
             const lastCheckKey = 'ip_location_last_check';
-            const checkInterval = 4 * 60 * 60 * 1000; // 4 godziny
+            const checkInterval = 4 * 60 * 60 * 1000; // 4 hours
 
             const now = Date.now();
             const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -1126,7 +1126,7 @@
             forecastContainer.innerHTML = '';
 
             forecastData.time.forEach((date, index) => {
-                const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                const formattedDate = new+f Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
                 const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
                 const weatherCode = forecastData.weathercode[index];
                 const maxTemp = forecastData.temperature_2m_max[index];
@@ -1203,7 +1203,7 @@
                             title: data.title,
                             explanation: data.explanation || 'Brak opisu.'
                         };
-                        setCachedData\sqrtKey, cacheTimeKey, apodData);
+                        setCachedData(cacheKey, cacheTimeKey, apodData);
                         setCachedData(`${cacheKey}_fallback`, `${cacheTimeKey}_fallback`, apodData);
                         localStorage.removeItem(`rateLimit_${cacheKey}`);
                         displayNasaApod(apodData);
@@ -1317,36 +1317,6 @@
             document.getElementById('dailyFact').textContent = fact;
         }
 
-        function filterCoins(coins) {
-            const fiatCurrencies = ['usd', 'eur', 'gbp', 'jpy', 'cny', 'aud', 'cad', 'chf', 'sgd', 'krw', 'susds'];
-            return coins.filter(coin => {
-                const price = parseFloat(coin.current_price);
-                const id = (coin.id || '').toLowerCase();
-                const name = (coin.name || '').toLowerCase();
-                const symbol = (coin.symbol || '').toLowerCase();
-                if (isNaN(price)) {
-                    return false;
-                }
-                if (price >= 0.99 && price <= 1.01) {
-                    return false;
-                }
-                const isFiatRelated = fiatCurrencies.some(currency =>
-                    id.includes(currency) || name.includes(currency) || symbol.includes(currency)
-                );
-                if (isFiatRelated && price >= 0.95 && price <= 1.05) {
-                    return false;
-                }
-                if (price < 0.00001) {
-                    return false;
-                }
-                const { isDerivative: isDeriv } = isDerivative(coin, new Set(), coins);
-                if (isDeriv) {
-                    return false;
-                }
-                return true;
-            });
-        }
-
         function isDerivative(coin, usedBaseAssets, allCoins) {
             const derivativeKeywords = [
                 'wrapped', 'staked', 'liquid', 'bridged', 'pegged',
@@ -1421,36 +1391,67 @@
                 return { score: 0, valueText: 'Neutral' };
             }
             const altcoins = data.filter(coin => coin.id !== 'bitcoin');
-            const filteredAltcoins = filterCoins(altcoins);
+            const usedBaseAssets = new Set();
+            const fiatCurrencies = ['usd', 'eur', 'gbp', 'jpy', 'cny', 'aud', 'cad', 'chf', 'sgd', 'krw', 'susds'];
+
+            const filteredAltcoins = altcoins.filter(coin => {
+                const price = parseFloat(coin.current_price);
+                const id = (coin.id || '').toLowerCase();
+                const name = (coin.name || '').toLowerCase();
+                const symbol = (coin.symbol || '').toLowerCase();
+
+                if (isNaN(price)) return false;
+                if (price >= 0.99 && price <= 1.01) return false;
+                const isFiatRelated = fiatCurrencies.some(currency =>
+                    id.includes(currency) || name.includes(currency) || symbol.includes(currency)
+                );
+                if (isFiatRelated && price >= 0.95 && price <= 1.05) return false;
+                if (price < 0.00001) return false;
+
+                const { isDerivative: isDeriv } = isDerivative(coin, usedBaseAssets, data);
+                if (isDeriv) return false;
+
+                usedBaseAssets.add(symbol.toUpperCase());
+                return true;
+            });
+
             const top15Altcoins = filteredAltcoins.slice(0, 15);
             if (top15Altcoins.length < 15) {
                 console.warn('Za mało altcoinów po filtracji');
             }
+
             const totalMarketCap = top15Altcoins.reduce((sum, coin) => sum + (coin.market_cap || 0), 0);
             if (totalMarketCap === 0) {
                 console.error('Suma market_cap altcoinów jest zero');
                 return { score: 0, valueText: 'Neutral' };
             }
+
             const alt_30d = top15Altcoins.reduce((sum, coin) => sum + ((coin.price_change_percentage_30d || 0) * (coin.market_cap || 0)), 0) / totalMarketCap;
             const alt_7d = top15Altcoins.reduce((sum, coin) => sum + ((coin.price_change_percentage_7d || 0) * (coin.market_cap || 0)), 0) / totalMarketCap;
             const alt_24h = top15Altcoins.reduce((sum, coin) => sum + ((coin.price_change_percentage_24h || 0) * (coin.market_cap || 0)), 0) / totalMarketCap;
+
             const btc_30d = bitcoin.price_change_percentage_30d || 0;
             const btc_7d = bitcoin.price_change_percentage_7d || 0;
             const btc_24h = bitcoin.price_change_percentage_24h || 0;
+
             const diff_30d = btc_30d - alt_30d;
             const diff_7d = btc_7d - alt_7d;
             const diff_24h = btc_24h - alt_24h;
+
             const weight_30d = 0.3;
             const weight_7d = 0.5;
             const weight_24h = 0.2;
+
             const weighted_diff = (diff_30d * weight_30d) + (diff_7d * weight_7d) + (diff_24h * weight_24h);
             const max_diff = 40;
             let balance_score = (weighted_diff / max_diff) * 50;
             balance_score = Math.max(-50, Math.min(50, balance_score));
+
             if (Math.abs(diff_7d) > 20) {
                 balance_score *= 1.5;
                 balance_score = Math.max(-50, Math.min(50, balance_score));
             }
+
             const final_score = Math.round(balance_score);
             let value_text;
             if (final_score < 0) {
@@ -1460,6 +1461,7 @@
             } else {
                 value_text = 'Neutral';
             }
+
             return { score: final_score, valueText: value_text };
         }
 
@@ -1507,14 +1509,52 @@
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 28 : 35;
                 const usedBaseAssets = new Set();
+                const fiatCurrencies = ['usd', 'eur', 'gbp', 'jpy', 'cny', 'aud', 'cad', 'chf', 'sgd', 'krw', 'susds'];
 
-                const filteredCoins = filterCoins(data).slice(0, limit).map(coin => ({
+                const filteredCoins = data.filter(coin => {
+                    const price = parseFloat(coin.current_price);
+                    const id = (coin.id || '').toLowerCase();
+                    const name = (coin.name || '').toLowerCase();
+                    const symbol = (coin.symbol || '').toLowerCase();
+
+                    if (isNaN(price)) {
+                        console.log(`Pominięto ${coin.symbol}: nieprawidłowa cena (${coin.current_price})`);
+                        return false;
+                    }
+
+                    if (price >= 0.99 && price <= 1.01) {
+                        console.log(`Pominięto ${coin.symbol}: cena w przedziale 0.99–1.01 USD (${price} USD)`);
+                        return false;
+                    }
+
+                    const isFiatRelated = fiatCurrencies.some(currency =>
+                        id.includes(currency) || name.includes(currency) || symbol.includes(currency)
+                    );
+                    if (isFiatRelated && price >= 0.95 && price <= 1.05) {
+                        console.log(`Pominięto stablecoin: ${coin.symbol} (cena: ${price} USD)`);
+                        return false;
+                    }
+
+                    if (price < 0.00001) {
+                        console.log(`Pominięto ${coin.symbol}: cena ${price} USD`);
+                        return false;
+                    }
+
+                    const { isDerivative: isDeriv, baseSymbol } = isDerivative(coin, usedBaseAssets, data);
+                    if (isDeriv) {
+                        console.log(`Pochodna: ${coin.symbol} należy do ${baseSymbol}`);
+                        return false;
+                    }
+
+                    usedBaseAssets.add(baseSymbol);
+                    return true;
+                }).slice(0, limit).map(coin => ({
                     id: coin.id,
                     symbol: coin.symbol,
                     current_price: parseFloat(coin.current_price),
                     price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h),
-                    price_change_percentage_7d: parseFloat(coin.price_change_percentage_7d),
-                    price_change_percentage_30d: parseFloat(coin.price_change_percentage_30d),
+                    price_change_percentage_7d: parseFloat(coin.price_change_percentage_7d_in_currency || 0),
+                    price_change_percentage_30d: parseFloat(coin.price_change_percentage_30d_in_currency || 0),
                     market_cap: coin.market_cap
                 }));
 
@@ -1633,7 +1673,7 @@
 
         async function loadData() {
             const networkStatus = document.getElementById('networkStatus');
-            if (!navigator.onLine) return; // Ładuj dane tylko, jeśli online
+            if (!navigator.onLine) return;
 
             console.log('Połączenie aktywne, ładuję dane');
             if (!isReloading) {
@@ -1684,6 +1724,7 @@
         let logIntervalId = null;
         let fearGreedIntervalId = null;
         let visitCounterIntervalId = null;
+        let balanceBarIntervalId = null;
         let lastUpdateTime = null;
         const MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
 
@@ -1720,7 +1761,24 @@
             visitCounterIntervalId = setInterval(() => {
                 console.log('Aktualizuję licznik odwiedzin...');
                 displayVisitCounter();
-            }, 900000); // 15 minut, jak logi
+            }, 900000);
+        }
+
+        function startBalanceBarUpdateInterval() {
+            console.log('Uruchamiam interwał aktualizacji banera balansu');
+            const cachedData = getCachedData('crypto_data', 'crypto_time', 15 * 60 * 1000);
+            if (cachedData) {
+                const balanceScore = calculateBalanceScore(cachedData);
+                updateBalanceBar(balanceScore);
+            }
+            balanceBarIntervalId = setInterval(() => {
+                console.log('Aktualizuję baner balansu...');
+                const cachedData = getCachedData('crypto_data', 'crypto_time', 15 * 60 * 1000);
+                if (cachedData) {
+                    const balanceScore = calculateBalanceScore(cachedData);
+                    updateBalanceBar(balanceScore);
+                }
+            }, 3600000); // 1 godzina
         }
 
         let isManagingIntervals = false;
@@ -1752,6 +1810,10 @@
                     clearInterval(visitCounterIntervalId);
                     visitCounterIntervalId = null;
                 }
+                if (balanceBarIntervalId) {
+                    clearInterval(balanceBarIntervalId);
+                    balanceBarIntervalId = null;
+                }
 
                 if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
                     console.log('Minął minimalny czas, odświeżam dane');
@@ -1759,6 +1821,7 @@
                     startLogUpdateInterval();
                     startFearGreedUpdateInterval();
                     startVisitCounterUpdateInterval();
+                    startBalanceBarUpdateInterval();
                     lastUpdateTime = now;
                 } else {
                     console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
@@ -1778,6 +1841,14 @@
                         console.log('Aktualizuję licznik odwiedzin...');
                         displayVisitCounter();
                     }, 900000);
+                    balanceBarIntervalId = setInterval(() => {
+                        console.log('Aktualizuję baner balansu...');
+                        const cachedData = getCachedData('crypto_data', 'crypto_time', 15 * 60 * 1000);
+                        if (cachedData) {
+                            const balanceScore = calculateBalanceScore(cachedData);
+                            updateBalanceBar(balanceScore);
+                        }
+                    }, 3600000);
                 }
             } else {
                 console.log('Karta nieaktywna, wstrzymuję aktualizacje');
@@ -1796,6 +1867,10 @@
                 if (visitCounterIntervalId) {
                     clearInterval(visitCounterIntervalId);
                     visitCounterIntervalId = null;
+                }
+                if (balanceBarIntervalId) {
+                    clearInterval(balanceBarIntervalId);
+                    balanceBarIntervalId = null;
                 }
             }
 
@@ -1860,6 +1935,10 @@
                     clearInterval(visitCounterIntervalId);
                     visitCounterIntervalId = null;
                 }
+                if (balanceBarIntervalId) {
+                    clearInterval(balanceBarIntervalId);
+                    balanceBarIntervalId = null;
+                }
                 if (nasaIntervalId) {
                     clearInterval(nasaIntervalId);
                     nasaIntervalId = null;
@@ -1879,6 +1958,7 @@
                     startLogUpdateInterval();
                     startFearGreedUpdateInterval();
                     startVisitCounterUpdateInterval();
+                    startBalanceBarUpdateInterval();
                     startNasaUpdateInterval();
                     startWeatherUpdateInterval(ip);
                     startDailyFactUpdateInterval();
@@ -1901,7 +1981,15 @@
                         console.log('Aktualizuję licznik odwiedzin...');
                         displayVisitCounter();
                     }, 900000);
-                    nasaIntervalId = setInterval(() => {
+                    balanceBarIntervalId = setInterval(() => {
+                        console.log('Aktualizuję baner balansu...');
+                        const cachedData = getCachedData('crypto_data', 'crypto_time', 15 * 60 * 1000);
+                        if (cachedData) {
+                            const balanceScore = calculateBalanceScore(cachedData);
+                            updateBalanceBar(balanceScore);
+                        }
+                    }, 3600000);
+                    nasaIntervalmeIntervalId = setInterval(() => {
                         console.log('Aktualizuję NASA...');
                         getNasaApodImage();
                     }, 10800000);
@@ -1931,6 +2019,10 @@
                 if (visitCounterIntervalId) {
                     clearInterval(visitCounterIntervalId);
                     visitCounterIntervalId = null;
+                }
+                if (balanceBarIntervalId) {
+                    clearInterval(balanceBarIntervalId);
+                    balanceBarIntervalId = null;
                 }
                 if (nasaIntervalId) {
                     clearInterval(nasaIntervalId);
@@ -2120,8 +2212,7 @@
             document.addEventListener('visibilitychange', () => {
                 console.log(`Zmiana widoczności: ${document.visibilityState}`);
                 manageUpdateIntervals();
-                const ipPromise = getIp();
-                ipPromise.then(ip => manageAllUpdateIntervals(ip));
+                manageAllUpdateIntervals(getIp());
             });
 
             window.addEventListener('online', () => {
@@ -2167,6 +2258,7 @@
             if (logIntervalId) clearInterval(logIntervalId);
             if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
             if (visitCounterIntervalId) clearInterval(visitCounterIntervalId);
+            if (balanceBarIntervalId) clearInterval(balanceBarIntervalId);
             if (nasaIntervalId) clearInterval(nasaIntervalId);
             if (weatherIntervalId) clearInterval(weatherIntervalId);
             if (dailyFactIntervalId) clearInterval(dailyFactIntervalId);
