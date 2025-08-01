@@ -17,6 +17,9 @@
     --sentiment-positive: rgba(0, 180, 0, 0.85); /* Zielony dla pozytywnego sentymentu */
     --sentiment-negative: rgba(180, 0, 0, 0.85); /* Czerwony dla negatywnego sentymentu */
     --sentiment-neutral: rgba(255, 215, 0, 0.85); /* Żółty dla neutralnego sentymentu */
+    --balance-bitcoin: rgba(0, 180, 0, 0.85); /* Zielony dla Bitcoina */
+    --balance-altcoin: rgba(0, 180, 0, 0.85); /* Zielony dla altcoinów */
+    --balance-neutral: rgba(255, 215, 0, 0.85); /* Żółty dla neutralności */
 }
 
 body {
@@ -849,7 +852,7 @@ tr:hover td:last-child {
 @keyframes pulse-positive {
     0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.8); }
     50% { box-shadow: 0 0 13px rgba(0, 255, 0, 1); }
-    100% { box-shadow: 0 0 8px rgba(0, 255, 0, 0.8); }
+    100% { box-shadow: 0 0 8px rgba(0, 0, 0, 0.8); }
 }
 
 @keyframes pulse-negative {
@@ -968,19 +971,21 @@ tr:hover td:last-child {
     filter: brightness(1.1);
 }
 
-/* New Feature: Market Sentiment Tracker */
-.sentiment-tracker {
+/* New Feature: Bitcoin-Altcoin Balance Indicator */
+.balance-indicator {
     background-color: #2d2d2d;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
+    width: 100%;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    box-sizing: border-box;
 }
 
-.sentiment-header {
+.balance-header {
     text-align: center;
     font-size: 1.2em;
     font-weight: 600;
@@ -994,7 +999,35 @@ tr:hover td:last-child {
         0 0 5px rgba(0, 0, 0, 0.9);
 }
 
-.sentiment-gauge {
+.balance-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.balance-label-bitcoin,
+.balance-label-altcoin {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.balance-label-bitcoin {
+    text-align: left;
+}
+
+.balance-label-altcoin {
+    text-align: right;
+}
+
+.balance-gauge {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1004,27 +1037,27 @@ tr:hover td:last-child {
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.sentiment-gauge-bar {
+.balance-gauge-bar {
     width: 100%;
-    max-width: 600px;
-    height: 20px;
-    background: linear-gradient(to right, var(--sentiment-negative), var(--sentiment-neutral) 50%, var(--sentiment-positive));
+    max-width: 400px;
+    height: 15px; /* 50% of fear-greed-indicator min-height (30px) */
+    background: linear-gradient(to right, var(--balance-bitcoin), var(--balance-neutral) 50%, var(--balance-altcoin));
     border-radius: 10px;
     position: relative;
     overflow: hidden;
 }
 
-.sentiment-gauge-pointer {
+.balance-gauge-pointer {
     position: absolute;
     top: 0;
-    width: 4px;
+    width: 6px;
     height: 100%;
     background-color: #ffffff;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     transition: left 0.5s ease;
 }
 
-.sentiment-value {
+.balance-value {
     text-align: center;
     font-size: 0.9em;
     font-weight: 600;
@@ -1038,89 +1071,19 @@ tr:hover td:last-child {
         0 0 3px rgba(0, 0, 0, 0.9);
 }
 
-.sentiment-value.positive {
-    color: var(--sentiment-positive);
+.balance-value.bitcoin {
+    color: var(--balance-bitcoin);
     animation: glow-positive 1.5s ease-in-out infinite;
 }
 
-.sentiment-value.negative {
-    color: var(--sentiment-negative);
-    animation: glow-negative 1.5s ease-in-out infinite;
+.balance-value.altcoin {
+    color: var(--balance-altcoin);
+    animation: glow-positive 1.5s ease-in-out infinite;
 }
 
-.sentiment-value.neutral {
-    color: var(--sentiment-neutral);
+.balance-value.neutral {
+    color: var(--balance-neutral);
     animation: glow-neutral 1.5s ease-in-out infinite;
-}
-
-.sentiment-details {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    gap: 10px;
-}
-
-.sentiment-detail-item {
-    flex: 1;
-    background-color: #3a3a3a;
-    padding: 10px;
-    border-radius: 6px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease;
-}
-
-.sentiment-detail-item:hover {
-    transform: scale(1.05);
-}
-
-.sentiment-detail-label {
-    font-size: 0.8em;
-    color: #cccccc;
-    margin-bottom: 5px;
-}
-
-.sentiment-detail-value {
-    font-size: 0.9em;
-    font-weight: bold;
-    color: #ffeb3b;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.sentiment-toggle-button {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.75em;
-    font-weight: 600;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.0px 0 #000000,
-        0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    margin: 10px auto;
-    display: block;
-}
-
-.sentiment-toggle-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    filter: brightness(1.1);
 }
 
 @media (max-width: 768px) {
@@ -1372,51 +1335,35 @@ tr:hover td:last-child {
         max-width: 100%;
     }
 
-    /* Responsive styles for Market Sentiment Tracker */
-    .sentiment-tracker {
+    /* Responsive styles for Bitcoin-Altcoin Balance Indicator */
+    .balance-indicator {
         padding: 10px;
     }
 
-    .sentiment-header {
+    .balance-header {
         font-size: 1em;
     }
 
-    .sentiment-gauge {
-        padding: 8px;
-    }
-
-    .sentiment-gauge-bar {
-        height: 16px;
-    }
-
-    .sentiment-gauge-pointer {
-        width: 3px;
-    }
-
-    .sentiment-value {
+    .balance-label-bitcoin,
+    .balance-label-altcoin {
         font-size: 0.8em;
     }
 
-    .sentiment-details {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .sentiment-detail-item {
+    .balance-gauge {
         padding: 8px;
     }
 
-    .sentiment-detail-label {
-        font-size: 0.7em;
+    .balance-gauge-bar {
+        height: 12px;
+        max-width: 300px;
     }
 
-    .sentiment-detail-value {
+    .balance-gauge-pointer {
+        width: 4px;
+    }
+
+    .balance-value {
         font-size: 0.8em;
-    }
-
-    .sentiment-toggle-button {
-        font-size: 0.65em;
-        padding: 5px 10px;
     }
 
     ::-webkit-scrollbar {
