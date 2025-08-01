@@ -492,6 +492,113 @@ body {
         0 0 25px rgba(0, 0, 0, 0.9);
 }
 
+/* New Feature: Bitcoin-Altcoin Balance Bar */
+.balance-bar {
+    background-color: #2d2d2d;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+.balance-header {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #ffeb3b;
+    margin-bottom: 10px;
+    text-shadow: 
+        -1.0px -1.0px 0 #000000,
+        1.0px -1.0px 0 #000000,
+        -1.0px 1.0px 0 #000000,
+        1.0px 1.0px 0 #000000,
+        0 0 5px rgba(0, 0, 0, 0.9);
+}
+
+.balance-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.label-bitcoin,
+.label-altcoin {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.label-bitcoin {
+    text-align: left;
+}
+
+.label-altcoin {
+    text-align: right;
+}
+
+.balance-gradient {
+    width: 100%;
+    max-width: 400px;
+    height: 15px; /* 50% of fear-greed-indicator min-height (30px) */
+    background: linear-gradient(to right, var(--balance-bitcoin), var(--balance-neutral) 50%, var(--balance-altcoin));
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.balance-indicator {
+    position: absolute;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: left 0.5s ease;
+}
+
+.balance-value {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 10px;
+    text-shadow: 
+        -0.5px -0.5px 0 #000000,
+        0.5px -0.5px 0 #000000,
+        -0.5px 0.5px 0 #000000,
+        0.5px 0.5px 0 #000000,
+        0 0 3px rgba(0, 0, 0, 0.9);
+}
+
+.balance-value.bitcoin {
+    color: var(--balance-bitcoin);
+    animation: glow-positive 1.5s ease-in-out infinite;
+}
+
+.balance-value.altcoin {
+    color: var(--balance-altcoin);
+    animation: glow-positive 1.5s ease-in-out infinite;
+}
+
+.balance-value.neutral {
+    color: var(--balance-neutral);
+    animation: glow-neutral 1.5s ease-in-out infinite;
+}
+
 .crypto-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -971,119 +1078,24 @@ tr:hover td:last-child {
     filter: brightness(1.1);
 }
 
-/* New Feature: Bitcoin-Altcoin Balance Indicator */
-.balance-indicator {
-    background-color: #2d2d2d;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.75em;
+    color: #cccccc;
 }
 
-.balance-header {
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: 600;
+.footer p {
+    margin: 2px 0;
+}
+
+.footer a {
     color: #ffeb3b;
-    margin-bottom: 10px;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
+    text-decoration: none;
 }
 
-.balance-labels {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.balance-label-bitcoin,
-.balance-label-altcoin {
-    font-size: 0.9em;
-    font-weight: 600;
-    color: #ffffff;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.balance-label-bitcoin {
-    text-align: left;
-}
-
-.balance-label-altcoin {
-    text-align: right;
-}
-
-.balance-gauge {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    background: linear-gradient(135deg, #3a3a3a, #2d2d2d);
-    border-radius: 8px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.balance-gauge-bar {
-    width: 100%;
-    max-width: 400px;
-    height: 15px; /* 50% of fear-greed-indicator min-height (30px) */
-    background: linear-gradient(to right, var(--balance-bitcoin), var(--balance-neutral) 50%, var(--balance-altcoin));
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
-}
-
-.balance-gauge-pointer {
-    position: absolute;
-    top: 0;
-    width: 6px;
-    height: 100%;
-    background-color: #ffffff;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    transition: left 0.5s ease;
-}
-
-.balance-value {
-    text-align: center;
-    font-size: 0.9em;
-    font-weight: 600;
-    color: #ffffff;
-    margin-top: 10px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.balance-value.bitcoin {
-    color: var(--balance-bitcoin);
-    animation: glow-positive 1.5s ease-in-out infinite;
-}
-
-.balance-value.altcoin {
-    color: var(--balance-altcoin);
-    animation: glow-positive 1.5s ease-in-out infinite;
-}
-
-.balance-value.neutral {
-    color: var(--balance-neutral);
-    animation: glow-neutral 1.5s ease-in-out infinite;
+.footer a:hover {
+    text-decoration: underline;
 }
 
 @media (max-width: 768px) {
@@ -1335,8 +1347,8 @@ tr:hover td:last-child {
         max-width: 100%;
     }
 
-    /* Responsive styles for Bitcoin-Altcoin Balance Indicator */
-    .balance-indicator {
+    /* Responsive styles for Bitcoin-Altcoin Balance Bar */
+    .balance-bar {
         padding: 10px;
     }
 
@@ -1344,21 +1356,17 @@ tr:hover td:last-child {
         font-size: 1em;
     }
 
-    .balance-label-bitcoin,
-    .balance-label-altcoin {
+    .label-bitcoin,
+    .label-altcoin {
         font-size: 0.8em;
     }
 
-    .balance-gauge {
-        padding: 8px;
-    }
-
-    .balance-gauge-bar {
+    .balance-gradient {
         height: 12px;
         max-width: 300px;
     }
 
-    .balance-gauge-pointer {
+    .balance-indicator {
         width: 4px;
     }
 
