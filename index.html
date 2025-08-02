@@ -55,16 +55,17 @@
                         <span class="fear-greed-signal"></span>
                     </div>
                 </div>
+                <!-- Poprawiony baner z paskiem balansu -->
                 <div class="balance-bar" id="balanceBar">
-                    <div class="balance-header">Dziś bardziej się opłaca:</div>
-                    <div class="balance-labels">
+                    <div class="balance-header">
+                        <span class="balance-text">Dziś bardziej się opłaca:</span>
                         <span class="label-bitcoin">Bitcoin</span>
                         <span class="label-altcoin">Altcoin</span>
                     </div>
                     <div class="balance-gradient">
                         <div class="balance-indicator" id="balanceIndicator"></div>
                     </div>
-                    <div class="balance-value" id="balanceValue"></div>
+                    <div class="balance-value" id="balanceValue">Neutral</div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
             </div>
@@ -382,7 +383,8 @@
                     current_price: coin.current_price,
                     price_change_percentage_24h: coin.price_change_percentage_24h,
                     price_change_percentage_7d: coin.price_change_percentage_7d,
-                    price_change_percentage_30d: coin.price_change_percentage_30d
+                    price_change_percentage_30d: coin.price_change_percentage_30d,
+                    market_cap: coin.market_cap
                 }));
             }
             if (cacheKey.includes('weather_')) {
@@ -802,7 +804,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${log.date || 'Brak'}</td>
-                    <td>${log.day || 'Brak'}</td
+                    <td>${log.day || 'Brak'}</td>
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
@@ -1124,7 +1126,7 @@
 
             forecastData.time.forEach((date, index) => {
                 const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', {Aweekday: 'long' }));
+                const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
                 const weatherCode = forecastData.weathercode[index];
                 const maxTemp = forecastData.temperature_2m_max[index];
                 const minTemp = forecastData.temperature_2m_min[index];
@@ -1405,7 +1407,7 @@
             }
 
             try {
-                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1&sparkline=false&price_change_percentage=1h,24h,7d,30d');
+                const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1&sparkline=false&price_change_percentage=24h,7d,30d');
                 const isMobile = window.innerWidth <= 768;
                 const limit = isMobile ? 28 : 35;
                 const usedBaseAssets = new Set();
@@ -1486,24 +1488,37 @@
         }
 
         function updateBalanceBar(coins) {
+            console.log('Aktualizuję pasek balansu z danymi:', coins);
+            const indicator = document.getElementById('balanceIndicator');
+            const valueElement = document.getElementById('balanceValue');
+
+            if (!coins || coins.length === 0) {
+                console.error('Brak danych kryptowalut');
+                indicator.style.left = '50%';
+                valueElement.textContent = 'Brak danych';
+                return;
+            }
+
             const bitcoin = coins.find(coin => coin.id === 'bitcoin');
             if (!bitcoin) {
                 console.error('Brak danych dla Bitcoina');
-                document.getElementById('balanceValue').textContent = 'Brak danych';
+                indicator.style.left = '50%';
+                valueElement.textContent = 'Brak Bitcoina';
                 return;
             }
 
             const altcoins = coins.filter(coin => coin.id !== 'bitcoin').slice(0, 15);
             if (altcoins.length < 15) {
-                console.error('Za mało altcoinów do obliczenia średniej');
-                document.getElementById('balanceValue').textContent = 'Za mało danych';
+                console.error('Za mało altcoinów do obliczenia średniej:', altcoins.length);
+                indicator.style.left = '50%';
+                valueElement.textContent = 'Za mało altcoinów';
                 return;
             }
 
             const btcChanges = {
-                d1: bitcoin.price_change_percentage_24h,
-                d7: bitcoin.price_change_percentage_7d,
-                d30: bitcoin.price_change_percentage_30d
+                d1: bitcoin.price_change_percentage_24h || 0,
+                d7: bitcoin.price_change_percentage_7d || 0,
+                d30: bitcoin.price_change_percentage_30d || 0
             };
 
             const altChanges = {
@@ -1512,6 +1527,9 @@
                 d30: weightedAverage(altcoins, 'price_change_percentage_30d')
             };
 
+            console.log('Zmiany BTC:', btcChanges);
+            console.log('Zmiany Altcoinów:', altChanges);
+
             const diff = {
                 d1: btcChanges.d1 - altChanges.d1,
                 d7: btcChanges.d7 - altChanges.d7,
@@ -1519,7 +1537,7 @@
             };
 
             const weights = { d30: 0.3, d7: 0.5, d1: 0.2 };
-            const weightedDiff = (diff.d30 * weights.d30) + (diff.d7 * weights.d7) + (diff.d1 * weights.d1);
+            let weightedDiff = (diff.d30 * weights.d30) + (diff.d7 * weights.d7) + (diff.d1 * weights.d1);
 
             let balanceScore = (weightedDiff / 40) * 50;
             if (Math.abs(diff.d7) > 20) {
@@ -1527,17 +1545,14 @@
             }
             balanceScore = Math.min(Math.max(balanceScore, -50), 50);
 
-            const indicator = document.getElementById('balanceIndicator');
-            const valueElement = document.getElementById('balanceValue');
-
             const position = ((balanceScore + 50) / 100) * 100;
             indicator.style.left = `${position}%`;
 
             let valueText;
-            if (balanceScore < 0) {
-                valueText = `+${Math.abs(Math.round(balanceScore))} Bitcoin`;
-            } else if (balanceScore > 0) {
-                valueText = `+${Math.round(balanceScore)} Altcoin`;
+            if (balanceScore < -10) {
+                valueText = `Bitcoin +${Math.abs(Math.round(balanceScore))}%`;
+            } else if (balanceScore > 10) {
+                valueText = `Altcoin +${Math.round(balanceScore)}%`;
             } else {
                 valueText = 'Neutral';
             }
@@ -1547,8 +1562,12 @@
         }
 
         function weightedAverage(coins, key) {
-            const totalMarketCap = coins.reduce((sum, coin) => sum + coin.market_cap, 0);
-            return coins.reduce((sum, coin) => sum + (coin[key] * (coin.market_cap / totalMarketCap)), 0);
+            const totalMarketCap = coins.reduce((sum, coin) => sum + (coin.market_cap || 0), 0);
+            if (totalMarketCap === 0) {
+                console.error('Brak kapitalizacji rynkowej dla obliczenia średniej ważonej');
+                return 0;
+            }
+            return coins.reduce((sum, coin) => sum + ((coin[key] || 0) * (coin.market_cap / totalMarketCap)), 0);
         }
 
         function formatPrice(price) {
@@ -1628,11 +1647,12 @@
                     .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                     .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                    .balance-bar { width: 100%; margin-top: 20px; position: relative; }
-                    .balance-header { text-align: center; font-size: 18px; margin-bottom: 10px; }
-                    .balance-gradient { height: 20px; background: linear-gradient(to right, green, yellow, green); position: relative; }
-                    .balance-indicator { position: absolute; top: 0; bottom: 0; width: 5px; background: white; transition: left 0.5s ease; }
-                    .balance-labels { display: flex; justify-content: space-between; margin-top: 5px; }
+                    .balance-bar { width: 100%; margin: 20px 0; position: relative; }
+                    .balance-header { display: flex; justify-content: space-between; align-items: center; font-size: 18px; margin-bottom: 10px; }
+                    .balance-text { flex-grow: 1; text-align: center; }
+                    .label-bitcoin, .label-altcoin { width: 80px; text-align: center; }
+                    .balance-gradient { height: 20px; background: linear-gradient(to right, #00ff00, #ffff00, #00ff00); position: relative; border-radius: 5px; }
+                    .balance-indicator { position: absolute; top: 0; bottom: 0; width: 5px; background: #fff; transition: left 0.5s ease; left: 50%; transform: translateX(-50%); }
                     .balance-value { text-align: center; margin-top: 10px; font-size: 16px; }
                 `;
                 document.head.appendChild(style);
@@ -1704,7 +1724,7 @@
             cryptoIntervalId = setInterval(() => {
                 console.log('Aktualizuję kryptowaluty...');
                 getCryptoData();
-            }, 900000);
+            }, 15 * 60 * 1000); // 15 minut
         }
 
         function startLogUpdateInterval() {
@@ -1713,7 +1733,7 @@
             logIntervalId = setInterval(() => {
                 console.log('Aktualizuję logi...');
                 updateLogs();
-            }, 900000);
+            }, 15 * 60 * 1000);
         }
 
         function startFearGreedUpdateInterval() {
@@ -1722,7 +1742,7 @@
             fearGreedIntervalId = setInterval(() => {
                 console.log('Aktualizuję Fear and Greed...');
                 updateFearGreedIndicator();
-            }, 3600000);
+            }, 60 * 60 * 1000);
         }
 
         function startVisitCounterUpdateInterval() {
@@ -1731,7 +1751,7 @@
             visitCounterIntervalId = setInterval(() => {
                 console.log('Aktualizuję licznik odwiedzin...');
                 displayVisitCounter();
-            }, 900000);
+            }, 15 * 60 * 1000);
         }
 
         function startBalanceBarUpdateInterval() {
@@ -1739,10 +1759,16 @@
             const cachedData = getAnyCachedData('crypto_data');
             if (cachedData) updateBalanceBar(cachedData);
             balanceBarIntervalId = setInterval(() => {
-                console.log('Aktualizuję pasek balansu...');
+                console.log('Sprawdzam aktualność danych dla paska balansu...');
                 const latestData = getAnyCachedData('crypto_data');
-                if (latestData) updateBalanceBar(latestData);
-            }, 3600000);
+                const cachedTime = localStorage.getItem('crypto_time');
+                const now = Date.now();
+                if (latestData && cachedTime && (now - parseInt(cachedTime) < 15 * 60 * 1000)) {
+                    updateBalanceBar(latestData);
+                } else {
+                    console.log('Dane kryptowalut nieaktualne, czekam na aktualizację');
+                }
+            }, 15 * 60 * 1000); // 15 minut
         }
 
         let isManagingIntervals = false;
@@ -1758,26 +1784,11 @@
 
             if (document.visibilityState === 'visible') {
                 console.log('Karta aktywna, włączam aktualizacje');
-                if (cryptoIntervalId) {
-                    clearInterval(cryptoIntervalId);
-                    cryptoIntervalId = null;
-                }
-                if (logIntervalId) {
-                    clearInterval(logIntervalId);
-                    logIntervalId = null;
-                }
-                if (fearGreedIntervalId) {
-                    clearInterval(fearGreedIntervalId);
-                    fearGreedIntervalId = null;
-                }
-                if (visitCounterIntervalId) {
-                    clearInterval(visitCounterIntervalId);
-                    visitCounterIntervalId = null;
-                }
-                if (balanceBarIntervalId) {
-                    clearInterval(balanceBarIntervalId);
-                    balanceBarIntervalId = null;
-                }
+                if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+                if (logIntervalId) clearInterval(logIntervalId);
+                if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+                if (visitCounterIntervalId) clearInterval(visitCounterIntervalId);
+                if (balanceBarIntervalId) clearInterval(balanceBarIntervalId);
 
                 if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
                     console.log('Minął minimalny czas, odświeżam dane');
@@ -1789,50 +1800,27 @@
                     lastUpdateTime = now;
                 } else {
                     console.log('Zbyt szybkie przełączenie, pomijam odświeżanie, ustawiam tylko interwały');
-                    cryptoIntervalId = setInterval(() => {
-                        console.log('Aktualizuję kryptowaluty...');
-                        getCryptoData();
-                    }, 900000);
-                    logIntervalId = setInterval(() => {
-                        console.log('Aktualizuję logi...');
-                        updateLogs();
-                    }, 900000);
-                    fearGreedIntervalId = setInterval(() => {
-                        console.log('Aktualizuję Fear and Greed...');
-                        updateFearGreedIndicator();
-                    }, 3600000);
-                    visitCounterIntervalId = setInterval(() => {
-                        console.log('Aktualizuję licznik odwiedzin...');
-                        displayVisitCounter();
-                    }, 900000);
+                    cryptoIntervalId = setInterval(() => getCryptoData(), 15 * 60 * 1000);
+                    logIntervalId = setInterval(() => updateLogs(), 15 * 60 * 1000);
+                    fearGreedIntervalId = setInterval(() => updateFearGreedIndicator(), 60 * 60 * 1000);
+                    visitCounterIntervalId = setInterval(() => displayVisitCounter(), 15 * 60 * 1000);
                     balanceBarIntervalId = setInterval(() => {
-                        console.log('Aktualizuję pasek balansu...');
                         const latestData = getAnyCachedData('crypto_data');
-                        if (latestData) updateBalanceBar(latestData);
-                    }, 3600000);
+                        const cachedTime = localStorage.getItem('crypto_time');
+                        const now = Date.now();
+                        if (latestData && cachedTime && (now - parseInt(cachedTime) < 15 * 60 * 1000)) {
+                            updateBalanceBar(latestData);
+                        }
+                    }, 15 * 60 * 1000);
                 }
             } else {
                 console.log('Karta nieaktywna, wstrzymuję aktualizacje');
-                if (cryptoIntervalId) {
-                    clearInterval(cryptoIntervalId);
-                    cryptoIntervalId = null;
-                }
-                if (logIntervalId) {
-                    clearInterval(logIntervalId);
-                    logIntervalId = null;
-                }
-                if (fearGreedIntervalId) {
-                    clearInterval(fearGreedIntervalId);
-                    fearGreedIntervalId = null;
-                }
-                if (visitCounterIntervalId) {
-                    clearInterval(visitCounterIntervalId);
-                    visitCounterIntervalId = null;
-                }
-                if (balanceBarIntervalId) {
-                    clearInterval(balanceBarIntervalId);
-                    balanceBarIntervalId = null;
-                }
+                if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+                if (logIntervalId) clearInterval(logIntervalId);
+                if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+                if (visitCounterIntervalId) clearInterval(visitCounterIntervalId);
+                if (balanceBarIntervalId) clearInterval(balanceBarIntervalId);
+                cryptoIntervalId = logIntervalId = fearGreedIntervalId = visitCounterIntervalId = balanceBarIntervalId = null;
             }
 
             isManagingIntervals = false;
@@ -1845,28 +1833,19 @@
         function startNasaUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji NASA');
             getNasaApodImage();
-            nasaIntervalId = setInterval(() => {
-                console.log('Aktualizuję NASA...');
-                getNasaApodImage();
-            }, 10800000);
+            nasaIntervalId = setInterval(() => getNasaApodImage(), 3 * 60 * 60 * 1000);
         }
 
         function startWeatherUpdateInterval(ip) {
             console.log('Uruchamiam interwał aktualizacji pogody');
             getWeather(ip);
-            weatherIntervalId = setInterval(() => {
-                console.log('Aktualizuję pogodę...');
-                getWeather(ip);
-            }, 10800000);
+            weatherIntervalId = setInterval(() => getWeather(ip), 3 * 60 * 60 * 1000);
         }
 
         function startDailyFactUpdateInterval() {
             console.log('Uruchamiam interwał aktualizacji ciekawostki dnia');
             getDailyFact();
-            dailyFactIntervalId = setInterval(() => {
-                console.log('Aktualizuję ciekawostkę dnia...');
-                getDailyFact();
-            }, 10800000);
+            dailyFactIntervalId = setInterval(() => getDailyFact(), 3 * 60 * 60 * 1000);
         }
 
         function manageAllUpdateIntervals(ip) {
@@ -1880,38 +1859,14 @@
 
             if (document.visibilityState === 'visible') {
                 console.log('Karta aktywna, włączam wszystkie aktualizacje');
-                if (cryptoIntervalId) {
-                    clearInterval(cryptoIntervalId);
-                    cryptoIntervalId = null;
-                }
-                if (logIntervalId) {
-                    clearInterval(logIntervalId);
-                    logIntervalId = null;
-                }
-                if (fearGreedIntervalId) {
-                    clearInterval(fearGreedIntervalId);
-                    fearGreedIntervalId = null;
-                }
-                if (visitCounterIntervalId) {
-                    clearInterval(visitCounterIntervalId);
-                    visitCounterIntervalId = null;
-                }
-                if (balanceBarIntervalId) {
-                    clearInterval(balanceBarIntervalId);
-                    balanceBarIntervalId = null;
-                }
-                if (nasaIntervalId) {
-                    clearInterval(nasaIntervalId);
-                    nasaIntervalId = null;
-                }
-                if (weatherIntervalId) {
-                    clearInterval(weatherIntervalId);
-                    weatherIntervalId = null;
-                }
-                if (dailyFactIntervalId) {
-                    clearInterval(dailyFactIntervalId);
-                    dailyFactIntervalId = null;
-                }
+                if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+                if (logIntervalId) clearInterval(logIntervalId);
+                if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+                if (visitCounterIntervalId) clearInterval(visitCounterIntervalId);
+                if (balanceBarIntervalId) clearInterval(balanceBarIntervalId);
+                if (nasaIntervalId) clearInterval(nasaIntervalId);
+                if (weatherIntervalId) clearInterval(weatherIntervalId);
+                if (dailyFactIntervalId) clearInterval(dailyFactIntervalId);
 
                 if (!lastUpdateTime || (now - lastUpdateTime >= MIN_REFRESH_INTERVAL)) {
                     console.log('Minął minimalny czas, odświeżam wszystkie dane');
@@ -1926,74 +1881,33 @@
                     lastUpdateTime = now;
                 } else {
                     console.log('Zbyt szybkie przełączenie, ustawiam tylko interwały');
-                    cryptoIntervalId = setInterval(() => {
-                        console.log('Aktualizuję kryptowaluty...');
-                        getCryptoData();
-                    }, 900000);
-                    logIntervalId = setInterval(() => {
-                        console.log('Aktualizuję logi...');
-                        updateLogs();
-                    }, 900000);
-                    fearGreedIntervalId = setInterval(() => {
-                        console.log('Aktualizuję Fear and Greed...');
-                        updateFearGreedIndicator();
-                    }, 3600000);
-                    visitCounterIntervalId = setInterval(() => {
-                        console.log('Aktualizuję licznik odwiedzin...');
-                        displayVisitCounter();
-                    }, 900000);
+                    cryptoIntervalId = setInterval(() => getCryptoData(), 15 * 60 * 1000);
+                    logIntervalId = setInterval(() => updateLogs(), 15 * 60 * 1000);
+                    fearGreedIntervalId = setInterval(() => updateFearGreedIndicator(), 60 * 60 * 1000);
+                    visitCounterIntervalId = setInterval(() => displayVisitCounter(), 15 * 60 * 1000);
                     balanceBarIntervalId = setInterval(() => {
-                        console.log('Aktualizuję pasek balansu...');
                         const latestData = getAnyCachedData('crypto_data');
-                        if (latestData) updateBalanceBar(latestData);
-                    }, 3600000);
-                    nasaIntervalId = setInterval(() => {
-                        console.log('Aktualizuję NASA...');
-                        getNasaApodImage();
-                    }, 10800000);
-                    weatherIntervalId = setInterval(() => {
-                        console.log('Aktualizuję pogodę...');
-                        getWeather(ip);
-                    }, 10800000);
-                    dailyFactIntervalId = setInterval(() => {
-                        console.log('Aktualizuję ciekawostkę dnia...');
-                        getDailyFact();
-                    }, 10800000);
+                        const cachedTime = localStorage.getItem('crypto_time');
+                        const now = Date.now();
+                        if (latestData && cachedTime && (now - parseInt(cachedTime) < 15 * 60 * 1000)) {
+                            updateBalanceBar(latestData);
+                        }
+                    }, 15 * 60 * 1000);
+                    nasaIntervalId = setInterval(() => getNasaApodImage(), 3 * 60 * 60 * 1000);
+                    weatherIntervalId = setInterval(() => getWeather(ip), 3 * 60 * 60 * 1000);
+                    dailyFactIntervalId = setInterval(() => getDailyFact(), 3 * 60 * 60 * 1000);
                 }
             } else {
                 console.log('Karta nieaktywna, wstrzymuję wszystkie aktualizacje');
-                if (cryptoIntervalId) {
-                    clearInterval(cryptoIntervalId);
-                    cryptoIntervalId = null;
-                }
-                if (logIntervalId) {
-                    clearInterval(logIntervalId);
-                    logIntervalId = null;
-                }
-                if (fearGreedIntervalId) {
-                    clearInterval(fearGreedIntervalId);
-                    fearGreedIntervalId = null;
-                }
-                if (visitCounterIntervalId) {
-                    clearInterval(visitCounterIntervalId);
-                    visitCounterIntervalId = null;
-                }
-                if (balanceBarIntervalId) {
-                    clearInterval(balanceBarIntervalId);
-                    balanceBarIntervalId = null;
-                }
-                if (nasaIntervalId) {
-                    clearInterval(nasaIntervalId);
-                    nasaIntervalId = null;
-                }
-                if (weatherIntervalId) {
-                    clearInterval(weatherIntervalId);
-                    weatherIntervalId = null;
-                }
-                if (dailyFactIntervalId) {
-                    clearInterval(dailyFactIntervalId);
-                    dailyFactIntervalId = null;
-                }
+                if (cryptoIntervalId) clearInterval(cryptoIntervalId);
+                if (logIntervalId) clearInterval(logIntervalId);
+                if (fearGreedIntervalId) clearInterval(fearGreedIntervalId);
+                if (visitCounterIntervalId) clearInterval(visitCounterIntervalId);
+                if (balanceBarIntervalId) clearInterval(balanceBarIntervalId);
+                if (nasaIntervalId) clearInterval(nasaIntervalId);
+                if (weatherIntervalId) clearInterval(weatherIntervalId);
+                if (dailyFactIntervalId) clearInterval(dailyFactIntervalId);
+                cryptoIntervalId = logIntervalId = fearGreedIntervalId = visitCounterIntervalId = balanceBarIntervalId = nasaIntervalId = weatherIntervalId = dailyFactIntervalId = null;
             }
 
             isManagingIntervals = false;
@@ -2015,8 +1929,9 @@
                 console.log('Pogoda załadowana');
                 await updateFearGreedIndicator();
                 console.log('Fear and Greed załadowane');
-                await getCryptoData();
+                const cryptoData = await getCryptoData();
                 console.log('Kryptowaluty załadowane');
+                if (cryptoData) updateBalanceBar(cryptoData);
                 setTimeout(async () => {
                     await logVisit();
                     console.log('Logi załadowane');
