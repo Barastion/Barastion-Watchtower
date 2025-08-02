@@ -1,1431 +1,187 @@
-:root {
-    --fear-greed-hold: #cfae02; /* Żółty dla HODL */
-    --fear-greed-consider-buy: rgba(0, 180, 0, 0.75); /* Zielony dla BUY SLOWLY */
-    --fear-greed-opportunity: rgba(0, 220, 0, 0.9); /* Jasnozielony dla ALL IN! */
-    --fear-greed-consider-sell: rgba(180, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY */
-    --fear-greed-sell: rgba(220, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
-    --gradient-start: #cfae02; /* Kolor początkowy gradientu dla HODL */
-    --gradient-end: #a68e02; /* Kolor końcowy gradientu dla HODL */
-    --gradient-start-all-in: rgba(0, 220, 0, 0.9); /* Kolor początkowy dla ALL IN! */
-    --gradient-end-all-in: rgba(0, 180, 0, 0.75); /* Kolor końcowy dla ALL IN! */
-    --gradient-start-buy-slowly: rgba(0, 180, 0, 0.75); /* Kolor początkowy dla BUY SLOWLY */
-    --gradient-end-buy-slowly: rgba(0, 140, 0, 0.6); /* Kolor końcowy dla BUY SLOWLY */
-    --gradient-start-sell-slowly: rgba(180, 0, 0, 0.75); /* Kolor początkowy dla SELL SLOWLY */
-    --gradient-end-sell-slowly: rgba(140, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
-    --gradient-start-cash-out: rgba(220, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
-    --gradient-end-cash-out: rgba(180, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
-    --sentiment-positive: rgba(0, 180, 0, 0.85); /* Zielony dla pozytywnego sentymentu */
-    --sentiment-negative: rgba(180, 0, 0, 0.85); /* Czerwony dla negatywnego sentymentu */
-    --sentiment-neutral: rgba(255, 215, 0, 0.85); /* Żółty dla neutralnego sentymentu */
-    --balance-bitcoin: rgba(0, 180, 0, 0.85); /* Zielony dla Bitcoina */
-    --balance-altcoin: rgba(0, 180, 0, 0.85); /* Zielony dla altcoinów */
-    --balance-neutral: rgba(255, 215, 0, 0.85); /* Żółty dla neutralności */
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #1e1e1e;
-    color: #ffffff;
-    margin: 0;
-    padding: 20px;
-    line-height: 1.6;
-}
-
-.container {
-    max-width: 960px;
-    margin: 0 auto;
-    background-color: #2d2d2d;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.network-status {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #ff4d4d;
-    color: #ffffff;
-    text-align: center;
-    padding: 8px;
-    font-size: 0.9em;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.nasa-container {
-    max-width: 640px;
-    margin: 0 auto 20px;
-    text-align: center;
-}
-
-.nasa-frame {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%;
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    background-color: #2d2d2d;
-    border: 2px solid #555555;
-}
-
-.nasa-frame img,
-.nasa-frame iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
-.nasa-frame iframe {
-    object-fit: contain;
-}
-
-.nasa-ticker {
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 5px 0;
-    overflow: hidden;
-    white-space: nowrap;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-top: 0;
-}
-
-#nasaTickerContent {
-    display: inline-block;
-    padding-left: 100%;
-    animation: ticker 360s linear infinite;
-    -webkit-animation: ticker 360s linear infinite;
-    font-size: 0.7em;
-    color: #ffffff;
-    text-shadow: 
-        -1px -1px 0 #000000,
-        1px -1px 0 #000000,
-        -1px 1px 0 #000000,
-        1px 1px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
-}
-
-.nasa-ticker .ticker-segment {
-    display: inline-block;
-    padding-right: 180px;
-}
-
-.search-container {
-    text-align: center;
-    margin: 20px 0 10px 0;
-}
-
-.search-container form {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.search-container label {
-    font-size: 0.9em;
-    color: #ffffff;
-}
-
-.search-container input[type="text"] {
-    padding: 5px 10px;
-    border: 1px solid #555555;
-    border-radius: 4px;
-    background-color: #3a3a3a;
-    color: #ffffff;
-    font-size: 0.9em;
-    width: 200px;
-}
-
-.search-container input[type="text"]:focus {
-    outline: none;
-    border-color: #5a6268;
-}
-
-.daily-fact {
-    text-align: center;
-    margin: 20px 5px 20px 5px;
-    font-size: 0.9em;
-    color: #ffffff;
-}
-
-.fact-header {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 500;
-    color: #ffeb3b; /* Kolor nagłówka "Ciekawostka na dziś:" */
-}
-
-.fact-content {
-    margin: 5px 5px 0 5px;
-    font-size: 0.9em;
-    font-style: italic;
-    line-height: 1.5;
-    overflow-wrap: break-word;
-    white-space: normal;
-    max-width: 100%;
-    color: #ffffff; /* Treść ciekawostki pozostaje biała */
-}
-
-@media (min-width: 769px) {
-    .fact-content {
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
-.content-frame {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #3a3a3a;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.weather-info {
-    margin-bottom: 20px;
-}
-
-.weather-forecast {
-    background-color: #2d2d2d;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.weather-city {
-    text-align: center;
-    margin: 2px 0;
-    font-size: 1.2em;
-    color: #ffffff; /* Napis "Pogoda dla:" */
-}
-
-#weatherCity {
-    color: #ffeb3b; /* Nazwa miasta w kolorze żółtym */
-}
-
-.forecast-container {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px 0;
-    -webkit-overflow-scrolling: touch;
-}
-
-.forecast-bar {
-    background-color: #3a3a3a;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    min-width: 80px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
-
-.forecast-bar.today {
-    border: 2px solid #5a6268;
-}
-
-.forecast-date {
-    font-size: 0.7em;
-    color: #cccccc;
-    margin-bottom: 5px;
-}
-
-.weather-icon {
-    font-size: 1.5em;
-}
-
-.weather-day {
-    font-size: 0.9em;
-    font-weight: bold;
-    color: #ffeb3b; /* Dni tygodnia w kolorze żółtym */
-}
-
-.weather-description {
-    font-size: 0.8em;
-    overflow-wrap: break-word;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    color: #ffffff; /* Opis pogody pozostaje biały */
-}
-
-.weather-temps {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    align-items: center;
-}
-
-.temp-max {
-    color: #ff4d4d;
-    font-weight: bold;
-    font-size: 1em;
-}
-
-.temp-min {
-    color: #4d94ff;
-    font-weight: bold;
-    font-size: 1em;
-}
-
-.forecast-error {
-    font-size: 0.8em;
-    color: #999999;
-    text-align: center;
-    padding: 10px;
-    width: 100%;
-}
-
-.weather-ticker {
-    background-color: #3a3a3a;
-    padding: 4px 0;
-    margin-top: 10px;
-    margin-bottom: 3px;
-    overflow: hidden;
-    white-space: nowrap;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-#tickerContent {
-    display: inline-block;
-    padding-left: 100%;
-    animation: ticker 180s linear infinite;
-    -webkit-animation: ticker 180s linear infinite;
-    font-size: 0.8em;
-}
-
-.ticker-segment {
-    display: inline-block;
-    padding-right: 180px;
-    color: #ffffff; /* Nazwy w tickerze pozostają białe */
-}
-
-.ticker-value {
-    font-weight: bold;
-    color: #ffeb3b; /* Wartości z API w kolorze żółtym */
-}
-
-.crypto-info {
-    background-color: #2d2d2d;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-}
-
-.crypto-header {
-    margin-bottom: 2px;
-}
-
-.fear-greed-indicator {
-    padding: 8px 10px;
-    border-radius: 8px;
-    width: 100%;
-    min-height: 30px;
-    text-align: center;
-    font-size: 0.93em;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    overflow: hidden;
-    white-space: normal;
-    box-sizing: border-box;
-}
-
-.fear-greed-indicator .fgi-dash {
-    font-weight: 600;
-    margin: 0 2px;
-    color: #ffffff;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.0px 0 #000000,
-        0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
-}
-
-/* Gradienty dla każdego stanu */
-.fear-greed-indicator.all-in {
-    background: linear-gradient(135deg, var(--gradient-start-all-in), var(--gradient-end-all-in));
-}
-
-.fear-greed-indicator.buy-slowly {
-    background: linear-gradient(135deg, var(--gradient-start-buy-slowly), var(--gradient-end-buy-slowly));
-}
-
-.fear-greed-indicator.hodl {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-}
-
-.fear-greed-indicator.sell-slowly {
-    background: linear-gradient(135deg, var(--gradient-start-sell-slowly), var(--gradient-end-sell-slowly));
-}
-
-.fear-greed-indicator.cash-out {
-    background: linear-gradient(135deg, var(--gradient-start-cash-out), var(--gradient-end-cash-out));
-}
-
-/* Styl wartości FGI z kolorami zależnymi od przedziału */
-.fear-greed-indicator .fgi-value {
-    font-weight: 600;
-    margin-right: 8px;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.0px 0 #000000,
-        0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
-}
-
-.fear-greed-indicator .fgi-value.extreme-fear {
-    color: #dc0000; /* 1-20 */
-}
-
-.fear-greed-indicator .fgi-value.fear {
-    color: #b40000; /* 21-40 */
-}
-
-.fear-greed-indicator .fgi-value.neutral {
-    color: #ffeb3b; /* 41-60 */
-}
-
-.fear-greed-indicator .fgi-value.greedy {
-    color: #00b400; /* 61-80 */
-}
-
-.fear-greed-indicator .fgi-value.extreme-greedy {
-    color: #00dc00; /* 81-100 */
-}
-
-/* Styl napisu "Miesięczny sygnał:" */
-.fear-greed-indicator .fgi-label {
-    font-weight: 600;
-    margin-right: 4px;
-    color: #ffffff;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.0px 0 #000000,
-        0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
-}
-
-/* Styl strzałki trendu */
-.fear-greed-indicator .trend-indicator {
-    font-size: 1em;
-    margin-right: 8px;
-    margin-left: 4px;
-    vertical-align: baseline;
-    text-shadow: 
-        -1.0px -1.2px 0 #000000,
-        1.0px -1.2px 0 #000000,
-        -1.0px 1.2px 0 #000000,
-        1.0px 1.2px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.2px 0 #000000,
-        0 1.2px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
-    line-height: 1;
-}
-
-.fear-greed-indicator .trend-up {
-    color: #4bff4b;
-    animation: glow-positive 1.5s ease-in-out infinite;
-}
-
-.fear-greed-indicator .trend-down {
-    color: #ff4b4b;
-    animation: glow-negative 1.5s ease-in-out infinite;
-}
-
-.fear-greed-indicator .trend-neutral {
-    color: #ffea00;
-    animation: glow-neutral 1.5s ease-in-out infinite;
-}
-
-/* Styl sygnału */
-.fear-greed-indicator .fear-greed-signal {
-    position: relative;
-    display: inline-block;
-    padding: 2px 6px;
-    z-index: 2;
-    color: #ffffff;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.0px 0 #000000,
-        0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9);
-}
-
-/* New Feature: Bitcoin-Altcoin Balance Bar */
-.balance-bar {
-    background-color: #2d2d2d;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-
-.balance-header {
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: 600;
-    color: #ffeb3b;
-    margin-bottom: 10px;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        0 0 5px rgba(0, 0, 0, 0.9);
-}
-
-.balance-labels {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.label-bitcoin,
-.label-altcoin {
-    font-size: 0.9em;
-    font-weight: 600;
-    color: #ffffff;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.label-bitcoin {
-    text-align: left;
-}
-
-.label-altcoin {
-    text-align: right;
-}
-
-.balance-gradient {
-    width: 100%;
-    max-width: 400px;
-    height: 15px; /* 50% of fear-greed-indicator min-height (30px) */
-    background: linear-gradient(to right, var(--balance-bitcoin), var(--balance-neutral) 50%, var(--balance-altcoin));
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
-    margin: 0 auto;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.balance-indicator {
-    position: absolute;
-    top: 0;
-    width: 6px;
-    height: 100%;
-    background-color: #ffffff;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    transition: left 0.5s ease;
-}
-
-.balance-value {
-    text-align: center;
-    font-size: 0.9em;
-    font-weight: 600;
-    color: #ffffff;
-    margin-top: 10px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.balance-value.bitcoin {
-    color: var(--balance-bitcoin);
-    animation: glow-positive 1.5s ease-in-out infinite;
-}
-
-.balance-value.altcoin {
-    color: var(--balance-altcoin);
-    animation: glow-positive 1.5s ease-in-out infinite;
-}
-
-.balance-value.neutral {
-    color: var(--balance-neutral);
-    animation: glow-neutral 1.5s ease-in-out infinite;
-}
-
-.crypto-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    padding: 10px;
-}
-
-.crypto-tile {
-    padding: 4px;
-    border-radius: 6px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 34px;
-    box-sizing: border-box;
-    transition: transform 0.2s, background-color 0.5s ease;
-    cursor: pointer;
-}
-
-.crypto-tile:hover {
-    transform: scale(1.05);
-}
-
-.crypto-tile.positive-low {
-    background-color: rgba(0, 140, 0, 0.6);
-}
-
-.crypto-tile.positive-mid {
-    background-color: rgba(0, 180, 0, 0.75);
-}
-
-.crypto-tile.positive-high {
-    background-color: rgba(0, 220, 0, 0.9);
-    animation: pulse-positive 1.5s ease-in-out infinite;
-}
-
-.crypto-tile.negative-low {
-    background-color: rgba(140, 0, 0, 0.6);
-}
-
-.crypto-tile.negative-mid {
-    background-color: rgba(180, 0, 0, 0.75);
-}
-
-.crypto-tile.negative-high {
-    background-color: rgba(220, 0, 0, 0.9);
-    animation: pulse-negative 1.5s ease-in-out infinite;
-}
-
-.crypto-tile.neutral {
-    background-color: rgba(255, 215, 0, 0.75);
-}
-
-.crypto-symbol {
-    font-size: 0.85em;
-    font-weight: bold;
-    margin-bottom: 1px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.crypto-price {
-    font-size: 0.75em;
-    margin-bottom: 1px;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.crypto-change {
-    font-size: 0.6em;
-    text-shadow: 
-        -0.5px -0.5px 0 #000000,
-        0.5px -0.5px 0 #000000,
-        -0.5px 0.5px 0 #000000,
-        0.5px 0.5px 0 #000000,
-        0 0 3px rgba(0, 0, 0, 0.9);
-}
-
-.crypto-error {
-    text-align: center;
-    font-size: 0.9em;
-    color: #ff4d4d;
-}
-
-.log-table {
-    background-color: #333333;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.table-wrapper {
-    overflow-y: hidden;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.table-container {
-    width: 100%;
-    overflow: hidden;
-}
-
-table {
-    width: 100%;
-    min-width: 0;
-    border-collapse: collapse;
-    border-spacing: 0;
-    table-layout: auto;
-    min-width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-thead tr {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla nagłówka tabeli logów */
-}
-
-th, td {
-    padding: 5px;
-    height: 35px;
-    vertical-align: middle;
-    text-align: center;
-    font-size: 0.9em;
-    box-sizing: border-box;
-}
-
-th {
-    background: transparent;
-    color: white;
-    font-weight: 700;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.0px 0 #000000,
-        0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla nagłówków tabeli logów */
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    transition: filter 0.3s ease;
-}
-
-th:hover {
-    filter: brightness(1.1);
-}
-
-th:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-th:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-th.location-header {
-    max-width: 140px;
-}
-
-tr:nth-child(odd) {
-    background-color: #3a3a3a;
-}
-
-tr:nth-child(even) {
-    background-color: #2d2d2d;
-}
-
-tr:hover {
-    background-color: #4a4a4a;
-}
-
-tr:not(:first-child) td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-tr:not(:first-child) td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-tr:hover td:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-}
-
-tr:hover td:last-child {
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
-.location-cell {
-    max-width: 140px;
-}
-
-.city {
-    overflow-wrap: break-word;
-    max-width: 100%;
-    white-space: normal;
-    display: block;
-    font-size: 0.9em;
-    line-height: 1.2;
-    hyphens: auto;
-}
-
-.device {
-    overflow-wrap: break-word;
-    max-width: 100%;
-    white-space: normal;
-    display: block;
-    font-size: 0.9em;
-    line-height: 1.2;
-    hyphens: auto;
-    text-align: center; /* Wyśrodkowanie tekstu */
-}
-
-.country {
-    font-size: 0.8em;
-    color: #cccccc;
-    margin-top: 2px;
-    display: block;
-    line-height: 1.2;
-    hyphens: auto;
-}
-
-.isp {
-    font-size: 0.8em;
-    color: #cccccc;
-    margin-top: 2px;
-    display: block;
-    line-height: 1.2;
-    max-width: 20ch;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-wrap: break-word;
-    text-align: center;
-    margin: 0 auto;
-    position: relative; /* Dla tooltipa */
-}
-
-.isp:hover::after {
-    content: attr(data-full-text); /* Używa atrybutu data-full-text z HTML */
-    position: absolute;
-    background-color: #555555;
-    color: #ffffff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.75em;
-    white-space: normal;
-    width: auto;
-    max-width: 200px;
-    z-index: 10;
-    top: -40px; /* Pozycja nad elementem */
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    pointer-events: none;
-}
-
-.isp:hover::after {
-    opacity: 1; /* Tooltip pojawia się po najechaniu */
-}
-
-.hidden-log {
-    display: none;
-}
-
-.toggle-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
-
-.toggle-button {
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); /* Gradient dla przycisku "Rozwiń listę/Zwiń listę" */
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.75em;
-    font-weight: 600;
-    text-shadow: 
-        -1.0px -1.0px 0 #000000,
-        1.0px -1.0px 0 #000000,
-        -1.0px 1.0px 0 #000000,
-        1.0px 1.0px 0 #000000,
-        -1.0px 0 0 #000000,
-        1.0px 0 0 #000000,
-        0 -1.0px 0 #000000,
-        0 1.0px 0 #000000,
-        0 0 25px rgba(0, 0, 0, 0.9); /* Cień dla tekstu przycisku */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    min-width: 100px;
-}
-
-.toggle-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    filter: brightness(1.1);
-}
-
-::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-::-webkit-scrollbar-track {
-    background: #2d2d2d;
-    border-radius: 6px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-    border-radius: 6px;
-    border: 2px solid #2d2d2d;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    transition: background 0.3s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #6a7278, #5a6268);
-}
-
-::-webkit-scrollbar-corner {
-    background: #2d2d2d;
-}
-
-@keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-}
-
-@-webkit-keyframes ticker {
-    0% { -webkit-transform: translateX(0); }
-    100% { -webkit-transform: translateX(-100%); }
-}
-
-@keyframes pulse-positive {
-    0% { box-shadow: 0 0 6px rgba(0, 255, 0, 0.8); }
-    50% { box-shadow: 0 0 13px rgba(0, 255, 0, 1); }
-    100% { box-shadow: 0 0 8px rgba(0, 0, 0, 0.8); }
-}
-
-@keyframes pulse-negative {
-    0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.8); }
-    50% { box-shadow: 0 0 13px rgba(0, 0, 0, 1); }
-    100% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.8); }
-}
-
-@keyframes glow-positive {
-    0% { color: var(--fear-greed-consider-buy); }
-    50% { color: rgba(75, 255, 75, 0.9); }
-    100% { color: var(--fear-greed-opportunity); }
-}
-
-@keyframes glow-negative {
-    0% { color: var(--fear-greed-consider-sell); }
-    50% { color: rgba(255, 75, 75, 0.9); }
-    100% { color: var(--fear-greed-sell); }
-}
-
-@keyframes glow-neutral {
-    0% { color: #f5e27f; }
-    50% { color: #ffeb3b; }
-    100% { color: #cfae02; }
-}
-
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-container {
-    background-color: #2d2d2d;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    color: #ffffff;
-    position: relative;
-}
-
-.modal-container h2 {
-    margin-top: 0;
-    font-size: 1.5em;
-    text-align: center;
-}
-
-.modal-container p {
-    margin: 10px 0;
-    font-size: 0.9em;
-    line-height: 1.5;
-}
-
-.language-switch {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.language-switch button {
-    background: linear-gradient(135deg, #5a6268, #4a5258);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.8em;
-    font-weight: 600;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-}
-
-.language-switch button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    filter: brightness(1.1);
-}
-
-.language-switch button.active {
-    background: linear-gradient(135deg, #6a7278, #5a6268);
-    transform: scale(1.05);
-}
-
-.close-button {
-    background: linear-gradient(135deg, #ff4d4d, #d43f3f);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.8em;
-    font-weight: 600;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    display: block;
-    margin: 15px auto 0;
-}
-
-.close-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    filter: brightness(1.1);
-}
-
-.footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.75em;
-    color: #cccccc;
-}
-
-.footer p {
-    margin: 2px 0;
-}
-
-.footer a {
-    color: #ffeb3b;
-    text-decoration: none;
-}
-
-.footer a:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .container {
-        padding: 10px;
-    }
-
-    .network-status {
-        font-size: 0.8em;
-        padding: 6px;
-    }
-
-    .content-frame {
-        max-width: 100%;
-        padding: 10px;
-    }
-
-    .daily-fact {
-        font-size: 0.75em;
-        margin-bottom: 10px;
-    }
-
-    .fact-header {
-        font-size: 0.85em;
-    }
-
-    .fact-content {
-        font-size: 0.75em;
-        line-height: 1.3;
-    }
-
-    .weather-forecast {
-        max-width: 100%;
-        padding: 10px;
-    }
-
-    .forecast-container {
-        flex-wrap: nowrap;
-        gap: 5px;
-        padding: 10px 0;
-    }
-
-    .forecast-bar {
-        min-width: 70px;
-        padding: 5px;
-    }
-
-    .forecast-date, .weather-day, .weather-description, .temp-max, .temp-min {
-        font-size: 0.65em;
-    }
-
-    .weather-icon {
-        font-size: 1.2em;
-    }
-
-    .weather-ticker {
-        font-size: 0.8em;
-    }
-
-    .forecast-error {
-        font-size: 0.7em;
-        padding: 8px;
-    }
-
-    .crypto-info {
-        padding: 10px;
-    }
-
-    .fear-greed-indicator {
-        font-size: 0.75em;
-        padding: 8px 10px;
-    }
-
-    .fear-greed-indicator .fgi-value {
-        text-shadow: 
-            -0.6px -0.6px 0 #000000,
-            0.6px -0.6px 0 #000000,
-            -0.6px 0.6px 0 #000000,
-            0.6px 0.6px 0 #000000,
-            -0.6px 0 0 #000000,
-            0.6px 0 0 #000000,
-            0 -0.6px 0 #000000,
-            0 0.6px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .fear-greed-indicator .fgi-label {
-        text-shadow: 
-            -0.6px -0.6px 0 #000000,
-            0.6px -0.6px 0 #000000,
-            -0.6px 0.6px 0 #000000,
-            0.6px 0.6px 0 #000000,
-            -0.6px 0 0 #000000,
-            0.6px 0 0 #000000,
-            0 -0.6px 0 #000000,
-            0 0.6px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .fear-greed-indicator .trend-indicator {
-        font-size: 1.1em;
-        margin-right: 8px;
-        text-shadow: 
-            -0.6px -0.6px 0 #000000,
-            0.6px -0.6px 0 #000000,
-            -0.6px 0.6px 0 #000000,
-            0.6px 0.6px 0 #000000,
-            -0.6px 0 0 #000000,
-            0.6px 0 0 #000000,
-            0 -0.6px 0 #000000,
-            0 0.6px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .fear-greed-indicator .fear-greed-signal {
-        text-shadow: 
-            -0.6px -0.6px 0 #000000,
-            0.6px -0.6px 0 #000000,
-            -0.6px 0.6px 0 #000000,
-            0.6px 0.6px 0 #000000,
-            -0.6px 0 0 #000000,
-            0.6px 0 0 #000000,
-            0 -0.6px 0 #000000,
-            0 0.6px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .crypto-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 6px;
-        padding: 10px;
-    }
-
-    .crypto-tile {
-        min-height: 22px;
-        padding: 2px;
-    }
-
-    .crypto-symbol {
-        font-size: 0.7em;
-        margin-bottom: 0.5px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 100%;
-    }
-
-    .crypto-price {
-        font-size: 0.65em;
-        margin-bottom: 0.5px;
-    }
-
-    .crypto-change {
-        font-size: 0.5em;
-    }
-
-    .crypto-error {
-        font-size: 0.8em;
-    }
-
-    .log-table {
-        max-width: 100%;
-        padding: 15px;
-    }
-
-    table {
-        font-size: 0.75em;
-        table-layout: fixed;
-    }
-
-    th, td {
-        padding: 2px;
-        height: 28px;
-        font-size: 0.7em;
-    }
-
-    th {
-        font-size: 0.7em; /* Zmniejszona czcionka dla nagłówków w wersji mobilnej */
-        text-shadow: 
-            -0.6px -0.6px 0 #000000,
-            0.6px -0.6px 0 #000000,
-            -0.6px 0.6px 0 #000000,
-            0.6px 0.6px 0 #000000,
-            -0.6px 0 0 #000000,
-            0.6px 0 0 #000000,
-            0 -0.6px 0 #000000,
-            0 0.6px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
-    }
-
-    th:nth-child(1), td:nth-child(1) {
-        width: 50px;
-        min-width: 50px;
-    }
-
-    th:nth-child(2), td:nth-child(2) {
-        width: 50px;
-        min-width: 50px;
-    }
-
-    th:nth-child(3), td:nth-child(3) {
-        width: 40px;
-        min-width: 40px;
-    }
-
-    th:nth-child(4), td:nth-child(4) {
-        width: 60px;
-        min-width: 60px;
-    }
-
-    th.location-header, td.location-cell {
-        min-width: 90px;
-    }
-
-    th:nth-child(6), td:nth-child(6) {
-        min-width: 90px;
-    }
-
-    .city, .device, .country, .isp {
-        font-size: 0.7em;
-        line-height: 1.15;
-    }
-
-    .toggle-button {
-        padding: 3px 5px;
-        font-size: 0.50em;
-        min-width: 60px;
-        text-shadow:
-            -0.6px -0.6px 0 #000000,
-            0.6px -0.6px 0 #000000,
-            -0.6px 0.6px 0 #000000,
-            0.6px 0.6px 0 #000000,
-            -0.6px 0 0 #000000,
-            0.6px 0 0 #000000,
-            0 -0.6px 0 #000000,
-            0 0.6px 0 #000000,
-            0 0 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .nasa-ticker {
-        font-size: 0.6em;
-    }
-
-    .nasa-container {
-        max-width: 100%;
-    }
-
-    /* Responsive styles for Bitcoin-Altcoin Balance Bar */
-    .balance-bar {
-        padding: 10px;
-    }
-
-    .balance-header {
-        font-size: 1em;
-    }
-
-    .label-bitcoin,
-    .label-altcoin {
-        font-size: 0.8em;
-    }
-
-    .balance-gradient {
-        height: 12px;
-        max-width: 300px;
-    }
-
-    .balance-indicator {
-        width: 4px;
-    }
-
-    .balance-value {
-        font-size: 0.8em;
-    }
-
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        border-radius: 4px;
-        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        border: 1px solid #2d2d2d;
-        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
-    }
-}
-
-@media (max-width: 768px) and (orientation: landscape) {
-    .crypto-grid {
-        grid-template-columns: repeat(7, 1fr);
-    }
-}
-
-.footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.75em;
-    color: #cccccc;
-}
-
-.footer p {
-    margin: 2px 0;
-}
-
-.footer a {
-    color: #ffeb3b;
-    text-decoration: none;
-}
-
-.footer a:hover {
-    text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-    .footer {
-        font-size: 0.45em;
-    }
-
-    .footer p {
-        margin: 1px 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regulamin - Barastion Watchtower</title>
+    <link rel="stylesheet" href="terms.css">
+</head>
+<body>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-terms-container">
+            <div class="modal-header">
+                <h1 id="termsTitle">Regulamin Strony - Barastion Watchtower</h1>
+            </div>
+            <div class="modal-controls">
+                <div class="modal-language-switcher">
+                    <span class="modal-language-label">Language:</span>
+                    <button id="langPolish" class="modal-lang-button active">Polish</button>
+                    <button id="langEnglish" class="modal-lang-button">English</button>
+                </div>
+                <button id="closeButton" class="modal-close-button">Akceptuję</button>
+            </div>
+            <div class="modal-terms-content">
+                <div id="termsPL" class="modal-terms-language">
+                    <p><strong>Data wejścia w życie: 20 kwietnia 2025 r.</strong></p>
+                    <h2>1. Postanowienia ogólne</h2>
+                    <p>1.1. Niniejszy regulamin („Regulamin”) określa zasady korzystania ze strony internetowej dostępnej pod adresem <a href="https://barastion.github.io/Barastion-Watchtower/">https://barastion.github.io/Barastion-Watchtower/</a> („Strona”), prowadzonej przez osobę fizyczną działającą w ramach hobbystycznego projektu („Administrator”). Kontakt z Administratorem: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
+                    <p>1.2. Strona Barastion Watchtower jest osobistym dashboardem stworzonym w celach hobbystycznych, służącym do monitorowania pogody, kryptowalut oraz wyświetlania ciekawostek. Strona jest w 100% darmowa, nie jest reklamowana, nie generuje przychodów i została stworzona dla osób, którym podoba się pomysł Administratora na osobisty dashboard.</p>
+                    <p>1.3. Korzystanie ze Strony oznacza pełną akceptację niniejszego Regulaminu. Regulamin jest dostępny pod linkiem w stopce Strony. Użytkownicy, którzy nie akceptują Regulaminu, są zobowiązani do natychmiastowego opuszczenia Strony.</p>
+                    <p>1.4. Strona jest publicznie dostępna, co oznacza, że każdy, kto znajdzie Stronę w Internecie, może z niej korzystać.</p>
+
+                    <h2>2. Zasady korzystania ze Strony</h2>
+                    <p>2.1. Użytkownik zobowiązuje się do korzystania ze Strony zgodnie z prawem, zasadami współżycia społecznego oraz niniejszym Regulaminem.</p>
+                    <p>2.2. Zabronione jest podejmowanie działań mogących zakłócić funkcjonowanie Strony, takich jak ataki hakerskie, nadmierne obciążanie serwera czy naruszanie praw Administratora.</p>
+                    <p>2.3. Treści dostępne na Stronie, takie jak prognozy pogody, dane o kryptowalutach czy ciekawostki, pochodzą z zewnętrznych źródeł (np. Open-Meteo, CoinGecko, NASA API) lub są modyfikowane przez Administratora. Administrator nie gwarantuje ich dokładności, aktualności ani przydatności do jakichkolwiek celów.</p>
+
+                    <h2>3. Ochrona danych osobowych</h2>
+                    <p>3.1. Administrator przetwarza dane osobowe użytkowników zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 (RODO).</p>
+                    <p>3.2. <strong>Administrator danych</strong>: Osoba fizyczna działająca pod pseudonimem Barastion, kontakt: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
+                    <p>3.3. <strong>Dane zbierane</strong>: Strona zbiera następujące dane o użytkownikach w formie logów odwiedzin: adres IP, lokalizacja (miasto, kraj), dostawca internetu (ISP), data, godzina, informacje o urządzeniu (np. przeglądarka). Dane są przechowywane wyłącznie w usłudze Firebase oraz tymczasowo w pamięci cache.</p>
+                    <p>3.4. <strong>Cel i podstawa prawna</strong>: Dane są przetwarzane w celu monitorowania odwiedzin Strony, zapewnienia jej bezpieczeństwa i analizy statystycznej, na podstawie uzasadnionego interesu Administratora (art. 6 ust. 1 lit. f RODO).</p>
+                    <p>3.5. <strong>Okres przechowywania</strong>: Przechowywanych jest tylko 50 ostatnich logów odwiedzin. Starsze logi są automatycznie usuwane.</p>
+                    <p>3.6. <strong>Prawa użytkownika</strong>: Użytkownik ma prawo do:<br>
+                        - Dostępu do swoich danych.<br>
+                        - Sprostowania, usunięcia lub ograniczenia przetwarzania danych.<br>
+                        - Wniesienia sprzeciwu wobec przetwarzania.<br>
+                        - Wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (UODO).<br>
+                        Wnioski można zgłaszać na adres: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>. Administrator odpowie na takie wnioski w ciągu 30 dni od ich otrzymania. Usunięcie logu jest możliwe po ręcznym wykonaniu operacji przez Administratora w bazie danych.</p>
+                    <p>3.7. <strong>Odbiorcy danych</strong>: Dane są przekazywane do usługi Firebase (Google Cloud), która może przetwarzać dane poza Europejskim Obszarem Gospodarczym (EOG). Transfer danych jest zabezpieczony standardowymi klauzulami umownymi. Inne usługi, takie jak ipapi.co, mogą być używane do określania lokalizacji na podstawie IP. Użytkownicy są informowani, że transfer danych poza EOG może wiązać się z ryzykiem wynikającym z różnic w przepisach o ochronie danych w krajach trzecich.</p>
+                    <p>3.8. <strong>Brak zgody</strong>: Strona nie wymaga wyrażenia zgody na zbieranie danych, ponieważ przetwarzanie opiera się na uzasadnionym interesie. Użytkownik może wnieść sprzeciw wobec przetwarzania, kontaktując się z Administratorem.</p>
+
+                    <h2>4. Dane o kryptowalutach i brak porady inwestycyjnej</h2>
+                    <p>4.1. Dane o kryptowalutach, w tym wskaźniki takie jak Fear and Greed Index, są oparte na informacjach z zewnętrznych API (np. CoinGecko) i modyfikowane za pomocą algorytmu stworzonego przez Administratora.</p>
+                    <p>4.2. Dane te mają charakter wyłącznie informacyjny i edukacyjny. <strong>Nie stanowią porady inwestycyjnej, rekomendacji ani zachęty do podejmowania decyzji finansowych</strong>.</p>
+                    <p>4.3. Użytkownik podejmuje decyzje inwestycyjne na własne ryzyko. Administrator nie ponosi odpowiedzialności za jakiekolwiek straty finansowe wynikające z korzystania z danych na Stronie.</p>
+                    <p>4.4. Rynek kryptowalut jest wysoce zmienny, a inwestycje wiążą się z ryzykiem utraty kapitału.</p>
+
+                    <h2>5. Prawa własności intelektualnej</h2>
+                    <p>5.1. Treści stworzone przez Administratora, w tym zmodyfikowane wskaźniki (np. Fear and Greed Index), algorytmy, ciekawostki oraz kod Strony, są chronione prawem autorskim.</p>
+                    <p>5.2. Użytkownicy mogą korzystać z tych treści wyłącznie w zakresie dozwolonego użytku osobistego. Zabronione jest kopiowanie, modyfikowanie lub rozpowszechnianie treści bez zgody Administratora.</p>
+                    <p>5.3. Treści pochodzące z zewnętrznych źródeł (np. NASA API, Open-Meteo) podlegają zasadom określonym przez ich dostawców.</p>
+
+                    <h2>6. Odpowiedzialność</h2>
+                    <p>6.1. Administrator nie ponosi odpowiedzialności za:<br>
+                        - Błędy lub nieaktualność danych prezentowanych na Stronie.<br>
+                        - Przerwy w działaniu Strony wynikające z przyczyn technicznych lub niezależnych od Administratora.<br>
+                        - Szkody wynikające z korzystania ze Strony lub podejmowania decyzji na podstawie jej treści, w tym dotyczących pogody, kryptowalut lub ciekawostek.</p>
+                    <p>6.2. Strona jest hostowana na platformie GitHub, a Administrator nie ma wpływu na jej infrastrukturę techniczną i ciągłość działania.</p>
+
+                    <h2>7. Zmiany Regulaminu</h2>
+                    <p>7.1. Administrator zastrzega sobie prawo do zmiany Regulaminu w dowolnym czasie.</p>
+                    <p>7.2. Informacja o zmianach zostanie opublikowana na Stronie w widocznym miejscu (np. w formie komunikatu).</p>
+                    <p>7.3. Dalsze korzystanie ze Strony po wprowadzeniu zmian oznacza akceptację nowego Regulaminu.</p>
+
+                    <h2>8. Postanowienia końcowe</h2>
+                    <p>8.1. Strona Barastion Watchtower jest projektem hobbystycznym, stworzonym bez celów komercyjnych, reklamy czy generowania przychodów.</p>
+                    <p>8.2. Regulamin podlega prawu polskiemu. Wszelkie spory będą rozpatrywane przez sądy powszechne w Polsce.</p>
+                    <p>8.3. Wszelka korespondencja z Administratorem powinna być kierowana wyłącznie na adres e-mail: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>. Administrator nie odpowiada na zapytania przesłane innymi kanałami.</p>
+                </div>
+                <div id="termsEN" class="modal-terms-language" style="display: none;">
+                    <p><strong>Effective Date: April 20, 2025</strong></p>
+                    <h2>1. General Provisions</h2>
+                    <p>1.1. These terms and conditions ("Terms") govern the use of the website available at <a href="https://barastion.github.io/Barastion-Watchtower/">https://barastion.github.io/Barastion-Watchtower/</a> ("Website"), operated by an individual as part of a hobby project ("Administrator"). Contact with the Administrator: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
+                    <p>1.2. The Barastion Watchtower Website is a personal dashboard created for hobby purposes, used for monitoring weather, cryptocurrencies, and displaying trivia. The Website is 100% free, not advertised, generates no revenue, and was created for individuals who appreciate the Administrator's concept of a personal dashboard.</p>
+                    <p>1.3. Using the Website constitutes full acceptance of these Terms. The Terms are available via a link in the Website's footer. Users who do not accept the Terms are required to leave the Website immediately.</p>
+                    <p>1.4. The Website is publicly accessible, meaning anyone who finds the Website on the Internet can use it.</p>
+
+                    <h2>2. Rules for Using the Website</h2>
+                    <p>2.1. The User undertakes to use the Website in accordance with the law, principles of social coexistence, and these Terms.</p>
+                    <p>2.2. It is prohibited to undertake actions that may disrupt the Website's operation, such as hacking attacks, excessive server load, or infringing the Administrator's rights.</p>
+                    <p>2.3. Content available on the Website, such as weather forecasts, cryptocurrency data, or trivia, comes from external sources (e.g., Open-Meteo, CoinGecko, NASA API) or is modified by the Administrator. The Administrator does not guarantee their accuracy, timeliness, or suitability for any purpose.</p>
+
+                    <h2>3. Personal Data Protection</h2>
+                    <p>3.1. The Administrator processes users' personal data in accordance with Regulation (EU) 2016/679 of the European Parliament and of the Council (GDPR).</p>
+                    <p>3.2. <strong>Data Administrator</strong>: An individual operating under the pseudonym Barastion, contact: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>.</p>
+                    <p>3.3. <strong>Data Collected</strong>: The Website collects the following user data in the form of visit logs: IP address, location (city, country), internet service provider (ISP), date, time, and device information (e.g., browser). Data is stored solely in the Firebase service and temporarily in cache memory.</p>
+                    <p>3.4. <strong>Purpose and Legal Basis</strong>: Data is processed to monitor Website visits, ensure its security, and perform statistical analysis, based on the Administrator's legitimate interest (Art. 6(1)(f) GDPR).</p>
+                    <p>3.5. <strong>Storage Period</strong>: Only the last 50 visit logs are stored. Older logs are automatically deleted.</p>
+                    <p>3.6. <strong>User Rights</strong>: The User has the right to:<br>
+                        - Access their data.<br>
+                        - Rectify, delete, or restrict data processing.<br>
+                        - Object to data processing.<br>
+                        - Lodge a complaint with the President of the Personal Data Protection Office (UODO).<br>
+                        Requests can be submitted to: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>. The Administrator will respond to such requests within 30 days of receipt. Log deletion is possible after manual operation by the Administrator in the database.</p>
+                    <p>3.7. <strong>Data Recipients</strong>: Data is transferred to the Firebase service (Google Cloud), which may process data outside the European Economic Area (EEA). Data transfer is secured by standard contractual clauses. Other services, such as ipapi.co, may be used to determine location based on IP. Users are informed that the transfer of data outside the EEA may involve risks arising from differences in data protection regulations in third countries.</p>
+                    <p>3.8. <strong>No Consent Required</strong>: The Website does not require consent for data collection, as processing is based on legitimate interest. The User may object to processing by contacting the Administrator.</p>
+
+                    <h2>4. Cryptocurrency Data and No Investment Advice</h2>
+                    <p>4.1. Cryptocurrency data, including indicators such as the Fear and Greed Index, are based on information from external APIs (e.g., CoinGecko) and modified using an algorithm created by the Administrator.</p>
+                    <p>4.2. This data is purely informational and educational. <strong>It does not constitute investment advice, recommendations, or encouragement to make financial decisions</strong>.</p>
+                    <p>4.3. The User makes investment decisions at their own risk. The Administrator is not liable for any financial losses resulting from the use of data on the Website.</p>
+                    <p>4.4. The cryptocurrency market is highly volatile, and investments carry the risk of capital loss.</p>
+
+                    <h2>5. Intellectual Property Rights</h2>
+                    <p>5.1. Content created by the Administrator, including modified indicators (e.g., Fear and Greed Index), algorithms, trivia, and Website code, is protected by copyright.</p>
+                    <p>5.2. Users may use this content only within the scope of permitted personal use. Copying, modifying, or distributing content without the Administrator's consent is prohibited.</p>
+                    <p>5.3. Content from external sources (e.g., NASA API, Open-Meteo) is subject to the rules set by their providers.</p>
+
+                    <h2>6. Liability</h2>
+                    <p>6.1. The Administrator is not liable for:<br>
+                        - Errors or outdated data presented on the Website.<br>
+                        - Interruptions in Website operation due to technical reasons or factors beyond the Administrator's control.<br>
+                        - Damages resulting from using the Website or making decisions based on its content, including weather, cryptocurrencies, or trivia.</p>
+                    <p>6.2. The Website is hosted on the GitHub platform, and the Administrator has no control over its technical infrastructure or continuity of operation.</p>
+
+                    <h2>7. Changes to the Terms</h2>
+                    <p>7.1. The Administrator reserves the right to amend the Terms at any time.</p>
+                    <p>7.2. Information about changes will be published on the Website in a visible place (e.g., as a notification).</p>
+                    <p>7.3. Continued use of the Website after changes are introduced constitutes acceptance of the new Terms.</p>
+
+                    <h2>8. Final Provisions</h2>
+                    <p>8.1. The Barastion Watchtower Website is a hobby project created without commercial purposes, advertising, or revenue generation.</p>
+                    <p>8.2. The Terms are governed by Polish law. Any disputes will be resolved by Polish common courts.</p>
+                    <p>8.3. All correspondence with the Administrator should be directed exclusively to the e-mail address: <a href="mailto:lukasz13d@gmail.com">lukasz13d@gmail.com</a>. The Administrator does not respond to inquiries sent through other channels.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language toggle functionality
+        const langPolish = document.getElementById('langPolish');
+        const langEnglish = document.getElementById('langEnglish');
+        const termsPL = document.getElementById('termsPL');
+        const termsEN = document.getElementById('termsEN');
+        const termsTitle = document.getElementById('termsTitle');
+        const closeButton = document.getElementById('closeButton');
+        const termsContent = document.querySelector('.modal-terms-content');
+        let currentLanguage = 'pl';
+
+        function setLanguage(language) {
+            if (language === 'pl') {
+                termsPL.style.display = 'block';
+                termsEN.style.display = 'none';
+                termsTitle.textContent = 'Regulamin Strony - Barastion Watchtower';
+                closeButton.textContent = 'Akceptuję';
+                langPolish.classList.add('active');
+                langEnglish.classList.remove('active');
+                currentLanguage = 'pl';
+            } else {
+                termsPL.style.display = 'none';
+                termsEN.style.display = 'block';
+                termsTitle.textContent = 'Terms and Conditions - Barastion Watchtower';
+                closeButton.textContent = 'Accept';
+                langPolish.classList.remove('active');
+                langEnglish.classList.add('active');
+                currentLanguage = 'en';
+            }
+            // Scroll to top after language change
+            if (termsContent) {
+                termsContent.scrollTop = 0;
+            }
+        }
+
+        langPolish.addEventListener('click', () => setLanguage('pl'));
+        langEnglish.addEventListener('click', () => setLanguage('en'));
+
+        // Ensure modal is visible on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalOverlay = document.getElementById('modalOverlay');
+            modalOverlay.style.display = 'flex';
+            // Prevent body scrolling while modal is open
+            document.body.style.overflow = 'hidden';
+        });
+    </script>
+</body>
+</html>
