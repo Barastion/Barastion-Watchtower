@@ -55,11 +55,10 @@
                         <span class="fear-greed-signal"></span>
                     </div>
                 </div>
-                <!-- Poprawiony baner z paskiem balansu -->
                 <div class="balance-bar" id="balanceBar">
-                    <div class="balance-header">
+                    <div class="balance-header">Dziś bardziej się opłaca:</div>
+                    <div class="balance-labels">
                         <span class="label-bitcoin">Bitcoin</span>
-                        <span class="balance-text">Dziś bardziej się opłaca:</span>
                         <span class="label-altcoin">Altcoin</span>
                     </div>
                     <div class="balance-gradient">
@@ -140,7 +139,6 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Funkcja do skracania tekstu i dodawania tooltipów
         function truncateTextWithTooltip() {
             const ispElements = document.querySelectorAll('.isp');
             ispElements.forEach(element => {
@@ -152,10 +150,9 @@
             });
         }
 
-        // Funkcje licznika wyświetleń
         const visitCounterCacheKey = 'visitCounter';
         const visitCounterCacheTimeKey = 'visitCounter_time';
-        const visitCounterCacheDuration = 48 * 60 * 60 * 1000; // 48 godzin
+        const visitCounterCacheDuration = 48 * 60 * 60 * 1000;
 
         function formatNumberWithSpaces(number) {
             return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -592,8 +589,7 @@
             }
 
             const parsedValues = values.map(item => parseFloat(item.value) || 0);
-            const parsedValuesChronological = parsedValues.slice().reverse(); // Odwrócenie dla chronologicznej kolejności
-            const - dla zachowania spójności
+            const parsedValuesChronological = parsedValues.slice().reverse();
             const ema3 = calculateEMA(parsedValuesChronological, 3);
             const ema8 = calculateEMA(parsedValuesChronological, 8);
             const difference = ema3 - ema8;
@@ -806,7 +802,7 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${log.date || 'Brak'}</td>
-                    <td>${log.day || 'Brak'}</td>
+                    <td>${log.day || 'Brak'}</td
                     <td>${log.time || 'Brak'}</td>
                     <td>${log.ip || 'Brak'}</td>
                     <td class="location-cell">
@@ -867,9 +863,9 @@
         async function getIp(forceRefresh = false) {
             const cacheKey = 'ip_data';
             const cacheTimeKey = 'ip_time';
-            const cacheDuration = 15 * 60 * 1000; // 15 minut
+            const cacheDuration = 15 * 60 * 1000;
             const lastCheckKey = 'ip_location_last_check';
-            const checkInterval = 4 * 60 * 60 * 1000; // 4 godziny
+            const checkInterval = 4 * 60 * 60 * 1000;
 
             const now = Date.now();
             const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -924,9 +920,9 @@
         async function getLocation(ip, forceRefresh = false) {
             const cacheKey = `location_${ip}`;
             const cacheTimeKey = `${cacheKey}_time`;
-            const cacheDuration = 24 * 60 * 60 * 1000; // 24 godziny
+            const cacheDuration = 24 * 60 * 60 * 1000;
             const lastCheckKey = 'ip_location_last_check';
-            const checkInterval = 4 * 60 * 60 * 1000; // 4 godziny
+            const checkInterval = 4 * 60 * 60 * 1000;
 
             const now = Date.now();
             const lastCheck = parseInt(localStorage.getItem(lastCheckKey)) || 0;
@@ -1128,7 +1124,7 @@
 
             forecastData.time.forEach((date, index) => {
                 const formattedDate = new Date(date).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', { weekday: 'long' }));
+                const dayName = capitalizeFirstLetter(new Date(date).toLocaleDateString('pl-PL', {Aweekday: 'long' }));
                 const weatherCode = forecastData.weathercode[index];
                 const maxTemp = forecastData.temperature_2m_max[index];
                 const minTemp = forecastData.temperature_2m_min[index];
@@ -1490,7 +1486,6 @@
         }
 
         function updateBalanceBar(coins) {
-            console.log('Dane kryptowalut:', coins);
             const bitcoin = coins.find(coin => coin.id === 'bitcoin');
             if (!bitcoin) {
                 console.error('Brak danych dla Bitcoina');
@@ -1517,21 +1512,14 @@
                 d30: weightedAverage(altcoins, 'price_change_percentage_30d')
             };
 
-            console.log('Zmiany BTC:', btcChanges);
-            console.log('Zmiany Altcoinów:', altChanges);
-
             const diff = {
                 d1: btcChanges.d1 - altChanges.d1,
                 d7: btcChanges.d7 - altChanges.d7,
                 d30: btcChanges.d30 - altChanges.d30
             };
 
-            console.log('Różnice:', diff);
-
             const weights = { d30: 0.3, d7: 0.5, d1: 0.2 };
             const weightedDiff = (diff.d30 * weights.d30) + (diff.d7 * weights.d7) + (diff.d1 * weights.d1);
-
-            console.log('Ważona różnica:', weightedDiff);
 
             let balanceScore = (weightedDiff / 40) * 50;
             if (Math.abs(diff.d7) > 20) {
@@ -1539,12 +1527,10 @@
             }
             balanceScore = Math.min(Math.max(balanceScore, -50), 50);
 
-            console.log('Wynik balansu:', balanceScore);
-
             const indicator = document.getElementById('balanceIndicator');
             const valueElement = document.getElementById('balanceValue');
 
-            const position = ((balanceScore + 50) / 100) * 100; // Mapowanie z -50..50 na 0..100%
+            const position = ((balanceScore + 50) / 100) * 100;
             indicator.style.left = `${position}%`;
 
             let valueText;
@@ -1643,9 +1629,10 @@
                     .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                     .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
                     .balance-bar { width: 100%; margin-top: 20px; position: relative; }
-                    .balance-header { text-align: center; font-size: 18px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+                    .balance-header { text-align: center; font-size: 18px; margin-bottom: 10px; }
                     .balance-gradient { height: 20px; background: linear-gradient(to right, green, yellow, green); position: relative; }
-                    .balance-indicator { position: absolute; top: 0; bottom: 0; width: 10px; background: white; left: 50%; transform: translateX(-50%); transition: left 0.5s ease; }
+                    .balance-indicator { position: absolute; top: 0; bottom: 0; width: 5px; background: white; transition: left 0.5s ease; }
+                    .balance-labels { display: flex; justify-content: space-between; margin-top: 5px; }
                     .balance-value { text-align: center; margin-top: 10px; font-size: 16px; }
                 `;
                 document.head.appendChild(style);
@@ -1755,7 +1742,7 @@
                 console.log('Aktualizuję pasek balansu...');
                 const latestData = getAnyCachedData('crypto_data');
                 if (latestData) updateBalanceBar(latestData);
-            }, 3600000); // Co godzinę
+            }, 3600000);
         }
 
         let isManagingIntervals = false;
@@ -1861,7 +1848,7 @@
             nasaIntervalId = setInterval(() => {
                 console.log('Aktualizuję NASA...');
                 getNasaApodImage();
-            }, 10800000); // 3 godziny
+            }, 10800000);
         }
 
         function startWeatherUpdateInterval(ip) {
@@ -1870,7 +1857,7 @@
             weatherIntervalId = setInterval(() => {
                 console.log('Aktualizuję pogodę...');
                 getWeather(ip);
-            }, 10800000); // 3 godziny
+            }, 10800000);
         }
 
         function startDailyFactUpdateInterval() {
@@ -1879,7 +1866,7 @@
             dailyFactIntervalId = setInterval(() => {
                 console.log('Aktualizuję ciekawostkę dnia...');
                 getDailyFact();
-            }, 10800000); // 3 godziny
+            }, 10800000);
         }
 
         function manageAllUpdateIntervals(ip) {
