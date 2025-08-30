@@ -1,19 +1,19 @@
 :root {
     --fear-greed-hold: #cfae02; /* Żółty dla HODL */
-    --fear-greed-consider-buy: rgba(0, 160, 0, 0.75); /* Zielony dla BUY SLOWLY */
-    --fear-greed-opportunity: rgba(0, 200, 0, 0.9); /* Jasnozielony dla ALL IN! */
-    --fear-greed-consider-sell: rgba(160, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY */
-    --fear-greed-sell: rgba(200, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
+    --fear-greed-consider-buy: rgba(0, 140, 0, 0.75); /* Zielony dla BUY SLOWLY */
+    --fear-greed-opportunity: rgba(0, 180, 0, 0.9); /* Jasnozielony dla ALL IN! */
+    --fear-greed-consider-sell: rgba(140, 0, 0, 0.75); /* Czerwony dla SELL SLOWLY */
+    --fear-greed-sell: rgba(180, 0, 0, 0.9); /* Intensywnie czerwony dla CASH OUT! */
     --gradient-start: #cfae02; /* Kolor początkowy gradientu dla HODL */
     --gradient-end: #a68e02; /* Kolor końcowy gradientu dla HODL */
-    --gradient-start-all-in: rgba(0, 200, 0, 0.9); /* Kolor początkowy dla ALL IN! */
-    --gradient-end-all-in: rgba(0, 160, 0, 0.75); /* Kolor końcowy dla ALL IN! */
-    --gradient-start-buy-slowly: rgba(0, 160, 0, 0.75); /* Kolor początkowy dla BUY SLOWLY */
-    --gradient-end-buy-slowly: rgba(0, 120, 0, 0.6); /* Kolor końcowy dla BUY SLOWLY */
-    --gradient-start-sell-slowly: rgba(160, 0, 0, 0.75); /* Kolor początkowy dla SELL SLOWLY */
-    --gradient-end-sell-slowly: rgba(120, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
-    --gradient-start-cash-out: rgba(200, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
-    --gradient-end-cash-out: rgba(160, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
+    --gradient-start-all-in: rgba(0, 180, 0, 0.9); /* Kolor początkowy dla ALL IN! */
+    --gradient-end-all-in: rgba(0, 140, 0, 0.75); /* Kolor końcowy dla ALL IN! */
+    --gradient-start-buy-slowly: rgba(0, 140, 0, 0.75); /* Kolor początkowy dla BUY SLOWLY */
+    --gradient-end-buy-slowly: rgba(0, 100, 0, 0.6); /* Kolor końcowy dla BUY SLOWLY */
+    --gradient-start-sell-slowly: rgba(140, 0, 0, 0.75); /* Kolor początkowy dla SELL SLOWLY */
+    --gradient-end-sell-slowly: rgba(100, 0, 0, 0.6); /* Kolor końcowy dla SELL SLOWLY */
+    --gradient-start-cash-out: rgba(180, 0, 0, 0.9); /* Kolor początkowy dla CASH OUT! */
+    --gradient-end-cash-out: rgba(140, 0, 0, 0.75); /* Kolor końcowy dla CASH OUT! */
 }
 
 body {
