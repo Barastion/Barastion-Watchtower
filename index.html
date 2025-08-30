@@ -48,16 +48,11 @@
             </div>
             <div class="crypto-info">
                 <div class="crypto-header">
-                    <!-- Zmieniony baner ze wskaźnikami -->
-                    <div class="sentiment-banner">
-                        <span class="sentiment-label">Obecny sentyment:</span>
-                        <span id="sdwaValue" class="sentiment-value">-</span>
-                        <span class="separator">•</span>
-                        <span class="trend-label">Przewidywany trend:</span>
-                        <span id="trendIndicator" class="trend-indicator">-</span>
-                        <span class="separator">•</span>
-                        <span class="signal-label">Dzisiejszy sygnał:</span>
-                        <span id="dailySignal" class="signal-value">-</span>
+                    <div class="fear-greed-indicator" id="fearGreedIndicator">
+                        <span class="fgi-label">Miesięczny sygnał:</span>
+                        <span class="trend-indicator"></span>
+                        <span class="fgi-value"></span> –
+                        <span class="fear-greed-signal"></span>
                     </div>
                 </div>
                 <div class="crypto-grid" id="cryptoGrid"></div>
@@ -376,9 +371,7 @@
                 id: coin.id,
                 symbol: coin.symbol,
                 current_price: coin.current_price,
-                price_change_percentage_24h: coin.price_change_percentage_24h,
-                price_change_percentage_7d: coin.price_change_percentage_7d,
-                price_change_percentage_30d: coin.price_change_percentage_30d
+                price_change_percentage_24h: coin.price_change_percentage_24h
             }));
         }
         if (cacheKey.includes('weather_')) {
@@ -608,35 +601,32 @@
     }
 
     function displayFearGreed(averageData, trend) {
-        // Aktualizacja nowego banera zamiast starego wskaźnika
-        document.getElementById('sdwaValue').textContent = Math.round(averageData.average);
-        document.getElementById('trendIndicator').textContent = trend.symbol;
-        document.getElementById('dailySignal').textContent = averageData.signal.signal;
-        
-        // Dodanie klas dla kolorowania
-        const sdwaValue = document.getElementById('sdwaValue');
-        const trendIndicator = document.getElementById('trendIndicator');
-        const dailySignal = document.getElementById('dailySignal');
-        
-        // Kolorowanie wartości SDWA
+        const indicator = document.getElementById('fearGreedIndicator');
         const roundedAverage = Math.round(averageData.average);
+        const signalClass = averageData.signal.class;
+        const trendClass = trend.class;
+
+        let valueClass;
         if (roundedAverage <= 20) {
-            sdwaValue.className = 'sentiment-value extreme-fear';
+            valueClass = 'extreme-fear';
         } else if (roundedAverage <= 40) {
-            sdwaValue.className = 'sentiment-value fear';
+            valueClass = 'fear';
         } else if (roundedAverage <= 60) {
-            sdwaValue.className = 'sentiment-value neutral';
+            valueClass = 'neutral';
         } else if (roundedAverage <= 80) {
-            sdwaValue.className = 'sentiment-value greedy';
+            valueClass = 'greedy';
         } else {
-            sdwaValue.className = 'sentiment-value extreme-greedy';
+            valueClass = 'extreme-greedy';
         }
-        
-        // Kolorowanie trendu
-        trendIndicator.className = `trend-indicator ${trend.class}`;
-        
-        // Kolorowanie sygnału
-        dailySignal.className = `signal-value ${averageData.signal.class}`;
+
+        indicator.className = `fear-greed-indicator ${signalClass}`;
+        indicator.innerHTML = `
+            <span class="fgi-label">Miesięczny sygnał:</span>
+            <span class="trend-indicator ${trendClass}">${trend.symbol}</span>
+            <span class="fgi-value ${valueClass}">${roundedAverage}</span>
+            <span class="fgi-dash">–</span>
+            <span class="fear-greed-signal">${averageData.signal.signal}</span>
+        `;
     }
 
     async function updateFearGreedIndicator() {
@@ -654,8 +644,8 @@
         if (!data && anyCachedAverage && anyCachedTrend) {
             displayFearGreed(anyCachedAverage, anyCachedTrend);
         } else if (!data) {
-            const banner = document.querySelector('.sentiment-banner');
-            banner.innerHTML = '<span class="sentiment-label">Obecny sentyment:</span> Brak danych';
+            const indicator = document.getElementById('fearGreedIndicator');
+            indicator.innerHTML = '<span class="fgi-label">Miesięczny sygnał:</span> Brak danych';
         }
     }
 
@@ -1406,8 +1396,7 @@ async function logVisit() {
         }
 
         try {
-            // Zmienione API - dodanie parametrów do pobrania zmian 7d i 30d
-            const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1&sparkline=false&price_change_percentage=24h%2C7d%2C30d');
+            const data = await retryFetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=75&page=1');
             const isMobile = window.innerWidth <= 768;
             const limit = isMobile ? 28 : 35;
             const usedBaseAssets = new Set();
@@ -1454,9 +1443,7 @@ async function logVisit() {
                 id: coin.id,
                 symbol: coin.symbol,
                 current_price: parseFloat(coin.current_price),
-                price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h),
-                price_change_percentage_7d: parseFloat(coin.price_change_percentage_7d),
-                price_change_percentage_30d: parseFloat(coin.price_change_percentage_30d)
+                price_change_percentage_24h: parseFloat(coin.price_change_percentage_24h)
             }));
 
             console.log('Przefiltrowane kryptowaluty:', filteredCoins);
@@ -1532,19 +1519,11 @@ async function logVisit() {
         coins.forEach(coin => {
             const cryptoTile = document.createElement('div');
             cryptoTile.className = `crypto-tile ${getChangeClass(coin.price_change_percentage_24h)}`;
-            
-            // Dodanie danych 7d i 30d do tooltipa
-            const tooltipText = `24h: ${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}%\n7d: ${coin.price_change_percentage_7d >= 0 ? '+' : ''}${coin.price_change_percentage_7d.toFixed(2)}%\n30d: ${coin.price_change_percentage_30d >= 0 ? '+' : ''}${coin.price_change_percentage_30d.toFixed(2)}%`;
-            
             cryptoTile.innerHTML = `
                 <div class="crypto-symbol">${coin.symbol.toUpperCase()}</div>
                 <div class="crypto-price">${formatPrice(coin.current_price)}</div>
                 <div class="crypto-change">${coin.price_change_percentage_24h >= 0 ? '+' : ''}${coin.price_change_percentage_24h.toFixed(2)}% / 24h</div>
             `;
-            
-            // Dodanie tooltipa z danymi
-            cryptoTile.setAttribute('title', tooltipText);
-            
             cryptoTile.addEventListener('click', () => {
                 window.open(`https://www.coingecko.com/en/coins/${coin.id}`, '_blank');
             });
@@ -1569,31 +1548,6 @@ async function logVisit() {
                 .crypto-tile.negative-low { background: rgba(255, 50, 50, 0.4); }
                 .crypto-tile.negative-mid { background: rgba(255, 50, 50, 0.6); }
                 .crypto-tile.negative-high { background: rgba(255, 50, 50, 0.8); }
-                .sentiment-banner { 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    gap: 8px; 
-                    padding: 10px; 
-                    background: rgba(45, 45, 45, 0.8); 
-                    border-radius: 8px; 
-                    margin-bottom: 15px; 
-                    flex-wrap: wrap; 
-                }
-                .sentiment-label, .trend-label, .signal-label { font-weight: bold; }
-                .sentiment-value.extreme-fear { color: #ff4444; }
-                .sentiment-value.fear { color: #ff8844; }
-                .sentiment-value.neutral { color: #ffff44; }
-                .sentiment-value.greedy { color: #88ff44; }
-                .sentiment-value.extreme-greedy { color: #44ff44; }
-                .trend-indicator.trend-up { color: #44ff44; }
-                .trend-indicator.trend-down { color: #ff4444; }
-                .trend-indicator.trend-neutral { color: #ffff44; }
-                .signal-value.all-in { color: #44ff44; }
-                .signal-value.buy-slowly { color: #88ff44; }
-                .signal-value.hodl { color: #ffff44; }
-                .signal-value.sell-slowly { color: #ff8844; }
-                .signal-value.cash-out { color: #ff4444; }
             `;
             document.head.appendChild(style);
         }
@@ -1939,7 +1893,7 @@ async function logVisit() {
             console.log('Kryptowaluty załadowane');
             setTimeout(async () => {
                 await logVisit();
-                console.log('Logs loaded');
+                console.log('Logi załadowane');
             }, 5000);
         } catch (err) {
             console.error('Błąd podczas ładowania danych w kolejce:', err);
@@ -2051,7 +2005,7 @@ async function logVisit() {
                 console.log('Wyniki wywołań API:', {
                     nasa: nasaResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${nasaResult.reason}`,
                     weather: weatherResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${weatherResult.reason}`,
-                    dailyFact: dailyFactResult.status === 'fulfilled' : 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
+                    dailyFact: dailyFactResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${dailyFactResult.reason}`,
                     crypto: cryptoResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${cryptoResult.reason}`,
                     fearGreed: fearGreedResult.status === 'fulfilled' ? 'Sukces' : `Błąd: ${fearGreedResult.reason}`
                 });
