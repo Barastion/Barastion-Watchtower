@@ -2221,7 +2221,7 @@ function sigComputeSignal({ price_1d, price_7d, price_30d, price_365d, fgi_val, 
   const score = priceScore * 0.50 + fgiLevel * 0.30 + fgiMom * 0.20;
 
   let signal;
-  if      (score <= 34.286) signal = 'OKAZJA: KUPUJ';
+  if      (score <= 34.286) signal = '';
   else if (score <= 47.498) signal = 'AKUMULUJ';
   else if (score <= 64.219) signal = 'TRZYMAJ';
   else if (score <= 76.122) signal = 'REDUKUJ';
@@ -2232,10 +2232,10 @@ function sigComputeSignal({ price_1d, price_7d, price_30d, price_365d, fgi_val, 
 
 // Mapowanie sygnału na kolor
 const SIG_COLOR = {
-  'OKAZJA: KUPUJ':    '#0D7A56',
-  'KUPUJ':            '#2D9E4F',
+'OKAZJA: KUPUJ':    '#0D7A56',
+  'AKUMULUJ':         '#2D9E4F',
   'TRZYMAJ':          '#eab308',
-  'SPRZEDAJ':         '#f97316',
+  'REDUKUJ':          '#f97316',
   'OKAZJA: SPRZEDAJ': '#ef4444',
 };
 
