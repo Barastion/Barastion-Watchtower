@@ -2222,9 +2222,9 @@ function sigComputeSignal({ price_1d, price_7d, price_30d, price_365d, fgi_val, 
 
   let signal;
   if      (score <= 34.286) signal = 'OKAZJA: KUPUJ';
-  else if (score <= 47.498) signal = 'KUPUJ';
+  else if (score <= 47.498) signal = 'AKUMULUJ';
   else if (score <= 64.219) signal = 'TRZYMAJ';
-  else if (score <= 76.122) signal = 'SPRZEDAJ';
+  else if (score <= 76.122) signal = 'REDUKUJ';
   else                      signal = 'OKAZJA: SPRZEDAJ';
 
   return { score, signal, priceScore, fgiLevel, fgiMom };
